@@ -1,0 +1,207 @@
+---
+// Footer component — 3-column footer following DESIGN.md footer spec
+interface Props {
+  platform?: 'tiktok' | 'instagram' | 'facebook';
+}
+
+import { sectionHref } from '../lib/pageSections';
+
+const { platform = 'tiktok' } = Astro.props;
+const year = new Date().getFullYear();
+const isInstagram = platform === 'instagram';
+const isFacebook = platform === 'facebook';
+const currentPath = Astro.url.pathname;
+---
+
+<footer id="site-footer" class="site-footer">
+  <div class="footer-inner container-page">
+    <!-- Brand Column -->
+    <div class="footer-brand">
+      <a href="/" class="footer-logo" id="footer-logo" aria-label="TikSaveHub home">
+        <span class="footer-logo-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" rx="8" class="logo-icon-rect"/>
+            <path d="M10 8L18 14L10 20V8Z" class="logo-icon-path"/>
+            <path d="M12 18L16 22H20L16 18" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="logo-icon-stroke"/>
+            <line x1="13" y1="20" x2="21" y2="20" stroke="white" stroke-width="1.5" stroke-linecap="round" class="logo-icon-stroke"/>
+          </svg>
+        </span>
+        <span class="footer-logo-text">TikSaveHub</span>
+      </a>
+      <p class="footer-tagline">
+        {isInstagram
+          ? 'Download Instagram videos, Reels, and Stories without watermarks. Free, fast, and always HD quality.'
+          : isFacebook
+            ? 'Download Facebook videos, Reels, and audio in HD. Free, fast, and no sign-up required.'
+            : 'Download TikTok videos without watermarks. Free, fast, and always HD quality.'}
+      </p>
+      <p class="footer-copy">&copy; {year} TikSaveHub. All rights reserved.</p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="footer-col">
+      <p class="footer-col-label text-caption-mono">Quick Links</p>
+      <ul class="footer-link-list">
+        <li><a href={sectionHref(currentPath, 'download-form')} class="footer-link" id="footer-link-download">Download Video</a></li>
+        <li><a href="/tiktok-video-downloader-without-watermark" class="footer-link" id="footer-link-downloader">TikTok Downloader</a></li>
+        <li><a href={sectionHref(currentPath, 'how-it-works')} class="footer-link" id="footer-link-how">How It Works</a></li>
+        <li><a href={sectionHref(currentPath, 'features')} class="footer-link" id="footer-link-features">Features</a></li>
+        <li><a href={sectionHref(currentPath, 'faq')} class="footer-link" id="footer-link-faq">FAQ</a></li>
+        <li><a href="/blog" class="footer-link" id="footer-link-blog">Blog</a></li>
+      </ul>
+    </div>
+
+    <!-- Legal -->
+    <div class="footer-col">
+      <p class="footer-col-label text-caption-mono">Legal</p>
+      <ul class="footer-link-list">
+        <li><a href="/privacy" class="footer-link" id="footer-link-privacy">Privacy Policy</a></li>
+        <li><a href="/terms" class="footer-link" id="footer-link-terms">Terms of Service</a></li>
+        <li><a href="/dmca" class="footer-link" id="footer-link-dmca">DMCA</a></li>
+        <li><a href="/contact" class="footer-link" id="footer-link-contact">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="container-page footer-bottom-inner">
+      <p class="footer-bottom-text">
+        {isInstagram
+          ? 'TikSaveHub is not affiliated with Instagram or Meta Platforms, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'
+          : isFacebook
+            ? 'TikSaveHub is not affiliated with Facebook or Meta Platforms, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from Meta CDNs. Please respect content creators\' rights and copyright regulations.'
+            : 'TikSaveHub is not affiliated with TikTok or ByteDance Ltd. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'}
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background-color: var(--color-canvas);
+    border-top: 1px solid var(--color-hairline);
+    margin-top: 0;
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr 180px 180px;
+    gap: var(--spacing-4xl);
+    padding-top: var(--spacing-4xl);
+    padding-bottom: var(--spacing-4xl);
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    text-decoration: none;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .footer-logo-icon {
+    display: flex;
+    align-items: center;
+  }
+
+  .dark .logo-icon-rect {
+    fill: var(--color-canvas);
+  }
+  .dark .logo-icon-path {
+    fill: var(--color-ink);
+  }
+  .dark .logo-icon-stroke {
+    stroke: var(--color-ink);
+  }
+
+  .footer-logo-text {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #007cf0, #7928ca, #ff0080);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .footer-tagline {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+    margin: 0 0 var(--spacing-md) 0;
+    max-width: 280px;
+  }
+
+  .footer-copy {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  .footer-col-label {
+    color: var(--color-mute);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .footer-link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .footer-link {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    letter-spacing: -0.28px;
+  }
+
+  .footer-link:hover {
+    color: var(--color-ink);
+  }
+
+  .footer-bottom {
+    border-top: 1px solid var(--color-hairline);
+    padding: var(--spacing-md) 0;
+  }
+
+  .footer-bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-bottom-text {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    text-align: center;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 960px) {
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-xl);
+    }
+
+    .footer-bottom-text {
+      font-size: var(--text-caption);
+    }
+  }
+</style>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="TikTok videos downloading on phone, tablet, and PC">
+  <defs>
+    <linearGradient id="mmesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#00dfd8" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#7928ca" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="mbtn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0"/>
+      <stop offset="1" stop-color="#7928ca"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#mmesh)"/>
+
+  <!-- Phone -->
+  <rect x="120" y="90" width="170" height="270" rx="26" fill="#171717"/>
+  <rect x="132" y="102" width="146" height="238" rx="18" fill="#ffffff"/>
+  <path d="M150 200a34 40 0 1 0 12 8m18-12V330" stroke="url(#mbtn)" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <rect x="148" y="250" width="114" height="14" rx="7" fill="#e4e4e7"/>
+  <rect x="148" y="274" width="80" height="14" rx="7" fill="#e4e4e7"/>
+
+  <!-- Tablet -->
+  <rect x="312" y="96" width="210" height="286" rx="22" fill="#171717"/>
+  <rect x="322" y="106" width="190" height="250" rx="16" fill="#ffffff"/>
+  <circle cx="430" cy="280" r="26" fill="#171717" fill-opacity="0.9"/>
+  <path d="M424 264v24l22-12z" fill="#ffffff"/>
+  <rect x="330" y="206" width="120" height="14" rx="7" fill="#e4e4e7"/>
+
+  <!-- Laptop -->
+  <rect x="555" y="120" width="210" height="150" rx="14" fill="#171717"/>
+  <rect x="565" y="130" width="190" height="130" rx="10" fill="#ffffff"/>
+  <circle cx="660" cy="204" r="24" fill="#171717" fill-opacity="0.9"/>
+  <path d="M647 190v20l19-10z" fill="#ffffff"/>
+  <rect x="575" y="170" width="110" height="12" rx="6" fill="#e4e4e7"/>
+  <path d="M545 270h230l10 30H535z" fill="#e4e4e7"/>
+
+  <!-- Device labels -->
+  <text x="217" y="438" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="600" fill="#3f3f46" text-anchor="middle">Phone</text>
+  <text x="417" y="430" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="600" fill="#3f3f46" text-anchor="middle">Tablet</text>
+  <text x="660" y="438" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="600" fill="#3f3f46" text-anchor="middle">PC / Mac</text>
+
+  <text x="400" y="58" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#7c3aed" letter-spacing="0.5">WORKS ON EVERY DEVICE</text>
+</svg>

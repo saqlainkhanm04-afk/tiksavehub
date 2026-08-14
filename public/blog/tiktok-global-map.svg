@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="World map highlighting USA, UK, Canada, Australia">
+  <defs>
+    <linearGradient id="gmesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0" stop-opacity="0.16"/>
+      <stop offset="0.5" stop-color="#00dfd8" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#7928ca" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="gpin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff0080"/>
+      <stop offset="1" stop-color="#ff9966"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#gmesh)"/>
+
+  <!-- Dotted world map (abstract) -->
+  <g fill="#3f3f46" fill-opacity="0.35">
+    <!-- North America -->
+    <circle cx="180" cy="160" r="5"/><circle cx="200" cy="150" r="5"/><circle cx="220" cy="140" r="5"/><circle cx="240" cy="145" r="5"/>
+    <circle cx="180" cy="185" r="5"/><circle cx="205" cy="175" r="5"/><circle cx="230" cy="165" r="5"/><circle cx="255" cy="160" r="5"/>
+    <circle cx="195" cy="205" r="5"/><circle cx="225" cy="195" r="5"/><circle cx="250" cy="180" r="5"/><circle cx="275" cy="172" r="5"/>
+    <!-- South America -->
+    <circle cx="240" cy="250" r="5"/><circle cx="230" cy="275" r="5"/><circle cx="225" cy="300" r="5"/><circle cx="245" cy="285" r="5"/>
+    <circle cx="255" cy="265" r="5"/><circle cx="240" cy="315" r="5"/><circle cx="225" cy="330" r="5"/>
+    <!-- Europe -->
+    <circle cx="420" cy="140" r="5"/><circle cx="445" cy="132" r="5"/><circle cx="470" cy="140" r="5"/>
+    <circle cx="430" cy="160" r="5"/><circle cx="455" cy="155" r="5"/><circle cx="480" cy="148" r="5"/>
+    <!-- Africa -->
+    <circle cx="460" cy="205" r="5"/><circle cx="480" cy="220" r="5"/><circle cx="470" cy="245" r="5"/>
+    <circle cx="480" cy="270" r="5"/><circle cx="495" cy="250" r="5"/><circle cx="505" cy="225" r="5"/>
+    <!-- Asia -->
+    <circle cx="540" cy="130" r="5"/><circle cx="570" cy="125" r="5"/><circle cx="600" cy="130" r="5"/><circle cx="630" cy="135" r="5"/>
+    <circle cx="540" cy="155" r="5"/><circle cx="570" cy="150" r="5"/><circle cx="600" cy="150" r="5"/><circle cx="630" cy="150" r="5"/>
+    <circle cx="550" cy="180" r="5"/><circle cx="580" cy="175" r="5"/><circle cx="610" cy="172" r="5"/><circle cx="640" cy="170" r="5"/>
+    <!-- Australia -->
+    <circle cx="620" cy="315" r="5"/><circle cx="650" cy="305" r="5"/><circle cx="680" cy="310" r="5"/>
+    <circle cx="615" cy="335" r="5"/><circle cx="645" cy="330" r="5"/><circle cx="675" cy="332" r="5"/><circle cx="640" cy="350" r="5"/>
+  </g>
+
+  <!-- Pins -->
+  <g>
+    <path d="M205 128c0-16 13-28 29-28s29 12 29 28c0 19-29 46-29 46s-29-27-29-46z" fill="url(#gpin)"/>
+    <circle cx="234" cy="126" r="9" fill="#ffffff"/>
+  </g>
+  <g>
+    <path d="M455 105c0-15 12-27 27-27s27 12 27 27c0 18-27 43-27 43s-27-25-27-43z" fill="url(#gpin)"/>
+    <circle cx="482" cy="103" r="8" fill="#ffffff"/>
+  </g>
+  <g>
+    <path d="M160 105c0-15 12-27 27-27s27 12 27 27c0 18-27 43-27 43s-27-25-27-43z" fill="url(#gpin)"/>
+    <circle cx="187" cy="103" r="8" fill="#ffffff"/>
+  </g>
+  <g>
+    <path d="M690 282c0-15 12-27 27-27s27 12 27 27c0 18-27 43-27 43s-27-25-27-43z" fill="url(#gpin)"/>
+    <circle cx="717" cy="280" r="8" fill="#ffffff"/>
+  </g>
+
+  <!-- Labels -->
+  <text x="234" y="196" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#171717" text-anchor="middle">USA</text>
+  <text x="482" y="160" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#171717" text-anchor="middle">UK</text>
+  <text x="187" y="158" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#171717" text-anchor="middle">Canada</text>
+  <text x="717" y="335" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#171717" text-anchor="middle">Australia</text>
+
+  <text x="400" y="420" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#3f3f46" text-anchor="middle">Available worldwide — USA, UK, Canada, Australia &amp; more</text>
+</svg>

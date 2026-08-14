@@ -1,0 +1,183 @@
+---
+// FeaturesSection — 3-up feature cards on canvas-soft background
+const features = [
+  {
+    id: 'feat-no-watermark',
+    icon: 'shield',
+    label: 'No Watermark',
+    title: 'Crystal-clean videos.',
+    body: 'Download TikTok videos completely free of the TikTok watermark. Share anywhere — Instagram, WhatsApp, YouTube Shorts — without that floating logo.',
+    accent: 'develop',
+  },
+  {
+    id: 'feat-hd-quality',
+    icon: 'film',
+    label: 'HD Quality',
+    title: 'Best resolution, always.',
+    body: 'We always fetch the highest available quality — up to 1080p HD. No re-encoding, no compression. The video you download is exactly what TikTok stores.',
+    accent: 'preview',
+  },
+  {
+    id: 'feat-fast-free',
+    icon: 'zap',
+    label: 'Fast & Free',
+    title: 'Done in seconds.',
+    body: 'No account. No app. No waiting. Just paste the link and click download. Works on any device — phone, tablet, or desktop. Always free, forever.',
+    accent: 'ship',
+  },
+];
+---
+
+<section id="features" class="features-section" aria-labelledby="features-headline">
+  <div class="features-inner container-page">
+    <div class="features-header">
+      <span class="section-eyebrow text-caption-mono" id="features-eyebrow">Why TikSaveHub</span>
+      <h2 id="features-headline" class="section-headline">
+        Everything you need to save TikToks.
+      </h2>
+      <p class="section-sub text-body-lg">
+        Built for speed, simplicity, and quality. No bloat, no tricks — just clean video downloads.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      {features.map((f) => (
+        <article id={f.id} class="card-feature feature-card" aria-labelledby={`${f.id}-title`}>
+          <div class={`feature-icon-wrap feat-accent-${f.accent}`} aria-hidden="true">
+            {f.icon === 'shield' && (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            )}
+            {f.icon === 'film' && (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+            )}
+            {f.icon === 'zap' && (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            )}
+          </div>
+          <p class="feature-label text-caption-mono">{f.label}</p>
+          <h3 id={`${f.id}-title`} class="feature-title">{f.title}</h3>
+          <p class="feature-body">{f.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .features-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .features-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .feature-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .feat-accent-develop {
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+  }
+
+  .feat-accent-preview {
+    background: linear-gradient(135deg, #7928ca15, #ff008020);
+    color: var(--color-grad-preview-start);
+    box-shadow: inset 0 0 0 1px #7928ca25;
+  }
+
+  .feat-accent-ship {
+    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+    color: var(--color-grad-ship-start);
+    box-shadow: inset 0 0 0 1px #ff4d4d25;
+  }
+
+  .feature-label {
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  .feature-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .feature-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+    letter-spacing: -0.1px;
+  }
+
+  @media (max-width: 960px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .features-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

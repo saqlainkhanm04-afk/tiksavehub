@@ -1,0 +1,299 @@
+---
+// HowItWorksSection — polarity-flipped dark band with 3 steps
+const steps = [
+  {
+    num: '01',
+    title: 'Copy the TikTok link.',
+    body: 'Open TikTok, find the video you want, tap the Share button and select "Copy Link". Works on any TikTok video — public or from your For You page.',
+    icon: 'copy',
+  },
+  {
+    num: '02',
+    title: 'Paste it here.',
+    body: 'Come back to TikSaveHub, paste the link into the input field at the top of the page, and press the Download button.',
+    icon: 'paste',
+  },
+  {
+    num: '03',
+    title: 'Download in HD.',
+    body: 'Your video appears in seconds. Click "Download HD" to save a clean, watermark-free copy at the best available quality directly to your device.',
+    icon: 'download',
+  },
+];
+---
+
+<section id="how-it-works" class="hiw-section" aria-labelledby="hiw-headline">
+  <div class="hiw-inner container-page">
+    <div class="hiw-header">
+      <span class="hiw-eyebrow text-caption-mono" id="hiw-eyebrow">How It Works</span>
+      <h2 id="hiw-headline" class="hiw-headline">
+        Three steps. Seconds to download.
+      </h2>
+      <p class="hiw-sub text-body-lg">
+        No complicated steps. No account needed. Just copy, paste, and save.
+      </p>
+    </div>
+
+    <div class="hiw-steps">
+      {steps.map((step, i) => (
+        <div class="hiw-step" id={`step-${i + 1}`}>
+          <!-- Connector line -->
+          {i < steps.length - 1 && (
+            <div class="step-connector" aria-hidden="true"></div>
+          )}
+
+          <div class="step-num-wrap" aria-hidden="true">
+            <span class="step-num text-caption-mono">{step.num}</span>
+          </div>
+
+          <div class="step-content">
+            <div class="step-icon" aria-hidden="true">
+              {step.icon === 'copy' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              )}
+              {step.icon === 'paste' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                  <line x1="9" y1="12" x2="15" y2="12"/>
+                  <line x1="9" y1="16" x2="13" y2="16"/>
+                </svg>
+              )}
+              {step.icon === 'download' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+              )}
+            </div>
+            <h3 class="step-title">{step.title}</h3>
+            <p class="step-body">{step.body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- CTA -->
+    <div class="hiw-cta">
+      <a href="#download-form" class="btn-secondary hiw-btn" id="hiw-cta-btn">
+        Try it now
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hiw-section {
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dark .hiw-section {
+    background-color: #0a0a0a;
+    color: #fafafa;
+  }
+
+  .dark .hiw-eyebrow {
+    color: rgba(250, 250, 250, 0.4);
+  }
+
+  .dark .hiw-headline {
+    color: #fafafa;
+  }
+
+  .dark .hiw-sub {
+    color: rgba(250, 250, 250, 0.6);
+  }
+
+  .dark .step-num {
+    color: rgba(250, 250, 250, 0.25);
+  }
+
+  .dark .step-icon {
+    background-color: rgba(250, 250, 250, 0.08);
+    border-color: rgba(250, 250, 250, 0.12);
+    color: rgba(250, 250, 250, 0.85);
+  }
+
+  .dark .step-title {
+    color: #fafafa;
+  }
+
+  .dark .step-body {
+    color: rgba(250, 250, 250, 0.55);
+  }
+
+  .dark .hiw-btn {
+    background-color: rgba(250, 250, 250, 0.08) !important;
+    color: #fafafa !important;
+    border-color: rgba(250, 250, 250, 0.2) !important;
+  }
+
+  .dark .hiw-btn:hover {
+    background-color: rgba(250, 250, 250, 0.14) !important;
+  }
+
+  .dark .step-connector {
+    background: linear-gradient(90deg, rgba(250, 250, 250, 0.15), rgba(250, 250, 250, 0.05));
+  }
+
+  .hiw-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4xl);
+  }
+
+  .hiw-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .hiw-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary), transparent 60%);
+  }
+
+  .hiw-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-on-primary);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .hiw-sub {
+    color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+    margin: 0;
+    max-width: 440px;
+  }
+
+  .hiw-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+    position: relative;
+  }
+
+  .hiw-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  /* horizontal connector between steps */
+  .step-connector {
+    position: absolute;
+    top: 20px;
+    right: calc(-1 * var(--spacing-lg) / 2 - 50%);
+    width: calc(100% + var(--spacing-lg));
+    height: 1px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--color-on-primary), transparent 85%), color-mix(in srgb, var(--color-on-primary), transparent 95%));
+    z-index: 0;
+  }
+
+  .step-num-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .step-num {
+    color: color-mix(in srgb, var(--color-on-primary), transparent 75%);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .step-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background-color: color-mix(in srgb, var(--color-on-primary), transparent 92%);
+    border: 1px solid color-mix(in srgb, var(--color-on-primary), transparent 88%);
+    color: color-mix(in srgb, var(--color-on-primary), transparent 15%);
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    color: var(--color-on-primary);
+    margin: 0;
+    letter-spacing: -0.6px;
+    line-height: 1.35;
+  }
+
+  .step-body {
+    font-size: var(--text-body-sm);
+    color: color-mix(in srgb, var(--color-on-primary), transparent 45%);
+    margin: 0;
+    line-height: 1.65;
+    letter-spacing: -0.1px;
+  }
+
+  .hiw-cta {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hiw-btn {
+    background-color: color-mix(in srgb, var(--color-on-primary), transparent 92%) !important;
+    color: var(--color-on-primary) !important;
+    border: 1px solid color-mix(in srgb, var(--color-on-primary), transparent 80%) !important;
+    box-shadow: none !important;
+    gap: 8px;
+  }
+
+  .hiw-btn:hover {
+    background-color: color-mix(in srgb, var(--color-on-primary), transparent 86%) !important;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 960px) {
+    .hiw-steps {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+      gap: var(--spacing-xl);
+    }
+
+    .step-connector {
+      display: none;
+    }
+
+    .hiw-step {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    .step-num-wrap {
+      display: none;
+    }
+
+    .step-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hiw-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+  }
+</style>

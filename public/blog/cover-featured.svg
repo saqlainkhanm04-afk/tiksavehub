@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Best TikTok video downloader guide — featured article cover">
+  <defs>
+    <linearGradient id="mesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0" stop-opacity="0.2"/>
+      <stop offset="0.35" stop-color="#00dfd8" stop-opacity="0.2"/>
+      <stop offset="0.65" stop-color="#7928ca" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ff0080" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0"/>
+      <stop offset="1" stop-color="#7928ca"/>
+    </linearGradient>
+    <linearGradient id="brand2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00dfd8"/>
+      <stop offset="1" stop-color="#007cf0"/>
+    </linearGradient>
+    <linearGradient id="hd" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff0080"/>
+      <stop offset="1" stop-color="#ff9966"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#007cf0" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#mesh)"/>
+
+  <!-- Decorative rings -->
+  <circle cx="700" cy="60" r="90" fill="none" stroke="#007cf0" stroke-opacity="0.12" stroke-width="2"/>
+  <circle cx="100" cy="400" r="80" fill="none" stroke="#ff0080" stroke-opacity="0.1" stroke-width="2"/>
+  <circle cx="620" cy="380" r="46" fill="#00dfd8" fill-opacity="0.1"/>
+
+  <!-- Phone -->
+  <g filter="url(#soft)">
+    <rect x="96" y="60" width="200" height="330" rx="28" fill="#171717"/>
+    <rect x="110" y="74" width="172" height="300" rx="20" fill="#ffffff"/>
+    <rect x="152" y="84" width="88" height="6" rx="3" fill="#171717"/>
+
+    <rect x="110" y="74" width="172" height="300" rx="20" fill="url(#brand)" fill-opacity="0.12"/>
+    <text x="196" y="180" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800" fill="#007cf0" text-anchor="middle" letter-spacing="0.5">DOWNLOAD</text>
+    <path d="M196 194v40m0 0l-10-10m10 10l10-10" stroke="#007cf0" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="140" y="262" width="112" height="14" rx="7" fill="#e4e4e7"/>
+    <rect x="140" y="284" width="80" height="14" rx="7" fill="#e4e4e7"/>
+    <rect x="140" y="306" width="92" height="14" rx="7" fill="#e4e4e7"/>
+  </g>
+
+  <!-- Center headline block -->
+  <text x="408" y="150" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#ff0080" letter-spacing="1" text-anchor="middle">2026 GUIDE</text>
+  <text x="408" y="196" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#171717" letter-spacing="-1.5" text-anchor="middle">The Best TikTok</text>
+  <text x="408" y="240" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" fill="#171717" letter-spacing="-1.5" text-anchor="middle">Video Downloader</text>
+  <text x="408" y="288" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="500" fill="#52525b" text-anchor="middle" letter-spacing="-0.3">HD · No Watermark · Any Device</text>
+
+  <!-- Badges -->
+  <rect x="330" y="320" width="86" height="34" rx="17" fill="url(#brand)"/>
+  <text x="373" y="341" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">HD MP4</text>
+  <rect x="430" y="320" width="86" height="34" rx="17" fill="#171717"/>
+  <text x="473" y="341" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Free</text>
+
+  <!-- Laptop right -->
+  <rect x="548" y="140" width="210" height="140" rx="12" fill="#171717"/>
+  <rect x="556" y="148" width="194" height="124" rx="8" fill="#ffffff"/>
+  <circle cx="653" cy="210" r="22" fill="#171717" fill-opacity="0.9"/>
+  <path d="M642 197v19l18-9z" fill="#ffffff"/>
+  <rect x="566" y="178" width="120" height="12" rx="6" fill="#e4e4e7"/>
+  <path d="M540 280h226l8 26H532z" fill="#e4e4e7"/>
+  <path d="M548 282h210l10 30H538z" fill="#d4d4d8"/>
+
+  <!-- Play badge over laptop -->
+  <circle cx="653" cy="210" r="34" fill="url(#brand2)"/>
+  <path d="M644 196v28l24-14z" fill="#ffffff"/>
+
+  <!-- HD tag -->
+  <rect x="520" y="350" width="60" height="28" rx="14" fill="url(#hd)"/>
+  <text x="550" y="369" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle">1080p</text>
+
+  <!-- Bottom strip -->
+  <rect x="300" y="390" width="220" height="36" rx="18" fill="#ffffff" fill-opacity="0.9"/>
+  <text x="410" y="413" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" fill="#3f3f46" text-anchor="middle">Start downloading free &#8594;</text>
+</svg>

@@ -1,0 +1,237 @@
+---
+// HeroSection — mesh gradient hero with download form
+import DownloadForm from './DownloadForm.astro';
+---
+
+<section id="hero" class="hero-section" aria-labelledby="hero-headline">
+  <!-- Mesh Gradient Backdrop -->
+  <div class="hero-gradient gradient-mesh" aria-hidden="true"></div>
+
+  <div class="hero-inner container-page">
+    <!-- Eyebrow badge -->
+    <div class="hero-badge-row">
+      <span class="badge-pill hero-badge" id="hero-badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        Free · No Watermark · HD Quality
+      </span>
+    </div>
+
+    <!-- Headline -->
+    <h1 id="hero-headline" class="hero-headline">
+      Download TikTok Videos Without Watermark
+    </h1>
+
+    <!-- Sub -->
+    <p class="hero-sub text-body-lg">
+      Paste any TikTok link and get a clean HD download in seconds —
+      no account, no app, no watermark. 100% free.
+    </p>
+
+    <!-- Download Form -->
+    <div class="hero-form-wrap">
+      <DownloadForm />
+    </div>
+
+    <!-- Trust signals -->
+    <div class="hero-trust">
+      <button class="trust-btn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        MP4 format
+      </button>
+      <button class="trust-btn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Works on mobile
+      </button>
+      <button class="trust-btn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        No sign-up needed
+      </button>
+      <button class="trust-btn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Unlimited downloads
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    text-align: center;
+  }
+
+  .hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .hero-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-badge {
+    animation: fadeInUp 0.5s ease 0.1s both;
+  }
+
+  .badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .hero-headline {
+    font-size: clamp(28px, 4.5vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin: 0;
+    max-width: 700px;
+    background: linear-gradient(
+      135deg,
+      var(--color-grad-develop-start) 0%,
+      var(--color-grad-preview-start) 40%,
+      var(--color-grad-preview-end) 70%,
+      var(--color-grad-ship-end) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInUp 0.5s ease 0.2s both, shimmer 3s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .headline-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-grad-develop-start) 0%,
+      var(--color-grad-preview-start) 40%,
+      var(--color-grad-preview-end) 70%,
+      var(--color-grad-ship-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 520px;
+    animation: fadeInUp 0.5s ease 0.3s both;
+  }
+
+  .hero-form-wrap {
+    width: 100%;
+    max-width: 760px;
+    animation: fadeInUp 0.5s ease 0.4s both;
+  }
+
+  .hero-trust {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.5s ease 0.5s both;
+  }
+
+  .hero-trust .trust-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--color-canvas);
+    color: var(--color-body);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    padding: 0 var(--spacing-md);
+    height: 38px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    cursor: pointer;
+    transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-trust .trust-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(0, 124, 240, 0.08), rgba(0, 223, 216, 0.08));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .hero-trust .trust-btn:hover {
+    color: var(--color-ink);
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      0 4px 12px -2px rgba(0, 124, 240, 0.15),
+      0 8px 24px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  .hero-trust .trust-btn:hover::before {
+    opacity: 1;
+  }
+
+  .hero-trust .trust-btn:active {
+    transform: translateY(-1px);
+  }
+
+  .hero-trust .trust-btn svg {
+    color: var(--color-cyan-deep);
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  }
+
+  .hero-trust .trust-btn:hover svg {
+    transform: scale(1.2) rotate(-5deg);
+  }
+
+  .hero-trust .trust-btn > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 600px) {
+    .hero-section {
+      padding: var(--spacing-4xl) var(--spacing-md) var(--spacing-4xl);
+    }
+
+    .hero-headline {
+      letter-spacing: -1.5px;
+    }
+
+    .hero-trust .trust-btn {
+      font-size: var(--text-caption);
+      height: 34px;
+      padding: 0 var(--spacing-sm);
+    }
+  }
+</style>

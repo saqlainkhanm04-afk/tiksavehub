@@ -1,0 +1,176 @@
+---
+import NavBar from '../components/NavBar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: string;
+  keywords?: string;
+  noindex?: boolean;
+  platform?: 'tiktok' | 'instagram' | 'facebook';
+  jsonLd?: string;
+  appName?: string;
+  appRating?: { value: string; count: string };
+  skipSoftwareApp?: boolean;
+}
+
+const {
+  title = 'TikSaveHub — Download TikTok Videos Without Watermark',
+  description = 'Download TikTok videos in HD quality without watermark. Free, fast, and no account needed. Paste any TikTok link and save the video instantly.',
+  canonical,
+  ogImage = '/og-default.png',
+  ogType = 'website',
+  keywords = 'tiktok video downloader, tiktok video downloader without watermark, tiktok video downloader no watermark, tiktok video downloader online, free tiktok video downloader, download tiktok videos, save tiktok videos',
+  noindex = false,
+  platform = 'tiktok',
+  jsonLd,
+  appName = 'TikSaveHub',
+  appRating,
+  skipSoftwareApp = false,
+} = Astro.props;
+
+const siteURL = Astro.site ?? 'https://tiksavehub.com';
+
+// Canonical uses the page pathname (strips query params) and normalizes
+// trailing slashes so the slug and sitemap URLs always match (no duplicates).
+const canonicalPath = canonical ?? Astro.url.pathname;
+const normalizedCanonicalPath =
+  canonicalPath === '/' ? '/' : canonicalPath.replace(/\/+$/, '');
+const canonicalURL = new URL(normalizedCanonicalPath, siteURL);
+
+const ogImageURL = new URL(ogImage, siteURL);
+
+// Centralized SoftwareApplication (WebApplication) JSON-LD — emitted on every indexable page.
+const softwareAppSchema: Record<string, unknown> = {
+  '@type': 'SoftwareApplication',
+  name: appName,
+  url: canonicalURL.toString(),
+  image: ogImageURL.toString(),
+  description,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'All',
+  inLanguage: 'en',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    category: 'Free',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'TikSaveHub',
+    url: siteURL.toString(),
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'TikSaveHub',
+    url: siteURL.toString(),
+  },
+};
+
+if (appRating) {
+  softwareAppSchema.aggregateRating = {
+    '@type': 'AggregateRating',
+    ratingValue: appRating.value,
+    ratingCount: appRating.count,
+    bestRating: '5',
+  };
+}
+
+const graph: Record<string, unknown>[] = [];
+if (!noindex && !skipSoftwareApp) {
+  graph.push(softwareAppSchema);
+}
+if (jsonLd) {
+  try {
+    const parsed = JSON.parse(jsonLd) as Record<string, unknown>;
+    // Support a nested @graph from pages that emit multiple schema types.
+    if (Array.isArray(parsed['@graph'])) {
+      graph.push(...(parsed['@graph'] as Record<string, unknown>[]));
+    } else {
+      graph.push(parsed);
+    }
+  } catch {
+    // Ignore malformed page-level JSON-LD
+  }
+}
+
+const structuredData =
+  graph.length > 0
+    ? JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })
+    : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <link rel="canonical" href={canonicalURL} />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="TikSaveHub" />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={title} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme color matches the page background in light & dark mode -->
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)" />
+
+    <!-- Anti-FOUC: apply dark class before first paint -->
+    <script is:inline>
+      (function() {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <!-- Google Analytics -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-15RCTH6L8J"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-15RCTH6L8J');
+    </script>
+
+    {structuredData && <script is:inline type="application/ld+json" set:html={structuredData}></script>}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <NavBar />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer platform={platform} />
+  </body>
+</html>

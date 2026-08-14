@@ -1,0 +1,137 @@
+---
+// SocialShare — WhatsApp / Telegram / Pinterest share buttons
+// Uses server-rendered absolute URLs (no client JS needed; shares open in new tab).
+interface Props {
+  url?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  compact?: boolean;
+}
+
+const { url, title = 'TikSaveHub', description = '', image, compact = false } = Astro.props;
+
+const site = Astro.site?.toString().replace(/\/+$/, '') ?? 'https://tiksavehub.com';
+const shareUrl = url ? new URL(url, site).toString() : site;
+const shareTitle = encodeURIComponent(title);
+const shareDesc = encodeURIComponent(description || title);
+const shareImage = encodeURIComponent(image ? new URL(image, site).toString() : `${site}/og-default.png`);
+
+const whatsappUrl = `https://wa.me/?text=${shareTitle}%0A%0A${encodeURIComponent(shareUrl)}`;
+const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${shareTitle}`;
+const pinterestUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${shareImage}&description=${shareDesc}`;
+---
+
+<div class="social-share" aria-label="Share this page">
+  {!compact && <span class="social-share-label text-caption-mono">Share</span>}
+  <div class="social-share-row">
+    <a
+      class="social-share-btn social-share-wa"
+      href={whatsappUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Share on WhatsApp"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.83 14.14c-.25.7-1.45 1.33-2 1.38-.51.04-1.16.07-1.87-.12-1.18-.4-2.42-1.47-3.33-2.42-.91-.96-1.6-2.07-2.12-3.22-.46-.95-.46-1.74-.35-2.3.1-.56.55-1.36.94-1.62.33-.22.66-.24.93-.24.24 0 .48.02.69.1.24.08.54 1.36.63 1.49.09.13.15.28.06.46-.09.18-.13.28-.27.45-.14.17-.29.38-.42.51-.14.14-.28.28-.13.55.15.27.67 1.11 1.44 1.8.99.88 1.83 1.16 2.09 1.29.26.13.41.11.56-.06.15-.17.64-.75.81-1 .17-.26.34-.21.56-.13.23.08 1.46.69 1.71.82.25.13.42.19.48.3.07.11.07.64-.18 1.24z"/></svg>
+      {!compact && <span>WhatsApp</span>}
+    </a>
+    <a
+      class="social-share-btn social-share-tg"
+      href={telegramUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Share on Telegram"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 4.2 18.7 19.3c-.25 1.1-.9 1.37-1.83.85l-5.06-3.73-2.44 2.35c-.27.27-.5.5-1.02.5l.36-5.15 9.38-8.48c.41-.36-.09-.57-.64-.2L6.56 11.85 1.57 10.3c-1.08-.34-1.1-1.08.23-1.6l18.36-7.08c.9-.33 1.69.2 1.78 1.58z"/></svg>
+      {!compact && <span>Telegram</span>}
+    </a>
+    <a
+      class="social-share-btn social-share-pin"
+      href={pinterestUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Share on Pinterest"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.64 7.86 6.36 9.31-.09-.79-.17-2.01.03-2.87.19-.78 1.2-5.1 1.2-5.1s-.31-.62-.31-1.53c0-1.43.83-2.5 1.86-2.5.88 0 1.3.66 1.3 1.45 0 .88-.56 2.2-.85 3.42-.24 1.02.51 1.86 1.52 1.86 1.82 0 3.22-1.92 3.22-4.7 0-2.45-1.76-4.17-4.28-4.17-2.92 0-4.63 2.19-4.63 4.45 0 .88.34 1.83.76 2.34.08.1.1.19.07.29-.08.32-.25 1.02-.29 1.16-.04.19-.15.23-.35.14-1.32-.61-2.14-2.53-2.14-4.08 0-3.32 2.41-6.37 6.96-6.37 3.65 0 6.49 2.6 6.49 6.08 0 3.63-2.29 6.55-5.47 6.55-1.07 0-2.07-.55-2.42-1.21l-.66 2.51c-.24.92-.88 2.07-1.31 2.77.99.31 2.04.47 3.14.47 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+      {!compact && <span>Pinterest</span>}
+    </a>
+  </div>
+</div>
+
+<style>
+  .social-share {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .social-share-label {
+    color: var(--color-mute);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .social-share-row {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+
+  .social-share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--spacing-xs) var(--spacing-md);
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    color: var(--color-body);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .social-share-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .social-share-btn svg {
+    flex-shrink: 0;
+  }
+
+  .social-share-wa:hover {
+    color: #128c4a;
+    border-color: #128c4a55;
+    background-color: #128c4a0d;
+  }
+
+  .social-share-tg:hover {
+    color: #229ed9;
+    border-color: #229ed955;
+    background-color: #229ed90d;
+  }
+
+  .social-share-pin:hover {
+    color: #bd081c;
+    border-color: #bd081c55;
+    background-color: #bd081c0d;
+  }
+
+  @media (max-width: 600px) {
+    .social-share {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .social-share-btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    .social-share-row {
+      width: 100%;
+    }
+  }
+</style>

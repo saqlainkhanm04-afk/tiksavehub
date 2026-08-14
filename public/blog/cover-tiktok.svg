@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="TikTok video downloader guide cover">
+  <defs>
+    <linearGradient id="mesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#00dfd8" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#7928ca" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="btn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0"/>
+      <stop offset="1" stop-color="#00dfd8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#mesh)"/>
+
+  <circle cx="80" cy="80" r="70" fill="none" stroke="#00dfd8" stroke-opacity="0.14" stroke-width="2"/>
+  <circle cx="720" cy="380" r="90" fill="none" stroke="#007cf0" stroke-opacity="0.12" stroke-width="2"/>
+
+  <!-- Browser window -->
+  <rect x="130" y="80" width="540" height="290" rx="18" fill="#ffffff" fill-opacity="0.97"/>
+  <line x1="130" y1="122" x2="670" y2="122" stroke="#e4e4e7" stroke-width="1.5"/>
+  <circle cx="158" cy="101" r="5" fill="#ff5f57"/>
+  <circle cx="176" cy="101" r="5" fill="#febc2e"/>
+  <circle cx="194" cy="101" r="5" fill="#28c840"/>
+
+  <!-- URL bar -->
+  <rect x="152" y="150" width="388" height="50" rx="25" fill="#ffffff" stroke="#e4e4e7" stroke-width="2"/>
+  <rect x="172" y="167" width="170" height="16" rx="8" fill="#e4e4e7"/>
+  <rect x="356" y="167" width="110" height="16" rx="8" fill="#e4e4e7"/>
+
+  <!-- Download button -->
+  <rect x="556" y="150" width="94" height="50" rx="25" fill="url(#btn)"/>
+  <path d="M603 160v17m0 0l-6-6m6 6l6-6" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Play icon below -->
+  <circle cx="400" cy="258" r="46" fill="#171717"/>
+  <path d="M386 232v52l44-26z" fill="#ffffff"/>
+  <rect x="152" y="320" width="300" height="20" rx="10" fill="#e4e4e7"/>
+  <rect x="152" y="346" width="220" height="14" rx="7" fill="#e4e4e7"/>
+
+  <!-- Side badge -->
+  <rect x="486" y="300" width="122" height="52" rx="14" fill="#171717"/>
+  <text x="547" y="324" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="0.3">NO</text>
+  <text x="547" y="341" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="0.3">WATERMARK</text>
+</svg>

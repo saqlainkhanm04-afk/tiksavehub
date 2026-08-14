@@ -1,0 +1,234 @@
+---
+// FAQSection — accordion-style FAQ
+const faqs = [
+  {
+    id: 'faq-free',
+    q: 'Is TikSaveHub free to use?',
+    a: 'Yes, TikSaveHub is a 100% free TikTok video downloader. There are no hidden fees, no subscriptions, and no account required. You can download unlimited TikTok videos without watermark at no cost.',
+  },
+  {
+    id: 'faq-watermark',
+    q: 'Does TikSaveHub remove the TikTok watermark?',
+    a: 'Yes. Our TikTok downloader removes the watermark and lets you download clean, watermark-free TikTok videos in MP4 format instantly.',
+  },
+  {
+    id: 'faq-quality',
+    q: 'What video quality can I download?',
+    a: 'You can download TikTok videos in the highest available quality, including HD (up to 1080p). Our tool does not reduce quality or add compression.',
+  },
+  {
+    id: 'faq-mobile',
+    q: 'Does this TikTok downloader work on mobile devices?',
+    a: 'Yes, TikSaveHub works on iPhone, Android, tablets, and desktop. No app or software installation is required — just paste the TikTok video link and download.',
+  },
+  {
+    id: 'faq-legal',
+    q: 'Is it legal to download TikTok videos?',
+    a: 'Downloading TikTok videos for personal use is generally allowed. However, you should not repost or use content commercially without permission from the original creator. Always respect copyright rules.',
+  },
+  {
+    id: 'faq-types',
+    q: 'What TikTok links are supported?',
+    a: 'Our TikTok downloader supports all types of TikTok links, including standard video URLs, short links (vm.tiktok.com), and mobile share links (vt.tiktok.com).',
+  },
+];
+---
+
+<section id="faq" class="faq-section" aria-labelledby="faq-headline">
+  <div class="faq-inner container-page">
+    <div class="faq-header">
+      <span class="section-eyebrow text-caption-mono" id="faq-eyebrow">FAQ</span>
+      <h2 id="faq-headline" class="section-headline">
+        Frequently asked questions.
+      </h2>
+    </div>
+
+    <div class="faq-list" role="list">
+      {faqs.map((faq) => (
+        <div class="faq-item" id={faq.id} role="listitem">
+          <button
+            class="faq-trigger"
+            id={`${faq.id}-btn`}
+            aria-expanded="false"
+            aria-controls={`${faq.id}-panel`}
+            type="button"
+          >
+            <span class="faq-q">{faq.q}</span>
+            <span class="faq-chevron" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </button>
+          <div
+            id={`${faq.id}-panel`}
+            class="faq-panel"
+            role="region"
+            aria-labelledby={`${faq.id}-btn`}
+            hidden
+          >
+            <p class="faq-a">{faq.a}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .faq-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .faq-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    transition: background-color 0.15s ease;
+  }
+
+  .faq-trigger:hover {
+    background-color: var(--color-canvas-soft);
+  }
+
+  @media (hover: hover) {
+    .faq-trigger:hover {
+      background-color: var(--color-canvas-soft);
+    }
+  }
+
+  .faq-trigger[aria-expanded="true"] {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .faq-q {
+    font-size: var(--text-body-md);
+    font-weight: 500;
+    color: var(--color-ink);
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .faq-chevron {
+    flex-shrink: 0;
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+  }
+
+  .faq-trigger[aria-expanded="true"] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-panel {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    animation: fadeInUp 0.25s ease forwards;
+  }
+
+  .faq-a {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  @media (max-width: 600px) {
+    .faq-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+
+    .faq-trigger {
+      padding: var(--spacing-md);
+    }
+
+    .faq-panel {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+
+    .faq-q {
+      font-size: var(--text-body-sm);
+    }
+  }
+</style>
+
+<script>
+  const triggers = document.querySelectorAll<HTMLButtonElement>('.faq-trigger');
+
+  triggers.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      const panelId = btn.getAttribute('aria-controls')!;
+      const panel = document.getElementById(panelId);
+
+      // Close all others
+      triggers.forEach((otherBtn) => {
+        if (otherBtn !== btn) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          const otherId = otherBtn.getAttribute('aria-controls')!;
+          document.getElementById(otherId)?.setAttribute('hidden', '');
+        }
+      });
+
+      // Toggle current
+      if (isOpen) {
+        btn.setAttribute('aria-expanded', 'false');
+        panel?.setAttribute('hidden', '');
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        panel?.removeAttribute('hidden');
+      }
+    });
+  });
+</script>

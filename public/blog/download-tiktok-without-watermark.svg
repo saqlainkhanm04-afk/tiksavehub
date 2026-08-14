@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="how to download tiktok video without watermark">
+  <defs>
+    <linearGradient id="mesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7928ca" stop-opacity="0.16"/>
+      <stop offset="0.5" stop-color="#007cf0" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#00dfd8" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="badge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#007cf0"/>
+      <stop offset="1" stop-color="#00dfd8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#mesh)"/>
+
+  <!-- Step 1: Copy link -->
+  <rect x="100" y="120" width="200" height="230" rx="18" fill="#ffffff" fill-opacity="0.96" stroke="#e4e4e7" stroke-width="1.5"/>
+  <circle cx="200" cy="160" r="20" fill="url(#badge)"/>
+  <text x="200" y="166" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">1</text>
+  <rect x="170" y="220" width="60" height="44" rx="8" fill="none" stroke="#007cf0" stroke-width="4"/>
+  <polygon points="196 232 196 252 212 242" fill="#007cf0"/>
+  <text x="200" y="318" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#3f3f46" text-anchor="middle">Copy link</text>
+
+  <!-- Arrow -->
+  <path d="M308 235h16m-6-6l6 6-6 6" stroke="#c4c4c4" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Step 2: Paste link -->
+  <rect x="330" y="120" width="200" height="230" rx="18" fill="#ffffff" fill-opacity="0.96" stroke="#e4e4e7" stroke-width="1.5"/>
+  <circle cx="430" cy="160" r="20" fill="url(#badge)"/>
+  <text x="430" y="166" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">2</text>
+  <rect x="400" y="218" width="60" height="48" rx="8" fill="#f4f4f5" stroke="#00a3a3" stroke-width="2"/>
+  <rect x="406" y="240" width="48" height="9" rx="4.5" fill="#e4e4e7"/>
+  <rect x="406" y="253" width="36" height="9" rx="4.5" fill="#e4e4e7"/>
+  <text x="430" y="318" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#3f3f46" text-anchor="middle">Paste link</text>
+
+  <!-- Arrow -->
+  <path d="M538 235h16m-6-6l6 6-6 6" stroke="#c4c4c4" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Step 3: Download HD -->
+  <rect x="560" y="120" width="200" height="230" rx="18" fill="#ffffff" fill-opacity="0.96" stroke="#e4e4e7" stroke-width="1.5"/>
+  <circle cx="660" cy="160" r="20" fill="url(#badge)"/>
+  <text x="660" y="166" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">3</text>
+  <path d="M660 218v24m0 0l-7-7m7 7l7-7" stroke="#ff0080" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="634" y="256" width="52" height="10" rx="5" fill="#ff0080"/>
+  <text x="660" y="318" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#3f3f46" text-anchor="middle">Download HD</text>
+</svg>

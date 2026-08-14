@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Safe video download security guide cover">
+  <defs>
+    <linearGradient id="mesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e7490" stop-opacity="0.2"/>
+      <stop offset="0.5" stop-color="#007cf0" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#7928ca" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00dfd8"/>
+      <stop offset="1" stop-color="#007cf0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#mesh)"/>
+
+  <circle cx="690" cy="90" r="84" fill="none" stroke="#00dfd8" stroke-opacity="0.16" stroke-width="2"/>
+  <circle cx="110" cy="370" r="70" fill="none" stroke="#007cf0" stroke-opacity="0.12" stroke-width="2"/>
+
+  <!-- Shield -->
+  <g transform="translate(200,70)">
+    <path d="M200 0L370 70v150c0 90-70 150-170 190C100 370 30 310 30 220V70z" fill="url(#shield)" opacity="0.95"/>
+    <path d="M110 196l26 26 54-60" stroke="#ffffff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Right text column -->
+  <text x="500" y="150" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff" letter-spacing="-1.2" text-anchor="middle">Safe &amp; Secure</text>
+  <text x="500" y="188" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="500" fill="#d4d4d8" text-anchor="middle">Browser-based · No app · No account</text>
+
+  <!-- Trust badges -->
+  <rect x="420" y="226" width="160" height="46" rx="14" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="452" cy="249" r="12" fill="#00dfd8"/>
+  <path d="M447 249l4 4 7-8" stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="474" y="254" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#18181b">No malware</text>
+
+  <rect x="596" y="226" width="160" height="46" rx="14" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="628" cy="249" r="12" fill="#007cf0"/>
+  <path d="M623 249l4 4 7-8" stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="650" y="254" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#18181b">HTTPS safe</text>
+
+  <rect x="420" y="288" width="160" height="46" rx="14" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="452" cy="311" r="12" fill="#7928ca"/>
+  <path d="M447 311l4 4 7-8" stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="474" y="316" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#18181b">No data stored</text>
+
+  <rect x="596" y="288" width="160" height="46" rx="14" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="628" cy="311" r="12" fill="#ec4899"/>
+  <path d="M623 311l4 4 7-8" stroke="#ffffff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="650" y="316" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#18181b">Legal use</text>
+
+  <!-- Bottom pill -->
+  <rect x="420" y="356" width="336" height="38" rx="19" fill="#171717"/>
+  <text x="588" y="380" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">Download with confidence &#8594;</text>
+</svg>

@@ -1,0 +1,219 @@
+---
+// StatsSection — social proof with premium design
+
+interface Props {
+  stats?: Array<{
+    value: string;
+    label: string;
+    sub: string;
+    icon: 'download' | 'globe' | 'star';
+  }>;
+}
+
+const defaultStats = [
+  {
+    value: '10M+',
+    label: 'TikTok Videos Downloaded',
+    sub: 'Download TikTok videos instantly without watermark',
+    icon: 'download',
+  },
+  {
+    value: '150+',
+    label: 'Countries Using Our TikTok Downloader',
+    sub: 'Download TikTok videos online from anywhere',
+    icon: 'globe',
+  },
+  {
+    value: '4.9',
+    label: 'Fast & Free TikTok Video Download',
+    sub: 'No watermark, no login required',
+    icon: 'star',
+  },
+];
+
+const { stats = defaultStats } = Astro.props;
+---
+
+<section id="stats" class="stats-section" aria-label="TikSaveHub statistics — social proof">
+  <div class="stats-inner container-page">
+    {stats.map((stat, i) => (
+      <div class="stat-item" id={`stat-${i}`}>
+        <span class={`stat-icon stat-icon-${stat.icon}`} aria-hidden="true">
+          {stat.icon === 'download' && (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          )}
+          {stat.icon === 'globe' && (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          )}
+          {stat.icon === 'star' && (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          )}
+        </span>
+        <p class="stat-value">
+          {stat.value}{stat.icon === 'star' && <span class="stat-star" aria-label="stars">★★★★★</span>}
+        </p>
+        <p class="stat-label">{stat.label}</p>
+        <p class="stat-sub">{stat.sub}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .stats-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stats-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(600px circle at 20% 50%, rgba(0, 124, 240, 0.04) 0%, transparent 70%),
+      radial-gradient(600px circle at 80% 50%, rgba(121, 40, 202, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .stats-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-canvas-soft);
+    box-shadow:
+      inset 0 0 0 1px var(--color-hairline),
+      0px 1px 2px #00000006;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+    .stat-item:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        inset 0 0 0 1px var(--color-hairline-strong),
+        0px 4px 12px -2px rgba(0, 0, 0, 0.08);
+    }
+
+    @media (hover: hover) {
+      .stat-item:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          inset 0 0 0 1px var(--color-hairline-strong),
+          0px 4px 12px -2px rgba(0, 0, 0, 0.08);
+      }
+    }
+
+  .stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .stat-icon-download {
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+  }
+
+  .stat-icon-globe {
+    background: linear-gradient(135deg, #7928ca15, #ff008020);
+    color: var(--color-grad-preview-start);
+    box-shadow: inset 0 0 0 1px #7928ca25;
+  }
+
+  .stat-icon-star {
+    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+    color: #f59e0b;
+    box-shadow: inset 0 0 0 1px #f9cb2825;
+  }
+
+  .stat-value {
+    font-size: var(--text-display-lg);
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: -1.28px;
+    margin: 0;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+
+  .stat-star {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #f59e0b;
+    display: inline-flex;
+  }
+
+  .stat-label {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .stat-sub {
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+    margin: 0;
+    letter-spacing: -0.2px;
+    line-height: 1.5;
+    max-width: 220px;
+  }
+
+  @media (max-width: 960px) {
+    .stats-section {
+      padding: var(--spacing-4xl) var(--spacing-lg);
+    }
+
+    .stat-item {
+      padding: var(--spacing-lg);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .stats-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .stats-inner {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-md);
+    }
+
+    .stat-item {
+      flex-direction: row;
+      text-align: left;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+    }
+
+    .stat-icon {
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    .stat-value {
+      font-size: var(--text-display-md);
+    }
+  }
+</style>

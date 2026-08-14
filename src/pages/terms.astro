@@ -1,0 +1,360 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+
+const lastUpdated = '2025-01-01';
+---
+
+<Layout
+  title="Terms of Service — TikSaveHub"
+  description="Terms of Service for TikSaveHub. Read the rules and guidelines for using our TikTok video downloader tool."
+  keywords="terms of service, terms, tiksavehub terms, tiktok downloader terms"
+  canonical="/terms"
+  ogImage="/og-terms.png"
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1" />
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
+            <span itemprop="name">Terms of Service</span>
+            <meta itemprop="position" content="2" />
+          </li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">Legal</span>
+        <h1 id="legal-headline" class="legal-title">Terms of Service</h1>
+        <p class="legal-meta">Last updated: {lastUpdated} &middot; Effective: {lastUpdated}</p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">1. Acceptance of Terms</h2>
+            <p>
+              By accessing or using TikSaveHub ("the Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the Service. We reserve the right to update these Terms at any time; continued use after changes constitutes acceptance.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">2. Description of Service</h2>
+            <p>
+              TikSaveHub provides an online tool that allows users to download TikTok videos by submitting a video URL. The Service processes the URL and returns a downloadable MP4 file. The Service is provided "as is" for personal, non-commercial use.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">3. User Responsibilities</h2>
+            <p>By using the Service, you agree that you will not:</p>
+            <ul class="legal-list">
+              <li>Use the Service to download content that you do not have the right to access or reproduce.</li>
+              <li>Distribute, re-upload, or repurpose downloaded content without the original creator's permission.</li>
+              <li>Use the Service for any unlawful purpose or in violation of any applicable laws.</li>
+              <li>Attempt to disrupt, overload, or compromise the Service's infrastructure.</li>
+              <li>Use automated scripts, bots, or scrapers to access the Service.</li>
+            </ul>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">4. Intellectual Property</h2>
+            <p>
+              The TikSaveHub name, logo, and website design are our intellectual property. Downloaded TikTok videos remain the intellectual property of their respective creators. You are responsible for ensuring your use of downloaded content complies with copyright laws and the original creator's rights.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">5. Disclaimer of Warranties</h2>
+            <p>
+              The Service is provided on an "as is" and "as available" basis without warranties of any kind, either express or implied. We do not guarantee that the Service will be uninterrupted, error-free, or that downloaded videos will meet your expectations. We are not responsible for any damages arising from the use or inability to use the Service.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">6. Limitation of Liability</h2>
+            <p>
+              To the fullest extent permitted by law, TikSaveHub and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the Service. Our total liability for any claim shall not exceed the amount paid by you to use the Service (which is zero, as the Service is free).
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">7. Third-Party Links</h2>
+            <p>
+              The Service may contain links to third-party websites or services. We are not responsible for the content, privacy practices, or terms of those third parties. Your use of third-party services is at your own risk.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">8. Termination</h2>
+            <p>
+              We reserve the right to suspend or terminate access to the Service at any time, without notice, for conduct that we believe violates these Terms or is harmful to other users, third parties, or the Service itself.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">9. Governing Law</h2>
+            <p>
+              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which the Service operates. Any disputes shall be resolved in the courts of that jurisdiction.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">10. Changes to Terms</h2>
+            <p>
+              We may modify these Terms at any time. Changes will be posted on this page with an updated "Last updated" date. It is your responsibility to review these Terms periodically. Continued use of the Service after changes constitutes acceptance.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">11. Contact</h2>
+            <p>
+              If you have any questions about these Terms, please contact us at:
+            </p>
+            <p class="legal-contact">
+              <strong>Email:</strong> <a href="mailto:samneil7582@gmail.com">samneil7582@gmail.com</a>
+            </p>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Back to home -->
+      <div class="legal-back">
+        <a href="/" class="btn-primary-sm">&larr; Back to TikSaveHub</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .legal-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .legal-breadcrumb {
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .legal-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .legal-title {
+    font-size: var(--text-display-xl);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .legal-meta {
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  .legal-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3xl);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .legal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+  }
+
+  .legal-clause {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .legal-h2 {
+    font-size: var(--text-display-md);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .legal-content p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .legal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .legal-list li {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.7;
+    padding-left: 20px;
+    position: relative;
+    letter-spacing: -0.1px;
+  }
+
+  .legal-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+  }
+
+  .legal-content a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+
+  .legal-content a:hover {
+    color: var(--color-link-deep);
+  }
+
+  .legal-contact {
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+  }
+
+  .legal-contact strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .legal-back {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    line-height: 2.2;
+    letter-spacing: -0.1px;
+  }
+
+  .btn-primary-sm:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .dark .legal-card {
+    box-shadow:
+      inset 0 0 0 1px #ffffff0a,
+      0px 1px 1px #00000010,
+      0px 4px 8px #00000020;
+  }
+
+  .dark .legal-contact {
+    background-color: var(--color-canvas-soft-2);
+  }
+
+  @media (max-width: 600px) {
+    .legal-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+
+    .legal-title {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+    }
+
+    .legal-card {
+      padding: var(--spacing-lg);
+    }
+
+    .legal-h2 {
+      font-size: var(--text-display-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: var(--text-caption);
+    }
+  }
+</style>

@@ -114,6 +114,14 @@
 
 ---
 
+## FIRST GIT COMMIT (2026-08-14)
+- User said "sub kuch save kr lo" → committed everything: commit `3dbbe74` "Initial commit: TikSaveHub — TikTok, Instagram & Facebook video/audio downloader" (111 files).
+- `.gitignore` extended: dev.log, devout.txt, stdout.log, stderr.log, `data/` (runtime media cache) — no secrets committed (`.env.example` is an empty template; no `.env` exists).
+- Git identity set repo-local: user.name=TikSaveHub, user.email=admin@tiksavehub.com.
+- Working tree now clean.
+
+---
+
 ## LAST SAVE / PAUSE POINT (2026-08-11)
 
 > **IS WAHIN PAR RUKA — yahan se resume karna hai.**

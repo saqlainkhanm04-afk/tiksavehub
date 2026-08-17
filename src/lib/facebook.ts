@@ -8,6 +8,8 @@ const UA_MOBILE =
   'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36';
 const UA_DESKTOP =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
+const UA_IPHONE =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 
 export interface FacebookMedia {
   title: string;
@@ -472,75 +474,67 @@ export async function fetchFacebookAudio(inputUrl: string): Promise<FacebookAudi
 }
 
 /**
- * Extract the full-size photo URL from a Facebook photo page.
- *
- * Photo pages carry the original image in several spots depending on the
- * served variant (desktop vs mobile, flag-walled or not). We try, in order:
- *  1. og:image meta on the desktop page — the original-quality image URL.
- *  2. `"image":{"uri":"…"}` JSON blobs (full-size uri).
- *  3. The largest `<img>` src that points at scontent/fbcdn (mobile page).
- * The chosen URL is then promoted to the best-available size by rewriting the
- * CDN `stp`/size token (FB serves any requested size for signed CDN URLs).
+ * Promote a FB CDN image URL to the best-available resolution. The `stp` token
+ * is client-selectable: upgrade to a large square (photos are always square-ish
+ * on FB), and bump any small `p{size}` path token to the full-size variant.
  */
-function extractPhotoFromHtml(html: string): Partial<FacebookPhoto> | null {
-  if (html.length < 100) return null;
-
-  const http = (u: string | null): string | null => (u && u.startsWith('http') ? u : null);
-
-  const ogImage = http(getMetaContent(html, 'og:image'));
-  const jsonUri = (() => {
-    const m = html.match(/"image"\s*:\s*\{[\s\S]*?"uri"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-    return m ? http(unescapeJsonString(m[1])) : null;
-  })();
-
-  const imgSrc = (() => {
-    const candidates = html.matchAll(/<img[^>]*src="(https:\/\/[^"]*(?:scontent|fbcdn|fbsbx)[^"]*)"/gi);
-    let best = '';
-    let bestLen = 0;
-    for (const m of candidates) {
-      const raw = m[1].replace(/&amp;/g, '&');
-      // Ignore tiny avatars/emoji assets (s40x40, s96x96 …)
-      if (/\/s\d{1,3}x\d{1,3}(\/|\.)|emoji|avatar|profile_image/.test(raw)) continue;
-      if (raw.length > bestLen) {
-        bestLen = raw.length;
-        best = raw;
-      }
-    }
-    return http(best);
-  })();
-
-  const photoUrl = ogImage || jsonUri || imgSrc;
-  if (!photoUrl) return null;
-
-  // Request the best-available resolution from the FB CDN. The `stp` token is
-  // client-selectable: upgrade to a large square (photos are always square-ish
-  // on FB), and bump any small `p{size}` path token to the full-size variant.
-  const promote = (u: string): string => {
-    let out = u.replace(/stp=dst-jpg_s\d+x\d+/, 'stp=dst-jpg_p2048x2048');
-    out = out.replace(/stp=dst-jpg_p\d+x\d+/, 'stp=dst-jpg_p2048x2048');
-    out = out.replace(/(\/p\d{1,5}x\d{1,5}\/)/, '/p2048x2048/');
-    return out;
-  };
-  const photoUrlHd = promote(photoUrl);
-
-  let title =
-    getMetaContent(html, 'og:title') ||
-    getMetaContent(html, 'og:image:alt') ||
-    htmlTitle(html) ||
-    'Facebook Photo';
-
-  const authorMatch = html.match(/"pageName"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-  const authorName = authorMatch ? unescapeJsonString(authorMatch[1]) : '';
-
-  return {
-    title: title.replace(/\s*\|\s*Facebook\s*$/i, '').trim() || 'Facebook Photo',
-    cover: photoUrl,
-    photoUrl: photoUrlHd,
-    author: { name: authorName, avatar: photoUrl },
-  };
+function promotePhotoUrl(u: string): string {
+  let out = u.replace(/stp=dst-jpg_s\d+x\d+/, 'stp=dst-jpg_p2048x2048');
+  out = out.replace(/stp=dst-jpg_p\d+x\d+/, 'stp=dst-jpg_p2048x2048');
+  out = out.replace(/(\/p\d{1,5}x\d{1,5}\/)/, '/p2048x2048/');
+  return out;
 }
 
-const PHOTO_PAGE_TIMEOUT_MS = 12_000;
+/**
+ * Extract ALL full-size photo URLs from a Facebook photo page.
+ *
+ * Photo pages carry the original image in several spots depending on the
+ * served variant (desktop vs mobile, flag-walled or not). Multi-photo posts
+ * and albums list every sibling photo in `"image":{"uri":"…"}` JSON blobs, so
+ * instead of picking one URL we collect every candidate, in order:
+ *  1. og:image meta — the photo being viewed.
+ *  2. Every `"image":{"uri":"…"}` JSON blob (full-size uris; one per sibling).
+ *  3. Every scontent/fbcdn `<img>` src (mobile pages).
+ * Each URL is promoted to full resolution, and duplicates (the same photo
+ * appears at several sizes/params) collapse to one entry via the URL path.
+ */
+function extractPhotosFromHtml(html: string): string[] {
+  if (html.length < 100) return [];
+
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const add = (u: string | null) => {
+    if (!u || !u.startsWith('http')) return;
+    const promoted = promotePhotoUrl(u.replace(/&amp;/g, '&'));
+    const key = promoted.split('?')[0];
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(promoted);
+  };
+
+  add(getMetaContent(html, 'og:image'));
+
+  const jsonRe = /"image"\s*:\s*\{[\s\S]*?"uri"\s*:\s*"((?:[^"\\]|\\.)*)"/g;
+  for (const m of html.matchAll(jsonRe)) add(unescapeJsonString(m[1]));
+
+  const imgRe = /<img[^>]*src="(https:\/\/[^"]*(?:scontent|fbcdn|fbsbx)[^"]*)"/gi;
+  for (const m of html.matchAll(imgRe)) {
+    const raw = m[1].replace(/&amp;/g, '&');
+    // FB static hosts (emoji sprites, icons) are never photos.
+    if (/^https?:\/\/static\./i.test(raw) || /rsrc\.php/.test(raw)) continue;
+    // Ignore tiny avatars/emoji assets — both path tokens (s40x40, p40x40,
+    // p75x75) and stp query tokens (…_s40x40_tt6, …_s96x96_tt6: anything
+    // ≤160×160 is an avatar/icon, real photo thumbs are bigger).
+    const stpSize = raw.match(/_s(\d{2,3})x(\d{2,3})(?:_tt\d|&|$)/);
+    if (stpSize && Number(stpSize[1]) <= 160 && Number(stpSize[2]) <= 160) continue;
+    if (/\/s\d{1,3}x\d{1,3}(\/|\.)|\/p\d{1,2}x\d{1,2}(\/|\.)|emoji|avatar|profile_image/.test(raw)) continue;
+    add(raw);
+  }
+
+  return out;
+}
+
+const PHOTO_PAGE_TIMEOUT_MS = 15_000;
 const MAX_PHOTO_HTML_BYTES = 2_500_000;
 
 /**
@@ -572,12 +566,12 @@ async function readBoundedText(
   return out + decoder.decode();
 }
 
-async function fetchPhotoPage(url: string): Promise<string> {
+async function fetchPhotoPage(url: string, ua: string): Promise<string> {
   let resp: Response;
   try {
     resp = await fetch(url, {
       headers: {
-        'User-Agent': UA_DESKTOP,
+        'User-Agent': ua,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'no-cache',
@@ -604,38 +598,184 @@ async function fetchPhotoPage(url: string): Promise<string> {
   return html;
 }
 
+export interface FacebookPhotoSet {
+  photos: FacebookPhoto[];
+  title: string;
+  cover: string;
+  author: { name: string; avatar: string };
+}
+
+// Sanity cap so a giant album never explodes the response/zip.
+const MAX_PHOTOS_PER_POST = 50;
+
 /**
- * Fetch the download URL + metadata for a public Facebook photo.
- * Desktop and mobile pages are fetched in parallel — the first page that
- * yields a usable image wins, so the request stays fast even when one of the
- * variants is slow or shelled by Facebook.
+ * Facebook serves different page variants per host — flagged IPs regularly
+ * shell `www.` and `m.` while `web.` (share links in particular) serves the
+ * full story page, or vice versa. Return every host variant of a photo URL so
+ * the extractor can try them all and keep the one with the most photos.
  */
-export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhoto> {
-  return memoSWR(`fb:photo:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
-    const urls = [inputUrl, inputUrl.replace(/^https:\/\/www\./, 'https://m.')];
+function hostVariantsOf(url: string): string[] {
+  const variants = new Set<string>();
+  for (const host of ['www.facebook.com', 'web.facebook.com', 'm.facebook.com', 'touch.facebook.com']) {
+    variants.add(url.replace(/^https:\/\/[^/]+/, `https://${host}`));
+  }
+  return [...variants];
+}
 
-    const results = await Promise.allSettled(urls.map((u) => fetchPhotoPage(u)));
+/**
+ * Fetch the download URLs + metadata for a public Facebook photo post.
+ * Photo pages are fetched in parallel across host variants (www/web/m/touch)
+ * and user agents (desktop + iPhone — flagged IPs serve the full og:image
+ * story page to iPhone UAs on web. hosts). The page that yields the most
+ * photos wins.
+ */
+export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookPhotoSet> {
+  return memoSWR(`fb:photos:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
+    const attempts: Array<[string, string]> = [];
+    for (const u of hostVariantsOf(inputUrl)) {
+      attempts.push([u, UA_DESKTOP], [u, UA_IPHONE]);
+    }
 
-    let sawNotFound = false;
-    for (const result of results) {
-      if (result.status === 'rejected') {
-        if (result.reason?.code === FB_ERR.NOT_AVAILABLE) sawNotFound = true;
-        continue;
+    const round = (): Promise<Array<PromiseSettledResult<string>>> =>
+      Promise.allSettled(attempts.map(([u, ua]) => fetchPhotoPage(u, ua)));
+
+    const bestFrom = (results: Array<PromiseSettledResult<string>>) => {
+      let sawNotFound = false;
+      let bestHtml = '';
+      let bestUrls: string[] = [];
+      for (const result of results) {
+        if (result.status === 'rejected') {
+          if (result.reason?.code === FB_ERR.NOT_AVAILABLE) sawNotFound = true;
+          continue;
+        }
+        const urls = extractPhotosFromHtml(result.value);
+        if (urls.length > bestUrls.length) {
+          bestUrls = urls;
+          bestHtml = result.value;
+        }
       }
-      const photo = extractPhotoFromHtml(result.value);
-      if (photo?.photoUrl) {
-        return {
-          title: photo.title ?? 'Facebook Photo',
-          cover: photo.cover ?? photo.photoUrl,
-          photoUrl: photo.photoUrl,
-          author: { name: photo.author?.name ?? '', avatar: photo.cover ?? photo.photoUrl },
-        };
+      return { sawNotFound, bestHtml, bestUrls };
+    };
+
+    let results = await round();
+    let { sawNotFound, bestHtml, bestUrls } = bestFrom(results);
+
+    // FB serves different page variants per request on flagged IPs — the full
+    // story page carrying ALL sibling photos shows up intermittently. When the
+    // first round found <2 photos, retry once before giving up on the set.
+    if (bestUrls.length < 2) {
+      results = await round();
+      const retried = bestFrom(results);
+      if (retried.bestUrls.length > bestUrls.length) {
+        sawNotFound = retried.sawNotFound;
+        bestHtml = retried.bestHtml;
+        bestUrls = retried.bestUrls;
       }
     }
 
-    if (sawNotFound) {
-      throw coded('This photo is private or was deleted.', FB_ERR.NOT_AVAILABLE);
+    if (bestUrls.length === 0) {
+      if (sawNotFound) {
+        throw coded('This photo is private or was deleted.', FB_ERR.NOT_AVAILABLE);
+      }
+      throw coded('Could not load this Facebook photo.', FB_ERR.NO_MEDIA);
     }
-    throw coded('Could not load this Facebook photo.', FB_ERR.NO_MEDIA);
+
+    let title =
+      getMetaContent(bestHtml, 'og:title') ||
+      getMetaContent(bestHtml, 'og:image:alt') ||
+      htmlTitle(bestHtml) ||
+      'Facebook Photo';
+    title = title.replace(/\s*\|\s*Facebook\s*$/i, '').trim() || 'Facebook Photo';
+
+    const authorMatch = bestHtml.match(/"pageName"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+    const authorName = authorMatch ? unescapeJsonString(authorMatch[1]) : '';
+
+    const photos: FacebookPhoto[] = bestUrls.slice(0, MAX_PHOTOS_PER_POST).map((url) => ({
+      title,
+      cover: url,
+      photoUrl: url,
+      author: { name: authorName, avatar: url },
+    }));
+
+    return {
+      photos,
+      title,
+      cover: photos[0]?.cover ?? '',
+      author: { name: authorName, avatar: photos[0]?.cover ?? '' },
+    };
   });
+}
+
+/** First photo of a photo post — kept for the single-photo download path. */
+export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhoto> {
+  const set = await fetchFacebookPhotoSet(inputUrl);
+  const first = set.photos[0];
+  return {
+    title: first?.title || set.title,
+    cover: first?.cover || set.cover,
+    photoUrl: first?.photoUrl || '',
+    author: { name: set.author?.name ?? '', avatar: first?.cover || set.cover },
+  };
+}
+
+const PHOTO_DL_CONCURRENCY = 4;
+const PHOTO_DL_TIMEOUT_MS = 30_000;
+
+async function fetchPhotoBuffer(url: string): Promise<{ data: Uint8Array; contentType: string | null }> {
+  const resp = await fetch(url, {
+    headers: {
+      'User-Agent': UA_DESKTOP,
+      'Referer': 'https://www.facebook.com/',
+      'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+    },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(PHOTO_DL_TIMEOUT_MS),
+  });
+  if (!resp.ok) throw new Error(`Facebook CDN returned ${resp.status}`);
+  const data = new Uint8Array(await resp.arrayBuffer());
+  if (data.length < 256) throw new Error('Facebook CDN returned an empty image');
+  return { data, contentType: resp.headers.get('content-type') };
+}
+
+function photoExtOf(url: string, contentType: string | null): string {
+  if (contentType?.includes('png')) return 'png';
+  if (contentType?.includes('webp')) return 'webp';
+  if (contentType?.includes('gif')) return 'gif';
+  if (contentType?.includes('heic')) return 'heic';
+  if (contentType?.includes('avif')) return 'avif';
+  const m = /\.(jpe?g|png|webp|gif|heic|avif)(?:[?#]|$)/i.exec(url);
+  if (m) return m[1].toLowerCase() === 'jpeg' ? 'jpg' : m[1].toLowerCase();
+  return 'jpg';
+}
+
+/**
+ * Download every photo in a post as a buffer (bounded concurrency, CDN
+ * referer set). Failed entries are skipped so one dead URL can't sink the
+ * whole bundle; the caller decides what to do if ALL of them fail.
+ */
+export async function fetchFacebookPhotosAsFiles(
+  urls: string[]
+): Promise<Array<{ name: string; data: Uint8Array }>> {
+  const out: Array<{ name: string; data: Uint8Array }> = [];
+  let next = 0;
+
+  const worker = async () => {
+    while (next < urls.length) {
+      const i = next++;
+      const url = urls[i];
+      try {
+        const { data, contentType } = await fetchPhotoBuffer(url);
+        out.push({ name: `photo-${String(i + 1).padStart(2, '0')}.${photoExtOf(url, contentType)}`, data });
+      } catch (err: any) {
+        console.error(`[Facebook] photo ${i + 1} download failed:`, err?.message ?? err);
+      }
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.min(PHOTO_DL_CONCURRENCY, urls.length) }, () => worker())
+  );
+
+  out.sort((a, b) => (a.name < b.name ? -1 : 1));
+  return out;
 }

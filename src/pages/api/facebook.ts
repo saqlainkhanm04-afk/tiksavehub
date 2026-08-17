@@ -1,6 +1,15 @@
 import type { APIRoute } from 'astro';
 import { parseFacebookUrl } from '../../lib/facebook-url';
-import { fetchFacebookMedia, fetchFacebookAudio, fetchFacebookPhoto, fetchFacebookStory, FB_ERR } from '../../lib/facebook';
+import {
+  fetchFacebookMedia,
+  fetchFacebookAudio,
+  fetchFacebookPhoto,
+  fetchFacebookPhotoSet,
+  fetchFacebookPhotosAsFiles,
+  fetchFacebookStory,
+  FB_ERR,
+} from '../../lib/facebook';
+import { buildZip } from '../../lib/zip';
 import { streamFromUpstream } from '../../lib/stream';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
@@ -147,29 +156,35 @@ export const POST: APIRoute = async ({ request }) => {
     try {
       const cached = id ? cacheHit('facebook', 'fb', id, 'photo') : null;
       const cachedData = cached?.data as Record<string, unknown> | undefined;
-      if (cachedData) {
+      if (cachedData && Array.isArray(cachedData.photos) && (cachedData.photos as any[]).length) {
         return json({ success: true, type: 'facebook-photo', photo: cachedData, fromCache: true }, 200, true);
       }
 
-      const photo = await fetchFacebookPhoto(parsed.sanitizedUrl);
+      const set = await fetchFacebookPhotoSet(parsed.sanitizedUrl);
 
       const payload = {
-        photoUrl: photo.photoUrl,
-        cover: photo.cover || photo.photoUrl,
-        title: photo.title || 'Facebook Photo',
+        photoUrl: set.photos[0]?.photoUrl || '',
+        cover: set.photos[0]?.cover || set.cover || '',
+        title: set.title || 'Facebook Photo',
+        photos: set.photos.map((p) => ({
+          photoUrl: p.photoUrl,
+          cover: p.cover || p.photoUrl,
+          title: p.title || set.title,
+        })),
+        photoCount: set.photos.length,
         author: {
-          unique_id: photo.author?.name || '',
-          nickname: photo.author?.name || '',
-          avatar: photo.author?.avatar || photo.cover || '',
+          unique_id: set.author?.name || '',
+          nickname: set.author?.name || '',
+          avatar: set.author?.avatar || set.cover || '',
         },
       };
 
       if (id) {
         cacheWrite('facebook', 'fb', id, 'photo', {
           args: { type: 'photo' },
-          mediaUrl: photo.photoUrl,
-          thumb: photo.cover,
-          title: photo.title,
+          mediaUrl: payload.photoUrl,
+          thumb: payload.cover,
+          title: payload.title,
           data: payload,
         });
       }
@@ -183,7 +198,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (toolMode === 'photo') {
     return json(
-      { success: false, error: 'That link is a Facebook video, not a photo. Please paste a photo link (photo.php?fbid=… or facebook.com/{profile}/photos/…).' },
+      { success: false, error: 'That link is a Facebook video, not a photo. Please paste a photo link (photo.php?fbid=…, facebook.com/{profile}/photos/… or facebook.com/share/p/…).' },
       422
     );
   }
@@ -274,6 +289,67 @@ export const GET: APIRoute = async ({ url, request }) => {
     try {
       const cached = id ? cacheHit('facebook', 'fb', id, 'photo') : null;
       const cachedData = cached?.data as Record<string, unknown> | undefined;
+
+      // Bundle mode: download every photo of the post into one ZIP.
+      if (mode === 'zip') {
+        let photoUrls: string[] = Array.isArray(cachedData?.photos)
+          ? (cachedData.photos as any[]).map((p) => p?.photoUrl || p?.cover).filter(Boolean)
+          : [];
+        if (photoUrls.length < 2) {
+          const set = await fetchFacebookPhotoSet(parsed.sanitizedUrl);
+          photoUrls = set.photos.map((p) => p.photoUrl).filter(Boolean);
+          const payload = {
+            photoUrl: set.photos[0]?.photoUrl || '',
+            cover: set.photos[0]?.cover || set.cover || '',
+            title: set.title || 'Facebook Photo',
+            photos: set.photos.map((p) => ({
+              photoUrl: p.photoUrl,
+              cover: p.cover || p.photoUrl,
+              title: p.title || set.title,
+            })),
+            photoCount: set.photos.length,
+            author: {
+              unique_id: set.author?.name || '',
+              nickname: set.author?.name || '',
+              avatar: set.author?.avatar || set.cover || '',
+            },
+          };
+          if (id) {
+            cacheWrite('facebook', 'fb', id, 'photo', {
+              args: { type: 'photo' },
+              mediaUrl: payload.photoUrl,
+              thumb: payload.cover,
+              title: payload.title,
+              data: payload,
+            });
+          }
+        }
+
+        if (!photoUrls.length) {
+          return json({ success: false, error: 'Could not load this Facebook photo.' }, 500);
+        }
+
+        const files = await fetchFacebookPhotosAsFiles(photoUrls);
+        if (!files.length) {
+          return json(
+            { success: false, error: 'The photos could not be downloaded right now. Please try again later.' },
+            500
+          );
+        }
+
+        const zip = buildZip(files);
+        return new Response(zip, {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/zip',
+            'Content-Disposition': 'attachment; filename="tiksavehub-facebook-photos.zip"',
+            'Content-Length': String(zip.byteLength),
+            'Cache-Control': 'no-store',
+            'X-Accel-Buffering': 'no',
+          },
+        });
+      }
+
       const photoUrl: string | null = (cachedData?.photoUrl as string) || null;
 
       if (!photoUrl) {

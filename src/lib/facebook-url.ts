@@ -62,12 +62,15 @@ const WATCH_PATH_RE = /^\/watch\/?$/;
 const WATCH_LIVE_PATH_RE = /^\/watch\/live\/?$/;
 const VIDEO_PAGE_PATH_RE = /^\/(video\.php|permalink\.php|story\.php)\/?$/;
 const PHOTO_PAGE_PATH_RE = /^\/(photo\.php|photo)\/?$/;
-const PHOTO_PROFILE_RE = /^\/([A-Za-z0-9._-]+)\/photos\/(?:a\.[^\/]+\/|p\.([^\/]+)\/)?(\d+)(?:\/?)?$/;
+const PHOTO_PROFILE_BASE_RE = /^\/([A-Za-z0-9._-]+)\/photos\/?$/;
+const PHOTO_PROFILE_ITEM_RE = /^\/([A-Za-z0-9._-]+)\/photos\/(.+)$/;
 const PHOTO_VIEW_FULL_RE = /^\/photo\/view_full_size\/?$/;
+const ALBUM_PAGE_RE = /^\/([A-Za-z0-9._-]+)\/albums\/(\d+)(?:\/[^/]+)?\/?$/;
 const STORY_PATH_RE = /^\/(stories)\/(\d{5,20})(?:\/([A-Za-z0-9_=-]{4,64}))?\/?$/;
 const STORIES_PHP_PROFILE_RE = /^\/stories\.php\/?$/;
 const SHARE_REEL_RE = /^\/share\/r\/([A-Za-z0-9_-]{4,20})\/?$/;
 const SHARE_VIDEO_RE = /^\/share\/v\/([A-Za-z0-9_-]{4,20})\/?$/;
+const SHARE_PHOTO_RE = /^\/share\/p\/([A-Za-z0-9_-]{4,20})\/?$/;
 
 function invalid(error: string): FacebookUrlParseResult {
   return {
@@ -221,6 +224,26 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
     };
   }
 
+  // Photo share links — facebook.com/share/p/{code} (the format Facebook's
+  // app produces for "Copy link" on a photo). The code is alphanumeric and
+  // Facebook redirects to the photo page, so the share URL is kept as-is
+  // (original host preserved — flagged IPs serve the full photo set to
+  // web.facebook.com share pages but shell www./m. variants).
+  const sharePhotoMatch = pathname.match(SHARE_PHOTO_RE);
+  if (sharePhotoMatch) {
+    const code = sharePhotoMatch[1];
+    return {
+      isValid: true,
+      isVideo: false,
+      linkType: 'photo',
+      videoId: null,
+      photoId: code,
+      shortCode: null,
+      sanitizedUrl: `https://${host}/share/p/${code}/`,
+      error: null,
+    };
+  }
+
   // Stories — facebook.com/stories/{user_id}[/{story_token}]
   const storyMatch = pathname.match(STORY_PATH_RE);
   if (storyMatch) {
@@ -368,11 +391,25 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
     };
   }
 
-  // Profile photo pages — facebook.com/{user}/photos/{id} or with album prefix
-  const photoProfileMatch = pathname.match(PHOTO_PROFILE_RE);
+  // Profile photo pages — facebook.com/{user}/photos/{id}, with optional
+  // album prefixes (a.{album}, p.{album}, pcb.{post}, set.a.{album}) and
+  // numeric albums: facebook.com/{user}/photos/{album}/{id}. The photo id is
+  // always the LAST numeric path segment; trailing slug segments are dropped.
+  if (PHOTO_PROFILE_BASE_RE.test(pathname)) {
+    return invalid('Could not find the photo ID in that Facebook link.');
+  }
+  const photoProfileMatch = pathname.match(PHOTO_PROFILE_ITEM_RE);
   if (photoProfileMatch) {
-    const id = photoProfileMatch[3] || photoProfileMatch[2] || '';
-    if (/^\d{5,30}$/.test(id)) {
+    const segments = photoProfileMatch[2].split('/').filter(Boolean);
+    let id = '';
+    while (segments.length) {
+      const seg = segments.pop() as string;
+      if (/^\d{5,30}$/.test(seg)) {
+        id = seg;
+        break;
+      }
+    }
+    if (id) {
       return {
         isValid: true,
         isVideo: false,
@@ -381,6 +418,24 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         photoId: id,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${id}`,
+        error: null,
+      };
+    }
+  }
+
+  // Album pages with a ?media={photoId} query — facebook.com/{user}/albums/{id}/?media={photoId}
+  const albumPageMatch = pathname.match(ALBUM_PAGE_RE);
+  if (albumPageMatch) {
+    const mediaId = parsed.searchParams.get('media');
+    if (mediaId && /^\d{5,30}$/.test(mediaId)) {
+      return {
+        isValid: true,
+        isVideo: false,
+        linkType: 'photo',
+        videoId: null,
+        photoId: mediaId,
+        shortCode: null,
+        sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${mediaId}`,
         error: null,
       };
     }
@@ -404,7 +459,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
   }
 
   return invalid(
-    'Please enter a valid Facebook video link (facebook.com/reel/…, facebook.com/watch/?v=…, fb.watch/…).'
+    'Please enter a valid Facebook link (video, reel, story or photo — e.g. facebook.com/reel/…, facebook.com/watch/?v=…, fb.watch/…, facebook.com/photo.php?fbid=…, facebook.com/share/p/…).'
   );
 }
 

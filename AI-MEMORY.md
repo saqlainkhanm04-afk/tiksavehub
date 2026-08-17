@@ -158,7 +158,7 @@
 ### Session — FB Photo Downloader full build (2026-08-16)
 - User request: "FB photo downloader bhi bana do" — built end-to-end. Verified: `astro check` 0/0/0 (64 files), `npm run build` green, built HTML inspected + API smoke tested.
 - **Parse layer** (`src/lib/facebook-url.ts`): `FacebookUrlParseResult` now has `photoId: string | null`. Photo parsing: `PHOTO_PAGE_PATH_RE = /^\/(photo\.php|photo)\/?$/` (+ fbid/photo/story_fbid/id query params), `PHOTO_PROFILE_RE` (`/{user}/photos/{id}`, album-prefixed `a.`/`p.` forms), `PHOTO_VIEW_FULL_RE` (`/photo/view_full_size/`). Photo results: `linkType:'photo'`, `isVideo:false`, `sanitizedUrl` → `photo.php?fbid={id}`. All other parse sites now include `photoId: null`.
-- **Extraction** (`src/lib/facebook.ts`): new `FacebookPhoto` interface + `fetchFacebookPhoto(url)` (memoSWR `fb:photo:{url}`, 12h TTL) + `extractPhotoFromHtml()` — tries desktop page then mobile (`www.`→`m.` rewrite), extracts in order: og:image meta → `"image":{"uri":…}` JSON blob → largest non-avatar scontent/fbcdn `<img>` (skips `s\d+x\d+`/emoji/avatar assets); `promote()` rewrites CDN size tokens (`stp=dst-jpg_s…`→`p2048x2048`, `/p\d+x\d+/`→`/p2048x2048/`) for max resolution. Errors via `coded()` with `FB_ERR` codes.
+- **Extraction** (`src/lib/facebook.ts`): `FacebookPhoto` interface + `fetchFacebookPhoto(url)` (memoSWR `fb:photo:{url}`, 12h TTL) + `extractPhotoFromHtml()` — tries desktop page then mobile (`www.`→`m.` rewrite), extracts in order: og:image meta → `"image":{"uri":…}` JSON blob → largest non-avatar scontent/fbcdn `<img>` (skips `s\d+x\d+`/emoji/avatar assets); `promote()` rewrites CDN size tokens (`stp=dst-jpg_s…`→`p2048x2048`, `/p\d+x\d+/`→`/p2048x2048/`) for max resolution. Errors via `coded()` with `FB_ERR` codes. **NOW MULTI-PHOTO (see ZIP session below):** `extractPhotosFromHtml()` collects ALL candidates (og:image first, every `"image":{"uri":…}` JSON blob, scontent `<img>` srcs), promotes each, dedupes by URL path (`static.`/`rsrc.php`/`p\d{1,2}x\d{1,2}` avatars skipped); `fetchFacebookPhotoSet(url)` (memoSWR `fb:photos:{url}`) returns `{photos[], title, cover, author}` capped at 50; `fetchFacebookPhoto` = `photos[0]` wrapper. `fetchFacebookPhotosAsFiles(urls)` → buffers (4-way concurrency, FB referer), names `photo-01.jpg…`.
 - **API** (`src/pages/api/facebook.ts`): POST body accepts `mode` (`'photo'`); photo links route to photo extractor (cache `cacheHit/cacheWrite('facebook','fb',{photoId},'photo')`), response `{success,type:'facebook-photo',photo:{photoUrl,cover,title,author}}`. Cross-validation: photo link on video tool → 422 "use the Facebook Photo Downloader"; video link on photo tool (`mode:'photo'`) → 422 "That link is a Facebook video, not a photo". GET `dl=photo` streams the image (`streamFromUpstream`, `referer: https://www.facebook.com/`, `image/jpeg`, filename `tiksavehub-facebook-photo.jpg`). New `photoMessageFor(err)`. `cacheKeyOf` now includes `parsed.photoId`.
 - **Form** (`src/components/FacebookDownloadForm.astro`): `mode` prop now `'video'|'reels'|'story'|'mp3'|'photo'`; 5th tab "Photo" (`/facebook-photo-downloader`, image icon); photo copy map (placeholder "Paste Facebook photo link"); photo result card = square 200px preview (`photo-preview` class) + single `dl-tile-fb dl-tile-prime` "Download Photo" button w/ "Full Resolution" badge; `startDownload('photo')` filename `.jpg`; POST body `{url, mode}`.
 - **Page** (`src/pages/facebook-photo-downloader.astro`): full SEO landing (unique title/desc/keywords/canonical/OG + BreadcrumbList + FAQPage + SoftwareApplication 4.8/8740), FbHeroSection mode="photo", Stats 2M+, 600+ word FbSeoArticle, steps/features/FAQ/CTA, FbInternalLinks incl. photo card.
@@ -191,13 +191,41 @@
 
 ---
 
+### Session — FB photo link parse fix (user bug report) (2026-08-17)
+- **User report:** photo page pe photo link paste karke download click karne par error — "Please enter a valid Facebook video link (facebook.com/reel/…, facebook.com/watch/?v=…, fb.watch/…)." (ye SERVER-side fallback msg tha, facebook-url.ts:407).
+- **Root cause:** `parseFacebookUrl` me photo link formats missing the — sabse common `share/p/{code}` (FB app ka "Copy link" photo format) parse hi nahi hota tha; `pcb.{post}/{id}` aur numeric album prefixes bhi fail hote the (`PHOTO_PROFILE_RE` sirf `a.`/`p.` prefixes support karta tha). Parse fail → fallback invalid() msg jo "video link" bolta tha.
+- **FIX** (`src/lib/facebook-url.ts`):
+  - Naya `SHARE_PHOTO_RE = /^\/share\/p\/([A-Za-z0-9_-]{4,20})\/?$/` → `linkType:'photo'`, `photoId: code` (share code cache key bhi), `sanitizedUrl` = share URL itself (FB redirects karta hai).
+  - `PHOTO_PROFILE_RE` replace kiya: `PHOTO_PROFILE_BASE_RE` (`/{user}/photos/` → "Could not find the photo ID") + `PHOTO_PROFILE_ITEM_RE` (segment-based — `/{user}/photos/{…}/{id}` me photo id = LAST numeric segment; a./p./pcb./set.a./numeric albums + trailing slugs sab handled).
+  - Naya `ALBUM_PAGE_RE` — `/{user}/albums/{id}/?media={photoId}`.
+  - Final fallback msg ab neutral: "Please enter a valid Facebook link (video, reel, story or photo — …)" — ab "video link" nahi bolta.
+- **Copy updates:** client-side photo-mode error (FacebookDownloadForm.astro:1366) + API photo-mode 422 (api/facebook.ts:186) me ab `share/p/…` example included.
+- **Verified:** 21-case parse test ALL PASS (photo: photo.php/photo?fbid, {user}/photos/{id}, a./p./pcb./numeric albums, view_full_size, albums/?media, share/p, m.facebook; video: reel/watch/fb.watch/share/r/share/v/story regression PASS; invalid: example.com + /photos/ → INVALID). Live API: `share/p/{code}` + mode=photo → 500 friendly photo error (dev-IP shell — documented limitation, extractor reached), + mode=video → 422 "That link is a Facebook photo, not a video". `astro check` 0/0/0, build green. Dev server :3000 running.
+- No git commit made (user ne nahi bola).
+
+---
+
+### Session — FB photo share/p extraction FIX on dev IP (user bug report) (2026-08-17)
+- **User report:** `web.facebook.com/share/p/1Db3bNJrY4/` (user's real photo link) → "Could not load this Facebook photo. Check the link or try another public photo." (NO_MEDIA).
+- **Root cause found (tested live):** dev IP pe FB **share/p + photo.php pages ko desktop/Android UA pe 400 shell deta hai** (no og:image) — `fetchPhotoPage` dono fetches me UA_DESKTOP use karta tha. Lekin **iPhone UA pe `/share/p/{code}` (www + m. dono) 200 deta hai with real og:image** (6.6KB meta shell). Toh extractor ab iPhone UA se og:image nikal sakta hai — is dev IP pe bhi.
+- **FIX** (`src/lib/facebook.ts`):
+  - Naya `UA_IPHONE` constant.
+  - `fetchPhotoPage(url, ua)` — UA param.
+  - `fetchFacebookPhoto`: 4-way parallel matrix (desktop+mobile × desktopUA+iPhoneUA), allSettled, first page with usable image wins.
+  - `extractPhotoFromHtml`: og:image me `&amp;` → `&` decode (share-page og:image HTML-escaped hota hai; CDN fetch nahi karta warna).
+- **FULL-RES limitation (new finding):** is dev IP par milne wali og:image URL me naye locked size tokens hote hain — `stp=cp0_dst-jpg_e15_fr_q65_tt6&cstp=mx1296x1616&ctp=p600x600` — koi bhi token rewrite (p2048x2048, _o.jpg, ctp/cstp changes) → 400/403 (signed URL). Isliye dev IP pe download = p600x600 preview (~44KB), production (unflagged) IPs pe desktop page ke `"image":{"uri":…}` JSON se full-res milta hai (existing promote() path). Verified: photo.php?fbid={id} dono hosts pe 891B error shell (koi og:image nahi) — share/p page hi sahi source hai dev IP pe.
+- **Verified live (dev server :3000):** POST user's share/p link → **200** + photoUrl (cover/title "Syeda Fatima" + author); GET `dl=photo` → streams JPEG (FF D8 FF magic, 44502 bytes, exact CDN bytes); 2nd POST `fromCache:true`. `astro check` 0/0/0, build green.
+- No git commit made (user ne nahi bola).
+
+---
+
 ## LAST SAVE / PAUSE POINT (2026-08-17)
 
 > **IS WAHIN PAR RUKA — yahan se resume karna hai.**
 > READ ye section, phir neeche WORK SESSIONS, phir kaam shuru.
 
-- **Kya hua (2026-08-17):** Sitemap/robots verified (photo page in seoPages), `astro check` 0/0/0 + build green, **git commit `4501c72`** done (43 files, worktree clean). Production deploy still pending (server-side).
-- **Dev server:** port 3000 (agar nahi chalta to `npm run dev`).
+- **Kya hua (2026-08-17):** Sitemap/robots verified (photo page in seoPages), `astro check` 0/0/0 + build green, **git commit `4501c72`** done (43 files, worktree clean). **FB photo link parse fix** — `share/p/{code}` + `pcb.`/numeric album photos + `albums/?media=` formats ab parse hote hain (pehle "Please enter a valid Facebook video link" galat error aata tha); fallback msg neutral kar diya. 21-case parse test + live API smoke PASS. **FB share/p extraction fix** — dev IP pe bhi photo ab milti hai: iPhone UA matrix (`UA_IPHONE` + 4-way parallel fetch) + og:image `&amp;` decode; user's real link `share/p/1Db3bNJrY4/` verified 200 + JPEG download. Full-res sirf production IP pe (locked `ctp=c600x600` tokens dev IP pe 400 dete hain). **MULTI-PHOTO ZIP BUNDLE (user bug report "sirf first photo deta hai")** — `extractPhotosFromHtml` + `fetchFacebookPhotoSet` (`fb:photos:` cache) sab sibling photos nikalte hain (URL-path dedupe, og:image first; `static.`/`rsrc.php`/avatar skips), `src/lib/zip.ts` = dependency-free STORE-method ZIP writer (CRC32, verified via Expand-Archive), API POST returns `photos[]`+`photoCount` (old caches w/o `photos` refetch), GET `dl=zip` → `tiksavehub-facebook-photos.zip` (4-way concurrent CDN fetches, per-photo failure skip), form photo card = 96px thumb grid (12 + `+N` chip) + "Download All Photos · N Photos ZIP" button. Verified: extraction on synthetic album HTML ALL PASS, check 0/0/0, build green, video dl=sd regression OK; dev IP pe zip API = structured 500 (shell limitation — real multi-photo page only testable on unflagged IP).
+- **Dev server:** port 3000 running (agar nahi chalta to `npm run dev`).
 - **Known limitation:** dev IP pe FB photo pages shelled → photo POST error aata hai (og:image nahi milta); production IP pe kaam karega. Do NOT chase dev-IP workaround.
 - **Aage ka kaam (user puchhe to):**
   - [ ] Production deploy: IG_SESSIONID server pe paste, dist deploy, `systemctl enable --now tiksavehub` (user-side, server needed)
@@ -212,6 +240,7 @@
 - [x] FB Photo Downloader full build (parse/extraction/API/form/page) — verified 0/0/0 + build green + API smoke
 - [x] FB share-link formats fix (`share/r/` + `share/v/`)
 - [x] FB photo fetch speedup (parallel + bounded stream)
+- [x] FB multi-photo ZIP bundle (user bug report "sirf first photo deta hai") — `extractPhotosFromHtml`+`fetchFacebookPhotoSet`, `src/lib/zip.ts`, API POST `photos[]`/GET `dl=zip`, form thumb grid + "Download All ZIP"
 - [x] Per-tool result tiles (har FB tool sirf apne download buttons)
 - [x] Production env setup artifacts (`.env.production.example`, `deploy/tiksavehub.service`, `scripts/setup-server.sh`)
 - [x] Nav/ad layout fixes + FB nav button purple/pink palette

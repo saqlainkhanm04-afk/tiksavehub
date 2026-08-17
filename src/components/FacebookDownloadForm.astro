@@ -773,6 +773,43 @@ const copy = {
       var(--color-canvas-soft-2);
   }
 
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+    margin-top: var(--spacing-md);
+  }
+
+  .photo-grid-item {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas-soft-2);
+  }
+
+  html.dark .photo-grid-item {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .photo-grid-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-mute);
+    background-color: var(--color-canvas-soft);
+    border: 1px dashed var(--color-hairline-strong);
+  }
+
+  .photo-count {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    margin: 0;
+  }
+
   html.dark .result-thumb-fallback {
     background:
       radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--color-grad-develop-start) 18%, transparent), transparent 70%),
@@ -1150,27 +1187,53 @@ const copy = {
   const isPhotoMode = MODE === 'photo';
 
   function renderResult(data: any, inputUrl: string) {
-    const { cover, duration, title, hdplay, sdplay, play, photoUrl } = data || {};
+    const { cover, duration, title, hdplay, sdplay, play } = data || {};
     const hdUrl: string = hdplay || play || '';
     const sdUrl: string = sdplay || play || '';
     const videoTitle: string = title || (isMp3Mode ? 'Facebook Audio' : isPhotoMode ? 'Facebook Photo' : 'Facebook Video');
 
     if (isPhotoMode) {
-      const photoHref: string = photoUrl || cover || '';
+      const photos: any[] =
+        Array.isArray(data.photos) && data.photos.length ? data.photos : data.photoUrl ? [data] : [];
+      const photoHref: string = (photos[0] && (photos[0].photoUrl || photos[0].cover)) || '';
+      const count = photos.length;
+
+      const gridHtml =
+        count > 1
+          ? `<div class="photo-grid" role="list" aria-label="Photos found in this post">
+              ${photos
+                .slice(0, 12)
+                .map(
+                  (p, i) =>
+                    `<img class="photo-grid-item" src="${p.cover || p.photoUrl || ''}" alt="Facebook photo ${i + 1} of ${count}" loading="lazy" width="120" height="120">`
+                )
+                .join('')}
+              ${count > 12 ? `<span class="photo-grid-item photo-grid-more" aria-hidden="true">+${count - 12}</span>` : ''}
+            </div>`
+          : '';
+
+      const btnLabel =
+        count > 1
+          ? 'Download <strong>All Photos</strong>'
+          : 'Download <strong>Photo</strong>';
+      const badge =
+        count > 1
+          ? '<span class="dl-tile-badge">' + count + ' Photos · ZIP</span>'
+          : '<span class="dl-tile-badge">Full Resolution</span>';
 
       resultMount.innerHTML = `
         <div class="result-card animate-fade-in-up" role="region" aria-label="Download result">
           <div class="result-header">
             <div class="result-thumb-wrap photo-preview">
               <img
-                src="${cover || ''}"
+                src="${cover || photoHref || ''}"
                 alt="Facebook photo preview"
                 class="result-thumb"
                 loading="lazy"
                 width="200"
                 height="200"
-                ${!cover ? 'hidden' : ''} />
-              ${!cover ? `<div class="result-thumb-fallback" aria-hidden="true">
+                ${!cover && !photoHref ? 'hidden' : ''} />
+              ${!cover && !photoHref ? `<div class="result-thumb-fallback" aria-hidden="true">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
                   <line x1="7" y1="2" x2="7" y2="22"/>
@@ -1186,17 +1249,19 @@ const copy = {
             <div class="result-info">
               <div class="result-meta">
                 <p class="result-title">${videoTitle}</p>
+                ${count > 1 ? `<p class="photo-count">${count} photos found in this post</p>` : ''}
               </div>
               <div class="result-actions">
                 <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-photo" type="button">
                   <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
-                  <span class="dl-tile-label">Download <strong>Photo</strong></span>
-                  <span class="dl-tile-badge">Full Resolution</span>
+                  <span class="dl-tile-label">${btnLabel}</span>
+                  ${badge}
                   <span class="dl-proc-bar"></span>
                 </button>
               </div>
             </div>
           </div>
+          ${gridHtml}
         </div>
       `;
 
@@ -1204,7 +1269,7 @@ const copy = {
       if (!photoBtn) return;
       if (!photoHref) photoBtn.setAttribute('disabled', '');
       else {
-        photoBtn.addEventListener('click', () => startDownload('photo', photoBtn));
+        photoBtn.addEventListener('click', () => startDownload(count > 1 ? 'zip' : 'photo', photoBtn));
       }
       return;
     }
@@ -1316,6 +1381,7 @@ const copy = {
           a.download =
             mode === 'audio' ? 'tiksavehub-facebook-audio.mp3' :
             mode === 'photo' ? 'tiksavehub-facebook-photo.jpg' :
+            mode === 'zip' ? 'tiksavehub-facebook-photos.zip' :
             'tiksavehub-facebook-video.mp4';
           document.body.appendChild(a);
           a.click();
@@ -1363,7 +1429,7 @@ const copy = {
     if (!URL_PATTERN.test(url) && !SHORT_PATTERN.test(url)) {
       showError(
         isPhotoMode
-          ? 'Please enter a valid Facebook photo link (e.g. facebook.com/photo.php?fbid=…).'
+          ? 'Please enter a valid Facebook photo link (e.g. facebook.com/photo.php?fbid=… or facebook.com/share/p/…).'
           : 'Please enter a valid Facebook video link (e.g. facebook.com/username/videos/… or fb.watch/…).'
       );
       return;

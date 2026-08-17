@@ -27,6 +27,13 @@ export interface FacebookAudioResult {
   ext: string;
 }
 
+export interface FacebookPhoto {
+  title: string;
+  cover: string;
+  photoUrl: string;
+  author: { name: string; avatar: string };
+}
+
 /** Error codes thrown by the extraction layer (mapped to user messages by the API). */
 export const FB_ERR = {
   LOGIN_REQUIRED: 'facebook_login_required',
@@ -409,6 +416,50 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
   });
 }
 
+/**
+ * Fetch a Facebook story. Story pages do not expose the media like regular
+ * video pages, so we try several URL variants in parallel — the story
+ * permalink (story.php?story_fbid=…&id=…), the classic video page
+ * (video.php?v=…), and yt-dlp — and use the first one that yields media.
+ */
+export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedia> {
+  return memoSWR(`fb:story:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
+    const errors: string[] = [];
+
+    const candidates = new Set<string>([inputUrl]);
+    const storyFbid = inputUrl.match(/[?&]story_fbid=(\d+)/)?.[1];
+    if (storyFbid) {
+      candidates.add(`https://www.facebook.com/video.php?v=${storyFbid}`);
+    }
+
+    const results = await Promise.allSettled(
+      [...candidates].map((u) =>
+        fetchFacebookMedia(u).catch((err: any) => {
+          errors.push(err?.message || `Variant failed: ${u}`);
+          throw err;
+        })
+      )
+    );
+
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value?.hdUrl) {
+        return result.value;
+      }
+    }
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value?.sdUrl) {
+        return result.value;
+      }
+    }
+
+    const last = errors[errors.length - 1] || 'Could not load this story.';
+    if (last.toLowerCase().includes('private') || last.toLowerCase().includes('deleted')) {
+      throw coded('This story is private or was deleted.', FB_ERR.NOT_AVAILABLE);
+    }
+    throw coded('Could not load this Facebook story.', FB_ERR.NO_MEDIA);
+  });
+}
+
 /** Best-effort audio track extraction (yt-dlp bestaudio). */
 export async function fetchFacebookAudio(inputUrl: string): Promise<FacebookAudioResult | null> {
   try {
@@ -418,4 +469,173 @@ export async function fetchFacebookAudio(inputUrl: string): Promise<FacebookAudi
   } catch {
     return null;
   }
+}
+
+/**
+ * Extract the full-size photo URL from a Facebook photo page.
+ *
+ * Photo pages carry the original image in several spots depending on the
+ * served variant (desktop vs mobile, flag-walled or not). We try, in order:
+ *  1. og:image meta on the desktop page — the original-quality image URL.
+ *  2. `"image":{"uri":"…"}` JSON blobs (full-size uri).
+ *  3. The largest `<img>` src that points at scontent/fbcdn (mobile page).
+ * The chosen URL is then promoted to the best-available size by rewriting the
+ * CDN `stp`/size token (FB serves any requested size for signed CDN URLs).
+ */
+function extractPhotoFromHtml(html: string): Partial<FacebookPhoto> | null {
+  if (html.length < 100) return null;
+
+  const http = (u: string | null): string | null => (u && u.startsWith('http') ? u : null);
+
+  const ogImage = http(getMetaContent(html, 'og:image'));
+  const jsonUri = (() => {
+    const m = html.match(/"image"\s*:\s*\{[\s\S]*?"uri"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+    return m ? http(unescapeJsonString(m[1])) : null;
+  })();
+
+  const imgSrc = (() => {
+    const candidates = html.matchAll(/<img[^>]*src="(https:\/\/[^"]*(?:scontent|fbcdn|fbsbx)[^"]*)"/gi);
+    let best = '';
+    let bestLen = 0;
+    for (const m of candidates) {
+      const raw = m[1].replace(/&amp;/g, '&');
+      // Ignore tiny avatars/emoji assets (s40x40, s96x96 …)
+      if (/\/s\d{1,3}x\d{1,3}(\/|\.)|emoji|avatar|profile_image/.test(raw)) continue;
+      if (raw.length > bestLen) {
+        bestLen = raw.length;
+        best = raw;
+      }
+    }
+    return http(best);
+  })();
+
+  const photoUrl = ogImage || jsonUri || imgSrc;
+  if (!photoUrl) return null;
+
+  // Request the best-available resolution from the FB CDN. The `stp` token is
+  // client-selectable: upgrade to a large square (photos are always square-ish
+  // on FB), and bump any small `p{size}` path token to the full-size variant.
+  const promote = (u: string): string => {
+    let out = u.replace(/stp=dst-jpg_s\d+x\d+/, 'stp=dst-jpg_p2048x2048');
+    out = out.replace(/stp=dst-jpg_p\d+x\d+/, 'stp=dst-jpg_p2048x2048');
+    out = out.replace(/(\/p\d{1,5}x\d{1,5}\/)/, '/p2048x2048/');
+    return out;
+  };
+  const photoUrlHd = promote(photoUrl);
+
+  let title =
+    getMetaContent(html, 'og:title') ||
+    getMetaContent(html, 'og:image:alt') ||
+    htmlTitle(html) ||
+    'Facebook Photo';
+
+  const authorMatch = html.match(/"pageName"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  const authorName = authorMatch ? unescapeJsonString(authorMatch[1]) : '';
+
+  return {
+    title: title.replace(/\s*\|\s*Facebook\s*$/i, '').trim() || 'Facebook Photo',
+    cover: photoUrl,
+    photoUrl: photoUrlHd,
+    author: { name: authorName, avatar: photoUrl },
+  };
+}
+
+const PHOTO_PAGE_TIMEOUT_MS = 12_000;
+const MAX_PHOTO_HTML_BYTES = 2_500_000;
+
+/**
+ * Read a response body as text but stop early once `maxBytes` have been
+ * consumed — FB photo pages can be several MB and we only need the first
+ * portion (og:image lives in <head>, the JSON image blobs follow shortly
+ * after). Cancelling the stream keeps the fetch fast and memory-light.
+ */
+async function readBoundedText(
+  body: ReadableStream<Uint8Array> | null,
+  maxBytes: number
+): Promise<string> {
+  if (!body) return '';
+  const reader = body.getReader();
+  const decoder = new TextDecoder('utf-8', { fatal: false });
+  let out = '';
+  let total = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      out += decoder.decode(value, { stream: true });
+      if (total >= maxBytes) break;
+    }
+  } finally {
+    reader.cancel().catch(() => {});
+  }
+  return out + decoder.decode();
+}
+
+async function fetchPhotoPage(url: string): Promise<string> {
+  let resp: Response;
+  try {
+    resp = await fetch(url, {
+      headers: {
+        'User-Agent': UA_DESKTOP,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+      },
+      redirect: 'follow',
+      signal: AbortSignal.timeout(PHOTO_PAGE_TIMEOUT_MS),
+    });
+  } catch (err: any) {
+    if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
+      throw coded('The server took too long to reach Facebook.', FB_ERR.TIMEOUT);
+    }
+    throw err;
+  }
+  if (resp.status === 404) {
+    throw coded('This photo was not found.', FB_ERR.NOT_AVAILABLE);
+  }
+  if (!resp.ok && resp.status >= 500) {
+    throw coded('Facebook could not be reached right now.', FB_ERR.INVALID_RESPONSE);
+  }
+  const html = await readBoundedText(resp.body, MAX_PHOTO_HTML_BYTES);
+  if (html.length < 100) {
+    throw coded('Facebook returned an empty page.', FB_ERR.INVALID_RESPONSE);
+  }
+  return html;
+}
+
+/**
+ * Fetch the download URL + metadata for a public Facebook photo.
+ * Desktop and mobile pages are fetched in parallel — the first page that
+ * yields a usable image wins, so the request stays fast even when one of the
+ * variants is slow or shelled by Facebook.
+ */
+export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhoto> {
+  return memoSWR(`fb:photo:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
+    const urls = [inputUrl, inputUrl.replace(/^https:\/\/www\./, 'https://m.')];
+
+    const results = await Promise.allSettled(urls.map((u) => fetchPhotoPage(u)));
+
+    let sawNotFound = false;
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        if (result.reason?.code === FB_ERR.NOT_AVAILABLE) sawNotFound = true;
+        continue;
+      }
+      const photo = extractPhotoFromHtml(result.value);
+      if (photo?.photoUrl) {
+        return {
+          title: photo.title ?? 'Facebook Photo',
+          cover: photo.cover ?? photo.photoUrl,
+          photoUrl: photo.photoUrl,
+          author: { name: photo.author?.name ?? '', avatar: photo.cover ?? photo.photoUrl },
+        };
+      }
+    }
+
+    if (sawNotFound) {
+      throw coded('This photo is private or was deleted.', FB_ERR.NOT_AVAILABLE);
+    }
+    throw coded('Could not load this Facebook photo.', FB_ERR.NO_MEDIA);
+  });
 }

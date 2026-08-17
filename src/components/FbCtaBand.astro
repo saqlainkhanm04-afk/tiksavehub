@@ -1,0 +1,71 @@
+---
+// FbCtaBand — dark CTA band
+interface Props {
+  headline: string;
+  sub?: string;
+  ctaHref: string;
+  ctaLabel: string;
+}
+
+const { headline, sub, ctaHref, ctaLabel } = Astro.props;
+---
+
+<section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+  <div class="dl-cta-inner container-page">
+    <h2 id="dl-cta-headline" class="dl-cta-headline">
+      {headline}
+    </h2>
+    {sub && <p class="dl-cta-sub">{sub}</p>}
+    <a href={ctaHref} class="btn-primary dl-cta-btn">
+      {ctaLabel}
+    </a>
+  </div>
+</section>
+
+<style>
+  .dl-cta-band {
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    text-align: center;
+  }
+
+  .dl-cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .dl-cta-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-on-primary);
+    margin: 0;
+  }
+
+  .dl-cta-sub {
+    font-size: var(--text-body-lg);
+    color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .dl-cta-btn {
+    gap: 8px;
+    background-color: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+  }
+
+  .dl-cta-btn:hover {
+    background-color: var(--color-canvas-soft) !important;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .dl-cta-band {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+</style>

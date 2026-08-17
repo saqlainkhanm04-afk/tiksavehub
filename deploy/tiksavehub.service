@@ -1,0 +1,19 @@
+[Unit]
+Description=TikSaveHub — Astro Node standalone server
+After=network.target
+
+[Service]
+Type=simple
+User=tiksavehub
+Group=tiksavehub
+WorkingDirectory=/opt/tiksavehub
+EnvironmentFile=/etc/tiksavehub/env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node dist/server/entry.mjs
+Restart=always
+RestartSec=3
+StandardOutput=append:/var/log/tiksavehub/app.log
+StandardError=append:/var/log/tiksavehub/app-error.log
+
+[Install]
+WantedBy=multi-user.target

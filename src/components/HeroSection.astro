@@ -221,17 +221,47 @@ import DownloadForm from './DownloadForm.astro';
 
   @media (max-width: 600px) {
     .hero-section {
-      padding: var(--spacing-4xl) var(--spacing-md) var(--spacing-4xl);
+      padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+    }
+
+    .hero-inner {
+      gap: var(--spacing-md);
     }
 
     .hero-headline {
-      letter-spacing: -1.5px;
+      font-size: clamp(24px, 6vw, 36px);
+      letter-spacing: -1px;
+    }
+
+    .hero-sub {
+      font-size: var(--text-body-sm);
+      max-width: 90%;
+    }
+
+    .hero-trust {
+      gap: var(--spacing-xs);
     }
 
     .hero-trust .trust-btn {
       font-size: var(--text-caption);
-      height: 34px;
+      height: 32px;
       padding: 0 var(--spacing-sm);
+    }
+  }
+
+  @media (max-width: 360px) {
+    .hero-section {
+      padding: var(--spacing-xl) var(--spacing-sm) var(--spacing-xl);
+    }
+
+    .hero-headline {
+      font-size: 22px;
+    }
+
+    .hero-trust .trust-btn {
+      font-size: 11px;
+      height: 30px;
+      padding: 0 var(--spacing-xs);
     }
   }
 </style>

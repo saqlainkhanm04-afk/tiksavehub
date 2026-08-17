@@ -5,6 +5,7 @@ export type FacebookLinkType =
   | 'profile_video'
   | 'video_page'
   | 'short'
+  | 'story'
   | 'photo'
   | 'unknown';
 
@@ -13,6 +14,7 @@ export interface FacebookUrlParseResult {
   isVideo: boolean;
   linkType: FacebookLinkType | null;
   videoId: string | null;
+  photoId: string | null;
   shortCode: string | null;
   sanitizedUrl: string;
   error: string | null;
@@ -59,7 +61,13 @@ const PROFILE_VIDEO_RE = /^\/([A-Za-z0-9._-]+)\/videos\/(\d+)(?:\/([^/]+))?\/?$/
 const WATCH_PATH_RE = /^\/watch\/?$/;
 const WATCH_LIVE_PATH_RE = /^\/watch\/live\/?$/;
 const VIDEO_PAGE_PATH_RE = /^\/(video\.php|permalink\.php|story\.php)\/?$/;
-const PHOTO_PAGE_PATH_RE = /^\/(photo\.php|photo)|\/photos\//;
+const PHOTO_PAGE_PATH_RE = /^\/(photo\.php|photo)\/?$/;
+const PHOTO_PROFILE_RE = /^\/([A-Za-z0-9._-]+)\/photos\/(?:a\.[^\/]+\/|p\.([^\/]+)\/)?(\d+)(?:\/?)?$/;
+const PHOTO_VIEW_FULL_RE = /^\/photo\/view_full_size\/?$/;
+const STORY_PATH_RE = /^\/(stories)\/(\d{5,20})(?:\/([A-Za-z0-9_=-]{4,64}))?\/?$/;
+const STORIES_PHP_PROFILE_RE = /^\/stories\.php\/?$/;
+const SHARE_REEL_RE = /^\/share\/r\/([A-Za-z0-9_-]{4,20})\/?$/;
+const SHARE_VIDEO_RE = /^\/share\/v\/([A-Za-z0-9_-]{4,20})\/?$/;
 
 function invalid(error: string): FacebookUrlParseResult {
   return {
@@ -67,10 +75,33 @@ function invalid(error: string): FacebookUrlParseResult {
     isVideo: false,
     linkType: null,
     videoId: null,
+    photoId: null,
     shortCode: null,
     sanitizedUrl: '',
     error,
   };
+}
+
+/**
+ * Decode a Facebook story share token. The token looks like
+ * "UzpfSVNDOjE3NjAzNDYxMjg0OTg5MjU=" which is base64 of "S:_ISC:{story_id}".
+ * Returns the trailing numeric story id, or '' when the token isn't the
+ * expected shape.
+ */
+function decodeStoryToken(token: string): string {
+  try {
+    const cleaned = token.replace(/-/g, '+').replace(/_/g, '/');
+    const b64 = cleaned + '='.repeat((4 - (cleaned.length % 4)) % 4);
+    const decoded = decodeURIComponent(
+      Array.prototype.map.call(atob(b64), (c: string) =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join('')
+    );
+    const m = decoded.match(/(\d{5,30})$/);
+    return m ? m[1] : '';
+  } catch {
+    return '';
+  }
 }
 
 function stripTrackingParams(parsed: URL): URL {
@@ -126,6 +157,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       isVideo: true,
       linkType: 'short',
       videoId: null,
+      photoId: null,
       shortCode: code,
       sanitizedUrl: `https://fb.watch/${code}/`,
       error: null,
@@ -149,10 +181,85 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       isVideo: true,
       linkType: 'reel',
       videoId: id,
+      photoId: null,
       shortCode: null,
       sanitizedUrl: `https://www.facebook.com/reel/${id}/`,
       error: null,
     };
+  }
+
+  // Share links — facebook.com/share/r/{code} (Reels) and /share/v/{code}
+  // (videos). The code is alphanumeric and Facebook redirects these to the
+  // canonical media URL, so the share URL itself is kept as the fetch URL.
+  const shareReelMatch = pathname.match(SHARE_REEL_RE);
+  if (shareReelMatch) {
+    const code = shareReelMatch[1];
+    return {
+      isValid: true,
+      isVideo: true,
+      linkType: 'reel',
+      videoId: null,
+      photoId: null,
+      shortCode: code,
+      sanitizedUrl: `https://www.facebook.com/share/r/${code}/`,
+      error: null,
+    };
+  }
+
+  const shareVideoMatch = pathname.match(SHARE_VIDEO_RE);
+  if (shareVideoMatch) {
+    const code = shareVideoMatch[1];
+    return {
+      isValid: true,
+      isVideo: true,
+      linkType: 'profile_video',
+      videoId: null,
+      photoId: null,
+      shortCode: code,
+      sanitizedUrl: `https://www.facebook.com/share/v/${code}/`,
+      error: null,
+    };
+  }
+
+  // Stories — facebook.com/stories/{user_id}[/{story_token}]
+  const storyMatch = pathname.match(STORY_PATH_RE);
+  if (storyMatch) {
+    const userId = storyMatch[2];
+    const storyToken = storyMatch[3] || '';
+    // Story tokens are base64 of "S:_ISC:{story_id}" — decode to the real
+    // story id so we can build the classic story.php permalink, which serves
+    // the story media JSON that the extractor knows how to read.
+    const storyId = storyToken ? decodeStoryToken(storyToken) : '';
+    return {
+      isValid: true,
+      isVideo: true,
+      linkType: 'story',
+      videoId: storyId || storyToken || userId,
+      photoId: null,
+      shortCode: null,
+      sanitizedUrl: storyId
+        ? `https://www.facebook.com/video.php?v=${storyId}`
+        : `https://www.facebook.com/stories/${userId}${storyToken ? `/${storyToken}` : ''}/`,
+      error: null,
+    };
+  }
+
+  // Mobile stories — stories.php?profile_id={user_id}
+  if (STORIES_PHP_PROFILE_RE.test(pathname)) {
+    const profileId = parsed.searchParams.get('profile_id');
+    if (profileId && /^\d{5,20}$/.test(profileId)) {
+      return {
+        isValid: true,
+        isVideo: true,
+        linkType: 'story',
+        videoId: profileId,
+        photoId: null,
+        shortCode: null,
+        sanitizedUrl: `https://www.facebook.com/stories/${profileId}/`,
+        error: null,
+      };
+    }
+    return invalid('Please include the profile ID (…stories.php?profile_id=123456) in the Facebook stories link.');
   }
 
   // Profile video posts — facebook.com/{user}/videos/{id}[/{slug}]
@@ -164,6 +271,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       isVideo: true,
       linkType: 'profile_video',
       videoId: id,
+      photoId: null,
       shortCode: null,
       sanitizedUrl: `https://www.facebook.com/${profileMatch[1]}/videos/${id}/`,
       error: null,
@@ -179,6 +287,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         isVideo: true,
         linkType: 'watch',
         videoId: v,
+        photoId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/watch/?v=${v}`,
         error: null,
@@ -196,6 +305,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         isVideo: true,
         linkType: 'watch_live',
         videoId: v,
+        photoId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/watch/live/?v=${v}`,
         error: null,
@@ -216,6 +326,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         isVideo: true,
         linkType: 'video_page',
         videoId: id,
+        photoId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/video.php?v=${id}`,
         error: null,
@@ -225,16 +336,71 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
   }
 
   // Photo pages are valid Facebook content but not downloadable videos.
+  // facebook.com/photo.php?fbid=…, /photo/?fbid=…, /{user}/photos/{id},
+  // /{user}/photos/a.{album}/{id} and /photo/view_full_size/?id=…
   if (PHOTO_PAGE_PATH_RE.test(pathname)) {
+    const id =
+      parsed.searchParams.get('fbid') ||
+      parsed.searchParams.get('photo') ||
+      parsed.searchParams.get('story_fbid') ||
+      parsed.searchParams.get('id');
+    if (id && /^\d{5,30}$/.test(id)) {
+      return {
+        isValid: true,
+        isVideo: false,
+        linkType: 'photo',
+        videoId: null,
+        photoId: id,
+        shortCode: null,
+        sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${id}`,
+        error: null,
+      };
+    }
     return {
       isValid: true,
       isVideo: false,
       linkType: 'photo',
       videoId: null,
+      photoId: null,
       shortCode: null,
       sanitizedUrl: parsed.toString(),
-      error: 'That link points to a photo. This tool only downloads Facebook videos and Reels.',
+      error: 'Could not find the photo ID in that Facebook link.',
     };
+  }
+
+  // Profile photo pages — facebook.com/{user}/photos/{id} or with album prefix
+  const photoProfileMatch = pathname.match(PHOTO_PROFILE_RE);
+  if (photoProfileMatch) {
+    const id = photoProfileMatch[3] || photoProfileMatch[2] || '';
+    if (/^\d{5,30}$/.test(id)) {
+      return {
+        isValid: true,
+        isVideo: false,
+        linkType: 'photo',
+        videoId: null,
+        photoId: id,
+        shortCode: null,
+        sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${id}`,
+        error: null,
+      };
+    }
+  }
+
+  // Photo viewer page — facebook.com/photo/view_full_size/?id={id}
+  if (PHOTO_VIEW_FULL_RE.test(pathname)) {
+    const id = parsed.searchParams.get('id') || parsed.searchParams.get('fbid');
+    if (id && /^\d{5,30}$/.test(id)) {
+      return {
+        isValid: true,
+        isVideo: false,
+        linkType: 'photo',
+        videoId: null,
+        photoId: id,
+        shortCode: null,
+        sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${id}`,
+        error: null,
+      };
+    }
   }
 
   return invalid(

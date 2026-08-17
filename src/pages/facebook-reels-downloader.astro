@@ -1,0 +1,309 @@
+---
+// Facebook Reels Downloader — SEO-optimized landing page
+// URL: /facebook-reels-downloader
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import FbHeroSection from '../components/FbHeroSection.astro';
+import FbSeoArticle from '../components/FbSeoArticle.astro';
+import FbStepsSection from '../components/FbStepsSection.astro';
+import FbFeaturesSection from '../components/FbFeaturesSection.astro';
+import FbFaqSection from '../components/FbFaqSection.astro';
+import FbCtaBand from '../components/FbCtaBand.astro';
+import FbInternalLinks from '../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../components/FacebookDownloadForm.astro';
+import StatsSection from '../components/StatsSection.astro';
+
+const faqData = [
+  {
+    id: 'reels-hd1080',
+    q: 'Can I download Facebook Reels in HD 1080p for free?',
+    a: 'Yes. Paste any <strong>facebook.com/reel/…</strong> link into the box above and download the Reel in HD up to 1080p — completely free, no sign-up, no watermark. We grab the highest quality the creator uploaded and hand you a clean MP4.',
+  },
+  {
+    id: 'reels-nowm',
+    q: 'Is this Facebook Reels downloader really no watermark?',
+    a: 'Yes — our downloader saves the original Reel file with no overlay or logo added. You get the same clean video the creator shared, in original quality, no compression and no watermark.',
+  },
+  {
+    id: 'reels-iphone',
+    q: 'How do I download Facebook Reels on iPhone?',
+    a: 'Open Safari (or any browser) on your iPhone, paste the Reels link into the field above, and tap Download. The MP4 saves through your browser\u2019s download manager and appears in the Files app under Downloads — no app installation needed.',
+  },
+  {
+    id: 'reels-android',
+    q: 'Can I download Facebook Reels on Android?',
+    a: 'Absolutely. Copy the Reels link from the Facebook app, paste it here, and tap Download HD. The video saves straight to your Android device\u2019s gallery or Downloads folder — no app or extension required.',
+  },
+  {
+    id: 'reels-audio',
+    q: 'Can I also grab the audio from a Facebook Reel?',
+    a: 'Yes — paste the Reel link into our dedicated <a href="/facebook-to-mp3">Facebook to MP3 converter</a> to extract the soundtrack as a high-quality MP3. Perfect for saving trending Reel music or voice clips for offline listening.',
+  },
+  {
+    id: 'reels-watch',
+    q: 'Do you support normal Facebook videos and Watch links too?',
+    a: 'Yes. The same tool handles Reels, Watch links (facebook.com/watch/?v=…), video posts, and fb.watch short links. You can also try our full <a href="/facebook-video-downloader">Facebook video downloader</a> page that covers every format.',
+  },
+  {
+    id: 'reels-private',
+    q: 'Can you download Reels from private accounts?',
+    a: 'We can only download Reels that are publicly accessible to you. Reels from private or restricted accounts cannot be fetched, and we always respect account privacy settings.',
+  },
+  {
+    id: 'reels-legal',
+    q: 'Is it okay to download Facebook Reels?',
+    a: 'Saving Reels for personal, offline viewing is fine. But do not repost Reels commercially without the creator\u2019s permission — always respect copyright and credit the original creator.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+---
+
+<Layout
+  title="Facebook Reels Downloader HD 1080p — No Watermark, Free | TikSaveHub"
+  description="Download Facebook Reels in HD 1080p free, no watermark, no sign-up. Save any fb Reel on iPhone, Android or PC as MP4 — fast, private, and unlimited."
+  keywords="download facebook reels hd 1080p free, facebook reels downloader no watermark online, download facebook reels for iphone, facebook reels downloader, save facebook reels, facebook reel downloader hd, fb reels downloader free, download facebook reels android"
+  canonical="/facebook-reels-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Facebook Reels Downloader"
+  appRating={{ value: '4.8', count: '11230' }}
+>
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
+      { "@type": "ListItem", "position": 2, "name": "Facebook Reels Downloader", "item": "https://tiksavehub.com/facebook-reels-downloader" }
+    ]
+  })} />
+
+  <!-- Hero Section -->
+  <FbHeroSection
+    crumb="Facebook Reels Downloader"
+    badge="Free · HD 1080p · No Watermark"
+    title="Facebook Reels Downloader — HD 1080p, No Watermark"
+    subline="Download Facebook Reels in HD 1080p — free, fast, no watermark."
+    sub="Save any public Facebook Reel in full HD up to 1080p — free, fast, no sign-up, and no watermark. Paste a facebook.com/reel/… link and download the MP4, or extract the audio as MP3."
+    trust={['100% Free', 'No Watermark', 'HD up to 1080p', 'Works on iPhone', 'Works on Android']}
+    shareUrl="/facebook-reels-downloader"
+    shareTitle="Facebook Reels Downloader HD 1080p — No Watermark"
+    shareDescription="Download Facebook Reels in HD 1080p. Free, fast, no watermark. MP4 or MP3."
+  >
+    <FacebookDownloadForm mode="reels" />
+  </FbHeroSection>
+
+  <!-- Stats -->
+  <StatsSection stats={[
+    {
+      value: '8M+',
+      label: 'Facebook Reels Downloaded',
+      sub: 'Save FB Reels in HD instantly',
+      icon: 'download',
+    },
+    {
+      value: '150+',
+      label: 'Countries Using Our FB Reels Saver',
+      sub: 'Download Facebook Reels from anywhere',
+      icon: 'globe',
+    },
+    {
+      value: '4.8',
+      label: 'Free HD Facebook Reels Download',
+      sub: 'No watermark, no login required',
+      icon: 'star',
+    },
+  ]} />
+
+  <!-- SEO Content Section — 600+ words -->
+  <FbSeoArticle
+    headline="Download Facebook Reels in full HD — free and watermark-free."
+    quickLinks={[
+      { label: 'Facebook Reels Downloader', href: '#download-tool' },
+      { label: 'How It Works', href: '#how-it-works' },
+      { label: 'Features', href: '#features' },
+      { label: 'FAQ', href: '#faq' },
+      { label: 'Facebook Video Downloader', href: '/facebook-video-downloader' },
+    ]}
+    supportedLinks={['facebook.com/reel/…', 'facebook.com/watch/?v=…', 'facebook.com/user/videos/…', 'fb.watch/…']}
+  >
+    <p>
+      TikSaveHub is the fastest way to <strong>download Facebook Reels in HD 1080p for free</strong>. Reels are
+      Facebook's most-shared short videos — full-screen, vertical, and packed with music and trends — and a lot of
+      them are worth keeping: a cooking tutorial, a travel clip, a creator's best work, or your own Reel that you
+      want to back up before the platform removes it. With our <strong>Facebook Reels downloader, no watermark</strong>
+      is added and no sign-up is required: paste the link, tap Download, and the original-quality MP4 lands on your
+      device in seconds.
+    </p>
+
+    <h3 class="text-highlight">How to download a Facebook Reel in HD 1080p</h3>
+    <p>
+      The process takes under ten seconds. Open the Facebook app or website and find the Reel you want to save. Tap
+      the Share button and choose "Copy Link" — the URL looks like <em>facebook.com/reel/1234567890/</em>. Come back
+      to TikSaveHub and paste it into the input field at the top of this page. Hit Download and our servers fetch the
+      Reel's metadata instantly, showing the title, thumbnail, and resolution. Choose "Download HD Video" for up to
+      1080p, or "Download SD Video" for a smaller file. That's it — no app, no login, no watermark.
+    </p>
+
+    <h3 class="text-highlight">Why users pick TikSaveHub for Facebook Reels</h3>
+    <p>
+      Most "Reels downloader" websites redirect you through app stores, cap your downloads behind a daily limit, or
+      force you to create an account. TikSaveHub does none of that. It is a free online Facebook Reels downloader that
+      works in any browser on any device — <strong>download Facebook Reels for iPhone</strong>, Android, Windows, or
+      Mac with the exact same paste-and-download flow. Downloads are unlimited, your history is never stored, and the
+      file you receive is the untouched original upload, so the quality is exactly what the creator published.
+    </p>
+
+    <h3 class="text-highlight">HD 1080p quality — exactly as uploaded</h3>
+    <p>
+      When a creator uploads a Reel in 1080p, our downloader delivers 1080p. When the source is only 720p, you get
+      720p. We never re-encode, never compress, and never add overlays — the MP4 you save is a faithful copy of the
+      original. If you prefer smaller files for limited storage, the SD option shrinks the size while keeping the
+      video perfectly watchable.
+    </p>
+
+    <h3 class="text-highlight">Save Reel audio as MP3 too</h3>
+    <p>
+      Sometimes you want the sound more than the picture — a trending song, a motivational clip, a podcast excerpt. Our
+      <a href="/facebook-to-mp3">Facebook to MP3 converter</a> extracts the soundtrack from any Reel or video and
+      converts it to a high-quality MP3 on the fly, ready for offline listening anywhere.
+    </p>
+
+    <h3 class="text-highlight">Download Reels on iPhone, Android, and desktop</h3>
+    <p>
+      On iPhone or iPad, open Safari, paste the link and tap Download — the MP4 appears in Files under Downloads. On
+      Android, the video saves to your gallery. On a PC or Mac, it lands in your browser's download bar. Everything is
+      responsive and touch-friendly, with 48px tap targets and zero clutter, so it feels native no matter your screen.
+    </p>
+
+    <h3 class="text-highlight">Privacy and safety — no account, no tracking</h3>
+    <p>
+      We do not ask for your email, we do not store your download history, and we never crawl your profile. The
+      conversion happens server-side and the only thing that lands on your phone, tablet, or computer is the final
+      video file. That's the TikSaveHub promise: a free, fast, and private <strong>Facebook Reels downloader with no
+      watermark</strong>, ready whenever you are.
+    </p>
+
+    <p>
+      Want other formats too? You can also save <a href="/facebook-video-downloader">Facebook videos in HD</a>,
+      convert <a href="/facebook-to-mp3">Facebook videos to MP3</a>, or grab <a href="/facebook-story-downloader">Facebook
+      stories</a> — all free, all without a watermark.
+    </p>
+  </FbSeoArticle>
+
+  <!-- How It Works -->
+  <FbStepsSection
+    eyebrow="Step-by-Step Guide"
+    headline="How to download Facebook Reels."
+    sub="Three simple steps — no technical skills required."
+    steps={[
+      {
+        num: '01',
+        icon: 'copy',
+        title: 'Copy the Reels link',
+        body: 'Open the Facebook app or site, find the Reel you want, tap Share, and select "Copy Link." Every link format works: facebook.com/reel/…, Watch links, video posts, or fb.watch short links.',
+      },
+      {
+        num: '02',
+        icon: 'paste',
+        title: 'Paste it into TikSaveHub',
+        body: 'Come back here and paste the link into the field above — the Paste button grabs it straight from your clipboard. We detect the Reel and fetch its details in seconds.',
+      },
+      {
+        num: '03',
+        icon: 'download',
+        title: 'Download HD 1080p or MP3',
+        body: 'Tap "Download HD Video" for up to 1080p, or "Download SD Video" for a smaller file. Want just the soundtrack? Use our <a href="/facebook-to-mp3">Facebook to MP3 converter</a>. The file saves instantly — no app or account needed.',
+      },
+    ]}
+  />
+
+  <!-- Features -->
+  <FbFeaturesSection
+    eyebrow="Features"
+    headline="Why TikSaveHub stands out for Reels."
+    features={[
+      {
+        icon: 'shield',
+        accent: 'develop',
+        title: 'No Watermark',
+        body: 'Download Reels exactly as the creator uploaded them — original quality, no overlay, no compression, no watermark added.',
+      },
+      {
+        icon: 'music',
+        accent: 'preview',
+        title: 'MP3 Audio Extraction',
+        body: 'Convert any Reel\u2019s soundtrack to MP3 with one tap. Save trending Reel music and voice clips for offline listening.',
+      },
+      {
+        icon: 'zap',
+        accent: 'ship',
+        title: 'Lightning Fast',
+        body: 'Server-side processing with parallel chunk streaming means downloads start in seconds — paste, click, and it\u2019s yours.',
+      },
+      {
+        icon: 'list',
+        accent: 'develop',
+        title: 'All Link Formats',
+        body: 'facebook.com/reel/…, Watch links, video posts, and fb.watch short links — every public Reels URL format is supported.',
+      },
+      {
+        icon: 'device',
+        accent: 'preview',
+        title: 'iPhone + Android Ready',
+        body: 'Optimized for every screen with large tap targets. Save Reels to your Files app, gallery, or Downloads folder in one tap.',
+      },
+      {
+        icon: 'globe',
+        accent: 'ship',
+        title: 'Unlimited & Free',
+        body: 'No daily caps, no premium tier, no account. Download as many Facebook Reels as you want — every day, forever.',
+      },
+    ]}
+  />
+
+  <!-- FAQ -->
+  <FbFaqSection
+    eyebrow="FAQ"
+    headline="Facebook Reels download questions, answered."
+    prefix="reels"
+    faqs={faqData}
+  />
+
+  <!-- CTA Band -->
+  <FbCtaBand
+    headline="Your favorite Reel is one click away."
+    sub="Free, fast, and watermark-free — paste a Reels link and save it in HD."
+    ctaHref="#download-tool"
+    ctaLabel="Download a Reel Now"
+  />
+
+  <!-- Cross-links -->
+  <FbInternalLinks
+    headline="More free Facebook & social tools"
+    links={[
+      { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Download full-length Facebook videos and Watch links in HD.' },
+      { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Extract high-quality MP3 audio from any Facebook video or Reel.' },
+      { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Save Facebook stories in HD before they disappear after 24 hours.' },
+      { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Save public Facebook photos in full resolution, free.' },
+      { href: '/instagram-video-downloader-without-watermark', icon: 'ig', title: 'Instagram Video Downloader', desc: 'Need the full video? Download Instagram videos in HD.' },
+      { href: '/instagram-reels-downloader-without-watermark', icon: 'igreels', title: 'Instagram Reels Downloader', desc: 'Save Instagram Reels without a watermark.' },
+      { href: '/tiktok-video-downloader-without-watermark', icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'Download TikTok videos in HD without a watermark.' },
+    ]}
+  />
+</Layout>

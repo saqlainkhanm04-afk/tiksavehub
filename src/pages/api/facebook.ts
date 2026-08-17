@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { parseFacebookUrl } from '../../lib/facebook-url';
-import { fetchFacebookMedia, fetchFacebookAudio, FB_ERR } from '../../lib/facebook';
+import { fetchFacebookMedia, fetchFacebookAudio, fetchFacebookPhoto, fetchFacebookStory, FB_ERR } from '../../lib/facebook';
 import { streamFromUpstream } from '../../lib/stream';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
@@ -25,7 +25,7 @@ function json(body: unknown, status: number, cacheable = false): Response {
 }
 
 function cacheKeyOf(parsed: ReturnType<typeof parseFacebookUrl>): string {
-  return parsed.videoId || parsed.shortCode || '';
+  return parsed.videoId || parsed.shortCode || parsed.photoId || '';
 }
 
 function pickUrl(media: any, mode: string): string | null {
@@ -74,6 +74,28 @@ function userMessageFor(err: any, needsLoginHint = false): string {
   return 'Failed to fetch this video. Please check the link and try again.';
 }
 
+function photoMessageFor(err: any): string {
+  const code = err?.code ?? '';
+  if (code === FB_ERR.NOT_AVAILABLE) {
+    return 'This photo is private or was deleted. Please try another public Facebook photo link.';
+  }
+  if (code === FB_ERR.NO_MEDIA) {
+    return 'Could not load this Facebook photo. Check the link or try another public photo.';
+  }
+  return userMessageFor(err);
+}
+
+function storyMessageFor(err: any): string {
+  const code = err?.code ?? '';
+  if (code === FB_ERR.NO_MEDIA) {
+    return 'This story could not be downloaded. Facebook stories expire after 24 hours or may be private — please copy a fresh story link and try again.';
+  }
+  if (code === FB_ERR.NOT_AVAILABLE) {
+    return 'This story is private or has expired. Facebook stories disappear after 24 hours — try a fresh public story link.';
+  }
+  return userMessageFor(err);
+}
+
 export const POST: APIRoute = async ({ request }) => {
   let body: any;
   try {
@@ -95,6 +117,77 @@ export const POST: APIRoute = async ({ request }) => {
   if (!parsed.isValid) {
     return json({ success: false, error: parsed.error || 'Invalid Facebook URL.' }, 422);
   }
+
+  const id = cacheKeyOf(parsed);
+  const toolMode = typeof body?.mode === 'string' ? body.mode : '';
+
+  // Story mode accepts ONLY story links.
+  if (toolMode === 'story') {
+    if (parsed.linkType !== 'story') {
+      return json(
+        { success: false, error: 'That link is not a Facebook story. Please paste a story link — e.g. facebook.com/stories/… — the Story Downloader only downloads stories.' },
+        422
+      );
+    }
+  } else if (parsed.linkType === 'story') {
+    return json(
+      { success: false, error: 'That link is a Facebook story, not a video. Use the Facebook Story Downloader tool.' },
+      422
+    );
+  }
+
+  // Photo links route to the photo extractor.
+  if (parsed.linkType === 'photo') {
+    if (toolMode && toolMode !== 'photo') {
+      return json(
+        { success: false, error: 'That link is a Facebook photo, not a video. Use the Facebook Photo Downloader tool.' },
+        422
+      );
+    }
+    try {
+      const cached = id ? cacheHit('facebook', 'fb', id, 'photo') : null;
+      const cachedData = cached?.data as Record<string, unknown> | undefined;
+      if (cachedData) {
+        return json({ success: true, type: 'facebook-photo', photo: cachedData, fromCache: true }, 200, true);
+      }
+
+      const photo = await fetchFacebookPhoto(parsed.sanitizedUrl);
+
+      const payload = {
+        photoUrl: photo.photoUrl,
+        cover: photo.cover || photo.photoUrl,
+        title: photo.title || 'Facebook Photo',
+        author: {
+          unique_id: photo.author?.name || '',
+          nickname: photo.author?.name || '',
+          avatar: photo.author?.avatar || photo.cover || '',
+        },
+      };
+
+      if (id) {
+        cacheWrite('facebook', 'fb', id, 'photo', {
+          args: { type: 'photo' },
+          mediaUrl: photo.photoUrl,
+          thumb: photo.cover,
+          title: photo.title,
+          data: payload,
+        });
+      }
+
+      return json({ success: true, type: 'facebook-photo', photo: payload }, 200, true);
+    } catch (err: any) {
+      console.error('[Facebook API] Photo error:', err?.message ?? err);
+      return json({ success: false, error: photoMessageFor(err) }, 500);
+    }
+  }
+
+  if (toolMode === 'photo') {
+    return json(
+      { success: false, error: 'That link is a Facebook video, not a photo. Please paste a photo link (photo.php?fbid=… or facebook.com/{profile}/photos/…).' },
+      422
+    );
+  }
+
   if (!parsed.isVideo) {
     return json(
       { success: false, error: 'This tool only downloads Facebook videos and Reels, not photos.' },
@@ -102,16 +195,16 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  const id = cacheKeyOf(parsed);
+  const isStory = parsed.linkType === 'story';
 
   try {
-    const cached = id ? cacheHit('facebook', 'fb', id, 'video') : null;
+    const cached = isStory ? null : id ? cacheHit('facebook', 'fb', id, 'video') : null;
     const cachedData = cached?.data as Record<string, unknown> | undefined;
     if (cachedData) {
       return json({ success: true, type: 'facebook', video: cachedData, fromCache: true }, 200, true);
     }
 
-    const media = await fetchFacebookMedia(parsed.sanitizedUrl);
+    const media = isStory ? await fetchFacebookStory(parsed.sanitizedUrl) : await fetchFacebookMedia(parsed.sanitizedUrl);
 
     const hdUrl = media.hdUrl || media.sdUrl;
     if (!hdUrl) {
@@ -136,7 +229,7 @@ export const POST: APIRoute = async ({ request }) => {
       play_count: media.view_count ?? 0,
     };
 
-    if (id) {
+    if (id && !isStory) {
       cacheWrite('facebook', 'fb', id, 'video', {
         args: { type: parsed.linkType || 'watch' },
         mediaUrl: hdUrl,
@@ -149,7 +242,7 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ success: true, type: 'facebook', video }, 200, true);
   } catch (err: any) {
     console.error('[Facebook API] Error:', err?.message ?? err);
-    return json({ success: false, error: userMessageFor(err) }, 500);
+    return json({ success: false, error: isStory ? storyMessageFor(err) : userMessageFor(err) }, 500);
   }
 };
 
@@ -166,17 +259,54 @@ export const GET: APIRoute = async ({ url, request }) => {
   }
 
   const parsed = parseFacebookUrl(rawUrl);
-  if (!parsed.isValid || !parsed.isVideo) {
+  if (!parsed.isValid) {
+    return json(
+      { success: false, error: 'Invalid URL. Please provide a valid public Facebook link.' },
+      422
+    );
+  }
+
+  const id = cacheKeyOf(parsed);
+  const isStory = parsed.linkType === 'story';
+
+  // Photo download mode.
+  if (parsed.linkType === 'photo') {
+    try {
+      const cached = id ? cacheHit('facebook', 'fb', id, 'photo') : null;
+      const cachedData = cached?.data as Record<string, unknown> | undefined;
+      const photoUrl: string | null = (cachedData?.photoUrl as string) || null;
+
+      if (!photoUrl) {
+        const photo = await fetchFacebookPhoto(parsed.sanitizedUrl);
+        return streamFromUpstream(photo.photoUrl, {
+          filename: 'tiksavehub-facebook-photo.jpg',
+          contentType: 'image/jpeg',
+          accept: 'image/jpeg,image/png,image/webp,image/*,*/*',
+          referer: FACEBOOK_REFERER,
+        });
+      }
+
+      return streamFromUpstream(photoUrl, {
+        filename: 'tiksavehub-facebook-photo.jpg',
+        contentType: 'image/jpeg',
+        accept: 'image/jpeg,image/png,image/webp,image/*,*/*',
+        referer: FACEBOOK_REFERER,
+      });
+    } catch (err: any) {
+      console.error('[Facebook API] Photo error:', err?.message ?? err);
+      return json({ success: false, error: photoMessageFor(err) }, 500);
+    }
+  }
+
+  if (!parsed.isVideo) {
     return json(
       { success: false, error: 'Invalid URL. Please provide a valid public Facebook video link.' },
       422
     );
   }
 
-  const id = cacheKeyOf(parsed);
-
   try {
-    const cached = id ? cacheHit('facebook', 'fb', id, 'video') : null;
+    const cached = isStory ? null : id ? cacheHit('facebook', 'fb', id, 'video') : null;
     const cachedData = cached?.data as Record<string, unknown> | undefined;
     const media = cachedData || null;
 
@@ -200,7 +330,7 @@ export const GET: APIRoute = async ({ url, request }) => {
         const fresh = await fetchFacebookMedia(parsed.sanitizedUrl);
         mediaUrl = mode === 'hd' ? fresh.hdUrl || fresh.sdUrl : fresh.sdUrl || fresh.hdUrl;
         const hdUrl = fresh.hdUrl || fresh.sdUrl;
-        if (id) {
+        if (id && !isStory) {
           cacheWrite('facebook', 'fb', id, 'video', {
             args: { type: parsed.linkType || 'watch' },
             mediaUrl: hdUrl,

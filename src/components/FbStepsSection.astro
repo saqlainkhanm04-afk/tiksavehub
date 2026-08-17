@@ -1,0 +1,165 @@
+---
+// FbStepsSection — "How It Works" numbered steps (how-it-works anchor)
+interface Step {
+  num: string;
+  title: string;
+  body: string;
+  icon: 'copy' | 'paste' | 'download' | 'music' | 'link' | 'share' | 'device';
+}
+
+interface Props {
+  eyebrow: string;
+  headline: string;
+  sub?: string;
+  steps: Step[];
+}
+
+const { eyebrow, headline, sub, steps } = Astro.props;
+
+const icons: Record<Step['icon'], string> = {
+  copy: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  paste: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>',
+  download: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  music: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+  link: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  share: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+  device: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+};
+---
+
+<section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+  <div class="dl-steps-inner container-page">
+    <div class="dl-steps-header">
+      <span class="section-eyebrow text-caption-mono">{eyebrow}</span>
+      <h2 id="dl-steps-headline" class="section-headline">
+        {headline}
+      </h2>
+      {sub && <p class="section-sub text-body-lg">{sub}</p>}
+    </div>
+
+    <div class="dl-steps-grid">
+      {steps.map((step) => (
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">{step.num}</div>
+          <div class="dl-step-icon" aria-hidden="true" set:html={icons[step.icon]}></div>
+          <h3 class="dl-step-title">{step.title}</h3>
+          <p class="dl-step-body">{step.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .dl-steps-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-steps-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .dl-steps-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-step-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    position: relative;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-step-card:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-step-num {
+    align-self: flex-start;
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .dl-step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf010, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-step-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-step-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 960px) {
+    .dl-steps-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-steps-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+</style>

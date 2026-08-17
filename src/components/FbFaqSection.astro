@@ -1,0 +1,230 @@
+---
+// FbFaqSection — accessible FAQ accordion (faq anchor) with unique id prefix
+interface Faq {
+  id: string;
+  q: string;
+  a: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  faqs: Faq[];
+  prefix: string;
+}
+
+const { eyebrow = 'FAQ', headline = 'Frequently asked questions.', faqs, prefix } = Astro.props;
+---
+
+<section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+  <div class="dl-faq-inner container-page">
+    <div class="dl-faq-header">
+      <span class="section-eyebrow text-caption-mono">{eyebrow}</span>
+      <h2 id="dl-faq-headline" class="section-headline">
+        {headline}
+      </h2>
+    </div>
+
+    <div class="dl-faq-list" role="list" id={`dl-faq-${prefix}`}> 
+      {faqs.map((faq) => (
+        <div class="dl-faq-item" id={faq.id} role="listitem">
+          <button
+            class="dl-faq-trigger"
+            id={`${faq.id}-btn`}
+            aria-expanded="false"
+            aria-controls={`${faq.id}-panel`}
+            type="button"
+          >
+            <span class="dl-faq-q">{faq.q}</span>
+            <span class="dl-faq-chevron" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </button>
+          <div
+            id={`${faq.id}-panel`}
+            class="dl-faq-panel"
+            role="region"
+            aria-labelledby={`${faq.id}-btn`}
+            hidden
+          >
+            <p class="dl-faq-a" set:html={faq.a}></p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .dl-faq-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .dl-faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .dl-faq-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-faq-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .dl-faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .dl-faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    transition: background-color 0.15s ease;
+    touch-action: manipulation;
+    min-height: 48px;
+  }
+
+  .dl-faq-trigger:hover {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-trigger:focus-visible {
+    outline: 2px solid var(--color-grad-develop-start);
+    outline-offset: -2px;
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-q {
+    font-size: var(--text-body-md);
+    font-weight: 500;
+    color: var(--color-ink);
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .dl-faq-chevron {
+    flex-shrink: 0;
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .dl-faq-panel {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    animation: fadeInUp 0.25s ease forwards;
+  }
+
+  .dl-faq-a {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  @media (max-width: 600px) {
+    .dl-faq-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-faq-trigger {
+      padding: var(--spacing-md);
+      min-height: 48px;
+    }
+
+    .dl-faq-panel {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+
+    .dl-faq-q {
+      font-size: var(--text-body-sm);
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('.dl-faq-list') as HTMLElement | null;
+  if (root) {
+    const triggers = root.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
+    triggers.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+        const panelId = btn.getAttribute('aria-controls')!;
+        const panel = document.getElementById(panelId);
+
+        triggers.forEach((otherBtn) => {
+          if (otherBtn !== btn) {
+            otherBtn.setAttribute('aria-expanded', 'false');
+            const otherId = otherBtn.getAttribute('aria-controls')!;
+            document.getElementById(otherId)?.setAttribute('hidden', '');
+          }
+        });
+
+        if (isOpen) {
+          btn.setAttribute('aria-expanded', 'false');
+          panel?.setAttribute('hidden', '');
+        } else {
+          btn.setAttribute('aria-expanded', 'true');
+          panel?.removeAttribute('hidden');
+        }
+      });
+    });
+  }
+</script>

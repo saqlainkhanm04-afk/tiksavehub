@@ -155,8 +155,17 @@ const meta = typeMeta[type];
       </button>
     </form>
 
-    <p class="hero-notice" role="note">
+<p class="hero-notice" role="note">
       Notice: For personal use only. We do not host any media files on our servers. Please respect content creators' rights.
+    </p>
+
+    <p class="fetch-note" id="fetch-note" role="status" aria-live="polite" hidden>
+      <span class="fetch-note-dot" aria-hidden="true"></span>
+      <span>
+        Please wait, <strong>fetching your media</strong>… TikSaveHub's free Instagram downloader
+        is processing your link — it usually takes just a few seconds, and you can save reels,
+        videos, stories and audio without a watermark.
+      </span>
     </p>
 
     <!-- Error message -->
@@ -173,6 +182,9 @@ const meta = typeMeta[type];
 
     <!-- Result card mount point -->
     <div id="result-mount" class="result-mount"></div>
+
+    <!-- Monetag ad slot — reserved height prevents layout shift (CLS) when the ad loads -->
+    <div class="ad-slot" data-ad-slot="hero" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -440,6 +452,58 @@ const meta = typeMeta[type];
     letter-spacing: -0.1px;
   }
 
+  .fetch-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    text-align: left;
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.5;
+    letter-spacing: -0.1px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid rgba(121, 40, 202, 0.15);
+    border-radius: var(--radius-md, 10px);
+    background: rgba(121, 40, 202, 0.04);
+    animation: fetch-note-in 0.25s ease;
+  }
+
+  html.dark .fetch-note {
+    border-color: rgba(121, 40, 202, 0.35);
+    background: rgba(121, 40, 202, 0.08);
+  }
+
+  .fetch-note[hidden] {
+    display: none;
+  }
+
+  .fetch-note-dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.6);
+    animation: fetch-dot-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes fetch-note-in {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fetch-dot-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .ad-slot {
+    min-height: 90px;
+    margin: var(--spacing-sm) 0 0 0;
+  }
+
   .input-wrap {
     position: relative;
     flex: 1;
@@ -619,11 +683,22 @@ const meta = typeMeta[type];
     .form-row {
       flex-direction: column;
       align-items: stretch;
+      gap: var(--spacing-xs);
     }
 
     .download-submit-btn {
       width: 100%;
-      height: 48px;
+      height: 44px;
+    }
+
+    .paste-btn {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    .error-toast {
+      font-size: var(--text-caption);
+      padding: var(--spacing-xs) var(--spacing-sm);
     }
   }
 </style>
@@ -673,6 +748,8 @@ const meta = typeMeta[type];
     downloadBtn.disabled = loading;
     btnLabel.hidden = loading;
     btnSpinner.hidden = !loading;
+    const fetchNote = document.getElementById('fetch-note');
+    if (fetchNote) fetchNote.hidden = !loading;
   }
 
   function showError(msg: string) {

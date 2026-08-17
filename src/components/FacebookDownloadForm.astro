@@ -2,10 +2,112 @@
 // FacebookDownloadForm — interactive Facebook video URL input with fetch & result rendering
 // Supports Reels, Watch links, video posts, fb.watch short links and mobile hosts.
 // API: POST /api/facebook (metadata) + GET /api/facebook?url=&dl= (file download).
+// mode: 'video' (default) | 'reels' | 'story' | 'mp3' — adjusts copy and, for mp3,
+// promotes the Audio tile to first position with a Recommended badge.
+interface Props {
+  mode?: 'video' | 'reels' | 'story' | 'mp3' | 'photo';
+}
+
+const { mode = 'video' } = Astro.props;
+
+const tabLinks = [
+  {
+    mode: 'video',
+    label: 'Video',
+    href: '/facebook-video-downloader',
+    active: mode === 'video',
+    icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><polygon points="10 8 16 12 10 16 10 8"/></svg>',
+  },
+  {
+    mode: 'reels',
+    label: 'Reels',
+    href: '/facebook-reels-downloader',
+    active: mode === 'reels',
+    main: true,
+    icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  },
+  {
+    mode: 'story',
+    label: 'Story',
+    href: '/facebook-story-downloader',
+    active: mode === 'story',
+    icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  },
+  {
+    mode: 'mp3',
+    label: 'Audio',
+    href: '/facebook-to-mp3',
+    active: mode === 'mp3',
+    icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+  },
+  {
+    mode: 'photo',
+    label: 'Photo',
+    href: '/facebook-photo-downloader',
+    active: mode === 'photo',
+    icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  },
+];
+
+const copy = {
+  video: {
+    placeholder: 'Paste Facebook video link',
+    inputAria: 'Facebook video URL',
+    pasteAria: 'Paste Facebook link from clipboard',
+    submitAria: 'Download Facebook video',
+    fetch: 'Please wait, <strong>fetching your video</strong>… TikSaveHub\'s free Facebook video downloader is processing your link — it usually takes just a few seconds, and you get the video in HD, no login needed.',
+  },
+  reels: {
+    placeholder: 'Paste Facebook Reels link',
+    inputAria: 'Facebook Reels URL',
+    pasteAria: 'Paste Facebook Reels link from clipboard',
+    submitAria: 'Download Facebook Reels video',
+    fetch: 'Please wait, <strong>fetching your Reel</strong>… TikSaveHub\'s free Facebook Reels downloader is processing your link — it usually takes just a few seconds, and you get the Reel in HD, no login needed.',
+  },
+  story: {
+    placeholder: 'Paste Facebook story link',
+    inputAria: 'Facebook story URL',
+    pasteAria: 'Paste Facebook story link from clipboard',
+    submitAria: 'Download Facebook story',
+    fetch: 'Please wait, <strong>fetching your story</strong>… TikSaveHub\'s free Facebook story downloader is processing your link — it usually takes just a few seconds, and you get the story in HD, no login needed.',
+  },
+  mp3: {
+    placeholder: 'Paste Facebook video or Reels link to convert to MP3',
+    inputAria: 'Facebook video or Reels URL to convert to MP3',
+    pasteAria: 'Paste Facebook link from clipboard to convert to MP3',
+    submitAria: 'Convert Facebook video to MP3',
+    fetch: 'Please wait, <strong>fetching your audio</strong>… TikSaveHub\'s free Facebook to MP3 converter is processing your link — it usually takes just a few seconds, and you get a high-quality MP3, no login needed.',
+  },
+  photo: {
+    placeholder: 'Paste Facebook photo link',
+    inputAria: 'Facebook photo URL',
+    pasteAria: 'Paste Facebook photo link from clipboard',
+    submitAria: 'Download Facebook photo',
+    fetch: 'Please wait, <strong>fetching your photo</strong>… TikSaveHub\'s free Facebook photo downloader is processing your link — it usually takes just a few seconds, and you get the full-resolution photo, no login needed.',
+  },
+}[mode];
 ---
 
-<section id="download-form" class="download-form-section" data-type="facebook">
+<section id="download-form" class="download-form-section" data-type="facebook" data-mode={mode}>
   <div class="download-form-wrap">
+    <nav class="fb-tabs" aria-label="Choose Facebook download type">
+      {
+        tabLinks.map((tab) => (
+          <a
+            class:list={[
+              'fb-tab',
+              tab.active && 'fb-tab-active',
+              tab.main && 'fb-tab-main',
+            ]}
+            href={tab.href}
+            aria-current={tab.active ? 'page' : undefined}
+            set:html={`${tab.icon}<span>${tab.label}</span>`}
+          >
+          </a>
+        ))
+      }
+    </nav>
+
     <form id="facebook-form" class="form-row" role="search" aria-label="Facebook video download form" onsubmit="return false;">
       <div class="input-wrap">
         <span class="input-icon" aria-hidden="true">
@@ -19,11 +121,11 @@
           name="url"
           type="url"
           class="form-input-lg url-input"
-          placeholder="Paste Facebook video or Reels link"
+          placeholder={copy.placeholder}
           required
           autocomplete="off"
           spellcheck="false"
-          aria-label="Facebook video or Reels URL"
+          aria-label={copy.inputAria}
         />
         <button
           type="button"
@@ -41,7 +143,7 @@
           type="button"
           class="paste-btn"
           data-paste-target="facebook-url"
-          aria-label="Paste Facebook link from clipboard"
+          aria-label={copy.pasteAria}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
@@ -54,7 +156,7 @@
         id="download-btn"
         type="submit"
         class="btn-primary download-submit-btn"
-        aria-label="Download Facebook video"
+        aria-label={copy.submitAria}
       >
         <span id="btn-label" class="btn-icon-only">
           <svg class="icon-download" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -70,8 +172,13 @@
       </button>
     </form>
 
-    <p class="hero-notice" role="note">
+<p class="hero-notice" role="note">
       Notice: For personal use only. We do not host any media files on our servers. Please respect content creators' rights.
+    </p>
+
+    <p class="fetch-note" id="fetch-note" role="status" aria-live="polite" hidden>
+      <span class="fetch-note-dot" aria-hidden="true"></span>
+      <span set:html={copy.fetch}></span>
     </p>
 
     <!-- Error banner -->
@@ -88,6 +195,9 @@
 
     <!-- Result card mount point -->
     <div id="result-mount" class="result-mount"></div>
+
+    <!-- Monetag ad slot — reserved height prevents layout shift (CLS) when the ad loads -->
+    <div class="ad-slot" data-ad-slot="hero" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -96,6 +206,217 @@
     width: 100%;
     max-width: 760px;
     margin: 0 auto;
+  }
+
+  /* ——— Tab Group ——— */
+  .fb-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+    animation: fadeInUp 0.5s ease 0.35s both;
+  }
+
+  .fb-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    color: var(--color-body);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    letter-spacing: -0.28px;
+    cursor: pointer;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-height: 44px;
+    transition: color 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fb-tab svg {
+    color: var(--color-mute);
+    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fb-tab::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.45) 50%, transparent 80%);
+    transform: translateX(-160%) skewX(-20deg);
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .fb-tab:hover {
+    color: var(--color-ink);
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.15);
+  }
+
+  .fb-tab:hover::after {
+    transform: translateX(260%) skewX(-20deg);
+  }
+
+  .fb-tab:hover svg {
+    color: var(--color-ink);
+    transform: scale(1.15) rotate(-8deg);
+  }
+
+  .fb-tab-active {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.14), rgba(236, 72, 153, 0.14)) !important;
+    border-color: rgba(124, 58, 237, 0.4) !important;
+    color: #7c3aed !important;
+    font-weight: 600 !important;
+  }
+
+  .fb-tab-active svg {
+    color: #7c3aed !important;
+  }
+
+  html.dark .fb-tab {
+    background-color: var(--color-canvas);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #a3a3a3;
+  }
+
+  html.dark .fb-tab::after {
+    background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.18) 50%, transparent 80%);
+  }
+
+  html.dark .fb-tab:hover {
+    color: #fafafa;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  html.dark .fb-tab:hover svg {
+    color: #fafafa;
+  }
+
+  html.dark .fb-tab-active {
+    color: #c084fc !important;
+    border-color: rgba(192, 132, 252, 0.4) !important;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.14), rgba(236, 72, 153, 0.14)) !important;
+  }
+
+  html.dark .fb-tab-active svg {
+    color: #c084fc !important;
+  }
+
+  /* ——— Reels Tab — main Facebook tool — brand purple/pink pill ——— */
+  .fb-tab-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+    border: 1px solid rgba(124, 58, 237, 0.6) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation: fb-tab-pulse 2s ease-in-out infinite;
+  }
+
+  .fb-tab-main svg {
+    color: #ffffff !important;
+    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fb-tab-main:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #6d28d9, #db2777) !important;
+    color: #ffffff !important;
+    border-color: rgba(124, 58, 237, 0.8) !important;
+    box-shadow:
+      0 0 20px rgba(124, 58, 237, 0.35),
+      0 0 40px rgba(236, 72, 153, 0.2) !important;
+    animation: none !important;
+  }
+
+  .fb-tab-main:active {
+    transform: translateY(0);
+    transition-duration: 0.1s;
+  }
+
+  .fb-tab-main:hover svg {
+    color: #ffffff !important;
+    transform: scale(1.2) rotate(-10deg);
+  }
+
+  html.dark .fb-tab-main {
+    background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+    border: 1px solid rgba(192, 132, 252, 0.5) !important;
+    color: #ffffff !important;
+    animation-name: fb-tab-pulse-dark;
+  }
+
+  html.dark .fb-tab-main svg {
+    color: #ffffff !important;
+  }
+
+  html.dark .fb-tab-main:hover {
+    background: linear-gradient(135deg, #6d28d9, #db2777) !important;
+    color: #ffffff !important;
+    border-color: rgba(192, 132, 252, 0.7) !important;
+  }
+
+  .fb-tab-main.fb-tab-active {
+    background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+    border-color: rgba(124, 58, 237, 0.6) !important;
+    color: #ffffff !important;
+  }
+
+  .fb-tab-main.fb-tab-active svg {
+    color: #ffffff !important;
+  }
+
+  html.dark .fb-tab-main.fb-tab-active {
+    background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+    border-color: rgba(192, 132, 252, 0.5) !important;
+    color: #ffffff !important;
+  }
+
+  @keyframes fb-tab-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+    }
+    50% {
+      box-shadow: 0 0 8px 2px rgba(124, 58, 237, 0.25);
+    }
+  }
+
+  @keyframes fb-tab-pulse-dark {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(192, 132, 252, 0);
+    }
+    50% {
+      box-shadow: 0 0 8px 2px rgba(192, 132, 252, 0.2);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .fb-tabs {
+      gap: 6px;
+    }
+
+    .fb-tab {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-size: var(--text-caption);
+    }
   }
 
   .form-row {
@@ -112,6 +433,58 @@
     margin: var(--spacing-md) 0 0 0;
     line-height: 1.5;
     letter-spacing: -0.1px;
+  }
+
+  .fetch-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    text-align: left;
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.5;
+    letter-spacing: -0.1px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid rgba(121, 40, 202, 0.15);
+    border-radius: var(--radius-md, 10px);
+    background: rgba(121, 40, 202, 0.04);
+    animation: fetch-note-in 0.25s ease;
+  }
+
+  html.dark .fetch-note {
+    border-color: rgba(121, 40, 202, 0.35);
+    background: rgba(121, 40, 202, 0.08);
+  }
+
+  .fetch-note[hidden] {
+    display: none;
+  }
+
+  .fetch-note-dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    box-shadow: 0 0 8px rgba(236, 72, 153, 0.6);
+    animation: fetch-dot-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes fetch-note-in {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fetch-dot-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .ad-slot {
+    min-height: 90px;
+    margin: var(--spacing-sm) 0 0 0;
   }
 
   .input-wrap {
@@ -316,11 +689,22 @@
     .form-row {
       flex-direction: column;
       align-items: stretch;
+      gap: var(--spacing-xs);
     }
 
     .download-submit-btn {
       width: 100%;
-      height: 48px;
+      height: 44px;
+    }
+
+    .paste-btn {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    .error-toast {
+      font-size: var(--text-caption);
+      padding: var(--spacing-xs) var(--spacing-sm);
     }
   }
 
@@ -365,6 +749,16 @@
     object-fit: cover;
     position: absolute;
     inset: 0;
+  }
+
+  .result-thumb-wrap.photo-preview {
+    width: 200px;
+    min-height: 200px;
+    border-radius: var(--radius-md);
+  }
+
+  .photo-preview .result-thumb {
+    object-fit: cover;
   }
 
   .result-thumb-fallback {
@@ -589,6 +983,30 @@
     color: #b794f6;
   }
 
+  /* Prime tile — highlighted first action (MP3 mode) */
+  .dl-tile-prime {
+    border-color: #7928ca;
+    box-shadow: 0px 4px 16px rgba(121, 40, 202, 0.22);
+  }
+
+  .dl-tile-prime:hover {
+    border-color: #6d28d9;
+    box-shadow: 0px 6px 20px rgba(121, 40, 202, 0.28);
+  }
+
+  .dl-tile-badge {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
+  }
+
   .dl-tile-icon {
     display: flex;
     align-items: center;
@@ -668,6 +1086,8 @@
     downloadBtn.disabled = loading;
     btnLabel.hidden = loading;
     btnSpinner.hidden = !loading;
+    const fetchNote = document.getElementById('fetch-note');
+    if (fetchNote) fetchNote.hidden = !loading;
   }
 
   function showError(msg: string) {
@@ -725,11 +1145,93 @@
   const dlIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   const musicIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
 
+  const MODE = (document.getElementById('download-form') as HTMLElement | null)?.dataset.mode || 'video';
+  const isMp3Mode = MODE === 'mp3';
+  const isPhotoMode = MODE === 'photo';
+
   function renderResult(data: any, inputUrl: string) {
-    const { cover, duration, title, hdplay, sdplay, play } = data || {};
+    const { cover, duration, title, hdplay, sdplay, play, photoUrl } = data || {};
     const hdUrl: string = hdplay || play || '';
     const sdUrl: string = sdplay || play || '';
-    const videoTitle: string = title || 'Facebook Video';
+    const videoTitle: string = title || (isMp3Mode ? 'Facebook Audio' : isPhotoMode ? 'Facebook Photo' : 'Facebook Video');
+
+    if (isPhotoMode) {
+      const photoHref: string = photoUrl || cover || '';
+
+      resultMount.innerHTML = `
+        <div class="result-card animate-fade-in-up" role="region" aria-label="Download result">
+          <div class="result-header">
+            <div class="result-thumb-wrap photo-preview">
+              <img
+                src="${cover || ''}"
+                alt="Facebook photo preview"
+                class="result-thumb"
+                loading="lazy"
+                width="200"
+                height="200"
+                ${!cover ? 'hidden' : ''} />
+              ${!cover ? `<div class="result-thumb-fallback" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                  <line x1="7" y1="2" x2="7" y2="22"/>
+                  <line x1="17" y1="2" x2="17" y2="22"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <line x1="2" y1="7" x2="7" y2="7"/>
+                  <line x1="2" y1="17" x2="7" y2="17"/>
+                  <line x1="17" y1="17" x2="22" y2="17"/>
+                  <line x1="17" y1="7" x2="22" y2="7"/>
+                </svg>
+              </div>` : ''}
+            </div>
+            <div class="result-info">
+              <div class="result-meta">
+                <p class="result-title">${videoTitle}</p>
+              </div>
+              <div class="result-actions">
+                <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-photo" type="button">
+                  <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
+                  <span class="dl-tile-label">Download <strong>Photo</strong></span>
+                  <span class="dl-tile-badge">Full Resolution</span>
+                  <span class="dl-proc-bar"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const photoBtn = document.getElementById('btn-dl-photo') as HTMLButtonElement | null;
+      if (!photoBtn) return;
+      if (!photoHref) photoBtn.setAttribute('disabled', '');
+      else {
+        photoBtn.addEventListener('click', () => startDownload('photo', photoBtn));
+      }
+      return;
+    }
+
+    const hdTile = `
+      <button class="dl-tile dl-tile-fb" id="btn-dl-hd" type="button">
+        <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
+        <span class="dl-tile-label">Download <strong>HD Video</strong></span>
+        <span class="dl-proc-bar"></span>
+      </button>`;
+
+    const sdTile = `
+      <button class="dl-tile" id="btn-dl-sd" type="button">
+        <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
+        <span class="dl-tile-label">Download <strong>SD Video</strong></span>
+        <span class="dl-proc-bar"></span>
+      </button>`;
+
+    const audioTile = `
+      <button class="dl-tile dl-tile-audio${isMp3Mode ? ' dl-tile-prime' : ''}" id="btn-dl-audio" type="button">
+        <span class="dl-tile-icon" aria-hidden="true">${musicIcon}</span>
+        <span class="dl-tile-label">Download <strong>Audio (MP3)</strong></span>
+        ${isMp3Mode ? '<span class="dl-tile-badge">Recommended</span>' : ''}
+        <span class="dl-proc-bar"></span>
+      </button>`;
+
+    const tiles = isMp3Mode ? [audioTile] : [hdTile, sdTile];
 
     resultMount.innerHTML = `
       <div class="result-card animate-fade-in-up" role="region" aria-label="Download result">
@@ -762,21 +1264,7 @@
               <p class="result-title">${videoTitle}</p>
             </div>
             <div class="result-actions">
-              <button class="dl-tile dl-tile-fb" id="btn-dl-hd" type="button">
-                <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
-                <span class="dl-tile-label">Download <strong>HD Video</strong></span>
-                <span class="dl-proc-bar"></span>
-              </button>
-              <button class="dl-tile" id="btn-dl-sd" type="button">
-                <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
-                <span class="dl-tile-label">Download <strong>SD Video</strong></span>
-                <span class="dl-proc-bar"></span>
-              </button>
-              <button class="dl-tile dl-tile-audio" id="btn-dl-audio" type="button">
-                <span class="dl-tile-icon" aria-hidden="true">${musicIcon}</span>
-                <span class="dl-tile-label">Download <strong>Audio (MP3)</strong></span>
-                <span class="dl-proc-bar"></span>
-              </button>
+              ${tiles.join('')}
             </div>
           </div>
         </div>
@@ -804,7 +1292,10 @@
       }
 
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', `/api/facebook?url=${encodeURIComponent(inputUrl)}&dl=${mode}`);
+      xhr.open(
+        'GET',
+        `/api/facebook?url=${encodeURIComponent(inputUrl)}&dl=${mode}`
+      );
       xhr.responseType = 'blob';
 
       xhr.onprogress = function (e) {
@@ -822,7 +1313,10 @@
           const blobUrl = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = mode === 'audio' ? 'tiksavehub-facebook-audio.mp3' : 'tiksavehub-facebook-video.mp4';
+          a.download =
+            mode === 'audio' ? 'tiksavehub-facebook-audio.mp3' :
+            mode === 'photo' ? 'tiksavehub-facebook-photo.jpg' :
+            'tiksavehub-facebook-video.mp4';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -862,12 +1356,16 @@
     const url = urlInput.value.trim();
 
     if (!url) {
-      showError('Please paste a Facebook video URL.');
+      showError(isPhotoMode ? 'Please paste a Facebook photo URL.' : 'Please paste a Facebook video URL.');
       return;
     }
 
     if (!URL_PATTERN.test(url) && !SHORT_PATTERN.test(url)) {
-      showError('Please enter a valid Facebook video link (e.g. facebook.com/reel/… or fb.watch/…).');
+      showError(
+        isPhotoMode
+          ? 'Please enter a valid Facebook photo link (e.g. facebook.com/photo.php?fbid=…).'
+          : 'Please enter a valid Facebook video link (e.g. facebook.com/username/videos/… or fb.watch/…).'
+      );
       return;
     }
 
@@ -878,7 +1376,7 @@
       const res = await fetch('/api/facebook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, mode: MODE }),
       });
       const text = await res.text();
       let json: any;
@@ -892,7 +1390,7 @@
         throw new Error(json.error || 'Failed to fetch the video. Please try again.');
       }
 
-      renderResult(json.video, url);
+      renderResult(isPhotoMode ? json.photo : json.video, url);
     } catch (err: any) {
       showError(err.message || 'Something went wrong. Please try again.');
     } finally {

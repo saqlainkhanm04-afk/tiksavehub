@@ -1,0 +1,259 @@
+---
+// FbHeroSection — hero for Facebook tool sub-pages (breadcrumb, badge, H1,
+// subline, sub, slot for the tool form, trust chips, social share)
+import SocialShare from './SocialShare.astro';
+
+interface Props {
+  crumb: string;
+  badge: string;
+  title: string;
+  subline: string;
+  sub: string;
+  trust: string[];
+  shareUrl: string;
+  shareTitle: string;
+  shareDescription: string;
+  image?: string;
+}
+
+const { crumb, badge, title, subline, sub, trust, shareUrl, shareTitle, shareDescription, image = '/og-downloader.png' } = Astro.props;
+---
+
+<section class="dl-hero" aria-labelledby="dl-hero-headline" id="download-tool">
+  <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+  <div class="dl-hero-inner container-page">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+      <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
+          <span itemprop="name">{crumb}</span>
+          <meta itemprop="position" content="2" />
+        </li>
+      </ol>
+    </nav>
+
+    <div class="dl-badge-row">
+      <span class="badge-pill dl-badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        {badge}
+      </span>
+    </div>
+
+    <h1 id="dl-hero-headline" class="dl-hero-headline">
+      {title}
+    </h1>
+
+    <p class="dl-hero-subline headline-gradient">
+      {subline}
+    </p>
+
+    <p class="dl-hero-sub text-body-lg">
+      {sub}
+    </p>
+
+    <div class="dl-hero-form-wrap">
+      <slot />
+    </div>
+
+    <div class="dl-hero-trust">
+      {trust.map((chip) => (
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          {chip}
+        </span>
+      ))}
+    </div>
+
+    <div class="dl-hero-share">
+      <SocialShare
+        url={shareUrl}
+        title={shareTitle}
+        description={shareDescription}
+        image={image}
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .dl-hero {
+    position: relative;
+    padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    text-align: center;
+  }
+
+  .dl-hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .dl-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  /* Breadcrumb */
+  .dl-breadcrumb {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .dl-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dl-badge {
+    animation: fadeInUp 0.5s ease 0.1s both;
+  }
+
+  .badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .dl-hero-headline {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 700px;
+    text-wrap: balance;
+    animation: fadeInUp 0.5s ease 0.2s both;
+  }
+
+  .headline-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-grad-develop-start) 0%,
+      var(--color-grad-preview-start) 40%,
+      var(--color-grad-preview-end) 70%,
+      var(--color-grad-ship-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dl-hero-subline {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.25s both;
+  }
+
+  .dl-hero-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.3s both;
+  }
+
+  .dl-hero-form-wrap {
+    width: 100%;
+    max-width: 760px;
+    animation: fadeInUp 0.5s ease 0.4s both;
+  }
+
+  .dl-hero-trust {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.5s ease 0.5s both;
+  }
+
+  .dl-hero-share {
+    animation: fadeInUp 0.5s ease 0.55s both;
+  }
+
+  .trust-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-body);
+    padding: 0 var(--spacing-md);
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trust-chip svg {
+    color: var(--color-cyan-deep);
+  }
+
+  @media (max-width: 600px) {
+    .dl-hero {
+      padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+      padding-inline: max(var(--spacing-md), env(safe-area-inset-left, 0px)) max(var(--spacing-md), env(safe-area-inset-right, 0px));
+    }
+
+    .dl-hero-headline {
+      font-size: clamp(22px, 5vw, 32px);
+      letter-spacing: -1px;
+    }
+
+    .trust-chip {
+      font-size: var(--text-caption);
+      height: 36px;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: 11px;
+    }
+  }
+</style>

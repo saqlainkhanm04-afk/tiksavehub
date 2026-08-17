@@ -7,9 +7,69 @@ import { resolveTikTokShortLink, normalizeTikTokUrl } from '../../lib/normalize'
 
 export const prerender = false;
 
-function pickStreamUrl(meta: TikTokVideoMeta, isHd: boolean): string | null {
-  if (isHd) return meta.hdplay ?? meta.play ?? meta.wmplay;
-  return meta.play ?? meta.wmplay ?? meta.hdplay;
+const DEFAULT_STREAM_TIMEOUT_MS = 60_000;
+const HD_ATTEMPT_TIMEOUT_MS = 20_000;
+
+interface StreamConfig {
+  filename: string;
+  contentType: string;
+  accept?: string;
+  referer?: string;
+}
+
+const STREAM_CONFIG: StreamConfig = {
+  filename: 'tiksavehub-video.mp4',
+  contentType: 'video/mp4',
+  accept: 'video/mp4,video/*,*/*',
+  referer: 'https://tikwm.com/',
+};
+
+// HD first, then fall back down the quality ladder (some ISPs/CDN edges
+// block the HD host — e.g. v16-notes.tiktokcdn-us.com — while the SD host
+// stays reachable, so we retry with the next best URL instead of failing).
+function pickStreamCandidates(meta: TikTokVideoMeta, isHd: boolean): string[] {
+  const order = isHd
+    ? [meta.hdplay, meta.play, meta.wmplay]
+    : [meta.play, meta.wmplay, meta.hdplay];
+  return [...new Set(order.filter((u): u is string => Boolean(u)))];
+}
+
+// Tries each candidate in order, cycling for a bounded number of attempts:
+// the HD host gets one quick shot (it may be blocked), and the normally
+// reachable URLs get a retry to ride out transient CDN resets. When the
+// cache has held the stream URLs too long (TikTok signs them with an
+// expiry), a metadata refresh re-signs them before the final attempts.
+async function streamFirstReachable(
+  candidates: string[],
+  isHd: boolean,
+  refreshCandidates: () => Promise<string[]>
+): Promise<Response> {
+  const maxRounds = 2;
+  let lastError: unknown = null;
+  for (let round = 0; round < maxRounds; round++) {
+    let attempts = 0;
+    while (attempts < Math.max(2, candidates.length)) {
+      const url = candidates[attempts % candidates.length];
+      try {
+        return await streamFromUpstream(url, {
+          ...STREAM_CONFIG,
+          timeoutMs: attempts === 0 && isHd ? HD_ATTEMPT_TIMEOUT_MS : DEFAULT_STREAM_TIMEOUT_MS,
+        });
+      } catch (err) {
+        lastError = err;
+        attempts++;
+      }
+    }
+    if (round === 0) {
+      const fresh = await refreshCandidates();
+      if (fresh.length > 0) {
+        candidates = fresh;
+        continue;
+      }
+    }
+    break;
+  }
+  throw lastError ?? new Error('No video URL available.');
 }
 
 export const GET: APIRoute = async ({ url, request }) => {
@@ -45,19 +105,31 @@ export const GET: APIRoute = async ({ url, request }) => {
     if (cached?.data) {
       const meta = cached.data as TikTokVideoMeta;
       if (dl) {
-        const streamUrl = pickStreamUrl(meta, isHd);
-        if (!streamUrl) {
+        const candidates = pickStreamCandidates(meta, isHd);
+        if (candidates.length === 0) {
           return new Response(
             JSON.stringify({ success: false, error: 'No video URL available.' }),
             { status: 422, headers: { 'Content-Type': 'application/json' } }
           );
         }
-        return streamFromUpstream(streamUrl, {
-          filename: 'tiksavehub-video.mp4',
-          contentType: 'video/mp4',
-          accept: 'video/mp4,video/*,*/*',
-          referer: 'https://tikwm.com/',
-        });
+        const refreshCandidates = async (): Promise<string[]> => {
+          try {
+            const fresh = await fetchTikTokMetaWithFallback(canonical);
+            const freshCandidates = pickStreamCandidates(fresh, isHd);
+            if (freshCandidates.length > 0) {
+              cacheWrite('tiktok', 'tt', canonical, 'tt', {
+                args: { hd: String(isHd) },
+                mediaUrl: freshCandidates[0] ?? null,
+                thumb: fresh.cover ?? null,
+                title: fresh.title,
+                data: fresh,
+              });
+              return freshCandidates;
+            }
+          } catch {}
+          return [];
+        };
+        return streamFirstReachable(candidates, isHd, refreshCandidates);
       }
 
       return new Response(
@@ -72,29 +144,25 @@ export const GET: APIRoute = async ({ url, request }) => {
       );
     }
 
-    const meta = await fetchTikTokMetaWithFallback(canonical, { hd: isHd });
+    const meta = await fetchTikTokMetaWithFallback(canonical);
+    const candidates = pickStreamCandidates(meta, isHd);
     cacheWrite('tiktok', 'tt', canonical, 'tt', {
       args: { hd: String(isHd) },
-      mediaUrl: pickStreamUrl(meta, isHd),
+      mediaUrl: candidates[0] ?? null,
       thumb: meta.cover ?? null,
       title: meta.title,
       data: meta,
     });
 
     if (dl) {
-      const streamUrl = pickStreamUrl(meta, isHd);
-      if (!streamUrl) {
+      if (candidates.length === 0) {
         return new Response(
           JSON.stringify({ success: false, error: 'No video URL available.' }),
           { status: 422, headers: { 'Content-Type': 'application/json' } }
         );
       }
-      return streamFromUpstream(streamUrl, {
-        filename: 'tiksavehub-video.mp4',
-        contentType: 'video/mp4',
-        accept: 'video/mp4,video/*,*/*',
-        referer: 'https://tikwm.com/',
-      });
+      const refreshCandidates = (): Promise<string[]> => Promise.resolve(candidates);
+      return streamFirstReachable(candidates, isHd, refreshCandidates);
     }
 
     return new Response(
@@ -116,7 +184,8 @@ export const GET: APIRoute = async ({ url, request }) => {
       msg.includes('All TikTok servers are busy') ||
       msg.includes('Upstream API returned') ||
       msg.includes('Upstream returned') ||
-      msg.includes('yt-dlp');
+      msg.includes('yt-dlp') ||
+      msg.includes('fetch failed');
     const isInvalid = msg.includes('invalid or expired') || msg.includes('Url parsing is failed');
     const isRestricted =
       isInvalid || msg.includes('no downloadable media') || msg.includes('returned no media');

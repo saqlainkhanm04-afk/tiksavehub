@@ -9,6 +9,10 @@ export const TOOL_PAGES = [
   '/instagram-story-downloader-without-watermark',
   '/instagram-audio-downloader',
   '/facebook-video-downloader',
+  '/facebook-reels-downloader',
+  '/facebook-to-mp3',
+  '/facebook-story-downloader',
+  '/facebook-photo-downloader',
 ];
 
 export const DEFAULT_TOOL_PAGE = '/tiktok-video-downloader-without-watermark';

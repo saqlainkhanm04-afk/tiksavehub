@@ -8,7 +8,7 @@ const showSectionNav = isToolPage(currentPath);
 ---
 
 <header id="site-nav" class="site-nav">
-  <div class="nav-inner container-page">
+  <div class="nav-inner">
     <!-- Logo -->
     <a href="/" class="nav-logo" id="nav-logo-link" aria-label="TikSaveHub home">
       <span class="nav-logo-text">TikSaveHub</span>
@@ -28,15 +28,15 @@ const showSectionNav = isToolPage(currentPath);
         </span>
         MP3
       </a>
-      <a href="/instagram-video-downloader-without-watermark" class="nav-link nav-link-ig" id="nav-link-ig">
+      <a href="/instagram-reels-downloader-without-watermark" class="nav-link nav-link-ig" id="nav-link-ig">
         <span class="ig-nav-icon" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
         </span>
         Instagram
       </a>
-      <a href="/facebook-video-downloader" class="nav-link nav-link-fb" id="nav-link-fb">
+      <a href="/facebook-reels-downloader" class="nav-link nav-link-fb" id="nav-link-fb">
         <span class="fb-nav-icon" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.25-1.5 1.55-1.5h1.65V4.6c-.3-.04-1.3-.12-2.45-.12-2.4 0-4.05 1.47-4.05 4.16v2.32H7.5V14h2.7v8h3.3z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         </span>
         Facebook
       </a>
@@ -48,9 +48,27 @@ const showSectionNav = isToolPage(currentPath);
       </a>
     </nav>
 
+    <!-- Page Section Links + CTAs (tool pages) -->
+    <div class="nav-right">
+      {showSectionNav && (
+        <nav class="section-nav" aria-label="Page sections">
+        <a href="#how-it-works" class="section-nav-link">
+          <svg class="section-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="section-nav-label">How It Works</span>
+        </a>
+        <a href="#features" class="section-nav-link">
+          <svg class="section-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span class="section-nav-label">Features</span>
+        </a>
+        <a href="#faq" class="section-nav-link">
+          <svg class="section-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span class="section-nav-label">FAQ</span>
+        </a>
+      </nav>
+    )}
+
     <!-- Nav CTAs -->
     <div class="nav-ctas">
-      <a href={downloadHref} class="btn-nav" id="nav-cta-download">Download Free</a>
       <button class="btn-nav theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme">
         <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="5"/>
@@ -66,7 +84,9 @@ const showSectionNav = isToolPage(currentPath);
         <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
-      </button>
+        </button>
+      <a href={downloadHref} class="btn-nav" id="nav-cta-download">Download Free</a>
+    </div>
     </div>
 
     <!-- Mobile Hamburger -->
@@ -85,7 +105,7 @@ const showSectionNav = isToolPage(currentPath);
 
   <!-- Mobile Menu -->
   <div id="mobile-menu" class="mobile-menu" hidden aria-label="Mobile navigation">
-    <div class="mobile-menu-inner container-page">
+    <div class="mobile-menu-inner">
       <a href="/tiktok-video-downloader-without-watermark" class="mobile-nav-link mobile-nav-link-downloader" id="mob-link-downloader">
         <span class="dl-nav-icon" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
@@ -98,15 +118,15 @@ const showSectionNav = isToolPage(currentPath);
         </span>
         MP3
       </a>
-      <a href="/instagram-video-downloader-without-watermark" class="mobile-nav-link mobile-nav-link-ig" id="mob-link-ig">
+      <a href="/instagram-reels-downloader-without-watermark" class="mobile-nav-link mobile-nav-link-ig" id="mob-link-ig">
         <span class="ig-nav-icon" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
         </span>
         Instagram
       </a>
-      <a href="/facebook-video-downloader" class="mobile-nav-link mobile-nav-link-fb" id="mob-link-fb">
+      <a href="/facebook-reels-downloader" class="mobile-nav-link mobile-nav-link-fb" id="mob-link-fb">
         <span class="fb-nav-icon" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.25-1.5 1.55-1.5h1.65V4.6c-.3-.04-1.3-.12-2.45-.12-2.4 0-4.05 1.47-4.05 4.16v2.32H7.5V14h2.7v8h3.3z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         </span>
         Facebook
       </a>
@@ -138,24 +158,6 @@ const showSectionNav = isToolPage(currentPath);
     </div>
   </div>
 </header>
-
-<!-- Floating Side Navigation -->
-{showSectionNav && (
-<nav class="float-nav" aria-label="Page sections">
-  <a href="#how-it-works" class="float-nav-link">
-    <svg class="float-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    <span class="float-nav-label">How It Works</span>
-  </a>
-  <a href="#features" class="float-nav-link">
-    <svg class="float-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-    <span class="float-nav-label">Features</span>
-  </a>
-  <a href="#faq" class="float-nav-link">
-    <svg class="float-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    <span class="float-nav-label">FAQ</span>
-  </a>
-</nav>
-)}
 
 <style>
   .site-nav {
@@ -245,6 +247,10 @@ const showSectionNav = isToolPage(currentPath);
     align-items: center;
     gap: var(--spacing-lg);
     height: 100%;
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: var(--spacing-lg);
   }
 
   .nav-logo {
@@ -419,9 +425,9 @@ const showSectionNav = isToolPage(currentPath);
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: linear-gradient(135deg, rgba(245, 166, 35, 0.12), rgba(255, 77, 77, 0.12)) !important;
-    border: 1px solid rgba(245, 166, 35, 0.25) !important;
-    color: #d97706 !important;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(236, 72, 153, 0.12)) !important;
+    border: 1px solid rgba(124, 58, 237, 0.25) !important;
+    color: #7c3aed !important;
     font-weight: 600 !important;
     position: relative;
     overflow: hidden;
@@ -434,7 +440,7 @@ const showSectionNav = isToolPage(currentPath);
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, rgba(245, 166, 35, 0.15), rgba(255, 77, 77, 0.15));
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15));
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -442,10 +448,10 @@ const showSectionNav = isToolPage(currentPath);
   .nav-link-ig:hover {
     transform: scale(1.05) !important;
     box-shadow:
-      0 0 20px rgba(245, 166, 35, 0.3),
-      0 0 40px rgba(255, 77, 77, 0.15) !important;
-    border-color: rgba(245, 166, 35, 0.5) !important;
-    color: #b45309 !important;
+      0 0 20px rgba(124, 58, 237, 0.3),
+      0 0 40px rgba(236, 72, 153, 0.15) !important;
+    border-color: rgba(124, 58, 237, 0.5) !important;
+    color: #6d28d9 !important;
     animation: none !important;
   }
 
@@ -475,10 +481,10 @@ const showSectionNav = isToolPage(currentPath);
 
   @keyframes ig-nav-pulse {
     0%, 100% {
-      box-shadow: 0 0 0 0 rgba(245, 166, 35, 0);
+      box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
     }
     50% {
-      box-shadow: 0 0 8px 2px rgba(245, 166, 35, 0.15);
+      box-shadow: 0 0 8px 2px rgba(124, 58, 237, 0.15);
     }
   }
 
@@ -491,12 +497,12 @@ const showSectionNav = isToolPage(currentPath);
   }
 
   .dark .nav-link-ig {
-    color: #fbbf24 !important;
+    color: #c084fc !important;
   }
 
   .dark .nav-link-ig:hover {
-    color: #fde68a !important;
-    border-color: rgba(251, 191, 36, 0.5) !important;
+    color: #e9d5ff !important;
+    border-color: rgba(192, 132, 252, 0.5) !important;
   }
 
   /* ─── Mobile Instagram Nav Link ─── */
@@ -504,10 +510,10 @@ const showSectionNav = isToolPage(currentPath);
     display: flex !important;
     align-items: center;
     gap: 6px;
-    color: #d97706 !important;
+    color: #7c3aed !important;
     font-weight: 600 !important;
-    background: linear-gradient(135deg, rgba(245, 166, 35, 0.08), rgba(255, 77, 77, 0.08)) !important;
-    border: 1px solid rgba(245, 166, 35, 0.2) !important;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(236, 72, 153, 0.08)) !important;
+    border: 1px solid rgba(124, 58, 237, 0.2) !important;
     margin-top: 2px;
     margin-bottom: 2px;
     transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease !important;
@@ -515,8 +521,8 @@ const showSectionNav = isToolPage(currentPath);
   }
 
   .mobile-nav-link-ig:hover {
-    background: linear-gradient(135deg, rgba(245, 166, 35, 0.15), rgba(255, 77, 77, 0.15)) !important;
-    border-color: rgba(245, 166, 35, 0.4) !important;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15)) !important;
+    border-color: rgba(124, 58, 237, 0.4) !important;
     transform: translateX(4px);
   }
 
@@ -527,10 +533,10 @@ const showSectionNav = isToolPage(currentPath);
   }
 
   @keyframes ig-click-pop {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.4); }
-    30% { transform: scale(0.88); box-shadow: 0 0 0 6px rgba(245, 166, 35, 0); }
-    60% { transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(245, 166, 35, 0.2); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 166, 35, 0); }
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+    30% { transform: scale(0.88); box-shadow: 0 0 0 6px rgba(124, 58, 237, 0); }
+    60% { transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(124, 58, 237, 0.2); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
   }
 
   /* ─── MP3 Nav Button ─── */
@@ -833,6 +839,7 @@ const showSectionNav = isToolPage(currentPath);
     border-bottom: 1px solid var(--color-hairline);
     padding: var(--spacing-sm) 0;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     transition: max-height 0.35s ease, opacity 0.25s ease;
     max-height: 0;
     opacity: 0;
@@ -841,10 +848,12 @@ const showSectionNav = isToolPage(currentPath);
     left: 0;
     right: 0;
     z-index: 100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .mobile-menu:not([hidden]) {
-    max-height: calc(100vh - 64px);
+    max-height: calc(100vh - 64px - env(safe-area-inset-top, 0px));
     opacity: 1;
   }
 
@@ -859,13 +868,21 @@ const showSectionNav = isToolPage(currentPath);
     display: flex;
     flex-direction: column;
     gap: 4px;
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: var(--spacing-lg);
   }
 
   .mobile-nav-link {
     color: var(--color-body);
     font-size: var(--text-body-sm);
     font-weight: 400;
-    padding: var(--spacing-sm) var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-sm);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
     border-radius: var(--radius-sm);
     text-decoration: none;
     transition: color 0.15s ease, background-color 0.15s ease;
@@ -879,7 +896,8 @@ const showSectionNav = isToolPage(currentPath);
   .mobile-cta {
     margin-top: var(--spacing-sm);
     flex: 1;
-    height: 40px !important;
+    height: 44px !important;
+    min-height: 44px;
     font-size: var(--text-body-sm) !important;
   }
 
@@ -891,8 +909,8 @@ const showSectionNav = isToolPage(currentPath);
   }
 
   .mobile-theme-toggle {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     flex-shrink: 0;
   }
 
@@ -949,29 +967,20 @@ const showSectionNav = isToolPage(currentPath);
     100% { transform: rotate(360deg) scale(1); }
   }
 
-  /* ─── Floating Side Navigation ─── */
-  .float-nav {
-    position: fixed;
-    top: calc(64px + var(--spacing-md));
-    left: 16px;
-    z-index: 90;
+  /* ─── Section Navigation (in-header horizontal row, tool pages) ─── */
+  .section-nav {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     gap: 2px;
-    padding: var(--spacing-xs);
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    padding-left: var(--spacing-md);
+    margin-left: var(--spacing-md);
+    border-left: 1px solid var(--color-hairline);
+    flex-shrink: 0;
   }
 
-  .dark .float-nav {
-    background: transparent;
-    border-color: transparent;
-  }
-
-  .float-nav-link {
-    display: flex;
+  .section-nav-link {
+    display: inline-flex;
     align-items: center;
     gap: var(--spacing-xs);
     padding: var(--spacing-sm) var(--spacing-md);
@@ -984,61 +993,210 @@ const showSectionNav = isToolPage(currentPath);
     transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
     white-space: nowrap;
     position: relative;
+    cursor: pointer;
   }
 
-  .float-nav-link::before {
+  .section-nav-link::before {
     content: '';
     position: absolute;
-    left: -1px;
-    top: 50%;
-    transform: translateY(-50%) scaleY(0);
-    width: 3px;
-    height: 20px;
+    left: var(--spacing-sm);
+    right: var(--spacing-sm);
+    bottom: 5px;
+    height: 3px;
     border-radius: 2px;
-    background: linear-gradient(180deg, #007cf0, #7928ca);
+    background: linear-gradient(90deg, #007cf0, #7928ca);
+    transform: scaleX(0);
+    transform-origin: left;
     transition: transform 0.2s ease;
   }
 
-  .float-nav-link:hover {
+  .section-nav-link:hover {
     color: var(--color-ink);
     background: var(--color-canvas-soft-2);
   }
 
-  .float-nav-link:hover::before {
-    transform: translateY(-50%) scaleY(1);
+  .section-nav-link:hover::before {
+    transform: scaleX(1);
   }
 
-  .dark .float-nav-link {
-    color: #a3a3a3;
-  }
-
-  .dark .float-nav-link:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
-  }
-
-  .float-nav-icon {
+  .section-nav-icon {
     flex-shrink: 0;
     color: var(--color-mute);
     transition: color 0.2s ease;
   }
 
-  .float-nav-link:hover .float-nav-icon {
+  .section-nav-link:hover .section-nav-icon {
     color: var(--color-ink);
   }
 
-  .dark .float-nav-icon {
+  .dark .section-nav-link {
+    color: #a3a3a3;
+  }
+
+  .dark .section-nav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .section-nav-icon {
     color: #666;
   }
 
-  .dark .float-nav-link:hover .float-nav-icon {
+  .dark .section-nav-link:hover .section-nav-icon {
     color: #ffffff;
   }
 
+  .dark .section-nav {
+    border-left-color: rgba(255, 255, 255, 0.14);
+  }
+
+  /* ─── Facebook Nav Button ─── */
+  .nav-link-fb {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(236, 72, 153, 0.12)) !important;
+    border: 1px solid rgba(124, 58, 237, 0.25) !important;
+    color: #7c3aed !important;
+    font-weight: 600 !important;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation: fb-nav-pulse 2s ease-in-out infinite;
+  }
+
+  .nav-link-fb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav-link-fb:hover {
+    transform: scale(1.05) !important;
+    box-shadow:
+      0 0 20px rgba(124, 58, 237, 0.3),
+      0 0 40px rgba(236, 72, 153, 0.15) !important;
+    border-color: rgba(124, 58, 237, 0.5) !important;
+    color: #6d28d9 !important;
+    animation: none !important;
+  }
+
+  .nav-link-fb:hover::before {
+    opacity: 1;
+  }
+
+  .nav-link-fb:active {
+    transform: scale(0.92) !important;
+    transition-duration: 0.1s !important;
+  }
+
+  .nav-link-fb > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-link-fb:hover .fb-nav-icon {
+    animation: fb-icon-bounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  }
+
+  .fb-nav-icon {
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease;
+  }
+
+  @keyframes fb-nav-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+    }
+    50% {
+      box-shadow: 0 0 8px 2px rgba(124, 58, 237, 0.15);
+    }
+  }
+
+  @keyframes fb-icon-bounce {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-3px) scale(1.15); }
+    50% { transform: translateY(-1px) scale(1.05); }
+    70% { transform: translateY(-2px) scale(1.1); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  .dark .nav-link-fb {
+    color: #c084fc !important;
+  }
+
+  .dark .nav-link-fb:hover {
+    color: #e9d5ff !important;
+    border-color: rgba(192, 132, 252, 0.5) !important;
+  }
+
+  /* ─── Mobile Facebook Nav Link ─── */
+  .mobile-nav-link-fb {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    color: #7c3aed !important;
+    font-weight: 600 !important;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(236, 72, 153, 0.08)) !important;
+    border: 1px solid rgba(124, 58, 237, 0.2) !important;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease !important;
+    animation: fb-nav-pulse 2s ease-in-out infinite;
+  }
+
+  .mobile-nav-link-fb:hover {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15)) !important;
+    border-color: rgba(124, 58, 237, 0.4) !important;
+    transform: translateX(4px);
+  }
+
+  /* ─── Facebook Click Animation ─── */
+  .nav-link-fb.fb-clicked,
+  .mobile-nav-link-fb.fb-clicked {
+    animation: fb-click-pop 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
+  }
+
+  @keyframes fb-click-pop {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+    30% { transform: scale(0.88); box-shadow: 0 0 0 6px rgba(124, 58, 237, 0); }
+    60% { transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(124, 58, 237, 0.2); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+  }
+
   @media (max-width: 1180px) {
-    .float-nav {
+    .section-nav {
       display: none;
     }
+  }
+
+  /* True-center the tool nav links on wide screens where the
+     logo (left) and section-nav+CTAs (right) both fit with clearance */
+  @media (min-width: 1880px) {
+    .nav-inner {
+      position: relative;
+      justify-content: space-between;
+    }
+
+    .nav-links {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      flex: 0 0 auto;
+    }
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-shrink: 0;
   }
 
   @media (max-width: 600px) {
@@ -1049,6 +1207,21 @@ const showSectionNav = isToolPage(currentPath);
 
     .nav-hamburger {
       display: flex;
+    }
+
+    .nav-logo-text {
+      font-size: clamp(16px, 4vw, 20px);
+    }
+  }
+
+  @media (max-width: 360px) {
+    .nav-logo-text {
+      font-size: 15px;
+    }
+
+    .nav-logo-icon svg {
+      width: 22px;
+      height: 22px;
     }
   }
 </style>
@@ -1119,6 +1292,15 @@ const showSectionNav = isToolPage(currentPath);
     link.addEventListener('click', () => {
       link.classList.add('ig-clicked');
       setTimeout(() => link.classList.remove('ig-clicked'), 400);
+    });
+  });
+
+  // Facebook nav button click animation
+  const fbNavLinks = document.querySelectorAll('.nav-link-fb, .mobile-nav-link-fb');
+  fbNavLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      link.classList.add('fb-clicked');
+      setTimeout(() => link.classList.remove('fb-clicked'), 400);
     });
   });
 

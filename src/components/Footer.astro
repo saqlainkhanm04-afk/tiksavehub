@@ -159,6 +159,8 @@ const currentPath = Astro.url.pathname;
     text-decoration: none;
     transition: color 0.15s ease;
     letter-spacing: -0.28px;
+    padding: var(--spacing-xxs) 0;
+    display: inline-block;
   }
 
   .footer-link:hover {
@@ -198,6 +200,10 @@ const currentPath = Astro.url.pathname;
     .footer-inner {
       grid-template-columns: 1fr;
       gap: var(--spacing-xl);
+    }
+
+    .footer-link-list {
+      gap: var(--spacing-xs);
     }
 
     .footer-bottom-text {

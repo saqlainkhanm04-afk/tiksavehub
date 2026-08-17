@@ -1,0 +1,167 @@
+---
+// FbFeaturesSection — feature cards grid (features anchor)
+interface Feature {
+  title: string;
+  body: string;
+  icon: 'shield' | 'music' | 'zap' | 'list' | 'device' | 'globe';
+  accent: 'develop' | 'preview' | 'ship';
+}
+
+interface Props {
+  eyebrow: string;
+  headline: string;
+  features: Feature[];
+}
+
+const { eyebrow, headline, features } = Astro.props;
+
+const icons: Record<Feature['icon'], string> = {
+  shield: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  music: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+  zap: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  list: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="3"/></svg>',
+  device: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+  globe: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+};
+---
+
+<section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+  <div class="dl-features-inner container-page">
+    <div class="dl-features-header">
+      <span class="section-eyebrow text-caption-mono">{eyebrow}</span>
+      <h2 id="dl-features-headline" class="section-headline">
+        {headline}
+      </h2>
+    </div>
+
+    <div class="dl-features-grid">
+      {features.map((feature) => (
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-{feature.accent}" aria-hidden="true" set:html={icons[feature.icon]}></div>
+          <h3 class="dl-feature-title">{feature.title}</h3>
+          <p class="dl-feature-body">{feature.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .dl-features-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .dl-features-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .dl-features-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feat-accent-develop {
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+  }
+
+  .feat-accent-preview {
+    background: linear-gradient(135deg, #7928ca15, #ff008020);
+    color: var(--color-grad-preview-start);
+    box-shadow: inset 0 0 0 1px #7928ca25;
+  }
+
+  .feat-accent-ship {
+    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+    color: var(--color-grad-ship-start);
+    box-shadow: inset 0 0 0 1px #ff4d4d25;
+  }
+
+  .dl-feature-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-feature-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 960px) {
+    .dl-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-features-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,273 @@
+---
+// FbSeoArticle — long-form SEO content section with sticky sidebar
+interface Props {
+  headline: string;
+  quickLinks: { label: string; href: string }[];
+  supportedLinks?: string[];
+  sidebarCtaLabel?: string;
+  children: any;
+}
+
+const { headline, quickLinks, supportedLinks = [], sidebarCtaLabel = 'Start Downloading' } = Astro.props;
+---
+
+<section class="seo-content-section" aria-labelledby="seo-about-headline">
+  <div class="seo-content-inner container-page">
+    <div class="seo-content-grid">
+      <div class="seo-content-main">
+        <span class="section-eyebrow text-caption-mono">About</span>
+        <h2 id="seo-about-headline" class="section-headline">
+          {headline}
+        </h2>
+        <div class="seo-article">
+          <slot />
+        </div>
+      </div>
+
+      <aside class="seo-content-sidebar">
+        <div class="seo-sidebar-card">
+          <h3 class="seo-sidebar-title">Quick Links</h3>
+          <ul class="seo-sidebar-list">
+            {quickLinks.map((link) => (
+              <li><a href={link.href}>{link.label}</a></li>
+            ))}
+          </ul>
+        </div>
+
+        {supportedLinks.length > 0 && (
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Supported Links</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              {supportedLinks.map((link) => (
+                <li>{link}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="seo-sidebar-card seo-sidebar-highlight">
+          <h3 class="seo-sidebar-title">{sidebarCtaLabel}</h3>
+          <p class="seo-sidebar-text">Paste a Facebook link above and get your file in seconds.</p>
+          <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Try Now</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .seo-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .seo-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .seo-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .seo-content-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .seo-article {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .seo-article p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .seo-article h3 {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.35;
+  }
+
+  .seo-article ul {
+    margin: 0;
+    padding-left: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .seo-article li {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.7;
+  }
+
+  .seo-article a {
+    color: var(--color-grad-develop-start);
+    text-decoration-color: #007cf040;
+    text-underline-offset: 3px;
+    font-weight: 500;
+  }
+
+  .seo-article a:hover {
+    color: var(--color-ink);
+  }
+
+  .text-highlight {
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .seo-content-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    position: sticky;
+    top: 80px;
+  }
+
+  .seo-sidebar-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .seo-sidebar-highlight {
+    background: linear-gradient(135deg, #007cf008, #00dfd808);
+    border: 1px solid #007cf020;
+  }
+
+  .seo-sidebar-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .seo-sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .seo-sidebar-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .seo-sidebar-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .seo-sidebar-mono li {
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .seo-sidebar-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    line-height: 2.2;
+    letter-spacing: -0.1px;
+  }
+
+  .btn-primary-sm:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 960px) {
+    .seo-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .seo-content-sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .seo-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .seo-content-sidebar {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -227,6 +227,20 @@
 
 ---
 
+### Session — FB multi-photo ZIP: sibling full-res + locked-thumb fallback (2026-08-17)
+- **User bug report (Hinglish):** "abe yar ye single photo download kr raha hai — `web.facebook.com/share/p/14jou2QjmXc/` is link mai multiple photos hai" + "tum google ki b help le sakte ho, competitors ko check karo".
+- **Diagnosis (live on dev server):** API POST already returned `photoCount:5` — but sibling photos were ONLY signed quad thumbs (`stp=dst-webp_q70_s261x260/s173x172`, 4-7KB webp). The ZIP = 1 real photo (40KB p600) + 4 tiny thumbs → user sees "sirf single photo". `promotePhotoUrl` never touched `dst-webp` tokens.
+- **Dead-end probes (all documented):** `photo.php?fbid={siblingId}` 4 hosts × desktop/iPhone UA = login-wall shells (259KB Urdu login, NO og:image) or 880B shells; `story.php?story_fbid=1732655628004069` = no image data (touch page had only the same thumbs); `mbasic` = login redirect; `plugins/post.php` = JS-only; `photo/?fbid=` = 880B; CDN `stp=` rewrites of the sibling thumbs (p2048/dst-jpg variants) = **403** (signed, `oh`/`oe` cover stp). Dev IP cannot produce full-res siblings — confirmed hard limitation.
+- **Competitor research (websearch):** standard technique used by FDown/GetVidFB/Apify/open-source scripts = fetch each sibling's **`photo.php?fbid={photoId}`** and take ITS og:image (full-res). Photo ID = first numeric segment of CDN path (`{photoId}_{fbid}_{…}_n.jpg`).
+- **FIXES (`src/lib/facebook.ts`):** `extractPhotosFromHtml` → `PhotoCandidate[]` `{url, alt}` (promoted + raw original); per-path dedupe keeps BEST rendition via new `photoQualityScore(u)` (jpg+10/webp+1, stp s/p dims, ctp/cstp dims, path /p{w}x{h}/ dims, unsigned no-size dst-jpg = ORIGINAL +2000); `promotePhotoUrl` also upgrades `dst-webp_q70_s{N}x{N}` → `dst-jpg_p2048x2048`; new `photoIdFromUrl`, `isThumbOnly` (score < MIN_FULL_PHOTO_SCORE=320), `fetchSiblingPhotosFull(ids)` (photo.php matrix web-iPhone→www-desktop→m-iPhone, 6s timeout, 3 parallel rounds, og:image only, rejects login/static/facebook.com URLs); `fetchFacebookPhotoSet` triggers per-photo fetch only when thumb-only siblings exist; `FacebookPhoto.altUrl?`; `fetchPhotoBuffer(url, altUrl?)` falls back on non-ok; `fetchFacebookPhotosAsFiles(Array<{url, alt?}>)`; `readBoundedText` catch → returns buffered head on throttled stall (og:image salvaged instead of wasted timeout). `extractPhotosFromHtml` exported for tests.
+- **API (`src/pages/api/facebook.ts`):** POST + zip cache payload carry `altUrl` per photo; `dl=zip` passes `{url, alt}` objects both paths; single `dl=photo` tries promoted, falls back to alt on upstream failure.
+- **Verified live (dev server, after FB throttle cooldown):** POST user's link → 200 photoCount:5 (~15s while IP throttled; photos 2-5 `dst-jpg_p2048x2048` + altUrl set); ZIP 64,710B, **5 entries** (photo-01.jpg 40,962B FF D8 FF + photo-02..05.webp RIFF 4-7.7KB via alt fallback — promoted 403'd on dev, original thumbs salvaged, NO entry lost); single dl=photo 40,962B JPEG; video dl=sd regression OK (1.18MB ftyp). **Extractor unit test via tsx on 6 REAL saved pages ALL PASS** (share-iPhone 5 / throttled partial head 5 / touch story 5 / photo.php Urdu login 0 / story web shell 0 / plugin shell 0). `astro check` 0/0/0, build green.
+- **Ops note:** dev IP got hard-throttled by the curl barrage (share page stalled 113-167KB, 30s curl timeouts); cooldown restores it. Cache pitfalls during testing: kill node (clears memoSWR) + delete `media:fb:photo*` keys from `data/cache/media-cache.json` via **node script** (PowerShell ConvertFrom-Json/Set-Content mangles: BOM + wrong structure — use node with BOM-strip). Temp test file `test-extract.ts` deleted; backup of cache at `%TEMP%\media-cache-backup.json`.
+- On unflagged production IPs the story JSON already yields full-res sibling URIs (no per-photo fetches needed); per-photo fallback covers partial flags. Dev IP: sibling thumbs stay small (signed) — full-res verification needs production IP (documented, no action).
+- No git commit made (user ne nahi bola).
+
+---
+
 ## LAST SAVE / PAUSE POINT (2026-08-17)
 
 > **IS WAHIN PAR RUKA — yahan se resume karna hai.**

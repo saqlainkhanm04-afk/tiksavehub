@@ -183,18 +183,25 @@
 
 ---
 
-## LAST SAVE / PAUSE POINT (2026-08-16)
+### Session — Continue: sitemap verify + git commit (2026-08-17)
+- User said "continue" — resumed from pause point.
+- **Sitemap/robots verify (pending item DONE):** `/facebook-photo-downloader` confirmed in `astro.config.mjs` seoPages (line 22, already added in photo-build session); `public/robots.txt` is generic (Allow: /, points to sitemap-index.xml) — no per-page entries needed. `npx astro check` 0/0/0 (64 files), `npm run build` green, sitemap-index.xml generated in dist.
+- **GIT COMMIT DONE** (user confirmed): `4501c72` "FB downloader suite: photo tool, story strict-mode, share links, per-tool tiles + prod env artifacts" — 43 files, +5010/−350. Working tree now CLEAN.
+- Remaining: production deploy (server-side, needs user: IG_SESSIONID paste into /etc/tiksavehub/env, dist deploy, `systemctl enable --now tiksavehub`).
+
+---
+
+## LAST SAVE / PAUSE POINT (2026-08-17)
 
 > **IS WAHIN PAR RUKA — yahan se resume karna hai.**
 > READ ye section, phir neeche WORK SESSIONS, phir kaam shuru.
 
-- **Kya hua:** FB Photo Downloader full build complete (parse + extraction + API + form + page, verified 0/0/0 + build green + API smoke). Saath me FB share-link formats fix (`share/r/` + `share/v/`) + photo fetch speedup (parallel + bounded stream). Per-tool result tiles done (har tool sirf apne download buttons dikhata hai). **FB Story tool strict-mode fix:** story page ab SIRF story links accept karta hai (parse me `linkType:'story'` + API mode gate) — video/reel links 422 reject, verified live. **Story token decode + story.php permalink extraction:** token se asli story id nikalti hai aur classic `story.php?story_fbid=…&id=…` permalink se media milta hai (ye wahi method hai jo FB story downloaders use karte hain); stories cached nahi hoti (24h expiry).
+- **Kya hua (2026-08-17):** Sitemap/robots verified (photo page in seoPages), `astro check` 0/0/0 + build green, **git commit `4501c72`** done (43 files, worktree clean). Production deploy still pending (server-side).
 - **Dev server:** port 3000 (agar nahi chalta to `npm run dev`).
 - **Known limitation:** dev IP pe FB photo pages shelled → photo POST error aata hai (og:image nahi milta); production IP pe kaam karega. Do NOT chase dev-IP workaround.
 - **Aage ka kaam (user puchhe to):**
-  - [ ] FB photo page ko sitemap/robots me verify karna (astro.config.mjs me add ho chuka — check kar lena)
-  - [ ] Production env setup complete karna (IG_SESSIONID server pe paste, dist deploy, service start)
-  - [ ] Git commit (working tree me bahut saara uncommitted kaam hai — FB photo tool, share links, speedup, nav fixes)
+  - [ ] Production deploy: IG_SESSIONID server pe paste, dist deploy, `systemctl enable --now tiksavehub` (user-side, server needed)
+  - [ ] Koi naya feature / fix (user decide kare)
 - **Resume kaise:** FILE READ → dev server check → neeche sessions padho → user se pucho aage kya karna hai.
 
 ---
@@ -209,8 +216,8 @@
 - [x] Production env setup artifacts (`.env.production.example`, `deploy/tiksavehub.service`, `scripts/setup-server.sh`)
 - [x] Nav/ad layout fixes + FB nav button purple/pink palette
 - [ ] FB photo page sitemap verify (astro.config.mjs me add ho chuka — double-check karna)
-- [ ] Production deploy: IG_SESSIONID server pe, dist deploy, `systemctl enable --now tiksavehub`
-- [ ] Git commit working tree (bahut saara kaam uncommitted hai)
+- [ ] Production deploy: IG_SESSIONID server pe, dist deploy, `systemctl enable --now tiksavehub` (server-side, user needed)
+- [x] Git commit working tree (done: `4501c72`, worktree clean)
 - [ ] Anything GitHub says at commit time
 
 ---

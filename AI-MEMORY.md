@@ -219,6 +219,14 @@
 
 ---
 
+### Session — Git commit: multi-photo ZIP bundle + share/p fixes (2026-08-17)
+- User said "continue" → dev server was down, restarted on :3000 (photo page 200 verified).
+- Pending uncommitted work (photo parse fix + share/p extraction fix + multi-photo ZIP bundle, all previously verified) committed as `e0a1619` "FB multi-photo ZIP bundle + share/p parse/extraction fixes" — 7 files, +597/−126 (incl. new src/lib/zip.ts).
+- Pre-commit sanity: `npx astro check` 0/0/0 (65 files). Working tree now CLEAN.
+- Remaining: production deploy (server-side, user needed).
+
+---
+
 ## LAST SAVE / PAUSE POINT (2026-08-17)
 
 > **IS WAHIN PAR RUKA — yahan se resume karna hai.**
@@ -247,6 +255,7 @@
 - [ ] FB photo page sitemap verify (astro.config.mjs me add ho chuka — double-check karna)
 - [ ] Production deploy: IG_SESSIONID server pe, dist deploy, `systemctl enable --now tiksavehub` (server-side, user needed)
 - [x] Git commit working tree (done: `4501c72`, worktree clean)
+- [x] Git commit ZIP bundle + share/p fixes (done: `e0a1619`, worktree clean)
 - [ ] Anything GitHub says at commit time
 
 ---

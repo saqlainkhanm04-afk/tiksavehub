@@ -168,6 +168,7 @@ export const POST: APIRoute = async ({ request }) => {
         title: set.title || 'Facebook Photo',
         photos: set.photos.map((p) => ({
           photoUrl: p.photoUrl,
+          altUrl: p.altUrl,
           cover: p.cover || p.photoUrl,
           title: p.title || set.title,
         })),
@@ -292,18 +293,31 @@ export const GET: APIRoute = async ({ url, request }) => {
 
       // Bundle mode: download every photo of the post into one ZIP.
       if (mode === 'zip') {
-        let photoUrls: string[] = Array.isArray(cachedData?.photos)
-          ? (cachedData.photos as any[]).map((p) => p?.photoUrl || p?.cover).filter(Boolean)
-          : [];
+        let photoUrls: Array<{ url: string; alt?: string }> = [];
+        if (Array.isArray(cachedData?.photos)) {
+          for (const p of cachedData.photos as Array<{ photoUrl?: string; cover?: string; altUrl?: string }>) {
+            const url = p?.photoUrl || p?.cover;
+            if (!url) continue;
+            const entry: { url: string; alt?: string } = { url };
+            if (typeof p?.altUrl === 'string') entry.alt = p.altUrl;
+            photoUrls.push(entry);
+          }
+        }
         if (photoUrls.length < 2) {
           const set = await fetchFacebookPhotoSet(parsed.sanitizedUrl);
-          photoUrls = set.photos.map((p) => p.photoUrl).filter(Boolean);
+          photoUrls = [];
+          for (const p of set.photos) {
+            const entry: { url: string; alt?: string } = { url: p.photoUrl };
+            if (p.altUrl) entry.alt = p.altUrl;
+            photoUrls.push(entry);
+          }
           const payload = {
             photoUrl: set.photos[0]?.photoUrl || '',
             cover: set.photos[0]?.cover || set.cover || '',
             title: set.title || 'Facebook Photo',
             photos: set.photos.map((p) => ({
               photoUrl: p.photoUrl,
+              altUrl: p.altUrl,
               cover: p.cover || p.photoUrl,
               title: p.title || set.title,
             })),
@@ -351,23 +365,32 @@ export const GET: APIRoute = async ({ url, request }) => {
       }
 
       const photoUrl: string | null = (cachedData?.photoUrl as string) || null;
+      const altUrl: string | null = (cachedData?.photos as any[])?.[0]?.altUrl || null;
 
-      if (!photoUrl) {
-        const photo = await fetchFacebookPhoto(parsed.sanitizedUrl);
-        return streamFromUpstream(photo.photoUrl, {
+      const streamPhoto = async (primary: string, alt: string | null) => {
+        const opts = {
           filename: 'tiksavehub-facebook-photo.jpg',
           contentType: 'image/jpeg',
           accept: 'image/jpeg,image/png,image/webp,image/*,*/*',
           referer: FACEBOOK_REFERER,
-        });
+        };
+        try {
+          return await streamFromUpstream(primary, opts);
+        } catch (err) {
+          // Promoted rendition may be signed/locked → fall back to the raw original.
+          if (alt && alt !== primary) {
+            return streamFromUpstream(alt, opts);
+          }
+          throw err;
+        }
+      };
+
+      if (!photoUrl) {
+        const photo = await fetchFacebookPhoto(parsed.sanitizedUrl);
+        return streamPhoto(photo.photoUrl, photo.altUrl || null);
       }
 
-      return streamFromUpstream(photoUrl, {
-        filename: 'tiksavehub-facebook-photo.jpg',
-        contentType: 'image/jpeg',
-        accept: 'image/jpeg,image/png,image/webp,image/*,*/*',
-        referer: FACEBOOK_REFERER,
-      });
+      return streamPhoto(photoUrl, altUrl);
     } catch (err: any) {
       console.error('[Facebook API] Photo error:', err?.message ?? err);
       return json({ success: false, error: photoMessageFor(err) }, 500);

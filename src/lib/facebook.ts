@@ -33,7 +33,15 @@ export interface FacebookPhoto {
   title: string;
   cover: string;
   photoUrl: string;
+  /** Un-promoted CDN URL — safe fallback when the promoted URL is refused (signed/locked tokens). */
+  altUrl?: string;
   author: { name: string; avatar: string };
+}
+
+/** A photo candidate as found on the page: the promoted URL plus its raw original. */
+interface PhotoCandidate {
+  url: string;
+  alt: string;
 }
 
 /** Error codes thrown by the extraction layer (mapped to user messages by the API). */
@@ -475,18 +483,72 @@ export async function fetchFacebookAudio(inputUrl: string): Promise<FacebookAudi
 
 /**
  * Promote a FB CDN image URL to the best-available resolution. The `stp` token
- * is client-selectable: upgrade to a large square (photos are always square-ish
- * on FB), and bump any small `p{size}` path token to the full-size variant.
+ * is client-selectable for unsigned URLs: upgrade small squares to the 2048px
+ * rendition and bump any small `p{size}` path token to the full-size variant.
+ * Signed/locked URLs ignore the rewrite (they 403) — the downloaders fall back
+ * to the un-promoted original (`altUrl`) when that happens.
  */
 function promotePhotoUrl(u: string): string {
-  let out = u.replace(/stp=dst-jpg_s\d+x\d+/, 'stp=dst-jpg_p2048x2048');
-  out = out.replace(/stp=dst-jpg_p\d+x\d+/, 'stp=dst-jpg_p2048x2048');
+  let out = u.replace(/stp=dst-jpg_s\d{1,5}x\d{1,5}/, 'stp=dst-jpg_p2048x2048');
+  out = out.replace(/stp=dst-jpg_p\d{1,5}x\d{1,5}/, 'stp=dst-jpg_p2048x2048');
+  out = out.replace(/stp=dst-webp_q70_s\d{1,5}x\d{1,5}/, 'stp=dst-jpg_p2048x2048');
   out = out.replace(/(\/p\d{1,5}x\d{1,5}\/)/, '/p2048x2048/');
   return out;
 }
 
 /**
- * Extract ALL full-size photo URLs from a Facebook photo page.
+ * Rough resolution/quality score of a FB CDN image URL. Used to pick the best
+ * rendition of the SAME photo (multiple pages/contexts expose the same file at
+ * different sizes) and to detect "thumbnail-only" siblings that need their own
+ * photo page fetched. Higher = better. An unsigned `dst-jpg` URL with no size
+ * token at all is the ORIGINAL file — the top score.
+ */
+function photoQualityScore(u: string): number {
+  let score = 0;
+  if (/dst-webp/.test(u)) score += 1;
+  else if (/dst-jpg|dst-png|\.jpg(?:[?#]|$)|\.png(?:[?#]|$)/.test(u)) score += 10;
+
+  const stp = /stp=([^&]+)/.exec(u)?.[1] ?? '';
+  const dim = /[sp](\d{2,5})x(\d{2,5})/.exec(stp);
+  if (dim) score += Math.max(Number(dim[1]), Number(dim[2]));
+  const ctp = /ctp=p(\d{2,5})x(\d{2,5})/.exec(u);
+  if (ctp) score += Math.max(Number(ctp[1]), Number(ctp[2]));
+  const cstp = /cstp=mx(\d{2,5})x(\d{2,5})/.exec(u);
+  if (cstp) score += Math.max(Number(cstp[1]), Number(cstp[2]));
+  const ptok = /\/p(\d{2,5})x(\d{2,5})\//.exec(u);
+  if (ptok) score += Math.max(Number(ptok[1]), Number(ptok[2]));
+
+  if (!dim && !ctp && !cstp && !ptok && /dst-jpg/.test(u)) score += 2000;
+  return score;
+}
+
+/**
+ * Extract the photo ID from a FB CDN file name. Gallery/sibling photos are
+ * named `{photo_id}_{photo_fbid}_{…}_n.jpg`; the photo ID is the first segment
+ * (photo.php?fbid={id} is the per-photo page).
+ */
+function photoIdFromUrl(u: string): string | null {
+  const m = u.match(/\/(\d{4,20})_\d{4,20}_[A-Za-z0-9]*(?:_n|_o)\.(?:jpg|png|webp|gif|heic|avif)(?:[?#]|$)/);
+  return m ? m[1] : null;
+}
+
+/** True when a photo is only available as a small (≤ ~320px) thumbnail. */
+function isThumbOnly(u: string): boolean {
+  return photoQualityScore(u) < MIN_FULL_PHOTO_SCORE;
+}
+
+/** CDN path of a photo URL — same file on different FB CDN hosts/params
+ *  (e.g. `flhe2-2` vs `sea5-1` nodes, `stp` size tokens) dedupes to one. */
+function cdnPathOf(u: string): string {
+  try {
+    return new URL(u).pathname;
+  } catch {
+    return u.split('?')[0];
+  }
+}
+
+/**
+ * Extract ALL photo candidates from a Facebook photo page.
  *
  * Photo pages carry the original image in several spots depending on the
  * served variant (desktop vs mobile, flag-walled or not). Multi-photo posts
@@ -495,21 +557,28 @@ function promotePhotoUrl(u: string): string {
  *  1. og:image meta — the photo being viewed.
  *  2. Every `"image":{"uri":"…"}` JSON blob (full-size uris; one per sibling).
  *  3. Every scontent/fbcdn `<img>` src (mobile pages).
- * Each URL is promoted to full resolution, and duplicates (the same photo
- * appears at several sizes/params) collapse to one entry via the URL path.
+ * Each URL is promoted to full resolution, and every rendition of the same
+ * photo (same CDN path, different `stp` sizes/params) collapses to one entry —
+ * keeping whichever variant rates highest (jpg over webp, bigger over smaller).
  */
-function extractPhotosFromHtml(html: string): string[] {
+export function extractPhotosFromHtml(html: string): PhotoCandidate[] {
   if (html.length < 100) return [];
 
-  const out: string[] = [];
-  const seen = new Set<string>();
-  const add = (u: string | null) => {
-    if (!u || !u.startsWith('http')) return;
-    const promoted = promotePhotoUrl(u.replace(/&amp;/g, '&'));
-    const key = promoted.split('?')[0];
-    if (seen.has(key)) return;
-    seen.add(key);
-    out.push(promoted);
+  const candidates: PhotoCandidate[] = [];
+  const add = (raw: string | null) => {
+    if (!raw || !raw.startsWith('http')) return;
+    const clean = raw.replace(/&amp;/g, '&');
+    const promoted = promotePhotoUrl(clean);
+    const key = cdnPathOf(promoted);
+    const existing = candidates.find((c) => cdnPathOf(c.url) === key);
+    if (existing) {
+      if (photoQualityScore(promoted) > photoQualityScore(existing.url)) {
+        existing.url = promoted;
+        existing.alt = clean;
+      }
+      return;
+    }
+    candidates.push({ url: promoted, alt: clean });
   };
 
   add(getMetaContent(html, 'og:image'));
@@ -531,11 +600,14 @@ function extractPhotosFromHtml(html: string): string[] {
     add(raw);
   }
 
-  return out;
+  return candidates;
 }
 
 const PHOTO_PAGE_TIMEOUT_MS = 15_000;
 const MAX_PHOTO_HTML_BYTES = 2_500_000;
+// Anything smaller than this is a quad/thumbnail rendition — worth fetching
+// the photo's own page to look for the full-size original.
+const MIN_FULL_PHOTO_SCORE = 320;
 
 /**
  * Read a response body as text but stop early once `maxBytes` have been
@@ -546,27 +618,42 @@ const MAX_PHOTO_HTML_BYTES = 2_500_000;
 async function readBoundedText(
   body: ReadableStream<Uint8Array> | null,
   maxBytes: number
-): Promise<string> {
-  if (!body) return '';
+): Promise<{ text: string; truncated: boolean }> {
+  if (!body) return { text: '', truncated: false };
   const reader = body.getReader();
   const decoder = new TextDecoder('utf-8', { fatal: false });
   let out = '';
   let total = 0;
+  let truncated = false;
   try {
     for (;;) {
       const { done, value } = await reader.read();
       if (done) break;
       total += value.byteLength;
       out += decoder.decode(value, { stream: true });
-      if (total >= maxBytes) break;
+      if (total >= maxBytes) {
+        truncated = true;
+        break;
+      }
     }
+    return { text: out + decoder.decode(), truncated };
+  } catch {
+    // Throttled/flagged IPs stall mid-body — the buffered head (og:image in
+    // <head>, image JSON blobs right after) is already enough to extract,
+    // but sibling thumbnails further down may have been missed.
+    truncated = true;
+    reader.cancel().catch(() => {});
+    return { text: out + decoder.decode(), truncated };
   } finally {
     reader.cancel().catch(() => {});
   }
-  return out + decoder.decode();
 }
 
-async function fetchPhotoPage(url: string, ua: string): Promise<string> {
+async function fetchPhotoPage(
+  url: string,
+  ua: string,
+  timeoutMs = PHOTO_PAGE_TIMEOUT_MS
+): Promise<{ html: string; truncated: boolean }> {
   let resp: Response;
   try {
     resp = await fetch(url, {
@@ -577,7 +664,7 @@ async function fetchPhotoPage(url: string, ua: string): Promise<string> {
         'Cache-Control': 'no-cache',
       },
       redirect: 'follow',
-      signal: AbortSignal.timeout(PHOTO_PAGE_TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (err: any) {
     if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
@@ -591,11 +678,11 @@ async function fetchPhotoPage(url: string, ua: string): Promise<string> {
   if (!resp.ok && resp.status >= 500) {
     throw coded('Facebook could not be reached right now.', FB_ERR.INVALID_RESPONSE);
   }
-  const html = await readBoundedText(resp.body, MAX_PHOTO_HTML_BYTES);
-  if (html.length < 100) {
+  const { text, truncated } = await readBoundedText(resp.body, MAX_PHOTO_HTML_BYTES);
+  if (text.length < 100) {
     throw coded('Facebook returned an empty page.', FB_ERR.INVALID_RESPONSE);
   }
-  return html;
+  return { html: text, truncated };
 }
 
 export interface FacebookPhotoSet {
@@ -627,7 +714,9 @@ function hostVariantsOf(url: string): string[] {
  * Photo pages are fetched in parallel across host variants (www/web/m/touch)
  * and user agents (desktop + iPhone — flagged IPs serve the full og:image
  * story page to iPhone UAs on web. hosts). The page that yields the most
- * photos wins.
+ * photos wins. Sibling photos that only appear as small thumbnails get their
+ * own photo page fetched (`photo.php?fbid={id}` — the standard technique
+ * downloaders use) in a further attempt to recover the full-size original.
  */
 export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookPhotoSet> {
   return memoSWR(`fb:photos:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
@@ -636,48 +725,110 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       attempts.push([u, UA_DESKTOP], [u, UA_IPHONE]);
     }
 
-    const round = (): Promise<Array<PromiseSettledResult<string>>> =>
+    const round = (): Promise<Array<PromiseSettledResult<{ html: string; truncated: boolean }>>> =>
       Promise.allSettled(attempts.map(([u, ua]) => fetchPhotoPage(u, ua)));
 
-    const bestFrom = (results: Array<PromiseSettledResult<string>>) => {
+    const bestFrom = (results: Array<PromiseSettledResult<{ html: string; truncated: boolean }>>) => {
       let sawNotFound = false;
+      let sawTruncated = false;
       let bestHtml = '';
-      let bestUrls: string[] = [];
+      let bestCandidates: PhotoCandidate[] = [];
       for (const result of results) {
         if (result.status === 'rejected') {
           if (result.reason?.code === FB_ERR.NOT_AVAILABLE) sawNotFound = true;
           continue;
         }
-        const urls = extractPhotosFromHtml(result.value);
-        if (urls.length > bestUrls.length) {
-          bestUrls = urls;
-          bestHtml = result.value;
+        if (result.value.truncated) sawTruncated = true;
+        const candidates = extractPhotosFromHtml(result.value.html);
+        if (candidates.length > bestCandidates.length) {
+          bestCandidates = candidates;
+          bestHtml = result.value.html;
         }
       }
-      return { sawNotFound, bestHtml, bestUrls };
+      return { sawNotFound, sawTruncated, bestHtml, bestCandidates };
     };
 
     let results = await round();
-    let { sawNotFound, bestHtml, bestUrls } = bestFrom(results);
+    let { sawNotFound, sawTruncated, bestHtml, bestCandidates } = bestFrom(results);
+
+    // A fully throttled IP times out every attempt — retrying immediately
+    // won't lift the throttle, so skip the second round and let the reader
+    // proxy path below handle recovery.
+    const allTimedOut =
+      bestCandidates.length === 0 &&
+      results.length > 0 &&
+      results.every((r) => r.status === 'rejected' && r.reason?.code === FB_ERR.TIMEOUT);
 
     // FB serves different page variants per request on flagged IPs — the full
     // story page carrying ALL sibling photos shows up intermittently. When the
     // first round found <2 photos, retry once before giving up on the set.
-    if (bestUrls.length < 2) {
+    if (bestCandidates.length < 2 && !allTimedOut) {
       results = await round();
       const retried = bestFrom(results);
-      if (retried.bestUrls.length > bestUrls.length) {
+      if (retried.bestCandidates.length > bestCandidates.length) {
         sawNotFound = retried.sawNotFound;
+        sawTruncated = retried.sawTruncated;
         bestHtml = retried.bestHtml;
-        bestUrls = retried.bestUrls;
+        bestCandidates = retried.bestCandidates;
       }
     }
 
-    if (bestUrls.length === 0) {
+    // Flagged IPs shell every photo page locally — but the share page itself
+    // still renders fully for unflagged readers. Fetch it once through a public
+    // reader proxy and reuse its signed CDN URLs (signatures are IP-independent,
+    // so the images download from any IP). This recovers either the whole set
+    // (fully shelled) or the siblings lost to a throttled/truncated read — a
+    // clean single-photo page skips the proxy entirely.
+    if (bestCandidates.length === 0 || (bestCandidates.length === 1 && sawTruncated)) {
+      if (isSharePhotoUrl(inputUrl)) {
+        const recovered = new Map<string, PhotoCandidate>();
+        await fetchSiblingsViaReader(inputUrl, null, recovered);
+        if (recovered.size) {
+          for (const c of recovered.values()) {
+            const key = cdnPathOf(c.url);
+            const existing = bestCandidates.find((e) => cdnPathOf(e.url) === key);
+            if (existing) {
+              if (photoQualityScore(c.url) > photoQualityScore(existing.url)) {
+                existing.url = c.url;
+                existing.alt = c.alt;
+              }
+            } else {
+              bestCandidates.push(c);
+            }
+          }
+        }
+      }
+    }
+
+    if (bestCandidates.length === 0) {
       if (sawNotFound) {
         throw coded('This photo is private or was deleted.', FB_ERR.NOT_AVAILABLE);
       }
       throw coded('Could not load this Facebook photo.', FB_ERR.NO_MEDIA);
+    }
+
+    // Sibling photos that only exist as small quads/thumbs (< ~320px) get
+    // their own photo page fetched — photo.php exposes the full-size og:image
+    // on unflagged IPs. The check runs on the RAW rendition (c.alt): promotion
+    // to p2048 makes a signed thumb look full-size, but the promoted URL 403s
+    // at download time and the delivered file is still the small thumb.
+    const thumbIds = new Map<string, string>();
+    for (const c of bestCandidates) {
+      if (isThumbOnly(c.alt)) {
+        const id = photoIdFromUrl(c.alt);
+        if (id) thumbIds.set(id, c.alt);
+      }
+    }
+    if (thumbIds.size) {
+      const full = await fetchSiblingPhotosFull([...thumbIds.keys()], inputUrl);
+      for (const c of bestCandidates) {
+        const id = photoIdFromUrl(c.alt);
+        const upgraded = id && full.get(id);
+        if (upgraded) {
+          c.url = upgraded.url;
+          c.alt = upgraded.alt;
+        }
+      }
     }
 
     let title =
@@ -690,11 +841,12 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     const authorMatch = bestHtml.match(/"pageName"\s*:\s*"((?:[^"\\]|\\.)*)"/);
     const authorName = authorMatch ? unescapeJsonString(authorMatch[1]) : '';
 
-    const photos: FacebookPhoto[] = bestUrls.slice(0, MAX_PHOTOS_PER_POST).map((url) => ({
+    const photos: FacebookPhoto[] = bestCandidates.slice(0, MAX_PHOTOS_PER_POST).map((c) => ({
       title,
-      cover: url,
-      photoUrl: url,
-      author: { name: authorName, avatar: url },
+      cover: c.url,
+      photoUrl: c.url,
+      altUrl: c.alt !== c.url ? c.alt : undefined,
+      author: { name: authorName, avatar: c.url },
     }));
 
     return {
@@ -706,6 +858,115 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
   });
 }
 
+const SIBLING_PAGE_TIMEOUT_MS = 6_000;
+
+/** True for `share/p/{code}` photo share links (the only pages the reader
+ *  proxy reliably renders — everything else is login-walled for its IPs). */
+function isSharePhotoUrl(u: string): boolean {
+  return /\/share\/p\/[A-Za-z0-9_-]{4,20}\/?$/.test(u);
+}
+
+const READER_FALLBACK_TIMEOUT_MS = 20_000;
+
+/**
+ * Fetch the share page through a public reader proxy (r.jina.ai — unflagged
+ * IPs) and collect signed CDN URLs for the photos in it. The signatures are
+ * IP-independent, so the URLs download from any IP; `wantIds` limits the set
+ * to specific siblings, or `null` accepts every photo in the post. Never
+ * throws — flagged/throttled reads just keep the thumbnails.
+ */
+async function fetchSiblingsViaReader(
+  shareUrl: string,
+  wantIds: string[] | null,
+  found: Map<string, PhotoCandidate>
+): Promise<void> {
+  const attempt = async (): Promise<boolean> => {
+    try {
+      const resp = await fetch(`https://r.jina.ai/${shareUrl}`, {
+        headers: { Accept: 'text/plain' },
+        signal: AbortSignal.timeout(READER_FALLBACK_TIMEOUT_MS),
+      });
+      if (!resp.ok) return false;
+      const text = await resp.text();
+      const want = wantIds ? new Set(wantIds.filter((id) => !found.has(id))) : null;
+      if (wantIds && want && !want.size) return true;
+      const seen = new Set<string>();
+      const re = /https?:\/\/[^()\s"']+scontent[^()\s"']*/g;
+      for (const m of text.matchAll(re)) {
+        const raw = m[0];
+        if (seen.has(raw)) continue;
+        seen.add(raw);
+        const id = photoIdFromUrl(raw);
+        if (!id || (want && !want.has(id))) continue;
+        const clean = raw.replace(/&amp;/g, '&');
+        const candidate = { url: promotePhotoUrl(clean), alt: clean };
+        if (photoQualityScore(candidate.url) > MIN_FULL_PHOTO_SCORE) {
+          found.set(id, candidate);
+        }
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  // Reader proxies rate-limit aggressively — one quick retry before giving up
+  // (the caller keeps the thumbnails when this fails).
+  if (!(await attempt())) {
+    await new Promise((resolve) => setTimeout(resolve, 1_000));
+    await attempt();
+  }
+}
+
+/**
+ * Fetch the full-size image for a set of photo IDs via their own photo pages
+ * (`photo.php?fbid={id}`). Rounds run parallel across all ids — variant 1
+ * everywhere first, then variant 2/3 only for IDs still thumb-only (flagged
+ * IPs shell photo.php regardless, so the extra attempts stay cheap). IDs the
+ * native rounds could not recover fall back to one reader-proxy pass over the
+ * share page (unflagged readers see it with every photo at ~590px, signed —
+ * and those URLs download from any IP).
+ */
+async function fetchSiblingPhotosFull(
+  ids: string[],
+  shareUrl?: string
+): Promise<Map<string, PhotoCandidate>> {
+  const found = new Map<string, PhotoCandidate>();
+  const variantUAs = [UA_IPHONE, UA_DESKTOP, UA_IPHONE];
+  const variantHosts = ['web.facebook.com', 'www.facebook.com', 'm.facebook.com'];
+
+  let remaining = ids;
+  for (let round = 0; round < variantHosts.length && remaining.length; round++) {
+    const results = await Promise.all(
+      remaining.map(async (id) => {
+        const url = `https://${variantHosts[round]}/photo.php?fbid=${id}`;
+        try {
+          const { html } = await fetchPhotoPage(url, variantUAs[round], SIBLING_PAGE_TIMEOUT_MS);
+          const og = getMetaContent(html, 'og:image') || getMetaContent(html, 'og:image:url');
+          if (!og || /(?:static\.|rsrc\.php|facebook\.com)/i.test(og)) return null;
+          const clean = og.replace(/&amp;/g, '&');
+          return { id, candidate: { url: promotePhotoUrl(clean), alt: clean } };
+        } catch {
+          return null;
+        }
+      })
+    );
+    for (const r of results) {
+      if (r && photoQualityScore(r.candidate.url) > MIN_FULL_PHOTO_SCORE) {
+        found.set(r.id, r.candidate);
+      }
+    }
+    remaining = remaining.filter((id) => !found.has(id));
+    // Flagged IPs shell photo.php for every id — one wasted round is enough;
+    // the reader proxy recovers the rest much faster than more login walls.
+    if (round === 0 && remaining.length === ids.length) break;
+  }
+
+  if (remaining.length && shareUrl && isSharePhotoUrl(shareUrl)) {
+    await fetchSiblingsViaReader(shareUrl, remaining, found);
+  }
+  return found;
+}
+
 /** First photo of a photo post — kept for the single-photo download path. */
 export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhoto> {
   const set = await fetchFacebookPhotoSet(inputUrl);
@@ -714,6 +975,7 @@ export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhot
     title: first?.title || set.title,
     cover: first?.cover || set.cover,
     photoUrl: first?.photoUrl || '',
+    altUrl: first?.altUrl,
     author: { name: set.author?.name ?? '', avatar: first?.cover || set.cover },
   };
 }
@@ -721,20 +983,33 @@ export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhot
 const PHOTO_DL_CONCURRENCY = 4;
 const PHOTO_DL_TIMEOUT_MS = 30_000;
 
-async function fetchPhotoBuffer(url: string): Promise<{ data: Uint8Array; contentType: string | null }> {
-  const resp = await fetch(url, {
-    headers: {
-      'User-Agent': UA_DESKTOP,
-      'Referer': 'https://www.facebook.com/',
-      'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
-    },
-    redirect: 'follow',
-    signal: AbortSignal.timeout(PHOTO_DL_TIMEOUT_MS),
-  });
-  if (!resp.ok) throw new Error(`Facebook CDN returned ${resp.status}`);
-  const data = new Uint8Array(await resp.arrayBuffer());
-  if (data.length < 256) throw new Error('Facebook CDN returned an empty image');
-  return { data, contentType: resp.headers.get('content-type') };
+async function fetchPhotoBuffer(url: string, altUrl?: string): Promise<{ data: Uint8Array; contentType: string | null }> {
+  const download = async (u: string): Promise<{ data: Uint8Array; contentType: string | null }> => {
+    const resp = await fetch(u, {
+      headers: {
+        'User-Agent': UA_DESKTOP,
+        'Referer': 'https://www.facebook.com/',
+        'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+      },
+      redirect: 'follow',
+      signal: AbortSignal.timeout(PHOTO_DL_TIMEOUT_MS),
+    });
+    if (!resp.ok) throw new Error(`Facebook CDN returned ${resp.status}`);
+    const data = new Uint8Array(await resp.arrayBuffer());
+    if (data.length < 256) throw new Error('Facebook CDN returned an empty image');
+    return { data, contentType: resp.headers.get('content-type') };
+  };
+
+  try {
+    return await download(url);
+  } catch (err) {
+    // Signed/locked URLs reject the promoted rendition — retry the raw
+    // original before giving up on the photo entirely.
+    if (altUrl && altUrl !== url) {
+      return download(altUrl);
+    }
+    throw err;
+  }
 }
 
 function photoExtOf(url: string, contentType: string | null): string {
@@ -751,20 +1026,21 @@ function photoExtOf(url: string, contentType: string | null): string {
 /**
  * Download every photo in a post as a buffer (bounded concurrency, CDN
  * referer set). Failed entries are skipped so one dead URL can't sink the
- * whole bundle; the caller decides what to do if ALL of them fail.
+ * whole bundle; the caller decides what to do if ALL of them fail. Each entry
+ * may carry the un-promoted original as a fallback for signed/locked URLs.
  */
 export async function fetchFacebookPhotosAsFiles(
-  urls: string[]
+  photos: Array<{ url: string; alt?: string }>
 ): Promise<Array<{ name: string; data: Uint8Array }>> {
   const out: Array<{ name: string; data: Uint8Array }> = [];
   let next = 0;
 
   const worker = async () => {
-    while (next < urls.length) {
+    while (next < photos.length) {
       const i = next++;
-      const url = urls[i];
+      const { url, alt } = photos[i];
       try {
-        const { data, contentType } = await fetchPhotoBuffer(url);
+        const { data, contentType } = await fetchPhotoBuffer(url, alt);
         out.push({ name: `photo-${String(i + 1).padStart(2, '0')}.${photoExtOf(url, contentType)}`, data });
       } catch (err: any) {
         console.error(`[Facebook] photo ${i + 1} download failed:`, err?.message ?? err);
@@ -773,7 +1049,7 @@ export async function fetchFacebookPhotosAsFiles(
   };
 
   await Promise.all(
-    Array.from({ length: Math.min(PHOTO_DL_CONCURRENCY, urls.length) }, () => worker())
+    Array.from({ length: Math.min(PHOTO_DL_CONCURRENCY, photos.length) }, () => worker())
   );
 
   out.sort((a, b) => (a.name < b.name ? -1 : 1));

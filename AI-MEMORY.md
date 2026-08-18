@@ -277,3 +277,14 @@
 ## OPEN QUESTIONS / TODOS
 - [ ] User se poochna: is website/extension ka exact purpose kya hai
 - [ ] Production env vars: IG_SESSIONID? YTDLP_PATH?
+---
+
+### Session - FB reader-proxy fallback: full-res siblings on flagged IPs (2026-08-17)
+- **User re-report (Hinglish):** "ye phir se single photo download kr raha hai, tumne fix nai kya?" - ZIP me 5 entries thin lekin 4 = signed thumbs (4-7KB webp) -> user POV = 1 photo.
+- **Re-verification on dev IP (every source):** share page web/www/m A- UAs (sirf og:image + 5 signed thumbs; jpg thumb variant dst-jpg_s261x260 bhi aata hai), touch story = wahi 5 thumbs, photo.php sab hosts = login walls, story.php = kuch nahi, stp removal/rewrite/bare-path = **403** (signed, locked). Dev IP se full-res siblings impossible - confirmed again.
+- **BREAKTHROUGH:** share page through **public reader proxy .jina.ai/{url}** (unflagged IP) returns ALL 5 photos at stp=dst-jpg_tt6&cstp=mx1179x1572&ctp=s590x590 (443x590 JPEG, 32-52KB) - and those signed URLs **download from ANY IP** (signatures IP-independent; verified 200 image/jpeg from dev IP). photo.php via jina = login wall even for it; m./touch story via jina = same s590 or nothing. s590 A-prox p600 og:image standard (competitors).
+- **FIXES (src/lib/facebook.ts):** etchSiblingsViaReader(shareUrl, wantIds|null, found) (r.jina.ai fetch, regex scontent URLs, photoIdFromUrl match, quality gate > 320, 1 retry, never throws); recovery triggers in etchFacebookPhotoSet when count==0 (full shell - reader recovers WHOLE set) OR count==1 && sawTruncated (throttled head - reader recovers siblings; clean single-photo skips proxy); merge dedupe by **CDN path** via new cdnPathOf (host-agnostic - same file on flhe2-2 vs sea5-1); **CRITICAL: thumb detection on RAW c.alt not promoted URL** (promoted p2048 thumb *looks* full but 403s at download) - recovered entries replace unconditionally; eadBoundedText/etchPhotoPage return {html, truncated}; llTimedOut skips native retry round (throttled IP); etchSiblingPhotosFull(ids, shareUrl?) - empty round 1 skips rounds 2-3 (walls) - straight to reader (35s -> ~15s).
+- **Verified live:** POST -> 200 photoCount:5 (photo-01 p600 og:image 600x800, photos 02-05 s590x590 443x590 - System.Drawing verified); ZIP **212,247 bytes 5/5 real JPEGs**; single dl=photo 40,962B JPEG; video dl=sd 5.4MB regression OK. astro check 0/0/0, build green.
+- **Tooling:** scripts/clear-fb-photo-cache.cjs added (BOM-safe node script: deletes media:fb:photo* keys; then kill node + npm run dev).
+- **Trade-off:** reader path +3-20s sirf fully flagged IPs pe; production IPs never hit it. jina keyless rate limits handled (1 retry + thumbs-kept degradation).
+- **UNCOMMITTED:** src/lib/facebook.ts + src/pages/api/facebook.ts (previous session's altUrl work) + scripts/clear-fb-photo-cache.cjs + AGENTS.md WIP + this log.

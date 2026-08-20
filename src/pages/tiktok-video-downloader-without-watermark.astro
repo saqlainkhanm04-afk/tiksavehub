@@ -10,69 +10,64 @@ import SocialShare from '../components/SocialShare.astro';
 
 const faqData = [
   {
-    id: 'dl-free',
-    q: 'Is TikSaveHub free to use?',
-    a: 'Yes, TikSaveHub is a 100% free TikTok video downloader. There are no hidden fees, no subscriptions, and no account required. You can download unlimited TikTok videos without watermark at no cost.',
+    id: 'dl-ww',
+    q: 'How can I download TikTok videos without a watermark on TikSaveHub?',
+    a: 'TikSaveHub lets you save TikTok videos without any watermark by fetching the original video file. The tool removes the TikTok logo and username overlay, giving you a clean MP4 video with no branding. Simply copy the TikTok video link and paste it into TikSaveHub’s downloader. TikSaveHub retrieves the un-watermarked source video from TikTok’s servers, so the downloaded video appears exactly as the creator uploaded it, with no overlay or quality loss.',
   },
   {
-    id: 'dl-watermark',
-    q: 'Does TikSaveHub remove the TikTok watermark?',
-    a: 'Yes. Our TikTok downloader removes the watermark and lets you download clean, watermark-free TikTok videos in MP4 format instantly.',
-  },
-  {
-    id: 'dl-quality',
-    q: 'What video quality can I download?',
-    a: 'You can download TikTok videos in the highest available quality, including HD (up to 1080p). Our tool does not reduce quality or add compression.',
-  },
-  {
-    id: 'dl-mobile',
-    q: 'Does this TikTok downloader work on mobile devices?',
-    a: 'Yes, TikSaveHub works on iPhone, Android, tablets, and desktop. No app or software installation is required — just paste the TikTok video link and download.',
-  },
-  {
-    id: 'dl-legal',
-    q: 'Is it legal to download TikTok videos?',
-    a: 'Downloading TikTok videos for personal use is generally allowed. However, you should not repost or use content commercially without permission from the original creator. Always respect copyright rules.',
-  },
-  {
-    id: 'dl-types',
-    q: 'What TikTok links are supported?',
-    a: 'Our TikTok downloader supports all types of TikTok links, including standard video URLs, short links (vm.tiktok.com), and mobile share links (vt.tiktok.com).',
-  },
-  {
-    id: 'dl-save',
-    q: 'How do I save a TikTok video without the watermark?',
-    a: 'Copy the TikTok video link, paste it into the input field above, and press the download button. The video is processed in seconds and you can save a clean, watermark-free MP4 directly to your device.',
-  },
-  {
-    id: 'dl-mp3',
-    q: 'Can I also convert TikTok videos to MP3?',
-    a: 'Yes. If you need the audio instead of the video, use our dedicated <a href="/tiktok-to-mp3">TikTok to MP3 converter</a> to extract high-quality audio from the same TikTok links in seconds.',
-  },
-  {
-    id: 'dl-private',
-    q: 'Can I download private TikTok videos?',
-    a: 'We can only download TikTok videos that you are able to open and share. Private or login-only TikTok videos cannot be downloaded through our tool, and we always recommend respecting the creator\u2019s privacy settings.',
+    id: 'dl-hd',
+    q: 'Can I save TikTok videos in HD 1080p quality using TikSaveHub?',
+    a: 'Yes – TikSaveHub provides the highest available quality. If the original TikTok video has a 1080p HD stream, TikSaveHub will download that full HD version. TikTok videos often come in multiple resolutions. TikSaveHub automatically selects the best one. When an HD stream exists, the downloader grabs it. If a video only has a lower-quality stream, you’ll get that clear, original version, still without watermark. In all cases, the output is a clean MP4 file at the same quality as the source video.',
   },
   {
     id: 'dl-iphone',
-    q: 'How do I download TikTok videos on iPhone or iOS?',
-    a: 'Open the TikTok video, tap Share, and choose Copy Link. Then paste the link into TikSaveHub above and tap Download — the watermark-free video will save straight to your iPhone. No app or special permission is required.',
+    q: 'Can I use TikSaveHub to download TikTok videos on my iPhone (Safari)?',
+    a: 'Yes, TikSaveHub works in mobile browsers like Safari or Chrome on iPhone. After updating to iOS 13 or later, open Safari, navigate to TikSaveHub, paste the TikTok link, and save the video. Simply tap the Share button on TikTok, copy the link, then paste it into TikSaveHub’s input field in your browser. The video will download directly in Safari. (Note: iPhones running iOS 12 or below may face Apple’s download restrictions, so make sure your device is up to date.)',
   },
   {
-    id: 'dl-batch',
-    q: 'Can I download multiple TikTok videos at once (batch download)?',
-    a: 'TikSaveHub handles one link at a time for reliability. You can download as many TikTok videos as you like by pasting each link in turn — there are no daily limits and every save is completely free.',
+    id: 'dl-devices',
+    q: 'Can I use TikSaveHub on Android and PC to download TikTok videos?',
+    a: 'Absolutely. TikSaveHub is browser-based, so it works on all Android devices and on desktops/laptops (Windows, Mac, Linux). You just paste the TikTok link in your browser, and it downloads the video. Whether you’re on an Android phone or a PC/Mac, open TikSaveHub in Chrome, Firefox, Edge, or any modern browser. Copy the TikTok video URL from the app or web, paste it into TikSaveHub, and click download. No separate app is needed, and the video will be saved to your device in high quality.',
   },
   {
-    id: 'dl-saved',
-    q: 'Where do downloaded TikTok videos get saved?',
-    a: 'After tapping Download, the MP4 saves directly to your device. On Android it lands in the gallery or Downloads folder, on iPhone it appears in Photos, and on desktop it goes to your browser’s Downloads folder. Check your browser’s download history if you can’t find it.',
+    id: 'dl-links',
+    q: 'Which TikTok link formats does TikSaveHub support (for example, vm.tiktok.com or vt.tiktok.com)?',
+    a: 'TikSaveHub supports every TikTok link format. You can use full URLs (tiktok.com/…) or short URLs (vm.tiktok.com/… and vt.tiktok.com/…). All of these are resolved automatically by the downloader. It doesn’t matter how you get the link – TikSaveHub recognizes it. When you paste a TikTok link into the site, the tool automatically detects the format (whether it’s a standard link or a short mobile link) and fetches the correct video.',
   },
   {
-    id: 'dl-whyfail',
-    q: 'Why can’t I download some TikTok videos?',
-    a: 'We can only download TikTok videos that are publicly accessible. If a video is private, region-restricted, or removed, the downloader cannot fetch it — try another public video link instead.',
+    id: 'dl-free',
+    q: 'Is TikSaveHub free to use, and do I need to sign up or install any software?',
+    a: 'Yes. TikSaveHub is 100% free with no hidden fees or subscriptions. You don’t have to sign up or download any app or extension – just use the link in your browser. All processing happens online, so you simply paste the TikTok URL and get the download immediately. TikSaveHub also does not store your downloads or track your usage, ensuring your privacy.',
+  },
+  {
+    id: 'dl-account',
+    q: 'Do I need a TikTok account to download videos on TikSaveHub?',
+    a: 'No TikTok account is needed. TikSaveHub only requires a public video link. If the video is accessible on TikTok, you can download it without logging in. Simply copy the link of any public TikTok video (via Share → Copy Link) and paste it into TikSaveHub. The tool will fetch and download the video. If the content is private or restricted, TikSaveHub won’t be able to access it.',
+  },
+  {
+    id: 'dl-legal',
+    q: 'Is it legal to download TikTok videos without a watermark?',
+    a: 'Downloading TikTok videos for personal use (like offline viewing) is generally allowed, but sharing or monetizing someone else’s content without permission can violate copyright. TikSaveHub is intended for personal convenience and learning. We recommend always using downloaded videos ethically – credit the original creator if you repost or edit their work, and do not use the content commercially without permission.',
+  },
+  {
+    id: 'dl-remove',
+    q: 'How does TikSaveHub remove the TikTok watermark?',
+    a: 'TikSaveHub accesses the original video stream stored on TikTok’s servers. Since TikTok only adds the watermark when saving locally, the tool can fetch the untouched source video, delivering it without any logo or overlay. In other words, TikTok retains a clean version of every video for streaming. TikSaveHub finds and downloads that original file, so the saved video looks exactly as it was uploaded.',
+  },
+  {
+    id: 'dl-private',
+    q: 'Can TikSaveHub download videos from private TikTok accounts?',
+    a: 'No. TikSaveHub only works with public TikTok videos. It cannot access or download content from private profiles. If a video is set to private or requires special permissions on TikTok, TikSaveHub will not be able to retrieve it.',
+  },
+  {
+    id: 'dl-format',
+    q: 'What file format and quality will my downloaded TikTok videos have?',
+    a: 'Downloads from TikSaveHub are saved as MP4 files. The video quality is the highest available (up to 1080p HD) that TikTok provides. TikSaveHub grabs the original encoding, so if the creator uploaded a 1080p video, you’ll get that resolution. No additional compression is applied. You can also choose a standard definition option if needed, but either way the output is a clear MP4 video without watermark.',
+  },
+  {
+    id: 'dl-limits',
+    q: 'Are there any limits on how many TikTok videos I can download?',
+    a: 'No. TikSaveHub imposes no download limits or daily caps. You can paste and save as many TikTok videos as you want, for free. Every download is processed in seconds in your browser, so you’re free to use the tool as often as you like. This makes TikSaveHub ideal for heavy users – there are no quotas or fees.',
   },
 ];
 

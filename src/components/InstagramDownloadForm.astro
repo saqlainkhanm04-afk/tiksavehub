@@ -738,10 +738,10 @@ const meta = typeMeta[type];
     });
   });
   const tabPatterns: Record<string, RegExp> = {
-    video: /^(https?:\/\/)?(www\.)?instagram\.com\/(p|tv)\//,
-    reels: /^(https?:\/\/)?(www\.)?instagram\.com\/reel\//,
-    story: /^(https?:\/\/)?(www\.)?instagram\.com\/stories\//,
-    audio: /^(https?:\/\/)?(www\.)?instagram\.com\/(p|tv|reel)\//,
+    video: /^(https?:\/\/)?(www\.)?instagram\.com\/(p|tv|reel)\//i,
+    reels: /^(https?:\/\/)?(www\.)?instagram\.com\/(p|tv|reel)\//i,
+    story: /^(https?:\/\/)?(www\.)?instagram\.com\/stories\//i,
+    audio: /^(https?:\/\/)?(www\.)?instagram\.com\/(p|tv|reel)\//i,
   };
 
   function setLoading(loading: boolean) {

@@ -6,7 +6,8 @@ import {
   fetchFacebookPhoto,
   fetchFacebookPhotoSet,
   fetchFacebookPhotosAsFiles,
-  fetchFacebookStory,
+  fetchFacebookStorySet,
+  fetchFacebookStoryAsFiles,
   FB_ERR,
 } from '../../lib/facebook';
 import { buildZip } from '../../lib/zip';
@@ -41,6 +42,24 @@ function pickUrl(media: any, mode: string): string | null {
   if (mode === 'hd') return media.hdUrl || media.sdUrl || media.play || null;
   return media.sdUrl || media.hdUrl || media.play || null;
 }
+
+const streamPhoto = async (primary: string, alt: string | null) => {
+  const opts = {
+    filename: 'tiksavehub-facebook-photo.jpg',
+    contentType: 'image/jpeg',
+    accept: 'image/jpeg,image/png,image/webp,image/*,*/*',
+    referer: FACEBOOK_REFERER,
+  };
+  try {
+    return await streamFromUpstream(primary, opts);
+  } catch (err) {
+    // Promoted rendition may be signed/locked → fall back to the raw original.
+    if (alt && alt !== primary) {
+      return streamFromUpstream(alt, opts);
+    }
+    throw err;
+  }
+};
 
 function userMessageFor(err: any, needsLoginHint = false): string {
   const msg = err?.message ?? String(err);
@@ -96,6 +115,9 @@ function photoMessageFor(err: any): string {
 
 function storyMessageFor(err: any): string {
   const code = err?.code ?? '';
+  if (code === FB_ERR.LOGIN_REQUIRED) {
+    return 'This story requires a Facebook login to view (private or restricted account). Please try another public story link.';
+  }
   if (code === FB_ERR.NO_MEDIA) {
     return 'This story could not be downloaded. Facebook stories expire after 24 hours or may be private — please copy a fresh story link and try again.';
   }
@@ -199,7 +221,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (toolMode === 'photo') {
     return json(
-      { success: false, error: 'That link is a Facebook video, not a photo. Please paste a photo link (photo.php?fbid=…, facebook.com/{profile}/photos/… or facebook.com/share/p/…).' },
+      { success: false, error: 'That link is a Facebook video, not a photo. Please paste a photo link (photo.php?fbid=…, facebook.com/{profile}/photos/…, facebook.com/{profile}/posts/… or facebook.com/share/p/…).' },
       422
     );
   }
@@ -220,7 +242,40 @@ export const POST: APIRoute = async ({ request }) => {
       return json({ success: true, type: 'facebook', video: cachedData, fromCache: true }, 200, true);
     }
 
-    const media = isStory ? await fetchFacebookStory(parsed.sanitizedUrl) : await fetchFacebookMedia(parsed.sanitizedUrl);
+    // Stories can contain MULTIPLE segments (videos AND photos in one story).
+    // Return every segment so the UI renders one tile per item.
+    if (isStory) {
+      const set = await fetchFacebookStorySet(parsed.sanitizedUrl);
+      if (!set.segments.length) {
+        return json({ success: false, error: 'This story has no downloadable media.' }, 422);
+      }
+
+      const story = {
+        title: set.title || 'Facebook Story',
+        cover: set.cover,
+        author: {
+          unique_id: set.author?.name || '',
+          nickname: set.author?.name || '',
+          avatar: set.author?.avatar || set.cover || '',
+        },
+        segments: set.segments.map((s, i) => ({
+          index: i,
+          kind: s.kind,
+          title: s.title || (s.kind === 'video' ? `Story Video ${i + 1}` : `Story Photo ${i + 1}`),
+          cover: s.cover || set.cover,
+          duration: s.duration || 0,
+          hdplay: s.hdUrl,
+          sdplay: s.sdUrl,
+          photoUrl: s.photoUrl,
+          altUrl: s.altUrl,
+        })),
+        segmentCount: set.segments.length,
+      };
+
+      return json({ success: true, type: 'facebook-story', story }, 200, true);
+    }
+
+    const media = await fetchFacebookMedia(parsed.sanitizedUrl);
 
     const hdUrl = media.hdUrl || media.sdUrl;
     if (!hdUrl) {
@@ -367,24 +422,6 @@ export const GET: APIRoute = async ({ url, request }) => {
       const photoUrl: string | null = (cachedData?.photoUrl as string) || null;
       const altUrl: string | null = (cachedData?.photos as any[])?.[0]?.altUrl || null;
 
-      const streamPhoto = async (primary: string, alt: string | null) => {
-        const opts = {
-          filename: 'tiksavehub-facebook-photo.jpg',
-          contentType: 'image/jpeg',
-          accept: 'image/jpeg,image/png,image/webp,image/*,*/*',
-          referer: FACEBOOK_REFERER,
-        };
-        try {
-          return await streamFromUpstream(primary, opts);
-        } catch (err) {
-          // Promoted rendition may be signed/locked → fall back to the raw original.
-          if (alt && alt !== primary) {
-            return streamFromUpstream(alt, opts);
-          }
-          throw err;
-        }
-      };
-
       if (!photoUrl) {
         const photo = await fetchFacebookPhoto(parsed.sanitizedUrl);
         return streamPhoto(photo.photoUrl, photo.altUrl || null);
@@ -394,6 +431,69 @@ export const GET: APIRoute = async ({ url, request }) => {
     } catch (err: any) {
       console.error('[Facebook API] Photo error:', err?.message ?? err);
       return json({ success: false, error: photoMessageFor(err) }, 500);
+    }
+  }
+
+  // Story download mode: per-segment via ?idx= (default 0); dl=zip bundles
+  // every segment (videos at HD + photos) into one archive.
+  if (isStory) {
+    try {
+      const set = await fetchFacebookStorySet(parsed.sanitizedUrl);
+      if (!set.segments.length) {
+        return json({ success: false, error: 'This story has no downloadable media.' }, 422);
+      }
+
+      if (mode === 'zip') {
+        const files = await fetchFacebookStoryAsFiles(set);
+        if (!files.length) {
+          return json(
+            { success: false, error: 'The story could not be downloaded right now. Please try again later.' },
+            500
+          );
+        }
+        const zip = buildZip(files);
+        return new Response(zip, {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/zip',
+            'Content-Disposition': 'attachment; filename="tiksavehub-facebook-story.zip"',
+            'Content-Length': String(zip.byteLength),
+            'Cache-Control': 'no-store',
+            'X-Accel-Buffering': 'no',
+          },
+        });
+      }
+
+      const rawIdx = Number(url.searchParams.get('idx') || 0);
+      const idx = Number.isFinite(rawIdx)
+        ? Math.max(0, Math.min(Math.floor(rawIdx), set.segments.length - 1))
+        : 0;
+      const seg = set.segments[idx];
+      if (!seg) {
+        return json({ success: false, error: 'Could not find that story segment.' }, 422);
+      }
+
+      if (seg.kind === 'photo') {
+        if (!seg.photoUrl) {
+          return json({ success: false, error: 'No media URL available for this story photo.' }, 422);
+        }
+        return streamPhoto(seg.photoUrl, seg.altUrl || null);
+      }
+
+      const mediaUrl = mode === 'hd' ? seg.hdUrl || seg.sdUrl : seg.sdUrl || seg.hdUrl;
+      if (!mediaUrl) {
+        return json({ success: false, error: 'No media URL available for this story video.' }, 422);
+      }
+
+      return streamFromUpstream(mediaUrl, {
+        filename: `tiksavehub-facebook-story-${String(idx + 1).padStart(2, '0')}.mp4`,
+        contentType: 'video/mp4',
+        accept: 'video/mp4,video/*,*/*',
+        referer: FACEBOOK_REFERER,
+      });
+    } catch (err: any) {
+      console.error('[Facebook API] Story error:', err?.message ?? err);
+      return json({ success: false, error: storyMessageFor(err) }, 500);
     }
   }
 

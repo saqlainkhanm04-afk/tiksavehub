@@ -751,6 +751,16 @@ const copy = {
     inset: 0;
   }
 
+  .result-thumb-wrap.thumb-failed .result-thumb {
+    display: none;
+  }
+
+  .result-thumb-wrap.thumb-failed {
+    background:
+      radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--color-grad-develop-start) 10%, white), transparent 60%),
+      var(--color-canvas-soft-2);
+  }
+
   .result-thumb-wrap.photo-preview {
     width: 200px;
     min-height: 200px;
@@ -802,6 +812,73 @@ const copy = {
     color: var(--color-mute);
     background-color: var(--color-canvas-soft);
     border: 1px dashed var(--color-hairline-strong);
+  }
+
+  /* Story segments — one block per media item of a multi-segment story */
+  .story-seg {
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .story-seg-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .story-seg-thumb-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background-color: var(--color-canvas-soft-2);
+  }
+
+  .story-seg-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .story-seg-thumb-wrap.thumb-failed .story-seg-thumb {
+    display: none;
+  }
+
+  .story-seg-thumb-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-mute);
+  }
+
+  .story-seg-meta {
+    min-width: 0;
+  }
+
+  .story-seg-title {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .story-seg-type {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    margin: 2px 0 0 0;
+  }
+
+  html.dark .story-seg {
+    border-top-color: rgba(255, 255, 255, 0.08);
   }
 
   .photo-count {
@@ -954,37 +1031,108 @@ const copy = {
     75% { transform: translateX(-2px); }
   }
 
-  /* Facebook HD tile — brand blue accent */
+  /* Facebook HD tile — premium gradient chrome */
   .dl-tile-fb {
-    background: linear-gradient(135deg, #eef4ff, #e0ecfd);
-    border-color: #9fc2f5;
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(var(--color-canvas), #eef4ff) padding-box,
+      linear-gradient(135deg, #4f8ff7, #00dfd8, #1877f2) border-box;
+    background-size: 100% 100%, 220% 220%;
+    box-shadow:
+      0 2px 8px -2px rgba(24, 119, 242, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   html.dark .dl-tile-fb {
-    background: linear-gradient(135deg, rgba(24, 119, 242, 0.08), rgba(24, 119, 242, 0.14));
-    border-color: rgba(66, 145, 250, 0.4);
+    background:
+      linear-gradient(rgba(24, 119, 242, 0.06), rgba(24, 119, 242, 0.12)) padding-box,
+      linear-gradient(135deg, #4f8ff7, #00c6d8, #7c3aed) border-box;
+    background-size: 100% 100%, 220% 220%;
+    box-shadow:
+      0 2px 8px -2px rgba(24, 119, 242, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .dl-tile-fb::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 18%, rgba(255, 255, 255, 0.55) 50%, transparent 82%);
+    transform: translateX(-180%) skewX(-20deg);
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 0;
   }
 
   .dl-tile-fb:hover {
-    border-color: #1877f2;
-    box-shadow: 0px 4px 16px rgba(24, 119, 242, 0.18);
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 24px -6px rgba(24, 119, 242, 0.4),
+      0 2px 8px -2px rgba(0, 223, 216, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  .dl-tile-fb:hover::after {
+    transform: translateX(280%) skewX(-20deg);
+    opacity: 1;
+  }
+
+  .dl-tile-fb:hover .dl-tile-icon {
+    transform: scale(1.06);
   }
 
   .dl-tile-fb .dl-tile-icon {
-    color: #1877f2;
-    background-color: rgba(24, 119, 242, 0.1);
+    color: #fff;
+    background: linear-gradient(135deg, #1877f2, #00b4d8);
+    box-shadow:
+      0 3px 10px -2px rgba(24, 119, 242, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
   }
 
   .dl-tile-fb .dl-tile-label strong {
-    color: #1877f2;
+    background: linear-gradient(135deg, #1668dc, #0c9db8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-bottom: 1px;
+  }
+
+  .dl-hd-badge {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #1877f2, #00b4d8);
+    padding: 3px 8px;
+    border-radius: 6px;
+    box-shadow:
+      0 2px 8px rgba(24, 119, 242, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    position: relative;
+    z-index: 1;
   }
 
   html.dark .dl-tile-fb .dl-tile-icon {
-    background-color: rgba(24, 119, 242, 0.18);
+    background: linear-gradient(135deg, #2f7ff0, #00a8ce);
+    box-shadow:
+      0 3px 10px -2px rgba(24, 119, 242, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   html.dark .dl-tile-fb .dl-tile-label strong {
-    color: #6eb1fd;
+    background: linear-gradient(135deg, #6eb1fd, #3fd3e2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-bottom: 1px;
   }
 
   /* Audio tile — violet accent */
@@ -1101,6 +1249,12 @@ const copy = {
     .dl-tile-label {
       font-size: 12px;
     }
+
+    .dl-hd-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      letter-spacing: 0.08em;
+    }
   }
 </style>
 
@@ -1185,12 +1339,151 @@ const copy = {
   const MODE = (document.getElementById('download-form') as HTMLElement | null)?.dataset.mode || 'video';
   const isMp3Mode = MODE === 'mp3';
   const isPhotoMode = MODE === 'photo';
+  const isStoryMode = MODE === 'story';
 
   function renderResult(data: any, inputUrl: string) {
     const { cover, duration, title, hdplay, sdplay, play } = data || {};
     const hdUrl: string = hdplay || play || '';
     const sdUrl: string = sdplay || play || '';
     const videoTitle: string = title || (isMp3Mode ? 'Facebook Audio' : isPhotoMode ? 'Facebook Photo' : 'Facebook Video');
+
+    if (isStoryMode) {
+      const segments: any[] = Array.isArray(data.segments) ? data.segments : [];
+      const count = segments.length;
+      const storyTitle: string = data.title || videoTitle;
+      if (!count) {
+        showError('This story has no downloadable media.');
+        return;
+      }
+
+      const zipTile =
+        count > 1
+          ? `
+          <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-zip" type="button">
+            <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
+            <span class="dl-tile-label">Download <strong>All Media</strong> (${count} items)</span>
+            <span class="dl-tile-badge">ZIP</span>
+            <span class="dl-proc-bar"></span>
+          </button>`
+          : '';
+
+      const rows = segments
+        .map((s, i) => {
+          const isVideo = s.kind === 'video';
+          const segTitle: string = s.title || (isVideo ? `Story Video ${i + 1}` : `Story Photo ${i + 1}`);
+          const segCover: string = s.cover || '';
+          const thumb = segCover
+            ? `<img src="${segCover}" alt="${segTitle}" class="story-seg-thumb" loading="lazy" width="56" height="56" referrerpolicy="no-referrer" onerror="this.closest('.story-seg-thumb-wrap').classList.add('thumb-failed')">`
+            : `<div class="story-seg-thumb story-seg-thumb-fallback" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                  <line x1="7" y1="2" x2="7" y2="22"/>
+                  <line x1="17" y1="2" x2="17" y2="22"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <line x1="2" y1="7" x2="7" y2="7"/>
+                  <line x1="2" y1="17" x2="7" y2="17"/>
+                  <line x1="17" y1="17" x2="22" y2="17"/>
+                  <line x1="17" y1="7" x2="22" y2="7"/>
+                </svg>
+              </div>`;
+          const buttons = isVideo
+            ? `
+              <button class="dl-tile dl-tile-fb" id="btn-dl-hd-${i}" type="button" aria-label="Download HD video ${i + 1}">
+                <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
+                <span class="dl-tile-label">Download <strong>HD Video</strong></span>
+                <span class="dl-hd-badge" aria-hidden="true">HD</span>
+                <span class="dl-proc-bar"></span>
+              </button>
+              <button class="dl-tile" id="btn-dl-sd-${i}" type="button">
+                <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
+                <span class="dl-tile-label">Download <strong>SD Video</strong></span>
+                <span class="dl-proc-bar"></span>
+              </button>`
+            : `
+              <button class="dl-tile dl-tile-fb" id="btn-dl-photo-${i}" type="button">
+                <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
+                <span class="dl-tile-label">Download <strong>Photo</strong></span>
+                <span class="dl-proc-bar"></span>
+              </button>`;
+          return `
+            <div class="story-seg" role="group" aria-label="${segTitle}">
+              <div class="story-seg-head">
+                <div class="story-seg-thumb-wrap">
+                  ${thumb}
+                  ${isVideo && s.duration ? `<span class="result-duration-badge">${formatDuration(s.duration)}</span>` : ''}
+                </div>
+                <div class="story-seg-meta">
+                  <p class="story-seg-title">${segTitle}</p>
+                  <p class="story-seg-type">${isVideo ? 'Video' : 'Photo'} ${i + 1} of ${count}</p>
+                </div>
+              </div>
+              <div class="result-actions">
+                ${buttons}
+              </div>
+            </div>`;
+        })
+        .join('');
+
+      resultMount.innerHTML = `
+        <div class="result-card animate-fade-in-up" role="region" aria-label="Download result">
+          <div class="result-header">
+            <div class="result-thumb-wrap">
+              <img
+                src="${cover || ''}"
+                alt="Story thumbnail"
+                class="result-thumb"
+                loading="lazy"
+                width="120"
+                height="160"
+                referrerpolicy="no-referrer"
+                onerror="this.closest('.result-thumb-wrap').classList.add('thumb-failed')"
+                ${!cover ? 'hidden' : ''} />
+              ${!cover ? `<div class="result-thumb-fallback" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                  <line x1="7" y1="2" x2="7" y2="22"/>
+                  <line x1="17" y1="2" x2="17" y2="22"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <line x1="2" y1="7" x2="7" y2="7"/>
+                  <line x1="2" y1="17" x2="7" y2="17"/>
+                  <line x1="17" y1="17" x2="22" y2="17"/>
+                  <line x1="17" y1="7" x2="22" y2="7"/>
+                </svg>
+              </div>` : ''}
+            </div>
+            <div class="result-info">
+              <div class="result-meta">
+                <p class="result-title">${storyTitle}</p>
+                ${count > 1 ? `<p class="photo-count">${count} items found in this story</p>` : ''}
+              </div>
+              <div class="result-actions">
+                ${zipTile}
+              </div>
+            </div>
+          </div>
+          ${rows}
+        </div>
+      `;
+
+      const zipBtn = document.getElementById('btn-dl-zip') as HTMLButtonElement | null;
+      zipBtn?.addEventListener('click', () => startDownload('zip', zipBtn));
+      for (let i = 0; i < segments.length; i++) {
+        const s = segments[i];
+        const isVideo = s.kind === 'video';
+        const hdB = document.getElementById(`btn-dl-hd-${i}`) as HTMLButtonElement | null;
+        const sdB = document.getElementById(`btn-dl-sd-${i}`) as HTMLButtonElement | null;
+        const phB = document.getElementById(`btn-dl-photo-${i}`) as HTMLButtonElement | null;
+        hdB?.addEventListener('click', () => startDownload('hd', hdB, i));
+        sdB?.addEventListener('click', () => startDownload('sd', sdB, i));
+        phB?.addEventListener('click', () => startDownload('photo', phB, i));
+        if (!isVideo) continue;
+        const hdOk = Boolean(s.hdplay || s.sdplay);
+        const sdOk = Boolean(s.sdplay || s.hdplay);
+        if (!hdOk) hdB?.setAttribute('disabled', '');
+        if (!sdOk) sdB?.setAttribute('disabled', '');
+      }
+      return;
+    }
 
     if (isPhotoMode) {
       const photos: any[] =
@@ -1205,7 +1498,7 @@ const copy = {
                 .slice(0, 12)
                 .map(
                   (p, i) =>
-                    `<img class="photo-grid-item" src="${p.cover || p.photoUrl || ''}" alt="Facebook photo ${i + 1} of ${count}" loading="lazy" width="120" height="120">`
+                    `<img class="photo-grid-item" src="${p.cover || p.photoUrl || ''}" alt="Facebook photo ${i + 1} of ${count}" loading="lazy" width="120" height="120" referrerpolicy="no-referrer" onerror="this.style.display='none'">`
                 )
                 .join('')}
               ${count > 12 ? `<span class="photo-grid-item photo-grid-more" aria-hidden="true">+${count - 12}</span>` : ''}
@@ -1232,6 +1525,8 @@ const copy = {
                 loading="lazy"
                 width="200"
                 height="200"
+                referrerpolicy="no-referrer"
+                onerror="this.closest('.result-thumb-wrap').classList.add('thumb-failed')"
                 ${!cover && !photoHref ? 'hidden' : ''} />
               ${!cover && !photoHref ? `<div class="result-thumb-fallback" aria-hidden="true">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1275,9 +1570,10 @@ const copy = {
     }
 
     const hdTile = `
-      <button class="dl-tile dl-tile-fb" id="btn-dl-hd" type="button">
+      <button class="dl-tile dl-tile-fb" id="btn-dl-hd" type="button" aria-label="Download HD video">
         <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
         <span class="dl-tile-label">Download <strong>HD Video</strong></span>
+        <span class="dl-hd-badge" aria-hidden="true">HD</span>
         <span class="dl-proc-bar"></span>
       </button>`;
 
@@ -1309,6 +1605,8 @@ const copy = {
               loading="lazy"
               width="120"
               height="160"
+              referrerpolicy="no-referrer"
+              onerror="this.closest('.result-thumb-wrap').classList.add('thumb-failed')"
               ${!cover ? 'hidden' : ''} />
             ${!cover ? `<div class="result-thumb-fallback" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1343,7 +1641,7 @@ const copy = {
     if (!hdUrl || !hdBtn) hdBtn?.setAttribute('disabled', '');
     if (!sdUrl || !sdBtn) sdBtn?.setAttribute('disabled', '');
 
-    function startDownload(mode: string, btn: HTMLButtonElement | null) {
+    function startDownload(mode: string, btn: HTMLButtonElement | null, idx?: number) {
       if (!btn) return;
       btn.classList.add('dl-tile-processing');
       btn.disabled = true;
@@ -1357,9 +1655,10 @@ const copy = {
       }
 
       const xhr = new XMLHttpRequest();
+      const idxParam = typeof idx === 'number' && idx >= 0 ? `&idx=${idx}` : '';
       xhr.open(
         'GET',
-        `/api/facebook?url=${encodeURIComponent(inputUrl)}&dl=${mode}`
+        `/api/facebook?url=${encodeURIComponent(inputUrl)}&dl=${mode}${idxParam}`
       );
       xhr.responseType = 'blob';
 
@@ -1381,7 +1680,7 @@ const copy = {
           a.download =
             mode === 'audio' ? 'tiksavehub-facebook-audio.mp3' :
             mode === 'photo' ? 'tiksavehub-facebook-photo.jpg' :
-            mode === 'zip' ? 'tiksavehub-facebook-photos.zip' :
+            mode === 'zip' ? (isStoryMode ? 'tiksavehub-facebook-story.zip' : 'tiksavehub-facebook-photos.zip') :
             'tiksavehub-facebook-video.mp4';
           document.body.appendChild(a);
           a.click();
@@ -1429,7 +1728,7 @@ const copy = {
     if (!URL_PATTERN.test(url) && !SHORT_PATTERN.test(url)) {
       showError(
         isPhotoMode
-          ? 'Please enter a valid Facebook photo link (e.g. facebook.com/photo.php?fbid=… or facebook.com/share/p/…).'
+          ? 'Please enter a valid Facebook photo link (e.g. facebook.com/photo.php?fbid=…, facebook.com/share/p/… or facebook.com/{profile}/posts/…).'
           : 'Please enter a valid Facebook video link (e.g. facebook.com/username/videos/… or fb.watch/…).'
       );
       return;
@@ -1456,7 +1755,7 @@ const copy = {
         throw new Error(json.error || 'Failed to fetch the video. Please try again.');
       }
 
-      renderResult(isPhotoMode ? json.photo : json.video, url);
+      renderResult(isStoryMode ? json.story : isPhotoMode ? json.photo : json.video, url);
     } catch (err: any) {
       showError(err.message || 'Something went wrong. Please try again.');
     } finally {

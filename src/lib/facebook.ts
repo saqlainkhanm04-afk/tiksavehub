@@ -98,8 +98,16 @@ function extractMediaFromPageHtml(html: string): Partial<FacebookMedia> | null {
     return m ? unescapeJsonString(m[1]) : null;
   };
 
-  const hdUrl = jsonStr('playable_url_quality_hd');
-  const sdUrl = jsonStr('playable_url');
+  const hdUrl =
+    jsonStr('playable_url_quality_hd') ||
+    jsonStr('browser_native_hd_url') ||
+    jsonStr('hd_src_no_ratelimit') ||
+    jsonStr('hd_src');
+  const sdUrl =
+    jsonStr('playable_url') ||
+    jsonStr('browser_native_sd_url') ||
+    jsonStr('sd_src_no_ratelimit') ||
+    jsonStr('sd_src');
   if (!hdUrl && !sdUrl) return null;
 
   const cover = thumbnailUriFromHtml(html) || getMetaContent(html, 'og:image') || '';
@@ -167,8 +175,11 @@ function extractMediaFromEmbedHtml(html: string): Partial<FacebookMedia> | null 
     return m ? unescapeJsonString(m[1]) : null;
   };
 
-  const hdSrc = jsonStr('hd_src');
-  const sdSrc = jsonStr('sd_src');
+  // Prefer the no-ratelimit variants: same rendition, but not subject to the
+  // bandwidth throttling FB applies to hd_src/sd_src — faster, more reliable
+  // downloads. og:video is a last-resort progressive from the page meta.
+  const hdSrc = jsonStr('hd_src_no_ratelimit') || jsonStr('hd_src');
+  const sdSrc = jsonStr('sd_src_no_ratelimit') || jsonStr('sd_src');
   const ogVideo =
     getMetaContent(html, 'og:video:secure_url') ||
     getMetaContent(html, 'og:video:url') ||
@@ -258,6 +269,18 @@ async function fetchDesktopPageMeta(url: string): Promise<Partial<FacebookMedia>
 
 function detectUnavailable(html: string, finalUrl: string): string | null {
   if (/\/login(\/|$)/.test(finalUrl)) return FB_ERR.LOGIN_REQUIRED;
+  const lower = html.toLowerCase();
+  if (
+    lower.includes('url=/login/?next=') ||
+    lower.includes('url=/login/?') ||
+    lower.includes('log into facebook') ||
+    lower.includes('you must log in to continue') ||
+    lower.includes('log in to facebook to continue') ||
+    lower.includes('password</') ||
+    lower.includes('action="/login')
+  ) {
+    return FB_ERR.LOGIN_REQUIRED;
+  }
   const markers = [
     "content isn't available",
     "content is not available",
@@ -267,25 +290,27 @@ function detectUnavailable(html: string, finalUrl: string): string | null {
     "may have been removed",
     "The link you followed may be broken",
   ];
-  const lower = html.toLowerCase();
   for (const marker of markers) {
     if (lower.includes(marker)) return FB_ERR.NOT_AVAILABLE;
   }
   return null;
 }
 
-async function fetchPage(url: string): Promise<{ html: string; finalUrl: string }> {
+const VIDEO_PAGE_TIMEOUT_MS = 8_000;
+const MAX_VIDEO_HTML_BYTES = 2_500_000;
+
+async function fetchPage(url: string, ua: string = UA_MOBILE): Promise<{ html: string; finalUrl: string }> {
   let resp: Response;
   try {
     resp = await fetch(url, {
       headers: {
-        'User-Agent': UA_MOBILE,
+        'User-Agent': ua,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'no-cache',
       },
       redirect: 'follow',
-      signal: AbortSignal.timeout(25_000),
+      signal: AbortSignal.timeout(VIDEO_PAGE_TIMEOUT_MS),
     });
   } catch (err: any) {
     if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
@@ -302,7 +327,7 @@ async function fetchPage(url: string): Promise<{ html: string; finalUrl: string 
     throw coded('Facebook could not be reached right now.', FB_ERR.INVALID_RESPONSE);
   }
 
-  const html = await resp.text();
+  const { text: html } = await readBoundedText(resp.body, MAX_VIDEO_HTML_BYTES);
   const unavailable = detectUnavailable(html, finalUrl);
   if (unavailable) throw coded('This video is private or was deleted.', unavailable);
 
@@ -352,7 +377,10 @@ async function resolveShortUrl(url: string): Promise<string> {
 
 /**
  * Fetch metadata + download links for a public Facebook video.
- * Tries the video page markup first, then the embed plugin page, then yt-dlp.
+ * Pipeline is PARALLEL where it matters: the page markup wins fast on healthy
+ * IPs; when it is shelled (flagged/throttled IPs), the embed plugin page and
+ * the yt-dlp fallback run at the same time so the slowest single source
+ * bounds the total (was: sequential page → embed → yt-dlp).
  */
 export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedia> {
   return memoSWR(`fb:media:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
@@ -363,59 +391,122 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
 
     const errors: string[] = [];
 
-    try {
-      const { html } = await fetchPage(pageUrl);
-      const media = extractMediaFromPageHtml(html);
-      if (media?.hdUrl || media?.sdUrl) {
-        return {
-          title: media.title ?? 'Facebook Video',
-          cover: media.cover ?? '',
-          duration: media.duration ?? 0,
-          hdUrl: media.hdUrl ?? null,
-          sdUrl: media.sdUrl ?? null,
-          author: { name: media.author?.name ?? '', avatar: media.author?.avatar ?? '' },
-          like_count: media.like_count ?? 0,
-          comment_count: media.comment_count ?? 0,
-          share_count: media.share_count ?? 0,
-          view_count: media.view_count ?? 0,
-        };
+    const pageTask = (async () => {
+      try {
+        const { html } = await fetchPage(pageUrl);
+        const media = extractMediaFromPageHtml(html);
+        if (media?.hdUrl || media?.sdUrl) return media;
+        errors.push('Page markup contained no playable URLs.');
+        return null;
+      } catch (err: any) {
+        if (err?.code === FB_ERR.NOT_AVAILABLE || err?.code === FB_ERR.LOGIN_REQUIRED) throw err;
+        errors.push(err?.message || 'Page fetch failed.');
+        return null;
       }
-      errors.push('Page markup contained no playable URLs.');
-    } catch (err: any) {
-      if (err?.code === FB_ERR.NOT_AVAILABLE || err?.code === FB_ERR.LOGIN_REQUIRED) throw err;
-      errors.push(err?.message || 'Page fetch failed.');
-    }
+    })();
 
-    try {
-      const [embed, extra] = await Promise.all([
-        fetchEmbed(pageUrl),
-        fetchDesktopPageMeta(pageUrl).catch(() => null),
-      ]);
-      const title = (embed.title && embed.title !== 'Facebook Video' ? embed.title : extra?.title) || 'Facebook Video';
-      const cover = embed.cover || extra?.cover || '';
+    // Grace window: the page fetch usually wins fast on healthy IPs, so the
+    // expensive embed/yt-dlp sources only start when the page is slow or
+    // shelled (flagged/throttled IPs) — they then run in parallel instead of
+    // sequentially after the page verdict.
+    const pageGate = pageTask.then(
+      (m) => ({ done: Boolean(m) }),
+      () => {
+        throw null;
+      }
+    );
+    const startWhenPageDelays = <T,>(delayMs: number, task: () => Promise<T | null>): Promise<T | null> =>
+      new Promise((resolve) => {
+        let settled = false;
+        const finish = (v: T | null) => {
+          if (!settled) {
+            settled = true;
+            resolve(v);
+          }
+        };
+        const timer = setTimeout(() => {
+          task().then(finish, () => finish(null));
+        }, delayMs);
+        pageGate.then((g) => {
+          clearTimeout(timer);
+          if (g.done) finish(null);
+          else task().then(finish, () => finish(null));
+        }).catch(() => {
+          // Page threw (private/404/login) — definitive, don't start extras.
+          clearTimeout(timer);
+          finish(null);
+        });
+      });
+
+    const embedTask = startWhenPageDelays(2000, async () => {
+      try {
+        const [embed, extra] = await Promise.all([
+          fetchEmbed(pageUrl),
+          fetchDesktopPageMeta(pageUrl).catch(() => null),
+        ]);
+        if (!embed.hdUrl && !embed.sdUrl) return null;
+        return {
+          title: (embed.title && embed.title !== 'Facebook Video' ? embed.title : extra?.title) || 'Facebook Video',
+          cover: embed.cover || extra?.cover || '',
+          duration: embed.duration ?? 0,
+          hdUrl: embed.hdUrl ?? null,
+          sdUrl: embed.sdUrl ?? null,
+          author: {
+            name: embed.author?.name || extra?.author?.name || '',
+            avatar: embed.author?.avatar || embed.cover || extra?.cover || '',
+          },
+        };
+      } catch (err: any) {
+        errors.push(err?.message || 'Embed fetch failed.');
+        return null;
+      }
+    });
+
+    const ytTask = startWhenPageDelays(2500, async () => {
+      try {
+        return await fetchFacebookWithYtDlp(inputUrl);
+      } catch (err: any) {
+        errors.push(err?.message || 'yt-dlp failed.');
+        return null;
+      }
+    });
+
+    const [pageResult, embedResult, ytResult] = await Promise.allSettled([pageTask, embedTask, ytTask]);
+
+    if (pageResult.status === 'rejected') throw pageResult.reason;
+
+    if (pageResult.value) {
+      const media = pageResult.value;
       return {
-        title,
-        cover,
-        duration: embed.duration ?? 0,
-        hdUrl: embed.hdUrl ?? null,
-        sdUrl: embed.sdUrl ?? null,
-        author: {
-          name: embed.author?.name || extra?.author?.name || '',
-          avatar: embed.author?.avatar || cover || '',
-        },
-        like_count: 0,
-        comment_count: 0,
-        share_count: 0,
-        view_count: 0,
+        title: media.title ?? 'Facebook Video',
+        cover: media.cover ?? '',
+        duration: media.duration ?? 0,
+        hdUrl: media.hdUrl ?? null,
+        sdUrl: media.sdUrl ?? null,
+        author: { name: media.author?.name ?? '', avatar: media.author?.avatar ?? '' },
+        like_count: media.like_count ?? 0,
+        comment_count: media.comment_count ?? 0,
+        share_count: media.share_count ?? 0,
+        view_count: media.view_count ?? 0,
       };
-    } catch (err: any) {
-      errors.push(err?.message || 'Embed fetch failed.');
     }
 
-    try {
-      return await fetchFacebookWithYtDlp(inputUrl);
-    } catch (err: any) {
-      errors.push(err?.message || 'yt-dlp failed.');
+    const winner =
+      (embedResult.status === 'fulfilled' ? embedResult.value : null) ||
+      (ytResult.status === 'fulfilled' ? ytResult.value : null);
+    if (winner) {
+      return {
+        title: winner.title || 'Facebook Video',
+        cover: winner.cover ?? '',
+        duration: winner.duration ?? 0,
+        hdUrl: winner.hdUrl ?? null,
+        sdUrl: winner.sdUrl ?? null,
+        author: { name: winner.author?.name ?? '', avatar: winner.author?.avatar || winner.cover || '' },
+        like_count: winner.like_count ?? 0,
+        comment_count: winner.comment_count ?? 0,
+        share_count: winner.share_count ?? 0,
+        view_count: winner.view_count ?? 0,
+      };
     }
 
     const last = errors[errors.length - 1] || 'Could not load this video.';
@@ -445,7 +536,10 @@ export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedi
     const results = await Promise.allSettled(
       [...candidates].map((u) =>
         fetchFacebookMedia(u).catch((err: any) => {
-          errors.push(err?.message || `Variant failed: ${u}`);
+          const em = err?.message || `Variant failed: ${u}`;
+          const code = err?.code || '';
+          if (code) errors.push(`[${code}] ${em}`);
+          else errors.push(em);
           throw err;
         })
       )
@@ -463,10 +557,239 @@ export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedi
     }
 
     const last = errors[errors.length - 1] || 'Could not load this story.';
+    if (errors.some((e) => e.includes(FB_ERR.LOGIN_REQUIRED))) {
+      throw coded('This story requires a Facebook login to view.', FB_ERR.LOGIN_REQUIRED);
+    }
     if (last.toLowerCase().includes('private') || last.toLowerCase().includes('deleted')) {
       throw coded('This story is private or was deleted.', FB_ERR.NOT_AVAILABLE);
     }
     throw coded('Could not load this Facebook story.', FB_ERR.NO_MEDIA);
+  });
+}
+
+export interface FacebookStorySegment {
+  kind: 'video' | 'photo';
+  title: string;
+  cover: string;
+  duration: number;
+  hdUrl: string | null;
+  sdUrl: string | null;
+  /** Full-size CDN URL for photo segments. */
+  photoUrl: string | null;
+  /** Un-promoted CDN URL — safe fallback when the promoted URL is refused. */
+  altUrl?: string;
+}
+
+export interface FacebookStorySet {
+  title: string;
+  cover: string;
+  author: { name: string; avatar: string };
+  segments: FacebookStorySegment[];
+}
+
+const MAX_STORY_SEGMENTS = 30;
+const MAX_SJS_BLOB_BYTES = 1_500_000;
+
+/**
+ * Collect every media segment of a story from a parsed `data-sjs>` JSON blob.
+ * Stories render each segment as `story.attachments[].media` (the media item
+ * is EITHER a single object or — for multi-segment stories — an array of
+ * them); yt-dlp's extractor walks the same paths (`data.video.story
+ * .attachments[].media`, `video.creation_story.attachments` and the
+ * `node.comet_sections.content.story.attachments…attachment.media` relay
+ * shape), which this walker finds GENERICALLY: any object holding an
+ * `attachments` array whose items carry a `media` key. Video segments carry
+ * `playable_url`(+`playable_url_quality_hd`, `thumbnailImage`, duration);
+ * photo segments carry an `image.uri` with a Photo typename. Nested JSON
+ * strings (relay payloads) are re-parsed when they clearly hold attachments.
+ */
+function storySegmentsFromJson(root: unknown, out: FacebookStorySegment[]): void {
+  const seen = new Set<string>();
+  const seenSd = new Map<string, FacebookStorySegment>();
+
+  const collectMedia = (media: any) => {
+    if (!media || typeof media !== 'object' || Array.isArray(media)) return;
+    const hd = typeof media.playable_url_quality_hd === 'string' ? media.playable_url_quality_hd : null;
+    const sd = typeof media.playable_url === 'string' ? media.playable_url : null;
+    if (hd || sd) {
+      const img = typeof media?.thumbnailImage?.uri === 'string' ? media.thumbnailImage.uri : '';
+      const imgAlt = typeof media?.image?.uri === 'string' ? media.image.uri : '';
+      // Dedupe by the SD stream: the same video can appear twice in a payload
+      // (once bare, once with an HD variant). If we've seen the SD URL, upgrade
+      // the existing segment in place with the HD URL so the best rendition wins.
+      if (sd) {
+        const existing = seenSd.get(sd);
+        if (existing) {
+          if (hd && !existing.hdUrl) existing.hdUrl = hd;
+          if (!existing.cover && (img || imgAlt)) existing.cover = img || imgAlt;
+          return;
+        }
+      }
+      const url = hd || sd;
+      if (seen.has(`v:${url}`)) return;
+      seen.add(`v:${url}`);
+      const seg: FacebookStorySegment = {
+        kind: 'video',
+        title: typeof media?.name === 'string' ? media.name : '',
+        cover: img || imgAlt,
+        duration:
+          typeof media.playable_duration_in_ms === 'number' ? media.playable_duration_in_ms / 1000 : 0,
+        hdUrl: hd,
+        sdUrl: sd,
+        photoUrl: null,
+      };
+      if (sd) seenSd.set(sd, seg);
+      out.push(seg);
+      return;
+    }
+    const uri = media?.image?.uri;
+    if (typeof uri === 'string') {
+      const typename = typeof media.__typename === 'string' ? media.__typename : '';
+      if (typename && !/photo/i.test(typename)) return;
+      const clean = uri.replace(/&amp;/g, '&');
+      if (seen.has(`p:${clean}`)) return;
+      seen.add(`p:${clean}`);
+      out.push({
+        kind: 'photo',
+        title: '',
+        cover: clean,
+        duration: 0,
+        hdUrl: null,
+        sdUrl: null,
+        photoUrl: promotePhotoUrl(clean),
+        altUrl: clean,
+      });
+    }
+  };
+
+  const collectAttachmentMedia = (attachments: any[]) => {
+    for (const a of attachments) {
+      if (!a || typeof a !== 'object' || !('media' in a)) continue;
+      const media = (a as any).media;
+      if (Array.isArray(media)) for (const m of media) collectMedia(m);
+      else collectMedia(media);
+    }
+  };
+
+  const walk = (node: unknown, depth: number) => {
+    if (node == null || depth > 18) return;
+    if (Array.isArray(node)) {
+      for (const item of node) walk(item, depth + 1);
+      return;
+    }
+    if (typeof node === 'string') {
+      // Some relay payloads store nested JSON as escaped strings inside the
+      // container blob — parse the ones that clearly hold attachments.
+      if (node.length < MAX_SJS_BLOB_BYTES && node.startsWith('{') && node.includes('"attachments"')) {
+        try {
+          walk(JSON.parse(node), depth + 1);
+        } catch {
+          // ignore malformed nested payloads
+        }
+      }
+      return;
+    }
+    if (typeof node !== 'object') return;
+    const obj = node as Record<string, any>;
+    if (Array.isArray(obj.attachments)) collectAttachmentMedia(obj.attachments);
+    for (const key of Object.keys(obj)) {
+      if (key !== 'attachments') walk(obj[key], depth + 1);
+    }
+  };
+
+  walk(root, 0);
+}
+
+/**
+ * Parse every `data-sjs>` JSON blob of a story page into story segments.
+ * Exported for tests.
+ */
+export function parseStoryPage(html: string): FacebookStorySegment[] {
+  const out: FacebookStorySegment[] = [];
+  const blobRe = /<script\s+[^>]*type="application\/json"[^>]*data-sjs[^>]*>([\s\S]*?)<\/script>/gi;
+  for (const m of html.matchAll(blobRe)) {
+    const blob = m[1]?.trim();
+    if (!blob || blob.length > MAX_SJS_BLOB_BYTES) continue;
+    try {
+      storySegmentsFromJson(JSON.parse(blob), out);
+    } catch {
+      // malformed blob — try the next one
+    }
+    if (out.length >= MAX_STORY_SEGMENTS) break;
+  }
+  return out.slice(0, MAX_STORY_SEGMENTS);
+}
+
+/**
+ * Fetch EVERY segment of a Facebook story — multi-segment stories carry
+ * several videos/photos in one story, and previously only the first video was
+ * ever extracted. Story pages are fetched across host variants and user agents
+ * in PARALLEL (flagged IPs shell some variants; the variant that yields the
+ * most segments wins — same pattern as the photo pipeline). When no page
+ * exposes the attachments JSON (heavily shelled pages), fall back to the
+ * classic single-video pipeline (page → embed → yt-dlp) so single-segment
+ * stories keep working unchanged.
+ */
+export async function fetchFacebookStorySet(inputUrl: string): Promise<FacebookStorySet> {
+  return memoSWR(`fb:storyset:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
+    const attempts: Array<{ url: string; ua: string }> = [];
+    for (const u of hostVariantsOf(inputUrl)) {
+      attempts.push({ url: u, ua: UA_MOBILE }, { url: u, ua: UA_DESKTOP });
+    }
+
+    const results = await Promise.allSettled(attempts.map(({ url, ua }) => fetchPage(url, ua)));
+
+    let bestSegments: FacebookStorySegment[] = [];
+    let bestHtml = '';
+    for (const r of results) {
+      if (r.status === 'rejected') continue;
+      const segments = parseStoryPage(r.value.html);
+      if (segments.length > bestSegments.length) {
+        bestSegments = segments;
+        bestHtml = r.value.html;
+      }
+    }
+
+    if (bestSegments.length === 0) {
+      // No attachments JSON anywhere (flag-walled shells) — fall back to the
+      // classic single-video pipeline.
+      const single = await fetchFacebookStory(inputUrl);
+      if (!single.hdUrl && !single.sdUrl) {
+        throw coded('Could not load this Facebook story.', FB_ERR.NO_MEDIA);
+      }
+      bestSegments = [
+        {
+          kind: 'video',
+          title: single.title,
+          cover: single.cover,
+          duration: single.duration,
+          hdUrl: single.hdUrl,
+          sdUrl: single.sdUrl,
+          photoUrl: null,
+        },
+      ];
+      bestHtml = '';
+    }
+
+    let title =
+      getMetaContent(bestHtml, 'og:title') ||
+      htmlTitle(bestHtml) ||
+      (bestSegments[0]?.kind === 'video' ? bestSegments[0].title : '') ||
+      'Facebook Story';
+    title = title.replace(/\s*\|\s*Facebook\s*$/i, '').trim() || 'Facebook Story';
+
+    const ogImage = getMetaContent(bestHtml, 'og:image');
+    const cover = ogImage || bestSegments[0]?.cover || '';
+
+    const authorMatch = bestHtml.match(/"pageName"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+    const authorName = authorMatch ? unescapeJsonString(authorMatch[1]) : '';
+
+    return {
+      title,
+      cover,
+      author: { name: authorName, avatar: cover },
+      segments: bestSegments,
+    };
   });
 }
 
@@ -489,10 +812,17 @@ export async function fetchFacebookAudio(inputUrl: string): Promise<FacebookAudi
  * to the un-promoted original (`altUrl`) when that happens.
  */
 function promotePhotoUrl(u: string): string {
-  let out = u.replace(/stp=dst-jpg_s\d{1,5}x\d{1,5}/, 'stp=dst-jpg_p2048x2048');
-  out = out.replace(/stp=dst-jpg_p\d{1,5}x\d{1,5}/, 'stp=dst-jpg_p2048x2048');
-  out = out.replace(/stp=dst-webp_q70_s\d{1,5}x\d{1,5}/, 'stp=dst-jpg_p2048x2048');
+  let out = u.replace(/stp=dst-jpg(?:_q\d+)?_[sp]\d{1,5}x\d{1,5}(?:_q\d+)?/, 'stp=dst-jpg_p2048x2048');
+  out = out.replace(/stp=dst-webp(?:_q\d+)?_[sp]\d{1,5}x\d{1,5}(?:_q\d+)?/, 'stp=dst-jpg_p2048x2048');
   out = out.replace(/(\/p\d{1,5}x\d{1,5}\/)/, '/p2048x2048/');
+  out = out.replace(/(\/s\d{1,5}x\d{1,5}\/)/, '/s2048x2048/');
+  // `ctp={p|s}{w}x{h}` is the client-selectable size cap — dropping it serves
+  // the ORIGINAL full-size file (verified live: 443x590 → 1179x1572 on reader
+  // URLs, 600x800 → 1179x1572 on og:image URLs; cstp/stp/path rewrites 403 as
+  // they're signed, ctp is not). Signed URLs that still reject fall back to
+  // the un-promoted original via `altUrl`.
+  out = out.replace(/([?&])ctp=[sp]\d{1,5}x\d{1,5}/, '$1');
+  out = out.replace(/&{2,}/g, '&');
   return out;
 }
 
@@ -591,6 +921,10 @@ export function extractPhotosFromHtml(html: string): PhotoCandidate[] {
     const raw = m[1].replace(/&amp;/g, '&');
     // FB static hosts (emoji sprites, icons) are never photos.
     if (/^https?:\/\/static\./i.test(raw) || /rsrc\.php/.test(raw)) continue;
+    // Emoji/sticker/GIF renditions and external-gif proxies are not photos:
+    // `dst-emg0` stp tokens, the t39.1997-6 sticker bucket, and the emg1
+    // external-gif proxy host.
+    if (/dst-emg|emg1\/|t39\.1997-6\//.test(raw)) continue;
     // Ignore tiny avatars/emoji assets — both path tokens (s40x40, p40x40,
     // p75x75) and stp query tokens (…_s40x40_tt6, …_s96x96_tt6: anything
     // ≤160×160 is an avatar/icon, real photo thumbs are bigger).
@@ -780,7 +1114,7 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     // (fully shelled) or the siblings lost to a throttled/truncated read — a
     // clean single-photo page skips the proxy entirely.
     if (bestCandidates.length === 0 || (bestCandidates.length === 1 && sawTruncated)) {
-      if (isSharePhotoUrl(inputUrl)) {
+      if (isReaderRecoverableUrl(inputUrl)) {
         const recovered = new Map<string, PhotoCandidate>();
         await fetchSiblingsViaReader(inputUrl, null, recovered);
         if (recovered.size) {
@@ -860,10 +1194,19 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
 
 const SIBLING_PAGE_TIMEOUT_MS = 6_000;
 
-/** True for `share/p/{code}` photo share links (the only pages the reader
- *  proxy reliably renders — everything else is login-walled for its IPs). */
-function isSharePhotoUrl(u: string): boolean {
-  return /\/share\/p\/[A-Za-z0-9_-]{4,20}\/?$/.test(u);
+/** True for URLs the reader proxy can reliably render for unflagged readers:
+ *  share photo links (`share/p/{code}`), profile/group post permalinks
+ *  (`/{user}/posts/{token}`, `/groups/{gid}/permalink/{token}`) and legacy
+ *  `permalink.php?story_fbid={id}` post pages (they redirect to the post
+ *  permalink, which carries every carousel sibling) — everything else is
+ *  login-walled for its IPs. Called with full `https://…` URLs. */
+function isReaderRecoverableUrl(u: string): boolean {
+  return (
+    /\/share\/p\/[A-Za-z0-9_-]{4,20}\/?$/.test(u) ||
+    /\/[A-Za-z0-9._-]+\/(?:posts|permalink)\/[A-Za-z0-9_-]{8,80}\/?$/.test(u) ||
+    /\/groups\/[A-Za-z0-9._-]+\/(?:posts|permalink)\/[A-Za-z0-9_-]{8,80}\/?$/.test(u) ||
+    /\/permalink\.php\?story_fbid=\d{5,30}$/.test(u)
+  );
 }
 
 const READER_FALLBACK_TIMEOUT_MS = 20_000;
@@ -961,7 +1304,7 @@ async function fetchSiblingPhotosFull(
     if (round === 0 && remaining.length === ids.length) break;
   }
 
-  if (remaining.length && shareUrl && isSharePhotoUrl(shareUrl)) {
+  if (remaining.length && shareUrl && isReaderRecoverableUrl(shareUrl)) {
     await fetchSiblingsViaReader(shareUrl, remaining, found);
   }
   return found;
@@ -1050,6 +1393,65 @@ export async function fetchFacebookPhotosAsFiles(
 
   await Promise.all(
     Array.from({ length: Math.min(PHOTO_DL_CONCURRENCY, photos.length) }, () => worker())
+  );
+
+  out.sort((a, b) => (a.name < b.name ? -1 : 1));
+  return out;
+}
+
+const STORY_DL_CONCURRENCY = 3;
+const STORY_DL_TIMEOUT_MS = 60_000;
+
+async function fetchStoryVideoBuffer(url: string): Promise<{ data: Uint8Array; contentType: string | null }> {
+  const resp = await fetch(url, {
+    headers: {
+      'User-Agent': UA_DESKTOP,
+      'Referer': 'https://www.facebook.com/',
+      'Accept': 'video/mp4,video/*,*/*;q=0.8',
+    },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(STORY_DL_TIMEOUT_MS),
+  });
+  if (!resp.ok) throw new Error(`Facebook CDN returned ${resp.status}`);
+  const data = new Uint8Array(await resp.arrayBuffer());
+  if (data.length < 256) throw new Error('Facebook CDN returned an empty video');
+  return { data, contentType: resp.headers.get('content-type') };
+}
+
+/**
+ * Download every segment of a story (videos at HD, photos full-size) into one
+ * bundle for the ZIP downloader. Failed entries are skipped so one dead URL
+ * can't sink the whole archive.
+ */
+export async function fetchFacebookStoryAsFiles(
+  set: FacebookStorySet
+): Promise<Array<{ name: string; data: Uint8Array }>> {
+  const out: Array<{ name: string; data: Uint8Array }> = [];
+  let next = 0;
+
+  const worker = async () => {
+    while (next < set.segments.length) {
+      const i = next++;
+      const seg = set.segments[i];
+      const label = String(i + 1).padStart(2, '0');
+      try {
+        if (seg.kind === 'photo' && seg.photoUrl) {
+          const { data, contentType } = await fetchPhotoBuffer(seg.photoUrl, seg.altUrl);
+          out.push({ name: `story-${label}.${photoExtOf(seg.photoUrl, contentType)}`, data });
+        } else {
+          const url = seg.hdUrl || seg.sdUrl;
+          if (!url) continue;
+          const { data } = await fetchStoryVideoBuffer(url);
+          out.push({ name: `story-${label}.mp4`, data });
+        }
+      } catch (err: any) {
+        console.error(`[Facebook] story segment ${i + 1} download failed:`, err?.message ?? err);
+      }
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.min(STORY_DL_CONCURRENCY, Math.max(set.segments.length, 1)) }, () => worker())
   );
 
   out.sort((a, b) => (a.name < b.name ? -1 : 1));

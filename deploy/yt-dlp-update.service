@@ -1,0 +1,11 @@
+[Unit]
+Description=TikSaveHub — yt-dlp self-update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/yt-dlp -U
+Nice=5
+StandardOutput=append:/var/log/tiksavehub/yt-dlp-update.log
+StandardError=append:/var/log/tiksavehub/yt-dlp-update.log

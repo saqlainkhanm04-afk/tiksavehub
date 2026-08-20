@@ -49,6 +49,16 @@ chmod a+rx /usr/local/bin/yt-dlp
 log "yt-dlp: $(/usr/local/bin/yt-dlp --version)"
 log "Keep it fresh on the server: sudo yt-dlp -U"
 
+# ---- 3b. systemd timer: auto-update yt-dlp daily (idempotent) ----
+install -o root -g root -m 0644 \
+  "$APP_DIR/deploy/yt-dlp-update.service" /etc/systemd/system/yt-dlp-update.service
+install -o root -g root -m 0644 \
+  "$APP_DIR/deploy/yt-dlp-update.timer" /etc/systemd/system/yt-dlp-update.timer
+systemctl daemon-reload
+systemctl enable --now yt-dlp-update.timer
+log "yt-dlp auto-update timer enabled (runs daily). Status:"
+systemctl list-timers yt-dlp-update.timer --no-pager | tail -2
+
 # ---- 4. Service user (cannot log in) ----
 if ! id "$USER_NAME" >/dev/null 2>&1; then
   log "Creating system user '$USER_NAME'..."
@@ -117,3 +127,4 @@ log "  3. chown -R '$USER_NAME:$USER_NAME' $APP_DIR/data  (if used)"
 log "  4. Start the service: sudo systemctl enable --now tiksavehub"
 log "  5. Tail logs:         sudo journalctl -u tiksavehub -f"
 log "  6. Smoke test:        curl -s http://localhost:3000/ | head -5"
+log "  7. yt-dlp updates automatically (daily): systemctl list-timers yt-dlp-update.timer"

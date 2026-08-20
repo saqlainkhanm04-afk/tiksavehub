@@ -42,11 +42,14 @@ export const GET: APIRoute = async ({ url, request }) => {
   }
 
   if (typeParam) {
-    const allowedTypes = typeParam === 'audio' ? ['video', 'reels'] : [typeParam];
+    // video and reels tools accept both link kinds (reels are posts);
+    // audio accepts video/reels; story stays strict.
+    const allowedTypes =
+      typeParam === 'story' ? ['story'] : ['video', 'reels'];
     if (!allowedTypes.includes(parsed.type)) {
       const typeLabels: Record<string, string> = {
-        video: 'video post (instagram.com/p/…)',
-        reels: 'Reels (instagram.com/reel/…)',
+        video: 'video post or Reels (instagram.com/p/… or /reel/…)',
+        reels: 'Reels or video post (instagram.com/reel/… or /p/…)',
         story: 'story (instagram.com/stories/…)',
         audio: 'video or Reels',
       };

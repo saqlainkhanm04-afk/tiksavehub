@@ -10,64 +10,64 @@ import SocialShare from '../components/SocialShare.astro';
 
 const faqData = [
   {
-    id: 'dl-free',
-    q: 'Is TikSaveHub free to use?',
-    a: 'Yes, TikSaveHub is a 100% free Instagram Reels downloader. There are no hidden fees, no subscriptions, and no account required. You can download unlimited Instagram Reels without watermark at no cost.',
+    id: 'reels-how',
+    q: 'How can I download an Instagram Reel?',
+    a: 'Open the Reel you want in the Instagram app (or a browser) and tap the share icon, then Copy Link. Paste that link into TikSaveHub above and hit Download — the MP4 saves to your device in seconds.',
   },
   {
-    id: 'dl-watermark',
-    q: 'Does TikSaveHub remove the Instagram Reels watermark?',
-    a: 'Yes. Our Reels downloader removes the watermark and lets you download clean, watermark-free Instagram Reels in MP4 format instantly.',
+    id: 'reels-no-download-btn',
+    q: 'Why can’t I download a Reel directly from the Instagram app?',
+    a: 'Instagram only shows its own download button on certain Reels (usually the creator’s own or shareable ones), and it always pins the account handle on the file. With TikSaveHub you can save any public Reel you can open — without an app download button and without any added logo.',
   },
   {
-    id: 'dl-quality',
-    q: 'What quality can I download Reels in?',
-    a: 'You can download Instagram Reels in the highest available quality, including HD (up to 1080p). Our tool does not reduce quality or add compression.',
+    id: 'reels-link-formats',
+    q: 'Which Instagram Reel link formats are supported?',
+    a: 'All standard Reel URLs work: instagram.com/reel/{id}/, instagram.com/reels/{id}/, short post links like instagram.com/p/..., and the shortened share links Instagram generates when you tap Copy Link. Just paste whatever URL the app gave you.',
   },
   {
-    id: 'dl-mobile',
-    q: 'Does this Instagram Reels downloader work on mobile devices?',
-    a: 'Yes, TikSaveHub works on iPhone, Android, tablets, and desktop. No app or software installation is required — just paste the Reel link and download.',
+    id: 'reels-share-link',
+    q: 'Does it work with Instagram’s shortened share links?',
+    a: 'Yes. Instagram app share links (the short urls like instagram.com/reel/A1b2C3/) are resolved automatically by TikSaveHub — no need to expand them manually.',
   },
   {
-    id: 'dl-legal',
+    id: 'reels-hd',
+    q: 'What quality do I get when downloading a Reel?',
+    a: 'You get the highest resolution Instagram serves for that Reel — Reels are recorded up to 1080×1920, and TikSaveHub grabs the original MP4 at its full quality instead of a compressed copy.',
+  },
+  {
+    id: 'reels-audio',
+    q: 'Will the Reel’s original music and sound be included?',
+    a: 'Yes. The audio track — trending music, voiceover, or dialogue — is preserved in the downloaded MP4 at full quality.',
+  },
+  {
+    id: 'reels-mobile',
+    q: 'Can I download Reels on my phone without installing an app?',
+    a: 'Absolutely. TikSaveHub runs in any mobile browser on Android, iPhone, and iPad. Copy the link in Instagram, switch to your browser, paste, download — no app installation or extra permissions required.',
+  },
+  {
+    id: 'reels-iphone',
+    q: 'How do I save a Reel on iPhone or iPad?',
+    a: 'Copy the Reel link, paste it into TikSaveHub in Safari, and tap Download. The video opens in Quick Look — tap the share icon and choose Save Video to add it to your Photos library.',
+  },
+  {
+    id: 'reels-android',
+    q: 'How do I save a Reel on Android?',
+    a: 'Paste the copied Reel link into TikSaveHub in Chrome or any Android browser and tap Download. The MP4 lands in your Downloads folder, and most gallery apps pick it up automatically.',
+  },
+  {
+    id: 'reels-private',
+    q: 'Can I download Reels from private accounts?',
+    a: 'No. Like every downloader, TikSaveHub only works with public Reels. Content from private accounts is never fetched — we respect Instagram’s privacy settings completely.',
+  },
+  {
+    id: 'reels-legal',
     q: 'Is it legal to download Instagram Reels?',
-    a: 'Downloading Instagram Reels for personal use is generally allowed. However, you should not repost or use content commercially without permission from the original creator. Always respect copyright rules.',
+    a: 'Downloading for personal offline viewing is generally accepted. Re-uploading or republishing someone else’s Reel commercially without permission can violate copyright — always credit creators and respect their rights.',
   },
   {
-    id: 'dl-types',
-    q: 'What Instagram Reel link formats are supported?',
-    a: 'Our Reels downloader supports all Instagram Reel link formats, including instagram.com/reel/, instagram.com/reels/, and shortened share links (Instagram app share URLs).',
-  },
-  {
-    id: 'dl-private',
-    q: 'Can I download Reels from private Instagram accounts?',
-    a: 'We can only download Reels that are publicly accessible or that you can open yourself. Reels from private Instagram accounts cannot be downloaded without the owner\u2019s permission, and we respect all privacy settings.',
-  },
-  {
-    id: 'dl-original',
-    q: 'Do you keep the original HD quality of the Reel?',
-    a: 'Yes. We pull the Reel straight from Instagram at the highest available quality, including HD up to 1080p, without re-encoding or compression — so the file matches the original upload.',
-  },
-  {
-    id: 'dl-android',
-    q: 'How do I download Instagram Reels on Android?',
-    a: 'Copy the Reel link, paste it into the field above, and tap Download. The clean, watermark-free video saves directly to your Android device through your browser — no app is required.',
-  },
-  {
-    id: 'dl-iphone',
-    q: 'How do I download Instagram Reels on iPhone or iOS?',
-    a: 'Copy the Reel link from Instagram, paste it into TikSaveHub above, and tap Download. The Reel saves straight to your iPhone Photos via Safari — no app or special permission needed.',
-  },
-  {
-    id: 'dl-saved',
-    q: 'Where do downloaded Instagram Reels get saved?',
-    a: 'After tapping Download, the Reel saves directly to your device — the Downloads folder on desktop, your gallery or Downloads folder on Android, and Photos on iPhone. If you can’t find it, check your browser’s download history.',
-  },
-  {
-    id: 'dl-whyfail',
-    q: 'Why can’t I download some Instagram Reels?',
-    a: 'We can only download Reels that are publicly accessible or that you can open in your browser. Reels hidden by privacy settings, region restrictions, or removal cannot be fetched — try another public Reel link instead.',
+    id: 'reels-whyfail',
+    q: 'Why can’t I download some Reels?',
+    a: 'A few Reels can’t be fetched: ones from private accounts, ones removed or made unavailable by the creator, and region-restricted content. If a link fails, check that the Reel is public and still live before retrying.',
   },
 ];
 

@@ -117,7 +117,7 @@ async function dumpSingleJson(url: string): Promise<any> {
     '--no-color',
     '--no-check-certificates',
     '--format',
-    'best[protocol!=m3u8]/best',
+    'best[protocol!=m3u8][acodec!=none]/best[protocol!=m3u8]/best',
   ];
 
   const cookie = sessionCookieHeader();
@@ -220,12 +220,24 @@ function toFacebookMedia(json: any): any {
     const hit = formats.find(pred) || null;
     return hit?.url || null;
   };
+  const hasAudio = (f: any) => (f.acodec || '') !== 'none';
+  const hasVideo = (f: any) => (f.vcodec || '') !== 'none';
+  const progressive = (f: any) => f.protocol !== 'm3u8' && hasAudio(f) && hasVideo(f);
   const directUrl: string | null = json.url || null;
+  const progressiveHd = pick((f: any) => f.format_id === 'hd' && f.protocol !== 'm3u8');
+  const progressiveSd = pick((f: any) => f.format_id === 'sd' && f.protocol !== 'm3u8');
   const hdUrl =
+    progressiveHd ||
+    pick((f: any) => (f.height || 0) >= 720 && progressive(f)) ||
     pick((f: any) => (f.height || 0) >= 720 && f.protocol !== 'm3u8') ||
     pick((f: any) => (f.height || 0) >= 720) ||
     directUrl;
-  const sdUrl = pick((f: any) => f.protocol !== 'm3u8') || directUrl;
+  const sdUrl =
+    progressiveSd ||
+    progressiveHd ||
+    pick(progressive) ||
+    pick((f: any) => f.protocol !== 'm3u8') ||
+    directUrl;
 
   if (!hdUrl && !sdUrl) {
     throw new Error('yt-dlp returned no downloadable media for this link.');
@@ -240,6 +252,7 @@ function toFacebookMedia(json: any): any {
 
   return {
     title: json.title || 'Facebook Video',
+    cover: thumbnail,
     thumbnail,
     duration: json.duration || 0,
     hdUrl,

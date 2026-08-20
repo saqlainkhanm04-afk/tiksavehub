@@ -16,49 +16,64 @@ import StatsSection from '../components/StatsSection.astro';
 
 const faqData = [
   {
+    id: 'story-free',
+    q: 'How can I download a Facebook Story online for free?',
+    a: 'To download a Facebook Story online for free, simply copy the public Story link, paste it into TikSaveHub, and hit download. Our tool instantly processes the link and saves the high-quality photo or video directly to your device.',
+  },
+  {
+    id: 'story-anonymous',
+    q: 'Can I save a Facebook Story anonymously without them knowing?',
+    a: 'Yes, you can easily save a Facebook Story anonymously using TikSaveHub. Since you don\u2019t need to log in to our platform to download public stories, the creator will never know you viewed or downloaded their content.',
+  },
+  {
+    id: 'story-notified',
+    q: 'Will someone know if I download their Facebook Story?',
+    a: 'No, the creator will not be notified. TikSaveHub fetches the media directly from Facebook\u2019s servers, ensuring your download is completely private and your name never appears on their story viewer list.',
+  },
+  {
     id: 'story-hd',
-    q: 'Can I download Facebook stories in HD online?',
-    a: 'Yes. Paste the story link into the tool above and download it in HD — the highest quality the person uploaded. No watermark, no compression, and no sign-up required.',
-  },
-  {
-    id: 'story-expire',
-    q: 'Can I save a Facebook story before it disappears?',
-    a: 'Yes — stories vanish after 24 hours, so paste the link as soon as you can. The download is instant, so your story is saved to your device in seconds, forever.',
-  },
-  {
-    id: 'story-1080',
-    q: 'Is the Facebook story downloader 1080p?',
-    a: 'We deliver the best resolution the story was uploaded in — up to 1080p when available. The HD option preserves the original quality, and an SD option is there if you want a smaller file.',
+    q: 'Can I download Facebook Stories in HD or 1080p?',
+    a: 'Yes, TikSaveHub downloads Facebook Stories in the highest resolution available, up to HD 1080p. If the creator uploaded a high-definition story, you will get that exact pristine quality in your download.',
   },
   {
     id: 'story-iphone',
-    q: 'How do I save Facebook stories to my iPhone?',
-    a: 'Open Safari on your iPhone, paste the story link into the field above, and tap Download. The video saves through your browser\u2019s download manager to the Files app — no app installation needed.',
+    q: 'Does the Facebook Story downloader work on iPhone Safari?',
+    a: 'Yes, TikSaveHub is fully optimized as a Facebook Story downloader for iPhone Safari. Just paste the story link, tap download, and save the MP4 video or JPG image straight to your Photos or Files app.',
   },
   {
     id: 'story-android',
-    q: 'Can I save Facebook stories on Android?',
-    a: 'Yes. Copy the story\u2019s link from the Facebook app, paste it here, and tap Download. The video lands in your device\u2019s gallery or Downloads folder, ready to view offline.',
-  },
-  {
-    id: 'story-photo',
-    q: 'Do you also save Facebook story photos?',
-    a: 'Stories with video uploads are fully supported and download as MP4. For photo-only stories, we recommend taking a screenshot or screen recording from your device, as photo posts don\u2019t expose a downloadable media stream.',
+    q: 'How do I save an FB Story to my Android Gallery?',
+    a: 'To save an FB Story to your Android Gallery, open Chrome, paste the public Story URL into TikSaveHub, and tap download. The file will automatically save to your Downloads folder and appear directly in your Gallery.',
   },
   {
     id: 'story-private',
-    q: 'Can I download stories from private accounts?',
-    a: 'We can only download stories that are publicly accessible to you in your browser. Stories from private or close-friends accounts cannot be fetched, and we always respect account privacy settings.',
+    q: 'Can I download Facebook Stories from private accounts?',
+    a: 'No, TikSaveHub cannot download Facebook Stories from private accounts. To respect user privacy, our tool only accesses and downloads stories that are set to public.',
   },
   {
-    id: 'story-links',
-    q: 'Which story links does the tool accept?',
-    a: 'Any public story link that opens in your browser works — story watch links from the fb story viewer, story post URLs, and stories shared via Facebook\u2019s share sheet. Paste the URL and download.',
+    id: 'story-expired',
+    q: 'Can I download an expired Facebook Story?',
+    a: 'No, you cannot download expired Facebook Stories. Once a story disappears after 24 hours, its link is no longer active. However, if the user saves the expired story to their \u201cFeatured Highlights\u201d, you can download it from there.',
   },
   {
-    id: 'story-legal',
-    q: 'Is it okay to save Facebook stories?',
-    a: 'Saving publicly shared stories for personal, offline viewing is generally fine. Do not repost stories elsewhere without the author\u2019s permission, and always respect content creators\u2019 rights.',
+    id: 'story-photo-video',
+    q: 'Can I download both Facebook Story photos and videos?',
+    a: 'Yes, TikSaveHub supports both formats. Photo stories are instantly downloaded as high-quality JPG or PNG images, while video stories are saved as crisp MP4 files.',
+  },
+  {
+    id: 'story-no-login',
+    q: 'Do I need to log in to Facebook to download a Story?',
+    a: 'No login is required. You can download public Facebook Stories completely anonymously without ever entering your Facebook username, password, or account details on our site.',
+  },
+  {
+    id: 'story-no-limit',
+    q: 'Does TikSaveHub have a daily limit for Facebook Story downloads?',
+    a: 'No! TikSaveHub is completely free and comes with zero daily download caps. You can save as many public Facebook Stories as you want without any restrictions or hidden fees.',
+  },
+  {
+    id: 'story-whyfail',
+    q: 'Why can\u2019t I download a Facebook Story?',
+    a: 'Downloads typically fail if the story is private, has expired after 24 hours, or the link is copied incorrectly. Make sure you are copying the link from a publicly visible story and try again.',
   },
 ];
 

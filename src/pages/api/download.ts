@@ -185,7 +185,12 @@ export const GET: APIRoute = async ({ url, request }) => {
       msg.includes('Upstream API returned') ||
       msg.includes('Upstream returned') ||
       msg.includes('yt-dlp') ||
-      msg.includes('fetch failed');
+      msg.includes('fetch failed') ||
+      msg.includes('Failed to resolve') ||
+      msg.includes('getaddrinfo') ||
+      msg.includes('Name or service not known') ||
+      msg.includes('ENOTFOUND') ||
+      msg.includes('ECONNRESET');
     const isInvalid = msg.includes('invalid or expired') || msg.includes('Url parsing is failed');
     const isRestricted =
       isInvalid || msg.includes('no downloadable media') || msg.includes('returned no media');

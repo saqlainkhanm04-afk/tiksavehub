@@ -9,6 +9,7 @@ const TIKWM_UA =
 
 const FETCH_TIMEOUT_MS = 20_000;
 const FALLBACK_THRESHOLD_MS = 600;
+const ITEM_DETAIL_TIMEOUT_MS = 8_000;
 const META_TTL_MS = 6 * 60 * 60 * 1000;
 const AUDIO_TTL_MS = 2 * 60 * 60 * 1000;
 const META_STALE_MS = 6 * 60 * 60 * 1000;
@@ -41,6 +42,54 @@ export interface TikTokVideoMeta {
   share_count: number;
   play_count: number;
   music?: TikTokMusicInfo;
+  quality?: { width: number; height: number };
+}
+
+/**
+ * Try TikTok's own item-detail API for the best (often 1080p) no-watermark
+ * rendition. Returns null on any failure (challenge/blocked/parse) — callers
+ * must fall back to tikwm's URL, never throw.
+ */
+export async function fetchTikTokItemDetail(itemId: string): Promise<{ url: string; width: number; height: number; bitrate?: number } | null> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ITEM_DETAIL_TIMEOUT_MS);
+    try {
+      const resp = await fetch(
+        `https://www.tiktok.com/api/item/detail/?itemId=${encodeURIComponent(itemId)}&aid=1988`,
+        {
+          headers: {
+            'User-Agent': TIKWM_UA,
+            'Accept': 'application/json, text/plain, */*',
+            'Referer': 'https://www.tiktok.com/',
+          },
+          signal: controller.signal,
+        }
+      );
+      if (!resp.ok) return null;
+      const text = await resp.text();
+      if (!text || !text.trim().startsWith('{')) return null;
+      const data = JSON.parse(text);
+      const video = data?.itemInfo?.itemStruct?.video;
+      const url = video?.downloadAddr || video?.playAddr || null;
+      if (typeof url !== 'string' || !url) return null;
+      return {
+        url,
+        width: video.width || 0,
+        height: video.height || 0,
+        bitrate: video.bitrate || undefined,
+      };
+    } finally {
+      clearTimeout(timer);
+    }
+  } catch {
+    return null;
+  }
+}
+
+function itemIdFromUrl(url: string): string | null {
+  const m = url.match(/\/video\/(\d{15,20})/);
+  return m ? m[1] : null;
 }
 
 export function isValidTikTokUrl(url: string): boolean {
@@ -292,7 +341,18 @@ export async function fetchTikTokMetaWithFallback(
     };
     try {
       const data = await loadTikTokData(resolved);
-      return normalize(data);
+      const meta = normalize(data);
+      const itemId = itemIdFromUrl(resolved);
+      if (itemId) {
+        const direct = await fetchTikTokItemDetail(itemId);
+        if (direct?.url) {
+          meta.hdplay = direct.url;
+          if (direct.width && direct.height) {
+            meta.quality = { width: direct.width, height: direct.height };
+          }
+        }
+      }
+      return meta;
     } catch (primaryErr) {
       if (!retryable(primaryErr)) throw primaryErr;
       const ytData = await fetchTikTokWithYtDlp(resolved);

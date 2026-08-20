@@ -66,7 +66,7 @@ const PHOTO_PROFILE_BASE_RE = /^\/([A-Za-z0-9._-]+)\/photos\/?$/;
 const PHOTO_PROFILE_ITEM_RE = /^\/([A-Za-z0-9._-]+)\/photos\/(.+)$/;
 const PHOTO_VIEW_FULL_RE = /^\/photo\/view_full_size\/?$/;
 const ALBUM_PAGE_RE = /^\/([A-Za-z0-9._-]+)\/albums\/(\d+)(?:\/[^/]+)?\/?$/;
-const STORY_PATH_RE = /^\/(stories)\/(\d{5,20})(?:\/([A-Za-z0-9_=-]{4,64}))?\/?$/;
+const STORY_PATH_RE = /^\/(stories)\/(\d{5,20})(?:\/([A-Za-z0-9_=%\-]{4,96}))?\/?$/;
 const STORIES_PHP_PROFILE_RE = /^\/stories\.php\/?$/;
 const SHARE_REEL_RE = /^\/share\/r\/([A-Za-z0-9_-]{4,20})\/?$/;
 const SHARE_VIDEO_RE = /^\/share\/v\/([A-Za-z0-9_-]{4,20})\/?$/;
@@ -93,7 +93,8 @@ function invalid(error: string): FacebookUrlParseResult {
  */
 function decodeStoryToken(token: string): string {
   try {
-    const cleaned = token.replace(/-/g, '+').replace(/_/g, '/');
+    const un = decodeURIComponent(token);
+    const cleaned = un.replace(/-/g, '+').replace(/_/g, '/');
     const b64 = cleaned + '='.repeat((4 - (cleaned.length % 4)) % 4);
     const decoded = decodeURIComponent(
       Array.prototype.map.call(atob(b64), (c: string) =>
@@ -244,6 +245,31 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
     };
   }
 
+  // Profile / group post permalinks — facebook.com/{user}/posts/{pfbid…}
+  // (and /permalink/), facebook.com/groups/{gid}/posts/{pfbid…}. Facebook's
+  // "Copy link" for photo posts produces these; the post page HTML carries
+  // the photo via og:image + "image":{"uri":…} JSON so the photo extractor
+  // reads it like any photo page. The token can be a legacy numeric id or a
+  // modern alphanumeric "pfbid…" token.
+  const PROFILE_POST_RE = /^\/([A-Za-z0-9._-]+)\/(?:posts|permalink)\/([A-Za-z0-9_-]{8,80})\/?$/;
+  const GROUP_POST_RE = /^\/groups\/([A-Za-z0-9._-]+)\/(?:posts|permalink)\/([A-Za-z0-9_-]{8,80})\/?$/;
+  const postMatch =
+    pathname.match(PROFILE_POST_RE) ||
+    pathname.match(GROUP_POST_RE);
+  if (postMatch) {
+    const token = postMatch[2];
+    return {
+      isValid: true,
+      isVideo: false,
+      linkType: 'photo',
+      videoId: null,
+      photoId: token,
+      shortCode: null,
+      sanitizedUrl: `https://${host}${pathname}/`,
+      error: null,
+    };
+  }
+
   // Stories — facebook.com/stories/{user_id}[/{story_token}]
   const storyMatch = pathname.match(STORY_PATH_RE);
   if (storyMatch) {
@@ -261,7 +287,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       photoId: null,
       shortCode: null,
       sanitizedUrl: storyId
-        ? `https://www.facebook.com/video.php?v=${storyId}`
+        ? `https://www.facebook.com/story.php?story_fbid=${storyId}&id=${userId}`
         : `https://www.facebook.com/stories/${userId}${storyToken ? `/${storyToken}` : ''}/`,
       error: null,
     };
@@ -339,11 +365,31 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
 
   // Legacy video pages — video.php / permalink.php / story.php
   if (VIDEO_PAGE_PATH_RE.test(pathname)) {
+    const isStoryPhp = pathname === '/story.php' || pathname === '/permalink.php';
     const id =
       parsed.searchParams.get('v') ||
+      (isStoryPhp ? parsed.searchParams.get('story_fbid') : null) ||
       parsed.searchParams.get('id') ||
       parsed.searchParams.get('story_fbid');
     if (id && /^\d{5,20}$/.test(id)) {
+      // story.php?story_fbid={storyId}&id={userId} is a story permalink —
+      // story_fbid is the MEDIA id, id is the USER id (stories are served
+      // as posts). Route it through the story pipeline so the story tool
+      // accepts it and the extractor builds the classic story permalink.
+      if (isStoryPhp && parsed.searchParams.get('story_fbid')) {
+        const storyId = parsed.searchParams.get('story_fbid') || '';
+        const userId = parsed.searchParams.get('id') || '';
+        return {
+          isValid: true,
+          isVideo: true,
+          linkType: 'story',
+          videoId: storyId,
+          photoId: null,
+          shortCode: null,
+          sanitizedUrl: `https://www.facebook.com/story.php?story_fbid=${storyId}&id=${userId}`,
+          error: null,
+        };
+      }
       return {
         isValid: true,
         isVideo: true,
@@ -361,6 +407,12 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
   // Photo pages are valid Facebook content but not downloadable videos.
   // facebook.com/photo.php?fbid=…, /photo/?fbid=…, /{user}/photos/{id},
   // /{user}/photos/a.{album}/{id} and /photo/view_full_size/?id=…
+  //
+  // `set=pcb.{postId}` marks a photo inside a multi-photo carousel POST — the
+  // post page (permalink.php?story_fbid={postId} → /{user}/posts/{postId}/)
+  // carries EVERY sibling photo in its `"image":{"uri":…}` JSON, while the
+  // single photo page only shows the viewed photo. Fetching the post permalink
+  // is how downloaders recover the whole carousel from a photo-viewer link.
   if (PHOTO_PAGE_PATH_RE.test(pathname)) {
     const id =
       parsed.searchParams.get('fbid') ||
@@ -368,6 +420,11 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       parsed.searchParams.get('story_fbid') ||
       parsed.searchParams.get('id');
     if (id && /^\d{5,30}$/.test(id)) {
+      const set = parsed.searchParams.get('set') || '';
+      const pcbPostId = set.match(/^pcb\.(\d{5,30})$/)?.[1] || '';
+      const sanitizedUrl = pcbPostId
+        ? `https://${host}/permalink.php?story_fbid=${pcbPostId}`
+        : `https://www.facebook.com/photo.php?fbid=${id}`;
       return {
         isValid: true,
         isVideo: false,
@@ -375,7 +432,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         videoId: null,
         photoId: id,
         shortCode: null,
-        sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${id}`,
+        sanitizedUrl,
         error: null,
       };
     }
@@ -459,7 +516,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
   }
 
   return invalid(
-    'Please enter a valid Facebook link (video, reel, story or photo — e.g. facebook.com/reel/…, facebook.com/watch/?v=…, fb.watch/…, facebook.com/photo.php?fbid=…, facebook.com/share/p/…).'
+    'Please enter a valid Facebook link (video, reel, story or photo — e.g. facebook.com/reel/…, facebook.com/watch/?v=…, fb.watch/…, facebook.com/photo.php?fbid=…, facebook.com/share/p/…, facebook.com/{profile}/posts/…).'
   );
 }
 

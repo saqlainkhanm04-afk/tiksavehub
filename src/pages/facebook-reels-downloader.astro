@@ -17,43 +17,63 @@ import StatsSection from '../components/StatsSection.astro';
 const faqData = [
   {
     id: 'reels-hd1080',
-    q: 'Can I download Facebook Reels in HD 1080p for free?',
-    a: 'Yes. Paste any <strong>facebook.com/reel/…</strong> link into the box above and download the Reel in HD up to 1080p — completely free, no sign-up, no watermark. We grab the highest quality the creator uploaded and hand you a clean MP4.',
+    q: 'How can I download Facebook Reels in HD 1080p?',
+    a: 'To download Facebook Reels in HD 1080p, copy the public Reel link, paste it into TikSaveHub, and click download. If the original Reel was uploaded in 1080p, our tool will automatically extract and save the full high-definition MP4 file.',
   },
   {
     id: 'reels-nowm',
-    q: 'Is this Facebook Reels downloader really no watermark?',
-    a: 'Yes — our downloader saves the original Reel file with no overlay or logo added. You get the same clean video the creator shared, in original quality, no compression and no watermark.',
+    q: 'Can I save Facebook Reels without a watermark?',
+    a: 'Yes, TikSaveHub downloads Facebook Reels without adding any extra watermark, logo, or branding to the MP4 file. However, if a watermark was already edited into the video before uploading, it cannot be removed.',
   },
   {
     id: 'reels-iphone',
-    q: 'How do I download Facebook Reels on iPhone?',
-    a: 'Open Safari (or any browser) on your iPhone, paste the Reels link into the field above, and tap Download. The MP4 saves through your browser\u2019s download manager and appears in the Files app under Downloads — no app installation needed.',
+    q: 'Does Facebook Reel Downloader work on iPhone Safari?',
+    a: 'Yes, TikSaveHub works smoothly on iPhone Safari without needing any extra apps. Simply paste the Reel link into Safari, tap download, and save the MP4 directly to your Photos or Files app.',
   },
   {
     id: 'reels-android',
-    q: 'Can I download Facebook Reels on Android?',
-    a: 'Absolutely. Copy the Reels link from the Facebook app, paste it here, and tap Download HD. The video saves straight to your Android device\u2019s gallery or Downloads folder — no app or extension required.',
+    q: 'How do I save FB Reels to Android Gallery?',
+    a: 'To save FB Reels to your Android Gallery, open Chrome, paste the public Reel link into TikSaveHub, and tap download. The MP4 file will instantly save to your Downloads folder and show in your Gallery.',
+  },
+  {
+    id: 'reels-link-format',
+    q: 'Does the Facebook Reel downloader support facebook.com/reel links?',
+    a: 'Yes, TikSaveHub fully supports all standard facebook.com/reel/... links. Simply copy the full Reel URL directly from the Facebook app or web browser and paste it into our tool.',
+  },
+  {
+    id: 'reels-fbwatch',
+    q: 'Can I download a Facebook Reel from an fb.watch link?',
+    a: 'Yes, short fb.watch share links are fully supported. TikSaveHub automatically resolves the short link and extracts the original high-quality Reel for you.',
+  },
+  {
+    id: 'reels-mp3',
+    q: 'Can I convert a Facebook Reel to MP3 online?',
+    a: 'Yes, you can easily convert Facebook Reels to MP3 online. TikSaveHub extracts the audio track from the Reel and saves it as a clean, standalone MP3 audio file.',
   },
   {
     id: 'reels-audio',
-    q: 'Can I also grab the audio from a Facebook Reel?',
-    a: 'Yes — paste the Reel link into our dedicated <a href="/facebook-to-mp3">Facebook to MP3 converter</a> to extract the soundtrack as a high-quality MP3. Perfect for saving trending Reel music or voice clips for offline listening.',
-  },
-  {
-    id: 'reels-watch',
-    q: 'Do you support normal Facebook videos and Watch links too?',
-    a: 'Yes. The same tool handles Reels, Watch links (facebook.com/watch/?v=…), video posts, and fb.watch short links. You can also try our full <a href="/facebook-video-downloader">Facebook video downloader</a> page that covers every format.',
+    q: 'Can I download the original audio from a Facebook Reel?',
+    a: 'Yes, TikSaveHub lets you extract and save the original sound or background music from any public Facebook Reel directly as an MP3 track.',
   },
   {
     id: 'reels-private',
-    q: 'Can you download Reels from private accounts?',
-    a: 'We can only download Reels that are publicly accessible to you. Reels from private or restricted accounts cannot be fetched, and we always respect account privacy settings.',
+    q: 'Can I download private Facebook Reels?',
+    a: 'No, TikSaveHub cannot download private or restricted Facebook Reels. To respect user privacy, our tool only processes and extracts publicly accessible Reels.',
   },
   {
-    id: 'reels-legal',
-    q: 'Is it okay to download Facebook Reels?',
-    a: 'Saving Reels for personal, offline viewing is fine. But do not repost Reels commercially without the creator\u2019s permission — always respect copyright and credit the original creator.',
+    id: 'reels-no-login',
+    q: 'Do I need to log in to Facebook to download a Reel?',
+    a: 'No login is required. You can download public Facebook Reels anonymously without entering your Facebook account details or credentials.',
+  },
+  {
+    id: 'reels-no-limit',
+    q: 'Is there a daily limit for downloading Facebook Reels?',
+    a: 'No, TikSaveHub is 100% free with zero daily download limits. You can convert and save as many public Facebook Reels as you want without restrictions.',
+  },
+  {
+    id: 'reels-whyfail',
+    q: 'Why can\u2019t I download a Facebook Reel?',
+    a: 'Downloads usually fail if the Reel is set to private, has been deleted by the owner, or the copied URL is incomplete. Make sure you copy a fresh link directly from the Share menu of a public post.',
   },
 ];
 

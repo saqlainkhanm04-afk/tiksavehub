@@ -21,6 +21,8 @@ dev.log
 devout.txt
 stdout.log
 stderr.log
+dev*.log
+dev*.err
 
 # runtime media cache (signed CDN URLs, expiring)
 data/

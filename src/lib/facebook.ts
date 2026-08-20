@@ -968,9 +968,8 @@ export interface FacebookPhotoSet {
   author: { name: string; avatar: string };
 }
 
-// Download limit: only the FIRST 20 photos of an album/post are ever served.
-// (Requirement from the site owner — links with more photos are capped at 20.)
-const MAX_PHOTOS_PER_POST = 20;
+// No cap: the site serves EVERY photo in a link/album. (Owner requirement:
+// "jitne link mein photos hongi, sab show + download hongi".)
 
 /**
  * Facebook serves different page variants per host — flagged IPs regularly
@@ -1008,25 +1007,32 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     const bestFrom = (results: Array<PromiseSettledResult<{ html: string; truncated: boolean }>>) => {
       let sawNotFound = false;
       let sawTruncated = false;
+      let sawShell = false;
+      let sawTimeout = false;
       let bestHtml = '';
       let bestCandidates: PhotoCandidate[] = [];
       for (const result of results) {
         if (result.status === 'rejected') {
           if (result.reason?.code === FB_ERR.NOT_AVAILABLE) sawNotFound = true;
+          if (result.reason?.code === FB_ERR.TIMEOUT) sawTimeout = true;
           continue;
         }
         if (result.value.truncated) sawTruncated = true;
+        // Flagged IPs serve tiny 400/error shells for most host variants — a
+        // page that small (or truncated) can't be a faithful copy of the post,
+        // so its single-fold og:image is NOT proof the post has only one photo.
+        if (result.value.html.length < 15_000) sawShell = true;
         const candidates = extractPhotosFromHtml(result.value.html);
         if (candidates.length > bestCandidates.length) {
           bestCandidates = candidates;
           bestHtml = result.value.html;
         }
       }
-      return { sawNotFound, sawTruncated, bestHtml, bestCandidates };
+      return { sawNotFound, sawTruncated, sawShell, sawTimeout, bestHtml, bestCandidates };
     };
 
     let results = await round();
-    let { sawNotFound, sawTruncated, bestHtml, bestCandidates } = bestFrom(results);
+    let { sawNotFound, sawTruncated, sawShell, sawTimeout, bestHtml, bestCandidates } = bestFrom(results);
 
     // A fully throttled IP times out every attempt — retrying immediately
     // won't lift the throttle, so skip the second round and let the reader
@@ -1045,6 +1051,8 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       if (retried.bestCandidates.length > bestCandidates.length) {
         sawNotFound = retried.sawNotFound;
         sawTruncated = retried.sawTruncated;
+        sawShell = retried.sawShell;
+        sawTimeout = retried.sawTimeout;
         bestHtml = retried.bestHtml;
         bestCandidates = retried.bestCandidates;
       }
@@ -1054,9 +1062,15 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     // still renders fully for unflagged readers. Fetch it once through a public
     // reader proxy and reuse its signed CDN URLs (signatures are IP-independent,
     // so the images download from any IP). This recovers either the whole set
-    // (fully shelled) or the siblings lost to a throttled/truncated read — a
-    // clean single-photo page skips the proxy entirely.
-    if (bestCandidates.length === 0 || (bestCandidates.length === 1 && sawTruncated)) {
+    // (fully shelled) or the siblings lost to a throttled/truncated read — or
+    // the additional photos a single-photo-looking result missed because the
+    // serving variant was a shell/error page (tiny HTML, truncated body, or a
+    // host that timed out). A clean single-photo page (large, complete, no
+    // shells/timeouts) skips the proxy entirely — no wasted latency.
+    const needsReader =
+      bestCandidates.length === 0 ||
+      (bestCandidates.length === 1 && (sawTruncated || sawShell || sawTimeout));
+    if (needsReader) {
       if (isReaderRecoverableUrl(inputUrl)) {
         const recovered = new Map<string, PhotoCandidate>();
         await fetchSiblingsViaReader(inputUrl, null, recovered);
@@ -1126,7 +1140,7 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     // reaches the API can NEVER contain a capped or non-photo URL.
     bestCandidates = enforcePhotoQuality(bestCandidates);
 
-    const photos: FacebookPhoto[] = bestCandidates.slice(0, MAX_PHOTOS_PER_POST).map((c) => ({
+    const photos: FacebookPhoto[] = bestCandidates.map((c) => ({
       title,
       cover: c.url,
       photoUrl: c.url,
@@ -1275,10 +1289,22 @@ export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhot
   };
 }
 
-const PHOTO_DL_CONCURRENCY = 4;
-const PHOTO_DL_TIMEOUT_MS = 30_000;
+const PHOTO_DL_CONCURRENCY = 3;
 
-async function fetchPhotoBuffer(url: string, altUrl?: string): Promise<{ data: Uint8Array; contentType: string | null }> {
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Download one photo, failing fast under the concurrent burst (short timeout
+ * so throttled hosts cost ~seconds, not minutes) and cycling url → alt once.
+ * Burst-throttled photos are healed by the sequential retry pass in
+ * fetchFacebookPhotosAsFiles, which runs after the burst has cleared.
+ */
+async function fetchPhotoBuffer(
+  url: string,
+  altUrl?: string,
+  opts?: { timeoutMs?: number }
+): Promise<{ data: Uint8Array; contentType: string | null }> {
+  const timeoutMs = opts?.timeoutMs ?? 15_000;
   const download = async (u: string): Promise<{ data: Uint8Array; contentType: string | null }> => {
     const resp = await fetch(u, {
       headers: {
@@ -1287,7 +1313,7 @@ async function fetchPhotoBuffer(url: string, altUrl?: string): Promise<{ data: U
         'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
       },
       redirect: 'follow',
-      signal: AbortSignal.timeout(PHOTO_DL_TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs),
     });
     if (!resp.ok) throw new Error(`Facebook CDN returned ${resp.status}`);
     const data = new Uint8Array(await resp.arrayBuffer());
@@ -1295,16 +1321,21 @@ async function fetchPhotoBuffer(url: string, altUrl?: string): Promise<{ data: U
     return { data, contentType: resp.headers.get('content-type') };
   };
 
-  try {
-    return await download(url);
-  } catch (err) {
-    // Signed/locked URLs reject the promoted rendition — retry the raw
-    // original before giving up on the photo entirely.
-    if (altUrl && altUrl !== url) {
-      return download(altUrl);
+  const fallback = altUrl && altUrl !== url ? altUrl : url;
+  const attempts: Array<{ u: string; waitMs: number }> = [
+    { u: url, waitMs: 0 },
+    { u: fallback, waitMs: 800 },
+  ];
+  let lastErr: unknown = null;
+  for (const { u, waitMs } of attempts) {
+    if (waitMs) await sleep(waitMs);
+    try {
+      return await download(u);
+    } catch (err) {
+      lastErr = err;
     }
-    throw err;
   }
+  throw lastErr instanceof Error ? lastErr : new Error('Facebook CDN download failed');
 }
 
 function photoExtOf(url: string, contentType: string | null): string {
@@ -1320,14 +1351,16 @@ function photoExtOf(url: string, contentType: string | null): string {
 
 /**
  * Download every photo in a post as a buffer (bounded concurrency, CDN
- * referer set). Failed entries are skipped so one dead URL can't sink the
- * whole bundle; the caller decides what to do if ALL of them fail. Each entry
- * may carry the un-promoted original as a fallback for signed/locked URLs.
+ * referer set, retry pass for burst-throttled URLs). Failed entries are
+ * skipped only as a last resort so one dead URL can't sink the whole bundle;
+ * the caller decides what to do if ALL of them fail. Each entry may carry the
+ * un-promoted original as a fallback for signed/locked URLs.
  */
 export async function fetchFacebookPhotosAsFiles(
   photos: Array<{ url: string; alt?: string }>
 ): Promise<Array<{ name: string; data: Uint8Array }>> {
   const out: Array<{ name: string; data: Uint8Array }> = [];
+  const failed: number[] = [];
   let next = 0;
 
   const worker = async () => {
@@ -1339,6 +1372,7 @@ export async function fetchFacebookPhotosAsFiles(
         out.push({ name: `photo-${String(i + 1).padStart(2, '0')}.${photoExtOf(url, contentType)}`, data });
       } catch (err: any) {
         console.error(`[Facebook] photo ${i + 1} download failed:`, err?.message ?? err);
+        failed.push(i);
       }
     }
   };
@@ -1346,6 +1380,28 @@ export async function fetchFacebookPhotosAsFiles(
   await Promise.all(
     Array.from({ length: Math.min(PHOTO_DL_CONCURRENCY, photos.length) }, () => worker())
   );
+
+  // Retry pass for burst-throttled photos. Waits out the CDN throttle window
+  // (identical URLs that fail under the burst download fine seconds later
+  // standalone — verified live), then re-fetches each failure one at a time
+  // with no competing connections and a full-length timeout.
+  if (failed.length) {
+    const retried = new Set<number>();
+    for (let pass = 0; pass < 2 && retried.size < failed.length; pass++) {
+      await sleep(pass === 0 ? 5_000 : 4_000);
+      for (const i of failed) {
+        if (retried.has(i)) continue;
+        const { url, alt } = photos[i];
+        try {
+          const { data, contentType } = await fetchPhotoBuffer(url, alt, { timeoutMs: 60_000 });
+          out.push({ name: `photo-${String(i + 1).padStart(2, '0')}.${photoExtOf(url, contentType)}`, data });
+          retried.add(i);
+        } catch (err: any) {
+          console.error(`[Facebook] photo ${i + 1} retry failed:`, err?.message ?? err);
+        }
+      }
+    }
+  }
 
   out.sort((a, b) => (a.name < b.name ? -1 : 1));
   return out;

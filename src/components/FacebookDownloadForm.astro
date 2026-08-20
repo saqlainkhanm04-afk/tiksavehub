@@ -803,6 +803,10 @@ const copy = {
     border-color: rgba(255, 255, 255, 0.1);
   }
 
+  .photo-grid-hidden {
+    display: none;
+  }
+
   .photo-grid-more {
     display: flex;
     align-items: center;
@@ -812,6 +816,15 @@ const copy = {
     color: var(--color-mute);
     background-color: var(--color-canvas-soft);
     border: 1px dashed var(--color-hairline-strong);
+    cursor: pointer;
+    appearance: none;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .photo-grid-more:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background-color: var(--color-canvas-soft-2);
   }
 
   /* Story segments — one block per media item of a multi-segment story */
@@ -1491,17 +1504,17 @@ const copy = {
       const photoHref: string = (photos[0] && (photos[0].photoUrl || photos[0].cover)) || '';
       const count = photos.length;
 
+      const PREVIEW_PHOTOS = 5;
       const gridHtml =
         count > 1
           ? `<div class="photo-grid" role="list" aria-label="Photos found in this post">
               ${photos
-                .slice(0, 12)
                 .map(
                   (p, i) =>
-                    `<img class="photo-grid-item" src="${p.cover || p.photoUrl || ''}" alt="Facebook photo ${i + 1} of ${count}" loading="lazy" width="120" height="120" referrerpolicy="no-referrer" onerror="this.style.display='none'">`
+                    `<img class="photo-grid-item${i >= PREVIEW_PHOTOS ? ' photo-grid-hidden' : ''}" src="${p.cover || p.photoUrl || ''}" alt="Facebook photo ${i + 1} of ${count}" loading="lazy" width="120" height="120" referrerpolicy="no-referrer" onerror="this.style.display='none'">`
                 )
                 .join('')}
-              ${count > 12 ? `<span class="photo-grid-item photo-grid-more" aria-hidden="true">+${count - 12}</span>` : ''}
+              ${count > PREVIEW_PHOTOS ? `<button type="button" class="photo-grid-item photo-grid-more" id="btn-grid-more" aria-label="Show all ${count} photos">+${count - PREVIEW_PHOTOS}</button>` : ''}
             </div>`
           : '';
 
@@ -1566,6 +1579,11 @@ const copy = {
       else {
         photoBtn.addEventListener('click', () => startDownload(count > 1 ? 'zip' : 'photo', photoBtn));
       }
+      const moreBtn = document.getElementById('btn-grid-more') as HTMLButtonElement | null;
+      moreBtn?.addEventListener('click', () => {
+        resultMount.querySelectorAll('.photo-grid-hidden').forEach((el) => el.classList.remove('photo-grid-hidden'));
+        moreBtn.remove();
+      });
       return;
     }
 

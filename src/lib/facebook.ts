@@ -1,5 +1,16 @@
 import { memoSWR } from './cache';
 import { fetchFacebookWithYtDlp, fetchFacebookAudioWithYtDlp } from './ytdlp';
+import {
+  type PhotoCandidate,
+  MIN_FULL_PHOTO_SCORE,
+  stripCtpCap,
+  isNonPhotoAssetUrl,
+  promotePhotoUrl,
+  photoQualityScore,
+  cdnPathOf,
+  isThumbOnly,
+  enforcePhotoQuality,
+} from './facebook-photo-quality';
 
 const MEDIA_TTL_MS = 12 * 60 * 60 * 1000;
 const MEDIA_STALE_MS = 12 * 60 * 60 * 1000;
@@ -39,10 +50,7 @@ export interface FacebookPhoto {
 }
 
 /** A photo candidate as found on the page: the promoted URL plus its raw original. */
-interface PhotoCandidate {
-  url: string;
-  alt: string;
-}
+export type { PhotoCandidate } from './facebook-photo-quality';
 
 /** Error codes thrown by the extraction layer (mapped to user messages by the API). */
 export const FB_ERR = {
@@ -805,54 +813,6 @@ export async function fetchFacebookAudio(inputUrl: string): Promise<FacebookAudi
 }
 
 /**
- * Promote a FB CDN image URL to the best-available resolution. The `stp` token
- * is client-selectable for unsigned URLs: upgrade small squares to the 2048px
- * rendition and bump any small `p{size}` path token to the full-size variant.
- * Signed/locked URLs ignore the rewrite (they 403) — the downloaders fall back
- * to the un-promoted original (`altUrl`) when that happens.
- */
-function promotePhotoUrl(u: string): string {
-  let out = u.replace(/stp=dst-jpg(?:_q\d+)?_[sp]\d{1,5}x\d{1,5}(?:_q\d+)?/, 'stp=dst-jpg_p2048x2048');
-  out = out.replace(/stp=dst-webp(?:_q\d+)?_[sp]\d{1,5}x\d{1,5}(?:_q\d+)?/, 'stp=dst-jpg_p2048x2048');
-  out = out.replace(/(\/p\d{1,5}x\d{1,5}\/)/, '/p2048x2048/');
-  out = out.replace(/(\/s\d{1,5}x\d{1,5}\/)/, '/s2048x2048/');
-  // `ctp={p|s}{w}x{h}` is the client-selectable size cap — dropping it serves
-  // the ORIGINAL full-size file (verified live: 443x590 → 1179x1572 on reader
-  // URLs, 600x800 → 1179x1572 on og:image URLs; cstp/stp/path rewrites 403 as
-  // they're signed, ctp is not). Signed URLs that still reject fall back to
-  // the un-promoted original via `altUrl`.
-  out = out.replace(/([?&])ctp=[sp]\d{1,5}x\d{1,5}/, '$1');
-  out = out.replace(/&{2,}/g, '&');
-  return out;
-}
-
-/**
- * Rough resolution/quality score of a FB CDN image URL. Used to pick the best
- * rendition of the SAME photo (multiple pages/contexts expose the same file at
- * different sizes) and to detect "thumbnail-only" siblings that need their own
- * photo page fetched. Higher = better. An unsigned `dst-jpg` URL with no size
- * token at all is the ORIGINAL file — the top score.
- */
-function photoQualityScore(u: string): number {
-  let score = 0;
-  if (/dst-webp/.test(u)) score += 1;
-  else if (/dst-jpg|dst-png|\.jpg(?:[?#]|$)|\.png(?:[?#]|$)/.test(u)) score += 10;
-
-  const stp = /stp=([^&]+)/.exec(u)?.[1] ?? '';
-  const dim = /[sp](\d{2,5})x(\d{2,5})/.exec(stp);
-  if (dim) score += Math.max(Number(dim[1]), Number(dim[2]));
-  const ctp = /ctp=p(\d{2,5})x(\d{2,5})/.exec(u);
-  if (ctp) score += Math.max(Number(ctp[1]), Number(ctp[2]));
-  const cstp = /cstp=mx(\d{2,5})x(\d{2,5})/.exec(u);
-  if (cstp) score += Math.max(Number(cstp[1]), Number(cstp[2]));
-  const ptok = /\/p(\d{2,5})x(\d{2,5})\//.exec(u);
-  if (ptok) score += Math.max(Number(ptok[1]), Number(ptok[2]));
-
-  if (!dim && !ctp && !cstp && !ptok && /dst-jpg/.test(u)) score += 2000;
-  return score;
-}
-
-/**
  * Extract the photo ID from a FB CDN file name. Gallery/sibling photos are
  * named `{photo_id}_{photo_fbid}_{…}_n.jpg`; the photo ID is the first segment
  * (photo.php?fbid={id} is the per-photo page).
@@ -860,21 +820,6 @@ function photoQualityScore(u: string): number {
 function photoIdFromUrl(u: string): string | null {
   const m = u.match(/\/(\d{4,20})_\d{4,20}_[A-Za-z0-9]*(?:_n|_o)\.(?:jpg|png|webp|gif|heic|avif)(?:[?#]|$)/);
   return m ? m[1] : null;
-}
-
-/** True when a photo is only available as a small (≤ ~320px) thumbnail. */
-function isThumbOnly(u: string): boolean {
-  return photoQualityScore(u) < MIN_FULL_PHOTO_SCORE;
-}
-
-/** CDN path of a photo URL — same file on different FB CDN hosts/params
- *  (e.g. `flhe2-2` vs `sea5-1` nodes, `stp` size tokens) dedupes to one. */
-function cdnPathOf(u: string): string {
-  try {
-    return new URL(u).pathname;
-  } catch {
-    return u.split('?')[0];
-  }
 }
 
 /**
@@ -898,17 +843,18 @@ export function extractPhotosFromHtml(html: string): PhotoCandidate[] {
   const add = (raw: string | null) => {
     if (!raw || !raw.startsWith('http')) return;
     const clean = raw.replace(/&amp;/g, '&');
+    if (isNonPhotoAssetUrl(clean)) return;
     const promoted = promotePhotoUrl(clean);
     const key = cdnPathOf(promoted);
     const existing = candidates.find((c) => cdnPathOf(c.url) === key);
     if (existing) {
       if (photoQualityScore(promoted) > photoQualityScore(existing.url)) {
         existing.url = promoted;
-        existing.alt = clean;
+        existing.alt = stripCtpCap(clean);
       }
       return;
     }
-    candidates.push({ url: promoted, alt: clean });
+    candidates.push({ url: promoted, alt: stripCtpCap(clean) });
   };
 
   add(getMetaContent(html, 'og:image'));
@@ -920,11 +866,7 @@ export function extractPhotosFromHtml(html: string): PhotoCandidate[] {
   for (const m of html.matchAll(imgRe)) {
     const raw = m[1].replace(/&amp;/g, '&');
     // FB static hosts (emoji sprites, icons) are never photos.
-    if (/^https?:\/\/static\./i.test(raw) || /rsrc\.php/.test(raw)) continue;
-    // Emoji/sticker/GIF renditions and external-gif proxies are not photos:
-    // `dst-emg0` stp tokens, the t39.1997-6 sticker bucket, and the emg1
-    // external-gif proxy host.
-    if (/dst-emg|emg1\/|t39\.1997-6\//.test(raw)) continue;
+    if (isNonPhotoAssetUrl(raw)) continue;
     // Ignore tiny avatars/emoji assets — both path tokens (s40x40, p40x40,
     // p75x75) and stp query tokens (…_s40x40_tt6, …_s96x96_tt6: anything
     // ≤160×160 is an avatar/icon, real photo thumbs are bigger).
@@ -940,8 +882,8 @@ export function extractPhotosFromHtml(html: string): PhotoCandidate[] {
 const PHOTO_PAGE_TIMEOUT_MS = 15_000;
 const MAX_PHOTO_HTML_BYTES = 2_500_000;
 // Anything smaller than this is a quad/thumbnail rendition — worth fetching
-// the photo's own page to look for the full-size original.
-const MIN_FULL_PHOTO_SCORE = 320;
+// the photo's own page to look for the full-size original. (MIN_FULL_PHOTO_SCORE
+// lives in facebook-photo-quality.ts — the locked invariant module.)
 
 /**
  * Read a response body as text but stop early once `maxBytes` have been
@@ -1175,6 +1117,14 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     const authorMatch = bestHtml.match(/"pageName"\s*:\s*"((?:[^"\\]|\\.)*)"/);
     const authorName = authorMatch ? unescapeJsonString(authorMatch[1]) : '';
 
+    // OUTPUT-BOUNDARY ENFORCEMENT — see `enforcePhotoQuality` in
+    // facebook-photo-quality.ts (the locked invariant module). No matter which
+    // extraction/recovery path fed these candidates, this final pass strips
+    // every `ctp=` cap, rejects sticker/emoji/avatar buckets, drops
+    // thumbnail-only leftovers, and dedupes by CDN path. The photo set that
+    // reaches the API can NEVER contain a capped or non-photo URL.
+    bestCandidates = enforcePhotoQuality(bestCandidates);
+
     const photos: FacebookPhoto[] = bestCandidates.slice(0, MAX_PHOTOS_PER_POST).map((c) => ({
       title,
       cover: c.url,
@@ -1239,10 +1189,11 @@ async function fetchSiblingsViaReader(
         const raw = m[0];
         if (seen.has(raw)) continue;
         seen.add(raw);
+        if (isNonPhotoAssetUrl(raw)) continue;
         const id = photoIdFromUrl(raw);
         if (!id || (want && !want.has(id))) continue;
         const clean = raw.replace(/&amp;/g, '&');
-        const candidate = { url: promotePhotoUrl(clean), alt: clean };
+        const candidate = { url: promotePhotoUrl(clean), alt: stripCtpCap(clean) };
         if (photoQualityScore(candidate.url) > MIN_FULL_PHOTO_SCORE) {
           found.set(id, candidate);
         }
@@ -1285,9 +1236,9 @@ async function fetchSiblingPhotosFull(
         try {
           const { html } = await fetchPhotoPage(url, variantUAs[round], SIBLING_PAGE_TIMEOUT_MS);
           const og = getMetaContent(html, 'og:image') || getMetaContent(html, 'og:image:url');
-          if (!og || /(?:static\.|rsrc\.php|facebook\.com)/i.test(og)) return null;
+          if (!og || isNonPhotoAssetUrl(og) || /(?:static\.|rsrc\.php|facebook\.com)/i.test(og)) return null;
           const clean = og.replace(/&amp;/g, '&');
-          return { id, candidate: { url: promotePhotoUrl(clean), alt: clean } };
+          return { id, candidate: { url: promotePhotoUrl(clean), alt: stripCtpCap(clean) } };
         } catch {
           return null;
         }

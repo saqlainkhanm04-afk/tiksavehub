@@ -1,4 +1,7 @@
 import { execFile } from 'node:child_process';
+import { ensureInstagramEnv } from './ig-env';
+
+ensureInstagramEnv();
 
 const YTDLP_BIN = process.env.YTDLP_PATH || 'yt-dlp';
 const YTDLP_ENABLED = process.env.YTDLP_ENABLED !== 'false';
@@ -51,6 +54,9 @@ export async function isYtDlpAvailable(): Promise<boolean> {
 }
 
 function sessionCookieHeader(): string {
+  const full = process.env.IG_COOKIES || '';
+  if (full.trim()) return full.trim();
+
   const parts: string[] = [];
   const session = process.env.IG_SESSIONID || '';
   if (session) parts.push(`sessionid=${session}`);

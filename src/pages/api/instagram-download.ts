@@ -7,6 +7,12 @@ import {
   getBestVideoUrl,
   getThumbnailUrl,
   getAudioUrl,
+  isImageOnlyMedia,
+  ERR_SESSION_REQUIRED,
+  ERR_SESSION_MISSING,
+  ERR_LOGIN_REQUIRED,
+  ERR_STORY_EXPIRED,
+  ERR_HIGHLIGHTS_UNSUPPORTED,
 } from '../../lib/instagram';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
@@ -92,10 +98,15 @@ export const GET: APIRoute = async ({ url, request }) => {
           }
           const audioExt = (video.audio_format as string) || null;
           const isAudio = mode === 'audio' && Boolean(audioExt);
+          const isImage = !isAudio && (video.isPhoto as boolean) === true;
           return streamFromUpstream(streamUrl, {
-            filename: isAudio ? `tiksavehub-audio.${audioExt}` : 'tiksavehub-video.mp4',
-            contentType: isAudio ? 'audio/mp4' : 'video/mp4',
-            accept: isAudio ? 'audio/mp4,audio/mpeg,audio/*,*/*' : 'video/mp4,video/*,*/*',
+            filename: isAudio ? `tiksavehub-audio.${audioExt}` : isImage ? 'tiksavehub-story.jpg' : 'tiksavehub-video.mp4',
+            contentType: isAudio ? 'audio/mp4' : isImage ? 'image/jpeg' : 'video/mp4',
+            accept: isAudio
+              ? 'audio/mp4,audio/mpeg,audio/*,*/*'
+              : isImage
+                ? 'image/jpeg,image/webp,image/*,*/*'
+                : 'video/mp4,video/*,*/*',
             referer: 'https://www.instagram.com/',
           });
         }
@@ -134,6 +145,10 @@ export const GET: APIRoute = async ({ url, request }) => {
     let downloadUrl: string | null = null;
     let audioExt: string | null = null;
 
+    // Story items can be photos (media_type 1) — serve them as images with the
+    // right container instead of failing with "no video media".
+    const imageOnlyStory = parsed.type === 'story' && isImageOnlyMedia(media);
+
     if (mode === 'audio') {
       contentType = 'audio';
       const realAudio = getAudioUrl(media);
@@ -156,13 +171,16 @@ export const GET: APIRoute = async ({ url, request }) => {
         contentType = 'video';
         downloadUrl = getBestVideoUrl(media);
       }
+    } else if (imageOnlyStory) {
+      contentType = 'image';
+      downloadUrl = getThumbnailUrl(media) || null;
     } else {
       downloadUrl = getBestVideoUrl(media);
     }
 
     if (!downloadUrl) {
       return new Response(
-        JSON.stringify({ success: false, error: 'This post does not contain any downloadable media.' }),
+        JSON.stringify({ success: false, error: 'This content does not contain any downloadable media.' }),
         { status: 422, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -173,6 +191,7 @@ export const GET: APIRoute = async ({ url, request }) => {
       cover,
       duration,
       title,
+      isPhoto: imageOnlyStory || undefined,
       author: {
         unique_id: media.user?.username || '',
         nickname: media.user?.full_name || '',
@@ -197,11 +216,20 @@ export const GET: APIRoute = async ({ url, request }) => {
 
     if (dl) {
       const isAudio = contentType === 'audio';
-      const fileExt = isAudio ? audioExt || 'm4a' : 'mp4';
+      const isImage = contentType === 'image';
+      const fileExt = isAudio ? audioExt || 'm4a' : isImage ? 'jpg' : 'mp4';
       return streamFromUpstream(downloadUrl, {
-        filename: isAudio ? `tiksavehub-audio.${fileExt}` : 'tiksavehub-video.mp4',
-        contentType: isAudio ? 'audio/mp4' : 'video/mp4',
-        accept: isAudio ? 'audio/mp4,audio/mpeg,audio/*,*/*' : 'video/mp4,video/*,*/*',
+        filename: isAudio
+          ? `tiksavehub-audio.${fileExt}`
+          : isImage
+            ? 'tiksavehub-story.jpg'
+            : 'tiksavehub-video.mp4',
+        contentType: isAudio ? 'audio/mp4' : isImage ? 'image/jpeg' : 'video/mp4',
+        accept: isAudio
+          ? 'audio/mp4,audio/mpeg,audio/*,*/*'
+          : isImage
+            ? 'image/jpeg,image/webp,image/*,*/*'
+            : 'video/mp4,video/*,*/*',
         referer: 'https://www.instagram.com/',
       });
     }
@@ -234,10 +262,8 @@ export const GET: APIRoute = async ({ url, request }) => {
       msg.includes('UND_ERR') ||
       msg.includes('returned 429') ||
       msg.includes('returned 403');
-    const needsSession = parsed.type === 'story';
     const noMedia =
       msg.includes('No media found') ||
-      msg.includes('No story found') ||
       msg.includes('No items') ||
       msg.includes('returned no media') ||
       msg.includes('No downloadable media') ||
@@ -245,18 +271,36 @@ export const GET: APIRoute = async ({ url, request }) => {
 
     let errorMsg: string;
 
-    if (isTimeout) {
+    if (msg === ERR_STORY_EXPIRED) {
+      errorMsg =
+        'This story has already expired — Instagram stories disappear 24 hours after they are posted.';
+    } else if (msg === ERR_HIGHLIGHTS_UNSUPPORTED) {
+      errorMsg =
+        'This looks like an Instagram Highlight link. Highlight downloads are not supported — please paste a regular story link instead.';
+    } else if (msg === ERR_SESSION_REQUIRED) {
+      errorMsg =
+        'Instagram stories are protected content that can only be fetched by the server right now. Please try again shortly, or use a public Reels/post link instead.';
+      console.error(
+        '[Instagram Download API] Story fetch skipped: no Instagram session on this server. ' +
+          'Instagram blocks anonymous story access (verified 2026), so story downloads require ' +
+          'IG_COOKIES (full cookie jar from DevTools -> Copy as cURL) — or at minimum ' +
+          'IG_SESSIONID + IG_DS_USER_ID + IG_CSRF_TOKEN — in the server env (see .env.example).'
+      );
+    } else if (msg === ERR_LOGIN_REQUIRED || msg === ERR_SESSION_MISSING) {
+      errorMsg =
+        'This content could not be fetched right now. Please try again in a few minutes, or use another public link.';
+      console.error(
+        '[Instagram Download API] Instagram rejected the server session (login/challenge). ' +
+          'Refresh the IG_COOKIES jar (or IG_SESSIONID/IG_CSRF_TOKEN) — the story retried once with a fresh session already.'
+      );
+    } else if (isTimeout) {
       errorMsg = 'The server took too long to respond. Please try again in a moment.';
     } else if (isYtDlpMissing) {
       errorMsg = 'This content could not be fetched right now. Please try again later.';
     } else if (isYtDlpMediaErr || noMedia) {
       errorMsg = 'This content may be unavailable or restricted. Please try another public link.';
     } else if (isFetchFailed) {
-      errorMsg = needsSession
-        ? 'This content could not be fetched right now. Please try again later.'
-        : 'This content may be unavailable or restricted. Please try another public link.';
-    } else if (msg.includes('session_missing') || msg.includes('login_required')) {
-      errorMsg = 'This content may require an Instagram login to view. Please try another public link.';
+      errorMsg = 'This content could not be fetched right now. Please try again later.';
     } else {
       errorMsg = 'Failed to fetch this content. Please check the link and try again.';
     }

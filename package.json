@@ -10,6 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "test:fb-photo": "node tests/facebook-photo-quality.test.ts",
     "indexnow": "node scripts/submit-indexnow.mjs",
     "google-index": "node scripts/submit-google-index.mjs"
   },

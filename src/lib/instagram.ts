@@ -1,18 +1,47 @@
-import { memoSWR } from './cache';
+import { memoSWR, cacheGet, cacheSet, cacheDelete } from './cache';
 import { fetchInstagramWithYtDlp, instagramUrlFor } from './ytdlp';
+import { ensureInstagramEnv } from './ig-env';
+
+ensureInstagramEnv();
 
 const STORY_TTL_MS = 6 * 60 * 60 * 1000;
 const STORY_STALE_MS = 6 * 60 * 60 * 1000;
 
+// Sentinel error messages — the API route maps these to honest, per-case copy.
+export const ERR_SESSION_REQUIRED = 'instagram_session_required';
+export const ERR_SESSION_MISSING = 'instagram_session_missing';
+export const ERR_LOGIN_REQUIRED = 'instagram_login_required';
+export const ERR_STORY_EXPIRED = 'instagram_story_expired';
+export const ERR_HIGHLIGHTS_UNSUPPORTED = 'instagram_highlights_not_supported';
+
 const INSTAGRAM_GRAPHQL = 'https://www.instagram.com/graphql/query';
 const INSTAGRAM_HOME = 'https://www.instagram.com/';
 const INSTAGRAM_API = 'https://i.instagram.com/api/v1';
+const INSTAGRAM_API_WEB = 'https://www.instagram.com/api/v1';
 const SHORTCODE_DOC_ID = '27128499623469141';
 const MEDIA_INFO_DOC_ID = '4740221914432035';
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 const MOBILE_UA =
   'Instagram 219.0.0.12.117 Android (23/6.0; 420dpi; 1080x2310; Meizu; Meizu 16; meizu16; zh_CN; 62401037)';
+// Browser sessions are device-bound: the private-API calls only authenticate
+// when the request matches the mobile-Chrome client that created the session
+// (verified live 2026: web session + full cookie jar + these hints + this UA on
+// the www host = 200; any other host/app-UA combination = 403/useragent mismatch).
+const MOBILE_WEB_UA =
+  'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36';
+const MOBILE_WEB_HINTS: Record<string, string> = {
+  'sec-ch-ua': '"Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"',
+  'sec-ch-ua-full-version-list':
+    '"Not=A?Brand";v="99.0.0.0", "Google Chrome";v="151.0.7922.138", "Chromium";v="151.0.7922.138"',
+  'sec-ch-ua-mobile': '?1',
+  'sec-ch-ua-model': '"Pixel 7"',
+  'sec-ch-ua-platform': '"Android"',
+  'sec-ch-ua-platform-version': '"13"',
+  'sec-ch-prefers-color-scheme': 'dark',
+  dpr: '1',
+  'viewport-width': '150',
+};
 
 const CSRF_TTL_MS = 24 * 60 * 60 * 1000;
 const MEDIA_TTL_MS = 24 * 60 * 60 * 1000;
@@ -36,6 +65,12 @@ export function hasSession(): boolean {
 }
 
 function getSessionCookie(): string {
+  // Full browser cookie jar (recommended): Instagram's web API now expects the
+  // whole cookie family (mid, ig_did, rur, datr...) — sessionid alone gets 403.
+  // Get it via DevTools → Network → Copy as cURL → the `cookie: '...'` value.
+  const full = process.env.IG_COOKIES || '';
+  if (full.trim()) return full.trim();
+
   const parts: string[] = [];
   const session = readSession();
   if (session) parts.push(`sessionid=${session}`);
@@ -136,43 +171,128 @@ async function graphqlRequest(docId: string, variables: Record<string, unknown>)
   return json;
 }
 
-async function privateApiRequest<T>(path: string): Promise<T> {
+function isSessionBlockedMessage(message: string): boolean {
+  const m = String(message || '').toLowerCase();
+  return (
+    m === ERR_LOGIN_REQUIRED ||
+    m.includes('login_required') ||
+    m.includes('challenge_required') ||
+    m.includes('checkpoint_required') ||
+    m.includes('session_expired') ||
+    m.includes('useragent mismatch')
+  );
+}
+
+function errorWithCode(message: string, code?: string): Error {
+  const err = new Error(message);
+  if (code) (err as any).code = code;
+  return err;
+}
+
+/**
+ * Bust the memoized CSRF/session cookies and retry once. Instagram frequently
+ * rotates csrftoken and rejects stale sessions with challenge/login responses,
+ * so a single refresh-and-retry heals the majority of transient session blocks
+ * without surfacing them to the user.
+ */
+async function withSessionRetry<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (err: any) {
+    const msg = err?.message || String(err);
+    const code = err?.code || '';
+    if (isSessionBlockedMessage(msg) || isSessionBlockedMessage(code)) {
+      cacheDelete('ig:csrf');
+      return await fn();
+    }
+    throw err;
+  }
+}
+
+/**
+ * Shared Instagram private-API GET with optional session and per-call headers.
+ * `requireSession` endpoints are only reachable with a configured session;
+ * `web_profile_info` also works anonymously (verified), which is how we resolve
+ * a story username -> user id without any login state.
+ */
+function csrfFromCookie(cookie: string): string {
+  const m = cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+  return m ? m[1] : '';
+}
+
+async function apiGet(
+  path: string,
+  opts: { requireSession?: boolean; extra?: Record<string, string> } = {}
+): Promise<{ status: number; json: any }> {
   const sessionCookie = getSessionCookie();
-  if (!readSession()) {
-    throw new Error('instagram_session_missing');
+  const sessionAvailable = Boolean(readSession());
+
+  if (opts.requireSession && !sessionAvailable) {
+    throw errorWithCode(ERR_SESSION_MISSING, ERR_SESSION_MISSING);
   }
 
-  const resp = await fetch(`${INSTAGRAM_API}${path}`, {
-    headers: {
-      'User-Agent': MOBILE_UA,
-      Accept: 'application/json, */*',
-      'Accept-Language': 'en-US,en;q=0.9',
-      'X-IG-Capabilities': '3brTvw==',
-      'X-IG-Connection-Type': 'WIFI',
-      'X-IG-App-ID': '567067343352427',
-      'X-Requested-With': 'XMLHttpRequest',
-      Origin: 'https://www.instagram.com',
-      Referer: 'https://www.instagram.com/stories/',
-      Cookie: sessionCookie,
-    },
-    signal: AbortSignal.timeout(25_000),
+  const usingSession = Boolean(sessionCookie);
+  const headers: Record<string, string> = usingSession
+    ? {
+        'User-Agent': MOBILE_WEB_UA,
+        Accept: 'application/json, text/plain, */*',
+        'Accept-Language': 'en-PK,en;q=0.9,ur-PK;q=0.8,ur;q=0.7',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-IG-App-ID': '936619743392459',
+        'X-ASBD-ID': '129477',
+        'X-IG-WWW-Claim': '0',
+        'X-CSRFToken': csrfFromCookie(sessionCookie) || process.env.IG_CSRF_TOKEN || '',
+        Origin: 'https://www.instagram.com',
+        Referer: 'https://www.instagram.com/',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        ...MOBILE_WEB_HINTS,
+      }
+    : {
+        'User-Agent': MOBILE_UA,
+        Accept: 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'X-IG-Capabilities': '3brTvw==',
+        'X-IG-Connection-Type': 'WIFI',
+        'X-IG-App-ID': '567067343352427',
+        'X-Requested-With': 'XMLHttpRequest',
+        Origin: 'https://www.instagram.com',
+        Referer: 'https://www.instagram.com/stories/',
+      };
+  if (sessionCookie) headers.Cookie = sessionCookie;
+  if (opts.extra) Object.assign(headers, opts.extra);
+
+  const host = usingSession ? INSTAGRAM_API_WEB : INSTAGRAM_API;
+  const resp = await fetch(`${host}${path}`, {
+    headers,
+    signal: AbortSignal.timeout(20_000),
   });
 
   const text = await resp.text();
-  let json: any;
+  let json: any = null;
   try {
     json = JSON.parse(text);
   } catch {
-    throw new Error('Instagram API returned an invalid response.');
+    json = null;
   }
 
-  if (json.message === 'login_required' || json == null && resp.status === 403) {
-    throw new Error('instagram_login_required');
+  const message = json?.message;
+  if (resp.status === 403 || isSessionBlockedMessage(message)) {
+    throw errorWithCode(
+      ERR_LOGIN_REQUIRED,
+      String(message || 'login_required').toLowerCase()
+    );
   }
-  if (json.status && json.status !== 'ok') {
-    throw new Error('instagram_request_failed');
+  if (json?.status && json.status !== 'ok') {
+    throw new Error(`Instagram API request failed (${resp.status}).`);
   }
 
+  return { status: resp.status, json };
+}
+
+async function privateApiRequest<T>(path: string): Promise<T> {
+  const { json } = await apiGet(path, { requireSession: true });
   return json as T;
 }
 
@@ -325,7 +445,7 @@ export async function fetchMediaByShortcode(shortcode: string, type: string = 'v
       try {
         return await fetchMediaByMediaId(shortcodeToMediaId(shortcode));
       } catch (err: any) {
-        if (err?.message === 'instagram_login_required') {
+        if (err?.message === ERR_LOGIN_REQUIRED) {
           throw new Error('Could not retrieve this content with the configured Instagram session.');
         }
         throw err;
@@ -336,40 +456,129 @@ export async function fetchMediaByShortcode(shortcode: string, type: string = 'v
   });
 }
 
+export async function resolveUserIdByUsername(username: string): Promise<string> {
+  const cacheKey = `ig:uid:${username.toLowerCase()}`;
+  const cached = cacheGet<string>(cacheKey);
+  if (cached) return cached;
+
+  const { json } = await apiGet(`/users/web_profile_info/?username=${encodeURIComponent(username)}`);
+  const userId = json?.data?.user?.id;
+  if (!userId || !/^\d+$/.test(String(userId))) {
+    throw new Error('Could not resolve the Instagram user for this story link.');
+  }
+  cacheSet(cacheKey, String(userId), 7 * 24 * 60 * 60 * 1000);
+  return String(userId);
+}
+
+export async function fetchStoryTray(userId: string): Promise<any[]> {
+  const { json } = await apiGet(`/feed/reels_media/?reel_ids=${encodeURIComponent(userId)}`, {
+    requireSession: true,
+  });
+  const reels = json?.reels;
+  const tray = reels?.[userId] || reels?.[String(userId)] as any;
+  const items = Array.isArray(tray?.items) ? tray.items : [];
+  return items;
+}
+
+export function findStoryInTray(items: any[], mediaId: string): any | null {
+  if (!Array.isArray(items)) return null;
+  const target = String(mediaId);
+  return items.find((it) => String(it?.media_id || it?.pk || it?.id) === target) || null;
+}
+
+export function isImageOnlyMedia(media: any): boolean {
+  if (!media) return false;
+  const mediaType = Number(media.media_type);
+  if (mediaType === 1) return true;
+  if (mediaType === 2 || mediaType === 8) return false;
+  return !getBestVideoUrl(media) && Boolean(getThumbnailUrl(media));
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('timed out')), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer)) as Promise<T>;
+}
+
+/**
+ * Anonymous story attempt kept as a last chance in case Instagram ever re-opens
+ * guest story access. Bounded to ~6s so a guaranteed-fail environment returns an
+ * honest error fast instead of hanging on dead endpoints.
+ */
+async function tryAnonymousStory(mediaId: string): Promise<any> {
+  const json = await withTimeout(
+    graphqlRequest(MEDIA_INFO_DOC_ID, {
+      media_id: mediaId,
+      should_track_viewed: false,
+    }),
+    6_000
+  );
+  const media = json?.data?.xdt_api__v1__media__info__web?.media_union;
+  if (!media) throw new Error('no media item');
+  return media;
+}
+
+async function fetchStoryWithSession(username: string | undefined, mediaId: string): Promise<any> {
+  const errors: string[] = [];
+
+  if (username === 'highlights') {
+    throw errorWithCode(ERR_HIGHLIGHTS_UNSUPPORTED);
+  }
+
+  // Layer 1: resolve the user -> story tray, locate the exact story by media id.
+  if (username) {
+    try {
+      const userId = await resolveUserIdByUsername(username);
+      const tray = await fetchStoryTray(userId);
+      const found = findStoryInTray(tray, mediaId);
+      if (found) return found;
+      if (tray.length > 0) {
+        throw errorWithCode(ERR_STORY_EXPIRED);
+      }
+      errors.push('The story is not in the active story tray.');
+    } catch (err: any) {
+      if (err?.message === ERR_STORY_EXPIRED || err?.message === ERR_HIGHLIGHTS_UNSUPPORTED) throw err;
+      if (err?.message === ERR_LOGIN_REQUIRED) throw err; // session problem — handled by withSessionRetry
+      errors.push(err?.message || 'Story tray lookup failed.');
+    }
+  }
+
+  // Layer 2: direct media info lookup.
+  try {
+    return await fetchMediaByMediaId(mediaId);
+  } catch (err: any) {
+    if (err?.message === ERR_LOGIN_REQUIRED || err?.message === ERR_SESSION_MISSING) throw err;
+    errors.push(err?.message || 'Media info lookup failed.');
+  }
+
+  // Layer 3: yt-dlp with the session cookie header (handles both photo and video stories).
+  if (username) {
+    try {
+      return await fetchInstagramWithYtDlp(`https://www.instagram.com/stories/${username}/${mediaId}/`);
+    } catch (err: any) {
+      errors.push(err?.message || 'yt-dlp story fetch failed.');
+    }
+  }
+
+  throw new Error(errors[errors.length - 1] || ERR_STORY_EXPIRED);
+}
+
 export async function fetchStoryByMediaId(mediaId: string, username?: string): Promise<any> {
   return memoSWR(`ig:story:${mediaId}`, STORY_TTL_MS, STORY_STALE_MS, async () => {
     if (hasSession()) {
-      try {
-        return await fetchMediaByMediaId(mediaId);
-      } catch (err: any) {
-        if (err?.message === 'instagram_login_required') {
-          throw new Error('Stories require an Instagram session, or the story has expired.');
-        }
-        throw err;
-      }
+      return withSessionRetry(() => fetchStoryWithSession(username, mediaId));
     }
 
     try {
-      const json = await graphqlRequest(MEDIA_INFO_DOC_ID, {
-        media_id: mediaId,
-        should_track_viewed: false,
-      });
-
-      const media = json.data?.xdt_api__v1__media__info__web?.media_union;
-      if (!media) {
-        throw new Error('No story found. It may have expired, be private, or the link is invalid.');
-      }
-      return media;
-    } catch (err: any) {
-      if (!username) throw err;
-
-      try {
-        return await fetchInstagramWithYtDlp(
-          `https://www.instagram.com/stories/${username}/${mediaId}/`
-        );
-      } catch (err2: any) {
-        throw err;
-      }
+      return await tryAnonymousStory(mediaId);
+    } catch {
+      // Insta stories are session-only content in current builds (2026): the
+      // web page is a JS shell, public GraphQL doc ids are dead, reels_media
+      // returns empty to guests and media/info returns 403. Fail fast and
+      // honestly instead of burning ~90s on dying anonymous sources.
+      throw errorWithCode(ERR_SESSION_REQUIRED);
     }
   });
 }

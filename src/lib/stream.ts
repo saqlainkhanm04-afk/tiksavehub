@@ -231,7 +231,7 @@ export async function streamFromUpstream(
       const responseHeaders = new Headers();
       responseHeaders.set(
         'Content-Type',
-        upstream.headers.get('content-type') || opts.contentType
+        opts.contentType || upstream.headers.get('content-type') || 'application/octet-stream'
       );
       responseHeaders.set('Content-Disposition', `attachment; filename="${opts.filename}"`);
       responseHeaders.set('Cache-Control', 'no-store');
@@ -287,7 +287,7 @@ export async function streamFromUpstream(
       try {
         const { body, contentType } = await parallelBody(sourceUrl, headers, total);
         const responseHeaders = new Headers();
-        responseHeaders.set('Content-Type', contentType || opts.contentType);
+        responseHeaders.set('Content-Type', opts.contentType || contentType || 'application/octet-stream');
         responseHeaders.set('Content-Disposition', `attachment; filename="${opts.filename}"`);
         responseHeaders.set('Cache-Control', 'no-store');
         responseHeaders.set('X-Accel-Buffering', 'no');

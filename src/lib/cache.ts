@@ -37,6 +37,10 @@ export function cacheGet<T>(key: string): T | undefined {
   return entry.value;
 }
 
+export function cacheDelete(key: string): boolean {
+  return store.delete(key);
+}
+
 export function cacheSet<T>(key: string, value: T, ttlMs: number): void {
   store.set(key, { value, expiresAt: Date.now() + ttlMs });
   if (store.size > MAX_ENTRIES) cleanup();

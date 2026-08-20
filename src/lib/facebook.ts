@@ -968,8 +968,9 @@ export interface FacebookPhotoSet {
   author: { name: string; avatar: string };
 }
 
-// Sanity cap so a giant album never explodes the response/zip.
-const MAX_PHOTOS_PER_POST = 50;
+// Download limit: only the FIRST 20 photos of an album/post are ever served.
+// (Requirement from the site owner — links with more photos are capped at 20.)
+const MAX_PHOTOS_PER_POST = 20;
 
 /**
  * Facebook serves different page variants per host — flagged IPs regularly

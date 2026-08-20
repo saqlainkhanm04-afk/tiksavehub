@@ -94,7 +94,7 @@ export function parseInstagramUrl(rawUrl: string): InstagramParseResult | null {
   }
 
   const match = parsed.pathname.match(
-    /\/reel\/([^/]+)|\/(?:p|tv)\/([^/]+)|\/stories\/([^/]+)\/(\d+)/
+    /(?:\/reel|\/reels)\/([^/]+)|\/(?:p|tv)\/([^/]+)|\/stories\/([^/]+)\/(\d+)/
   );
   if (!match) return null;
 

@@ -51,8 +51,8 @@ const typeMeta = {
     formAria: 'Instagram Reels download form',
     btnAria: 'Download Instagram Reels',
     noUrlMsg: 'Please paste an Instagram Reels URL.',
-    pattern: /^(https?:\/\/)?(www\.)?instagram\.com\/reel\//,
-    example: 'https://www.instagram.com/reel/…',
+    pattern: /^(https?:\/\/)?(www\.)?instagram\.com\/(reel|reels)\//,
+    example: 'https://www.instagram.com/reels/…',
   },
   story: {
     placeholder: 'Paste Instagram Story link',
@@ -69,7 +69,7 @@ const typeMeta = {
     formAria: 'Instagram audio extractor form',
     btnAria: 'Extract Instagram audio',
     noUrlMsg: 'Please paste an Instagram video or Reels URL.',
-    pattern: /^(https?:\/\/)?(www\.)?instagram\.com\/(p|tv|reel)\//,
+    pattern: /^(https?:\/\/)?(www\.)?instagram\.com\/(p|tv|reel|reels)\//,
     example: 'https://www.instagram.com/reel/…',
   },
 } as const;

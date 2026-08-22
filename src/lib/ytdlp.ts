@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process';
 import { ensureInstagramEnv } from './ig-env';
+import { getNextCookie, poolSize } from './ig-cookie-pool';
 
 ensureInstagramEnv();
 
@@ -53,7 +54,15 @@ export async function isYtDlpAvailable(): Promise<boolean> {
   return available;
 }
 
-function sessionCookieHeader(): string {
+function sessionCookieHeader(cookieOverride?: string): string {
+  if (cookieOverride) return cookieOverride;
+
+  // If the cookie pool has entries, use the next one.
+  if (poolSize() > 0) {
+    return getNextCookie().cookie;
+  }
+
+  // Legacy fallback.
   const full = process.env.IG_COOKIES || '';
   if (full.trim()) return full.trim();
 
@@ -108,7 +117,7 @@ function toInstagramMedia(json: any): any {
   return media;
 }
 
-async function dumpSingleJson(url: string): Promise<any> {
+async function dumpSingleJson(url: string, cookieOverride?: string): Promise<any> {
   if (!YTDLP_ENABLED) {
     throw new Error('yt-dlp is disabled on this server (YTDLP_ENABLED=false).');
   }
@@ -126,7 +135,7 @@ async function dumpSingleJson(url: string): Promise<any> {
     'best[protocol!=m3u8][acodec!=none]/best[protocol!=m3u8]/best',
   ];
 
-  const cookie = sessionCookieHeader();
+  const cookie = cookieOverride || sessionCookieHeader();
   if (cookie) {
     args.push('--add-header', `Cookie: ${cookie}`);
   }
@@ -154,7 +163,7 @@ export interface YtDlpAudioResult {
   bitrate?: number;
 }
 
-async function fetchBestAudioWithYtDlp(url: string): Promise<YtDlpAudioResult | null> {
+async function fetchBestAudioWithYtDlp(url: string, cookieOverride?: string): Promise<YtDlpAudioResult | null> {
   if (!YTDLP_ENABLED) {
     throw new Error('yt-dlp is disabled on this server (YTDLP_ENABLED=false).');
   }
@@ -172,7 +181,7 @@ async function fetchBestAudioWithYtDlp(url: string): Promise<YtDlpAudioResult | 
     'bestaudio',
   ];
 
-  const cookie = sessionCookieHeader();
+  const cookie = cookieOverride || sessionCookieHeader();
   if (cookie) {
     args.push('--add-header', `Cookie: ${cookie}`);
   }
@@ -213,7 +222,8 @@ export async function fetchInstagramAudioWithYtDlp(url: string): Promise<YtDlpAu
 }
 
 export async function fetchFacebookAudioWithYtDlp(url: string): Promise<YtDlpAudioResult | null> {
-  return fetchBestAudioWithYtDlp(url);
+  const fbCookie = process.env.FB_COOKIES || '';
+  return fetchBestAudioWithYtDlp(url, fbCookie || undefined);
 }
 
 export async function fetchInstagramWithYtDlp(url: string): Promise<any> {
@@ -275,7 +285,8 @@ function toFacebookMedia(json: any): any {
 }
 
 export async function fetchFacebookWithYtDlp(url: string): Promise<any> {
-  return toFacebookMedia(await dumpSingleJson(url));
+  const fbCookie = process.env.FB_COOKIES || '';
+  return toFacebookMedia(await dumpSingleJson(url, fbCookie || undefined));
 }
 
 function toTikTokData(json: any): any {

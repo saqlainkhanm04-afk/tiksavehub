@@ -40,6 +40,12 @@ const showSectionNav = isToolPage(currentPath);
         </span>
         Facebook
       </a>
+      <a href="/x-video-downloader" class="nav-link nav-link-x" id="nav-link-x">
+        <span class="x-nav-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </span>
+        X / Twitter
+      </a>
       <a href="/blog" class="nav-link nav-link-blog" id="nav-link-blog">
         <span class="blog-nav-icon" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -129,6 +135,12 @@ const showSectionNav = isToolPage(currentPath);
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         </span>
         Facebook
+      </a>
+      <a href="/x-video-downloader" class="mobile-nav-link mobile-nav-link-x" id="mob-link-x">
+        <span class="x-nav-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </span>
+        X / Twitter
       </a>
       <a href="/blog" class="mobile-nav-link mobile-nav-link-blog" id="mob-link-blog">
         <span class="blog-nav-icon" aria-hidden="true">
@@ -1169,6 +1181,125 @@ const showSectionNav = isToolPage(currentPath);
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
   }
 
+  /* ─── X/Twitter Nav Button ─── */
+  .nav-link-x {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(29, 155, 240, 0.12), rgba(29, 155, 240, 0.08)) !important;
+    border: 1px solid rgba(29, 155, 240, 0.25) !important;
+    color: #1d9bf0 !important;
+    font-weight: 600 !important;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation: x-nav-pulse 2s ease-in-out infinite;
+  }
+
+  .nav-link-x::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(29, 155, 240, 0.15), rgba(29, 155, 240, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav-link-x:hover {
+    transform: scale(1.05) !important;
+    box-shadow:
+      0 0 20px rgba(29, 155, 240, 0.3),
+      0 0 40px rgba(29, 155, 240, 0.12) !important;
+    border-color: rgba(29, 155, 240, 0.5) !important;
+    color: #1a8cd8 !important;
+    animation: none !important;
+  }
+
+  .nav-link-x:hover::before {
+    opacity: 1;
+  }
+
+  .nav-link-x:active {
+    transform: scale(0.92) !important;
+    transition-duration: 0.1s !important;
+  }
+
+  .nav-link-x > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-link-x:hover .x-nav-icon {
+    animation: x-icon-bounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  }
+
+  .x-nav-icon {
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease;
+  }
+
+  @keyframes x-nav-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(29, 155, 240, 0);
+    }
+    50% {
+      box-shadow: 0 0 8px 2px rgba(29, 155, 240, 0.15);
+    }
+  }
+
+  @keyframes x-icon-bounce {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-3px) scale(1.15); }
+    50% { transform: translateY(-1px) scale(1.05); }
+    70% { transform: translateY(-2px) scale(1.1); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  .dark .nav-link-x {
+    color: #38bdf8 !important;
+  }
+
+  .dark .nav-link-x:hover {
+    color: #7dd3fc !important;
+    border-color: rgba(56, 189, 248, 0.5) !important;
+  }
+
+  /* ─── Mobile X/Twitter Nav Link ─── */
+  .mobile-nav-link-x {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    color: #1d9bf0 !important;
+    font-weight: 600 !important;
+    background: linear-gradient(135deg, rgba(29, 155, 240, 0.08), rgba(29, 155, 240, 0.05)) !important;
+    border: 1px solid rgba(29, 155, 240, 0.2) !important;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease !important;
+    animation: x-nav-pulse 2s ease-in-out infinite;
+  }
+
+  .mobile-nav-link-x:hover {
+    background: linear-gradient(135deg, rgba(29, 155, 240, 0.15), rgba(29, 155, 240, 0.1)) !important;
+    border-color: rgba(29, 155, 240, 0.4) !important;
+    transform: translateX(4px);
+  }
+
+  /* ─── X Click Animation ─── */
+  .nav-link-x.x-clicked,
+  .mobile-nav-link-x.x-clicked {
+    animation: x-click-pop 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
+  }
+
+  @keyframes x-click-pop {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(29, 155, 240, 0.4); }
+    30% { transform: scale(0.88); box-shadow: 0 0 0 6px rgba(29, 155, 240, 0); }
+    60% { transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(29, 155, 240, 0.2); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(29, 155, 240, 0); }
+  }
+
   @media (max-width: 1180px) {
     .section-nav {
       display: none;
@@ -1301,6 +1432,15 @@ const showSectionNav = isToolPage(currentPath);
     link.addEventListener('click', () => {
       link.classList.add('fb-clicked');
       setTimeout(() => link.classList.remove('fb-clicked'), 400);
+    });
+  });
+
+  // X/Twitter nav button click animation
+  const xNavLinks = document.querySelectorAll('.nav-link-x, .mobile-nav-link-x');
+  xNavLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      link.classList.add('x-clicked');
+      setTimeout(() => link.classList.remove('x-clicked'), 400);
     });
   });
 

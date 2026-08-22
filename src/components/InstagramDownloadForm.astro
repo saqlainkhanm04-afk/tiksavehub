@@ -896,6 +896,202 @@ const meta = typeMeta[type];
     storyBtn?.addEventListener('click', () => startDownload('story', storyBtn));
   }
 
+  function renderStories(stories: any[]) {
+    const dlIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+    const dlAllIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+    const checkIcon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    const count = stories.length;
+    const header = `
+      <div class="stories-header">
+        <div class="stories-header-left">
+          <span class="stories-count">${count} ${count === 1 ? 'Story' : 'Stories'} Found</span>
+          <span class="stories-hint">Active stories from this account</span>
+        </div>
+        ${count > 1 ? `
+          <button class="stories-dl-all-btn" id="btn-dl-all" type="button">
+            ${dlAllIcon}
+            <span class="stories-dl-all-label">Download All</span>
+          </button>
+        ` : ''}
+      </div>`;
+
+    const tiles = stories.map((s: any, i: number) => {
+      const badge = s.isPhoto
+        ? '<span class="story-type-badge">Photo</span>'
+        : s.duration
+          ? `<span class="story-duration-badge">${Math.floor(s.duration / 60)}:${(s.duration % 60).toString().padStart(2, '0')}</span>`
+          : '';
+      return `
+        <div class="story-tile" id="story-tile-${i}">
+          <div class="story-thumb-wrap">
+            <img src="${s.cover || ''}" alt="Story ${i + 1}" class="story-thumb" loading="lazy" width="110" height="195" />
+            ${badge}
+          </div>
+          <button class="story-dl-btn" type="button" data-index="${i}" data-story-url="${encodeURIComponent('/stories/' + (s.author?.unique_id || 'user') + '/' + s.mediaId + '/')}" data-stream-url="${(s.downloadUrl || '').replace(/&/g, '&amp;')}" data-is-photo="${s.isPhoto ? '1' : '0'}">
+            ${dlIcon}
+          </button>
+          <div class="story-dl-overlay" id="story-overlay-${i}" hidden>
+            <div class="story-dl-spinner"></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    resultMount.innerHTML = `
+      <div class="result-card stories-card animate-fade-in-up" role="region" aria-label="Download stories">
+        ${header}
+        <div class="stories-status-msg" id="stories-status-msg" role="status" aria-live="polite">
+          <p class="stories-status-text" id="stories-status-text">${count} active ${count === 1 ? 'story' : 'stories'} ready to download. Click <strong>Download All</strong> or tap any story to save it.</p>
+        </div>
+        <div class="stories-grid">${tiles}</div>
+        <div class="stories-dl-all-status" id="dl-all-status" hidden>
+          <div class="stories-dl-all-bar"><div class="stories-dl-all-bar-fill" id="dl-all-bar-fill"></div></div>
+          <span class="stories-dl-all-text" id="dl-all-text"></span>
+        </div>
+      </div>
+    `;
+
+    async function fetchAndDownload(storyUrl: string, fileName: string, streamUrl?: string): Promise<boolean> {
+      let apiUrl: string;
+      if (streamUrl) {
+        apiUrl = `/api/instagram-download?url=${encodeURIComponent(storyUrl)}&type=story&dl=story&stream=${encodeURIComponent(streamUrl)}`;
+      } else {
+        apiUrl = `/api/instagram-download?url=${encodeURIComponent(storyUrl)}&type=story&dl=story`;
+      }
+      const resp = await fetch(apiUrl);
+      if (!resp.ok) {
+        const errJson = await resp.json().catch(() => null);
+        throw new Error(errJson?.error || `Server returned ${resp.status}`);
+      }
+      const blob = await resp.blob();
+      if (blob.size < 1000) {
+        const text = await blob.text().catch(() => '');
+        if (text.includes('"error"')) {
+          const parsed = JSON.parse(text);
+          throw new Error(parsed.error || 'Download failed');
+        }
+      }
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+      return true;
+    }
+
+    function setTileState(idx: number, state: 'loading' | 'done' | 'error') {
+      const overlay = document.getElementById(`story-overlay-${idx}`);
+      const btn = resultMount.querySelector(`.story-dl-btn[data-index="${idx}"]`) as HTMLButtonElement | null;
+      if (state === 'loading') {
+        if (overlay) { overlay.hidden = false; overlay.innerHTML = '<div class="story-dl-spinner"></div>'; }
+        if (btn) { btn.disabled = true; btn.classList.add('dl-tile-processing'); }
+      } else if (state === 'done') {
+        if (overlay) overlay.innerHTML = checkIcon;
+        if (btn) { btn.classList.remove('dl-tile-processing'); btn.classList.add('dl-tile-done'); }
+        setTimeout(() => {
+          if (overlay) overlay.hidden = true;
+          if (btn) btn.classList.remove('dl-tile-done');
+        }, 2000);
+      } else {
+        if (overlay) overlay.hidden = true;
+        if (btn) { btn.classList.remove('dl-tile-processing'); btn.classList.add('dl-tile-error'); }
+        setTimeout(() => { if (btn) btn.classList.remove('dl-tile-error'); }, 2000);
+      }
+    }
+
+    function updateBar(done: number, total: number, text: string) {
+      const barFill = document.getElementById('dl-all-bar-fill');
+      const statusText = document.getElementById('dl-all-text');
+      if (barFill) barFill.style.width = Math.round((done / total) * 100) + '%';
+      if (statusText) statusText.textContent = text;
+    }
+
+    resultMount.querySelectorAll('.story-dl-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const el = btn as HTMLButtonElement;
+        const idx = Number(el.getAttribute('data-index') || '0');
+        const storyUrl = decodeURIComponent(el.getAttribute('data-story-url') || '');
+        const streamUrl = el.getAttribute('data-stream-url') || undefined;
+        const isPhoto = el.getAttribute('data-is-photo') === '1';
+        const fileName = isPhoto ? `tiksavehub-story-${idx + 1}.jpg` : `tiksavehub-story-${idx + 1}.mp4`;
+        setTileState(idx, 'loading');
+        try {
+          await fetchAndDownload(storyUrl, fileName, streamUrl);
+          setTileState(idx, 'done');
+        } catch {
+          setTileState(idx, 'error');
+        }
+      });
+    });
+
+    const dlAllBtn = document.getElementById('btn-dl-all') as HTMLButtonElement | null;
+    if (dlAllBtn && count > 1) {
+      dlAllBtn.addEventListener('click', async () => {
+        dlAllBtn.disabled = true;
+        dlAllBtn.classList.add('dl-tile-processing');
+        const label = dlAllBtn.querySelector('.stories-dl-all-label') as HTMLElement;
+        const statusEl = document.getElementById('dl-all-status');
+        const statusMsg = document.getElementById('stories-status-text');
+        if (statusEl) statusEl.hidden = false;
+
+        const allBtns = Array.from(resultMount.querySelectorAll('.story-dl-btn')) as HTMLButtonElement[];
+        const total = allBtns.length;
+        let done = 0;
+        let failed = 0;
+
+        if (statusMsg) statusMsg.innerHTML = `<strong>Preparing ${total} stories for download…</strong> Your videos are being fetched and saved in sequence.`;
+        updateBar(0, total, `Preparing ${total} downloads…`);
+
+        for (const btn of allBtns) {
+          const idx = Number(btn.getAttribute('data-index') || '0');
+          const storyUrl = decodeURIComponent(btn.getAttribute('data-story-url') || '');
+          const streamUrl = btn.getAttribute('data-stream-url') || undefined;
+          const isPhoto = btn.getAttribute('data-is-photo') === '1';
+          const fileName = isPhoto ? `tiksavehub-story-${idx + 1}.jpg` : `tiksavehub-story-${idx + 1}.mp4`;
+
+          setTileState(idx, 'loading');
+          const current = done + failed + 1;
+          if (statusMsg) statusMsg.innerHTML = `<strong>Downloading story ${current} of ${total}…</strong> ${isPhoto ? 'Photo' : 'Video'} ${current} is being processed and saved to your device.`;
+          updateBar(done + failed, total, `Downloading ${current} of ${total}…`);
+
+          try {
+            await fetchAndDownload(storyUrl, fileName, streamUrl);
+            done++;
+            setTileState(idx, 'done');
+          } catch {
+            failed++;
+            setTileState(idx, 'error');
+          }
+
+          updateBar(done + failed, total, failed > 0
+            ? `${done} of ${total} downloaded (${failed} failed)`
+            : `Downloaded ${done} of ${total}…`);
+        }
+
+        if (label) label.textContent = failed > 0 ? `${done} Done` : 'All Done!';
+        if (statusMsg) statusMsg.innerHTML = failed > 0
+          ? `<strong>Download complete.</strong> ${done} of ${total} stories saved successfully${failed > 0 ? `, ${failed} failed` : ''}.`
+          : `<strong>All ${total} stories downloaded!</strong> Your Instagram stories have been saved to your device without watermark.`;
+        updateBar(total, total, failed > 0
+          ? `Finished — ${done} downloaded, ${failed} failed`
+          : `All ${total} stories downloaded!`);
+
+        setTimeout(() => {
+          dlAllBtn.disabled = false;
+          dlAllBtn.classList.remove('dl-tile-processing');
+          if (label) label.textContent = 'Download All';
+          if (statusEl) statusEl.hidden = true;
+          const barFill = document.getElementById('dl-all-bar-fill');
+          if (barFill) barFill.style.width = '0%';
+          if (statusMsg) statusMsg.innerHTML = `${count} active ${count === 1 ? 'story' : 'stories'} ready to download. Click <strong>Download All</strong> or tap any story to save it.`;
+        }, 3000);
+      });
+    }
+  }
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideError();
@@ -919,8 +1115,33 @@ const meta = typeMeta[type];
     setLoading(true);
     resultMount.innerHTML = '';
 
+    if (currentTabType === 'story') {
+      resultMount.innerHTML = `
+        <div class="result-card stories-loading-card animate-fade-in-up" role="status" aria-live="polite">
+          <div class="stories-loading-icon">
+            <div class="stories-loading-ring"></div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stories-loading-text">
+            <span class="stories-loading-title">Fetching stories…</span>
+            <span class="stories-loading-sub" id="loading-sub">Connecting to Instagram</span>
+          </div>
+          <div class="stories-loading-dots"><span></span><span></span><span></span></div>
+        </div>
+      `;
+      const sub = document.getElementById('loading-sub');
+      const phases = ['Connecting to Instagram', 'Resolving account', 'Loading story tray', 'Preparing downloads'];
+      let pi = 0;
+      const phaseTimer = setInterval(() => {
+        pi = Math.min(pi + 1, phases.length - 1);
+        if (sub) sub.textContent = phases[pi];
+      }, 2000);
+      (window as any).__igPhaseTimer = phaseTimer;
+    }
+
     try {
       const res = await fetch(`/api/instagram-download?url=${encodeURIComponent(url)}&type=${currentTabType}`);
+      if ((window as any).__igPhaseTimer) { clearInterval((window as any).__igPhaseTimer); delete (window as any).__igPhaseTimer; }
       const text = await res.text();
       let json: any;
       try {
@@ -933,8 +1154,13 @@ const meta = typeMeta[type];
         throw new Error(json.error || 'Failed to fetch content. Please try again.');
       }
 
-      renderResult(json.video, url);
+      if (json.stories && json.stories.length > 0) {
+        renderStories(json.stories);
+      } else {
+        renderResult(json.video, url);
+      }
     } catch (err: any) {
+      if ((window as any).__igPhaseTimer) { clearInterval((window as any).__igPhaseTimer); delete (window as any).__igPhaseTimer; }
       showError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -1186,6 +1412,349 @@ const meta = typeMeta[type];
     margin: 0;
     padding-top: var(--spacing-sm);
     border-top: 1px solid var(--color-hairline);
+  }
+
+  .stories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .stories-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .stories-count {
+    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--color-text);
+  }
+
+  .stories-hint {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .stories-status-msg {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.06), rgba(236, 72, 153, 0.06));
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    animation: stories-msg-in 0.3s ease;
+  }
+
+  html.dark .stories-status-msg {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(236, 72, 153, 0.1));
+    border-color: rgba(124, 58, 237, 0.3);
+  }
+
+  .stories-status-text {
+    margin: 0;
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    line-height: 1.5;
+  }
+
+  .stories-status-text strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  @keyframes stories-msg-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stories-dl-all-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid transparent;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+    flex-shrink: 0;
+  }
+
+  .stories-dl-all-btn:hover {
+    background: linear-gradient(135deg, #6d28d9, #5b21b6);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .stories-dl-all-btn:active {
+    transform: translateY(0);
+  }
+
+  .stories-dl-all-btn.dl-tile-processing {
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .stories-dl-all-btn.dl-tile-processing svg {
+    animation: dl-pulse 1s ease-in-out infinite;
+  }
+
+  .stories-dl-all-label {
+    flex: 1;
+  }
+
+  .stories-dl-all-progress {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    opacity: 0.8;
+  }
+
+  .stories-dl-all-status {
+    margin-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .stories-dl-all-status[hidden] {
+    display: none;
+  }
+
+  .stories-dl-all-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background-color: var(--color-canvas-soft-2);
+    overflow: hidden;
+  }
+
+  .stories-dl-all-bar-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #7c3aed, #ec4899, #7c3aed);
+    background-size: 200% 100%;
+    animation: dl-bar-shimmer 1.5s linear infinite;
+    transition: width 0.3s ease;
+  }
+
+  .stories-dl-all-text {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  @keyframes dl-bar-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: var(--spacing-sm);
+  }
+
+  .story-tile {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: var(--color-canvas-soft-2);
+    aspect-ratio: 9 / 16;
+  }
+
+  .story-thumb-wrap {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .story-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .story-type-badge,
+  .story-duration-badge {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: var(--radius-xs);
+    font-size: 10px;
+    font-weight: 500;
+  }
+
+  .story-duration-badge {
+    left: auto;
+    right: 4px;
+  }
+
+  .story-dl-btn {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.15s;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .story-dl-btn:hover {
+    background-color: rgba(0, 0, 0, 0.85);
+    transform: translateX(-50%) scale(1.1);
+  }
+
+  .story-dl-btn.dl-tile-processing {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .story-dl-btn.dl-tile-done {
+    background-color: #22c55e;
+  }
+
+  .story-dl-btn.dl-tile-error {
+    background-color: #ef4444;
+  }
+
+  .story-dl-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 2;
+  }
+
+  .story-dl-overlay[hidden] {
+    display: none;
+  }
+
+  .story-dl-overlay svg {
+    color: #22c55e;
+    filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.5));
+  }
+
+  .story-dl-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: story-spin 0.7s linear infinite;
+  }
+
+  @keyframes story-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .stories-loading-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+  }
+
+  .stories-loading-icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+  }
+
+  .stories-loading-ring {
+    position: absolute;
+    inset: 0;
+    border: 3px solid transparent;
+    border-top-color: #7c3aed;
+    border-radius: 50%;
+    animation: story-spin 1s linear infinite;
+  }
+
+  .stories-loading-ring::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 3px solid transparent;
+    border-top-color: #ec4899;
+    border-radius: 50%;
+    animation: story-spin 1.5s linear infinite reverse;
+  }
+
+  .stories-loading-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .stories-loading-title {
+    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--color-text);
+  }
+
+  .stories-loading-sub {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .stories-loading-dots {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .stories-loading-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7c3aed;
+    animation: loading-dot 1.2s ease-in-out infinite;
+  }
+
+  .stories-loading-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .stories-loading-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes loading-dot {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1.1); }
   }
 
   @media (max-width: 600px) {

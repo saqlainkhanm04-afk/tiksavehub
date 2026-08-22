@@ -41,7 +41,7 @@ export function ensureInstagramEnv(): void {
     const raw = readFileSync(envPath, 'utf8');
     for (const line of raw.split(/\r?\n/)) {
       const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
-      if (!m || !m[1].startsWith('IG_')) continue;
+      if (!m || !(m[1].startsWith('IG_') || m[1].startsWith('FB_'))) continue;
       const key = m[1];
       if (process.env[key] !== undefined && process.env[key] !== '') continue;
       let value = m[2].trim();

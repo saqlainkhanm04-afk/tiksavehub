@@ -22,6 +22,10 @@ const UA_DESKTOP =
 const UA_IPHONE =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 
+function getFbCookie(): string {
+  return process.env.FB_COOKIES || '';
+}
+
 export interface FacebookMedia {
   title: string;
   cover: string;
@@ -309,6 +313,7 @@ const MAX_VIDEO_HTML_BYTES = 2_500_000;
 
 async function fetchPage(url: string, ua: string = UA_MOBILE): Promise<{ html: string; finalUrl: string }> {
   let resp: Response;
+  const cookie = getFbCookie();
   try {
     resp = await fetch(url, {
       headers: {
@@ -316,6 +321,7 @@ async function fetchPage(url: string, ua: string = UA_MOBILE): Promise<{ html: s
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'no-cache',
+        ...(cookie ? { 'Cookie': cookie } : {}),
       },
       redirect: 'follow',
       signal: AbortSignal.timeout(VIDEO_PAGE_TIMEOUT_MS),
@@ -351,11 +357,13 @@ async function fetchEmbed(url: string): Promise<Partial<FacebookMedia>> {
     url
   )}&show_text=false`;
 
+  const cookie = getFbCookie();
   const resp = await fetch(embedUrl, {
     headers: {
       'User-Agent': UA_DESKTOP,
       'Accept': 'text/html,application/xhtml+xml,*/*',
       'Accept-Language': 'en-US,en;q=0.9',
+      ...(cookie ? { 'Cookie': cookie } : {}),
     },
     redirect: 'follow',
     signal: AbortSignal.timeout(20_000),
@@ -879,7 +887,7 @@ export function extractPhotosFromHtml(html: string): PhotoCandidate[] {
   return candidates;
 }
 
-const PHOTO_PAGE_TIMEOUT_MS = 15_000;
+const PHOTO_PAGE_TIMEOUT_MS = 10_000;
 const MAX_PHOTO_HTML_BYTES = 2_500_000;
 // Anything smaller than this is a quad/thumbnail rendition — worth fetching
 // the photo's own page to look for the full-size original. (MIN_FULL_PHOTO_SCORE
@@ -931,6 +939,7 @@ async function fetchPhotoPage(
   timeoutMs = PHOTO_PAGE_TIMEOUT_MS
 ): Promise<{ html: string; truncated: boolean }> {
   let resp: Response;
+  const cookie = getFbCookie();
   try {
     resp = await fetch(url, {
       headers: {
@@ -938,6 +947,7 @@ async function fetchPhotoPage(
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'no-cache',
+        ...(cookie ? { 'Cookie': cookie } : {}),
       },
       redirect: 'follow',
       signal: AbortSignal.timeout(timeoutMs),
@@ -1001,8 +1011,10 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       attempts.push([u, UA_DESKTOP], [u, UA_IPHONE]);
     }
 
+    const hasCookies = !!getFbCookie();
+    const photoTimeout = hasCookies ? 5_000 : PHOTO_PAGE_TIMEOUT_MS;
     const round = (): Promise<Array<PromiseSettledResult<{ html: string; truncated: boolean }>>> =>
-      Promise.allSettled(attempts.map(([u, ua]) => fetchPhotoPage(u, ua)));
+      Promise.allSettled(attempts.map(([u, ua]) => fetchPhotoPage(u, ua, photoTimeout)));
 
     const bestFrom = (results: Array<PromiseSettledResult<{ html: string; truncated: boolean }>>) => {
       let sawNotFound = false;
@@ -1042,10 +1054,12 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       results.length > 0 &&
       results.every((r) => r.status === 'rejected' && r.reason?.code === FB_ERR.TIMEOUT);
 
-    // FB serves different page variants per request on flagged IPs — the full
-    // story page carrying ALL sibling photos shows up intermittently. When the
-    // first round found <2 photos, retry once before giving up on the set.
-    if (bestCandidates.length < 2 && !allTimedOut) {
+    // With cookies + ≥1 photo found, authenticated pages are consistent —
+    // skip the retry round (saves 8 parallel requests). Still retry when
+    // 0 photos found (flagged IPs may shell even with cookies on some hosts).
+    // Without cookies on flagged IPs, FB serves different page variants per
+    // request so retrying once can recover missing siblings.
+    if (bestCandidates.length < 2 && !allTimedOut && !(hasCookies && bestCandidates.length >= 1)) {
       results = await round();
       const retried = bestFrom(results);
       if (retried.bestCandidates.length > bestCandidates.length) {
@@ -1067,10 +1081,13 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     // serving variant was a shell/error page (tiny HTML, truncated body, or a
     // host that timed out). A clean single-photo page (large, complete, no
     // shells/timeouts) skips the proxy entirely — no wasted latency.
+    // With cookies, authenticated pages return full content — skip the reader
+    // proxy when we already have photos (no need for external recovery).
+    // Still use reader when 0 photos found (flagged IPs may shell even with cookies).
     const needsReader =
       bestCandidates.length === 0 ||
       (bestCandidates.length === 1 && (sawTruncated || sawShell || sawTimeout));
-    if (needsReader) {
+    if (needsReader && !(hasCookies && bestCandidates.length >= 1)) {
       if (isReaderRecoverableUrl(inputUrl)) {
         const recovered = new Map<string, PhotoCandidate>();
         await fetchSiblingsViaReader(inputUrl, null, recovered);

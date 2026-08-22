@@ -1,6 +1,7 @@
 import { memoSWR, cacheGet, cacheSet, cacheDelete } from './cache';
 import { fetchInstagramWithYtDlp, instagramUrlFor } from './ytdlp';
 import { ensureInstagramEnv } from './ig-env';
+import { withCookiePool, poolSize } from './ig-cookie-pool';
 
 ensureInstagramEnv();
 
@@ -61,13 +62,21 @@ function readSession(): string {
 }
 
 export function hasSession(): boolean {
+  if (poolSize() > 0) return true;
   return Boolean(readSession());
 }
 
-function getSessionCookie(): string {
+/**
+ * Build a cookie header from env vars.  When a specific `cookieOverride` is
+ * provided (from the cookie pool), it takes precedence — this is the main path
+ * for pooled requests.  Without an override the legacy env-var assembly is used
+ * as a backward-compatible fallback.
+ */
+function getSessionCookie(cookieOverride?: string): string {
+  if (cookieOverride) return cookieOverride;
+
   // Full browser cookie jar (recommended): Instagram's web API now expects the
   // whole cookie family (mid, ig_did, rur, datr...) — sessionid alone gets 403.
-  // Get it via DevTools → Network → Copy as cURL → the `cookie: '...'` value.
   const full = process.env.IG_COOKIES || '';
   if (full.trim()) return full.trim();
 
@@ -94,13 +103,13 @@ export function parseInstagramUrl(rawUrl: string): InstagramParseResult | null {
   }
 
   const match = parsed.pathname.match(
-    /(?:\/reel|\/reels)\/([^/]+)|\/(?:p|tv)\/([^/]+)|\/stories\/([^/]+)\/(\d+)/
+    /(?:\/reel|\/reels)\/([^/]+)|\/(?:p|tv)\/([^/]+)|\/stories\/([^/]+)(?:\/(\d+))?/
   );
   if (!match) return null;
 
   if (match[1]) return { type: 'reels', shortcode: match[1] };
   if (match[2]) return { type: 'video', shortcode: match[2] };
-  if (match[3] && match[4]) return { type: 'story', mediaId: match[4], username: match[3] };
+  if (match[3]) return { type: 'story', ...(match[4] ? { mediaId: match[4] } : {}), username: match[3] };
 
   return null;
 }
@@ -112,10 +121,10 @@ export function isValidInstagramUrl(rawUrl: string, type?: InstagramType): boole
   return parsed.type === type;
 }
 
-async function getCsrfToken(): Promise<{ token: string; cookies: string }> {
-  const sessionCookie = getSessionCookie();
+async function getCsrfToken(cookieOverride?: string): Promise<{ token: string; cookies: string }> {
+  const sessionCookie = getSessionCookie(cookieOverride);
 
-  return memoSWR('ig:csrf', CSRF_TTL_MS, CSRF_TTL_MS, async () => {
+  return memoSWR(cookieOverride ? `ig:csrf:${cookieOverride.slice(0, 32)}` : 'ig:csrf', CSRF_TTL_MS, CSRF_TTL_MS, async () => {
     const resp = await fetch(INSTAGRAM_HOME, {
       headers: {
         'User-Agent': USER_AGENT,
@@ -134,8 +143,8 @@ async function getCsrfToken(): Promise<{ token: string; cookies: string }> {
   });
 }
 
-async function graphqlRequest(docId: string, variables: Record<string, unknown>): Promise<any> {
-  const { token, cookies } = await getCsrfToken();
+async function graphqlRequest(docId: string, variables: Record<string, unknown>, cookieOverride?: string): Promise<any> {
+  const { token, cookies } = await getCsrfToken(cookieOverride);
 
   const resp = await fetch(INSTAGRAM_GRAPHQL, {
     method: 'POST',
@@ -190,23 +199,36 @@ function errorWithCode(message: string, code?: string): Error {
 }
 
 /**
- * Bust the memoized CSRF/session cookies and retry once. Instagram frequently
- * rotates csrftoken and rejects stale sessions with challenge/login responses,
- * so a single refresh-and-retry heals the majority of transient session blocks
- * without surfacing them to the user.
+ * Session retry with cookie-pool rotation.
+ *
+ * The original `withSessionRetry` busted the CSRF cache and retried once.
+ * The new version wraps the call in `withCookiePool` so that on a session
+ * failure the NEXT cookie in the pool is tried automatically.  The CSRF
+ * cache is still busted on the first failure so the retried cookie gets a
+ * fresh token.
  */
-async function withSessionRetry<T>(fn: () => Promise<T>): Promise<T> {
-  try {
-    return await fn();
-  } catch (err: any) {
-    const msg = err?.message || String(err);
-    const code = err?.code || '';
-    if (isSessionBlockedMessage(msg) || isSessionBlockedMessage(code)) {
-      cacheDelete('ig:csrf');
+async function withSessionRetry<T>(fn: (cookie?: string) => Promise<T>): Promise<T> {
+  // If there's no cookie pool (single legacy cookie), fall back to the
+  // original one-retry behaviour.
+  if (poolSize() <= 1) {
+    try {
       return await fn();
+    } catch (err: any) {
+      const msg = err?.message || String(err);
+      const code = err?.code || '';
+      if (isSessionBlockedMessage(msg) || isSessionBlockedMessage(code)) {
+        cacheDelete('ig:csrf');
+        return await fn();
+      }
+      throw err;
     }
-    throw err;
   }
+
+  // Multi-cookie pool: let `withCookiePool` handle rotation.
+  return withCookiePool(async (cookie) => {
+    cacheDelete(`ig:csrf:${cookie.slice(0, 32)}`);
+    return fn(cookie);
+  });
 }
 
 /**
@@ -222,10 +244,10 @@ function csrfFromCookie(cookie: string): string {
 
 async function apiGet(
   path: string,
-  opts: { requireSession?: boolean; extra?: Record<string, string> } = {}
+  opts: { requireSession?: boolean; extra?: Record<string, string>; cookieOverride?: string } = {}
 ): Promise<{ status: number; json: any }> {
-  const sessionCookie = getSessionCookie();
-  const sessionAvailable = Boolean(readSession());
+  const sessionCookie = getSessionCookie(opts.cookieOverride);
+  const sessionAvailable = Boolean(opts.cookieOverride) || poolSize() > 0 || Boolean(readSession());
 
   if (opts.requireSession && !sessionAvailable) {
     throw errorWithCode(ERR_SESSION_MISSING, ERR_SESSION_MISSING);
@@ -291,8 +313,8 @@ async function apiGet(
   return { status: resp.status, json };
 }
 
-async function privateApiRequest<T>(path: string): Promise<T> {
-  const { json } = await apiGet(path, { requireSession: true });
+async function privateApiRequest<T>(path: string, cookieOverride?: string): Promise<T> {
+  const { json } = await apiGet(path, { requireSession: true, cookieOverride });
   return json as T;
 }
 
@@ -313,8 +335,8 @@ function shortcodeToMediaId(shortcode: string): string {
   return id.toString();
 }
 
-async function fetchMediaByMediaId(mediaId: string): Promise<any> {
-  const json = await privateApiRequest<any>(`/media/${encodeURIComponent(mediaId)}/info/`);
+async function fetchMediaByMediaId(mediaId: string, cookieOverride?: string): Promise<any> {
+  const json = await privateApiRequest<any>(`/media/${encodeURIComponent(mediaId)}/info/`, cookieOverride);
   const media = mediaFromItems(json);
   if (!media) {
     throw new Error('No media found. The link may be private or invalid.');
@@ -446,6 +468,16 @@ export async function fetchMediaByShortcode(shortcode: string, type: string = 'v
         return await fetchMediaByMediaId(shortcodeToMediaId(shortcode));
       } catch (err: any) {
         if (err?.message === ERR_LOGIN_REQUIRED) {
+          // If the pool has multiple cookies, try with the next one before giving up.
+          if (poolSize() > 1) {
+            try {
+              return await withCookiePool(async (cookie) => {
+                return fetchMediaByMediaId(shortcodeToMediaId(shortcode), cookie);
+              });
+            } catch {
+              // fall through to the fallbacks below
+            }
+          }
           throw new Error('Could not retrieve this content with the configured Instagram session.');
         }
         throw err;
@@ -456,12 +488,12 @@ export async function fetchMediaByShortcode(shortcode: string, type: string = 'v
   });
 }
 
-export async function resolveUserIdByUsername(username: string): Promise<string> {
+export async function resolveUserIdByUsername(username: string, cookieOverride?: string): Promise<string> {
   const cacheKey = `ig:uid:${username.toLowerCase()}`;
   const cached = cacheGet<string>(cacheKey);
   if (cached) return cached;
 
-  const { json } = await apiGet(`/users/web_profile_info/?username=${encodeURIComponent(username)}`);
+  const { json } = await apiGet(`/users/web_profile_info/?username=${encodeURIComponent(username)}`, { cookieOverride });
   const userId = json?.data?.user?.id;
   if (!userId || !/^\d+$/.test(String(userId))) {
     throw new Error('Could not resolve the Instagram user for this story link.');
@@ -470,9 +502,10 @@ export async function resolveUserIdByUsername(username: string): Promise<string>
   return String(userId);
 }
 
-export async function fetchStoryTray(userId: string): Promise<any[]> {
+export async function fetchStoryTray(userId: string, cookieOverride?: string): Promise<any[]> {
   const { json } = await apiGet(`/feed/reels_media/?reel_ids=${encodeURIComponent(userId)}`, {
     requireSession: true,
+    cookieOverride,
   });
   const reels = json?.reels;
   const tray = reels?.[userId] || reels?.[String(userId)] as any;
@@ -520,7 +553,7 @@ async function tryAnonymousStory(mediaId: string): Promise<any> {
   return media;
 }
 
-async function fetchStoryWithSession(username: string | undefined, mediaId: string): Promise<any> {
+async function fetchStoryWithSession(username: string | undefined, mediaId: string, cookieOverride?: string): Promise<any> {
   const errors: string[] = [];
 
   if (username === 'highlights') {
@@ -530,8 +563,8 @@ async function fetchStoryWithSession(username: string | undefined, mediaId: stri
   // Layer 1: resolve the user -> story tray, locate the exact story by media id.
   if (username) {
     try {
-      const userId = await resolveUserIdByUsername(username);
-      const tray = await fetchStoryTray(userId);
+      const userId = await resolveUserIdByUsername(username, cookieOverride);
+      const tray = await fetchStoryTray(userId, cookieOverride);
       const found = findStoryInTray(tray, mediaId);
       if (found) return found;
       if (tray.length > 0) {
@@ -547,7 +580,7 @@ async function fetchStoryWithSession(username: string | undefined, mediaId: stri
 
   // Layer 2: direct media info lookup.
   try {
-    return await fetchMediaByMediaId(mediaId);
+    return await fetchMediaByMediaId(mediaId, cookieOverride);
   } catch (err: any) {
     if (err?.message === ERR_LOGIN_REQUIRED || err?.message === ERR_SESSION_MISSING) throw err;
     errors.push(err?.message || 'Media info lookup failed.');
@@ -568,7 +601,7 @@ async function fetchStoryWithSession(username: string | undefined, mediaId: stri
 export async function fetchStoryByMediaId(mediaId: string, username?: string): Promise<any> {
   return memoSWR(`ig:story:${mediaId}`, STORY_TTL_MS, STORY_STALE_MS, async () => {
     if (hasSession()) {
-      return withSessionRetry(() => fetchStoryWithSession(username, mediaId));
+      return withSessionRetry((cookie) => fetchStoryWithSession(username, mediaId, cookie));
     }
 
     try {
@@ -580,6 +613,19 @@ export async function fetchStoryByMediaId(mediaId: string, username?: string): P
       // honestly instead of burning ~90s on dying anonymous sources.
       throw errorWithCode(ERR_SESSION_REQUIRED);
     }
+  });
+}
+
+export async function fetchAllStoriesForUser(username: string): Promise<any[]> {
+  if (username === 'highlights') throw errorWithCode(ERR_HIGHLIGHTS_UNSUPPORTED);
+  return memoSWR(`ig:stories:${username.toLowerCase()}`, STORY_TTL_MS, STORY_STALE_MS, async () => {
+    if (!hasSession()) throw errorWithCode(ERR_SESSION_REQUIRED);
+    return withSessionRetry(async (cookie) => {
+      const userId = await resolveUserIdByUsername(username, cookie);
+      const tray = await fetchStoryTray(userId, cookie);
+      if (tray.length === 0) throw errorWithCode(ERR_STORY_EXPIRED);
+      return tray;
+    });
   });
 }
 
@@ -602,6 +648,27 @@ export function getAudioUrl(media: any): string | null {
   if (audioVersions && audioVersions.length > 0) {
     const sorted = [...audioVersions].sort((a: any, b: any) => (b.bitrate || 0) - (a.bitrate || 0));
     if (sorted[0]?.url) return sorted[0].url;
+  }
+  // Reel media JSON no longer ships a separate audio_versions array, but the
+  // video_dash_manifest still contains the audio-only representation (mimeType
+  // audio/mp4) with a direct signed CDN URL — that is the real audio track.
+  const dash = media.video_dash_manifest;
+  if (typeof dash === 'string' && dash.includes('audio/mp4')) {
+    const blocks = dash.match(/<Representation[^>]*mimeType="audio\/mp4"[^>]*>[\s\S]*?<\/Representation>/gi) || [];
+    let best: string | null = null;
+    let bestBandwidth = -1;
+    for (const block of blocks) {
+      const bw = Number(block.match(/bandwidth="(\d+)"/)?.[1] || 0);
+      const base = block.match(/<BaseURL>([^<]*)<\/BaseURL>/)?.[1];
+      if (!base) continue;
+      const url = base.replaceAll('&amp;', '&').trim();
+      if (!url.startsWith('http')) continue;
+      if (bw > bestBandwidth) {
+        bestBandwidth = bw;
+        best = url;
+      }
+    }
+    if (best) return best;
   }
   return null;
 }

@@ -20,6 +20,7 @@ const seoPages = [
   '/facebook-to-mp3',
   '/facebook-story-downloader',
   '/facebook-photo-downloader',
+  '/x-video-downloader',
   '/blog',
   '/contact',
   '/privacy',

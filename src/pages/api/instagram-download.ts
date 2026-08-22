@@ -4,6 +4,7 @@ import {
   parseInstagramUrl,
   fetchMediaByShortcode,
   fetchStoryByMediaId,
+  fetchAllStoriesForUser,
   getBestVideoUrl,
   getThumbnailUrl,
   getAudioUrl,
@@ -24,6 +25,7 @@ function contentId(parsed: ReturnType<typeof parseInstagramUrl>): string | null 
   if (!parsed) return null;
   if (parsed.shortcode) return parsed.shortcode;
   if (parsed.mediaId) return `story:${parsed.mediaId}`;
+  if (parsed.type === 'story' && parsed.username) return `stories:${parsed.username.toLowerCase()}`;
   return null;
 }
 
@@ -31,6 +33,20 @@ export const GET: APIRoute = async ({ url, request }) => {
   const videoUrl = url.searchParams.get('url');
   const dl = url.searchParams.get('dl');
   const typeParam = url.searchParams.get('type');
+  const streamUrl = url.searchParams.get('stream');
+
+  // Fast path: stream directly from a pre-resolved CDN URL (used by multi-story downloads).
+  if (dl && streamUrl) {
+    const isPhoto = streamUrl.includes('.jpg') || streamUrl.includes('image');
+    return streamFromUpstream(streamUrl, {
+      filename: isPhoto ? 'tiksavehub-story.jpg' : 'tiksavehub-story.mp4',
+      contentType: isPhoto ? 'image/jpeg' : 'video/mp4',
+      accept: isPhoto
+        ? 'image/jpeg,image/webp,image/*,*/*'
+        : 'video/mp4,video/*,*/*',
+      referer: 'https://www.instagram.com/',
+    });
+  }
 
   if (!videoUrl) {
     return new Response(
@@ -126,6 +142,41 @@ export const GET: APIRoute = async ({ url, request }) => {
 
     let media: any;
     let contentType = 'video';
+
+    // When fetching story metadata (no dl param), return ALL active stories for the user.
+    // When downloading (dl param present), fetch the specific story for streaming.
+    if (parsed.type === 'story' && !dl && parsed.username) {
+      const allStories = await fetchAllStoriesForUser(parsed.username);
+      const stories = allStories.map((item: any) => {
+        const isPhoto = isImageOnlyMedia(item);
+        const coverUrl = getThumbnailUrl(item);
+        const downloadUrl = isPhoto ? coverUrl : getBestVideoUrl(item);
+        return {
+          mediaId: String(item.media_id || item.pk || item.id),
+          cover: coverUrl,
+          duration: item.video_duration || 0,
+          title: `Instagram story by ${item.user?.username || 'unknown'}`,
+          isPhoto,
+          downloadUrl,
+          author: {
+            unique_id: item.user?.username || '',
+            nickname: item.user?.full_name || '',
+            avatar: item.user?.profile_pic_url || '',
+          },
+        };
+      }).filter((s: any) => s.downloadUrl);
+
+      return new Response(
+        JSON.stringify({ success: true, type: 'story', stories, storyCount: stories.length }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        }
+      );
+    }
 
     if (parsed.type === 'story' && parsed.mediaId) {
       media = await fetchStoryByMediaId(parsed.mediaId, parsed.username);

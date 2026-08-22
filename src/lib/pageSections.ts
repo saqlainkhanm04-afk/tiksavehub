@@ -13,6 +13,7 @@ export const TOOL_PAGES = [
   '/facebook-to-mp3',
   '/facebook-story-downloader',
   '/facebook-photo-downloader',
+  '/x-video-downloader',
 ];
 
 export const DEFAULT_TOOL_PAGE = '/tiktok-video-downloader-without-watermark';

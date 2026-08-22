@@ -1,7 +1,7 @@
 ---
 // Footer component — 3-column footer following DESIGN.md footer spec
 interface Props {
-  platform?: 'tiktok' | 'instagram' | 'facebook';
+  platform?: 'tiktok' | 'instagram' | 'facebook' | 'x';
 }
 
 import { sectionHref } from '../lib/pageSections';
@@ -10,6 +10,7 @@ const { platform = 'tiktok' } = Astro.props;
 const year = new Date().getFullYear();
 const isInstagram = platform === 'instagram';
 const isFacebook = platform === 'facebook';
+const isX = platform === 'x';
 const currentPath = Astro.url.pathname;
 ---
 
@@ -33,7 +34,9 @@ const currentPath = Astro.url.pathname;
           ? 'Download Instagram videos, Reels, and Stories without watermarks. Free, fast, and always HD quality.'
           : isFacebook
             ? 'Download Facebook videos, Reels, and audio in HD. Free, fast, and no sign-up required.'
-            : 'Download TikTok videos without watermarks. Free, fast, and always HD quality.'}
+            : isX
+              ? 'Download X (Twitter) videos and GIFs in HD. Free, fast, and no sign-up required.'
+              : 'Download TikTok videos without watermarks. Free, fast, and always HD quality.'}
       </p>
       <p class="footer-copy">&copy; {year} TikSaveHub. All rights reserved.</p>
     </div>
@@ -71,7 +74,9 @@ const currentPath = Astro.url.pathname;
           ? 'TikSaveHub is not affiliated with Instagram or Meta Platforms, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'
           : isFacebook
             ? 'TikSaveHub is not affiliated with Facebook or Meta Platforms, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from Meta CDNs. Please respect content creators\' rights and copyright regulations.'
-            : 'TikSaveHub is not affiliated with TikTok or ByteDance Ltd. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'}
+            : isX
+              ? 'TikSaveHub is not affiliated with X Corp. or Twitter, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from X/Twitter CDNs. Please respect content creators\' rights and copyright regulations.'
+              : 'TikSaveHub is not affiliated with TikTok or ByteDance Ltd. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'}
       </p>
     </div>
   </div>

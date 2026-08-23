@@ -19,10 +19,12 @@
     "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/vite": "^4.3.1",
     "astro": "^6.4.6",
+    "nodemailer": "^9.0.5",
     "tailwindcss": "^4.3.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@types/nodemailer": "^8.0.1",
     "typescript": "^6.0.3"
   }
 }

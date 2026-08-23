@@ -226,6 +226,10 @@ export async function fetchFacebookAudioWithYtDlp(url: string): Promise<YtDlpAud
   return fetchBestAudioWithYtDlp(url, fbCookie || undefined);
 }
 
+export async function fetchXAudioWithYtDlp(url: string): Promise<YtDlpAudioResult | null> {
+  return fetchBestAudioWithYtDlp(url);
+}
+
 export async function fetchInstagramWithYtDlp(url: string): Promise<any> {
   return toInstagramMedia(await dumpSingleJson(url));
 }

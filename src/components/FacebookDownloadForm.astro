@@ -1679,6 +1679,7 @@ const copy = {
         `/api/facebook?url=${encodeURIComponent(inputUrl)}&dl=${mode}${idxParam}`
       );
       xhr.responseType = 'blob';
+      xhr.timeout = 120_000;
 
       xhr.onprogress = function (e) {
         if (e.lengthComputable && bar && labelEl) {

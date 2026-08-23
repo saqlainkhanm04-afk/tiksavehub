@@ -407,6 +407,114 @@ const copy = {
     .download-submit-btn:hover .icon-download {
       animation: none;
     }
+    .x-loading-ring,
+    .x-loading-ring::after {
+      animation: none;
+    }
+    .x-loading-dots span {
+      animation: none;
+    }
+    .x-dl-tile-processing .x-dl-tile-icon svg {
+      animation: none;
+    }
+    .x-dl-proc-bar {
+      animation: none;
+    }
+  }
+</style>
+
+<style is:global>
+  .x-loading-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .x-loading-icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1d9bf0;
+  }
+
+  .x-loading-ring {
+    position: absolute;
+    inset: 0;
+    border: 3px solid transparent;
+    border-top-color: #1d9bf0;
+    border-radius: 50%;
+    animation: x-spin 1s linear infinite;
+  }
+
+  .x-loading-ring::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 3px solid transparent;
+    border-top-color: #1a8cd8;
+    border-radius: 50%;
+    animation: x-spin 1.5s linear infinite reverse;
+  }
+
+  @keyframes x-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .x-loading-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .x-loading-title {
+    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--color-text);
+  }
+
+  .x-loading-sub {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .x-loading-dots {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .x-loading-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1d9bf0;
+    animation: x-loading-dot 1.2s ease-in-out infinite;
+  }
+
+  .x-loading-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .x-loading-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes x-loading-dot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
   }
 </style>
 
@@ -589,6 +697,67 @@ const copy = {
     transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+  }
+
+  .x-dl-proc-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2.5px;
+    width: 0;
+    background: linear-gradient(90deg, #1d9bf0, #1a8cd8, #4db5ff, #1d9bf0);
+    background-size: 200% 100%;
+    border-radius: 0 0 8px 8px;
+    transition: none;
+    pointer-events: none;
+    animation: x-proc-shimmer 1.5s linear infinite;
+  }
+
+  @keyframes x-proc-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .x-dl-tile-processing {
+    pointer-events: none;
+  }
+
+  .x-dl-tile-processing .x-dl-tile-icon svg {
+    animation: x-dl-pulse 1s ease-in-out infinite;
+  }
+
+  .x-dl-tile-done {
+    border-color: #22c55e !important;
+    background-color: #f0fdf4 !important;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+
+  html.dark .x-dl-tile-done {
+    background-color: rgba(34, 197, 94, 0.1) !important;
+    border-color: rgba(34, 197, 94, 0.4) !important;
+  }
+
+  .x-dl-tile-error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+    animation: x-dl-shake 0.4s ease;
+  }
+
+  html.dark .x-dl-tile-error {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+  }
+
+  @keyframes x-dl-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.9); }
+  }
+
+  @keyframes x-dl-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
   }
 
   .x-dl-tile:hover {
@@ -785,6 +954,37 @@ const copy = {
     if (fetchNote) fetchNote.hidden = !loading;
   }
 
+  function showLoadingCard() {
+    resultMount.innerHTML = `
+      <div class="x-loading-card animate-fade-in-up" role="status" aria-live="polite">
+        <div class="x-loading-icon">
+          <div class="x-loading-ring"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <div class="x-loading-text">
+          <span class="x-loading-title">Fetching your video…</span>
+          <span class="x-loading-sub" id="x-loading-sub">Connecting to X</span>
+        </div>
+        <div class="x-loading-dots"><span></span><span></span><span></span></div>
+      </div>
+    `;
+    const sub = document.getElementById('x-loading-sub');
+    const phases = ['Connecting to X', 'Extracting video data', 'Preparing download links'];
+    let pi = 0;
+    const phaseTimer = setInterval(() => {
+      pi = Math.min(pi + 1, phases.length - 1);
+      if (sub) sub.textContent = phases[pi];
+    }, 2500);
+    (window as any).__xPhaseTimer = phaseTimer;
+  }
+
+  function clearLoadingCard() {
+    if ((window as any).__xPhaseTimer) {
+      clearInterval((window as any).__xPhaseTimer);
+      delete (window as any).__xPhaseTimer;
+    }
+  }
+
   function showError(msg: string) {
     errorText.textContent = msg;
     errorMsg.removeAttribute('hidden');
@@ -904,14 +1104,14 @@ const copy = {
     const hasSd = Boolean(sdUrl);
 
     const hdTile = hasHd
-      ? '<a class="x-dl-tile" href="/api/x-download?url=' + encodeURIComponent(inputUrl) + '&dl=hd" download aria-label="Download HD video"><span class="x-dl-tile-icon" aria-hidden="true">' + dlIcon + '</span><span class="x-dl-tile-label">Download <strong>HD Video</strong></span><span class="x-dl-badge" aria-hidden="true">HD</span></a>'
+      ? '<button class="x-dl-tile" id="x-btn-dl-hd" type="button" data-dl="hd" data-url="' + encodeURIComponent(inputUrl) + '" aria-label="Download HD video"><span class="x-dl-tile-icon" aria-hidden="true">' + dlIcon + '</span><span class="x-dl-tile-label">Download <strong>HD Video</strong></span><span class="x-dl-badge" aria-hidden="true">HD</span><span class="x-dl-proc-bar"></span></button>'
       : '';
 
     const sdTile = hasSd
-      ? '<a class="x-dl-tile" href="/api/x-download?url=' + encodeURIComponent(inputUrl) + '&dl=sd" download aria-label="Download SD video"><span class="x-dl-tile-icon" aria-hidden="true">' + dlIcon + '</span><span class="x-dl-tile-label">Download <strong>SD Video</strong></span></a>'
+      ? '<button class="x-dl-tile" id="x-btn-dl-sd" type="button" data-dl="sd" data-url="' + encodeURIComponent(inputUrl) + '" aria-label="Download SD video"><span class="x-dl-tile-icon" aria-hidden="true">' + dlIcon + '</span><span class="x-dl-tile-label">Download <strong>SD Video</strong></span><span class="x-dl-proc-bar"></span></button>'
       : '';
 
-    const audioTile = '<a class="x-dl-tile x-dl-tile-audio" href="/api/x-download?url=' + encodeURIComponent(inputUrl) + '&dl=audio" download aria-label="Download audio as MP3"><span class="x-dl-tile-icon" aria-hidden="true">' + musicIcon + '</span><span class="x-dl-tile-label">Download <strong>Audio (MP3)</strong></span></a>';
+    const audioTile = '<button class="x-dl-tile x-dl-tile-audio" id="x-btn-dl-audio" type="button" data-dl="audio" data-url="' + encodeURIComponent(inputUrl) + '" aria-label="Download audio as MP3"><span class="x-dl-tile-icon" aria-hidden="true">' + musicIcon + '</span><span class="x-dl-tile-label">Download <strong>Audio (MP3)</strong></span><span class="x-dl-proc-bar"></span></button>';
 
     const tiles = [hdTile, sdTile, audioTile].filter(Boolean).join('');
 
@@ -948,6 +1148,92 @@ const copy = {
     if (!hasHd && !hasSd) {
       showError('No downloadable video found. The tweet may only contain a GIF or image.');
     }
+
+    resultMount.querySelectorAll<HTMLButtonElement>('.x-dl-tile').forEach((btn) => {
+      btn.addEventListener('click', () => startDownload(btn));
+    });
+  }
+
+  function startDownload(btn: HTMLButtonElement) {
+    const dlType = btn.dataset.dl;
+    const encodedUrl = btn.dataset.url;
+    if (!dlType || !encodedUrl) return;
+
+    const labelEl = btn.querySelector('.x-dl-tile-label') as HTMLElement;
+    const origLabel = labelEl?.textContent || '';
+    const bar = btn.querySelector('.x-dl-proc-bar') as HTMLElement;
+
+    btn.classList.add('x-dl-tile-processing');
+    btn.disabled = true;
+    if (labelEl) labelEl.textContent = 'Processing… 0%';
+    if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/x-download?url=' + decodeURIComponent(encodedUrl) + '&dl=' + dlType);
+    xhr.responseType = 'blob';
+    xhr.timeout = 120_000;
+
+    xhr.onprogress = function (e) {
+      if (e.lengthComputable && bar && labelEl) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        bar.style.transition = 'none';
+        bar.style.width = pct + '%';
+        labelEl.textContent = 'Processing… ' + pct + '%';
+      }
+    };
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const blob = xhr.response;
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = dlType === 'audio' ? 'tiksavehub-audio.mp3' : 'tiksavehub-video.mp4';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+        btn.classList.add('x-dl-tile-done');
+        if (labelEl) labelEl.innerHTML = origLabel;
+        setTimeout(() => btn.classList.remove('x-dl-tile-done'), 1500);
+      } else {
+        btn.classList.add('x-dl-tile-error');
+        if (labelEl) labelEl.textContent = 'Download failed — try again';
+        setTimeout(() => {
+          btn.classList.remove('x-dl-tile-error');
+          if (labelEl) labelEl.innerHTML = origLabel;
+        }, 2000);
+      }
+      btn.classList.remove('x-dl-tile-processing');
+      btn.disabled = false;
+      if (bar) bar.style.width = '0%';
+    };
+
+    xhr.onerror = function () {
+      btn.classList.add('x-dl-tile-error');
+      if (labelEl) labelEl.textContent = 'Download failed — try again';
+      setTimeout(() => {
+        btn.classList.remove('x-dl-tile-error');
+        if (labelEl) labelEl.innerHTML = origLabel;
+      }, 2000);
+      btn.classList.remove('x-dl-tile-processing');
+      btn.disabled = false;
+      if (bar) bar.style.width = '0%';
+    };
+
+    xhr.ontimeout = function () {
+      btn.classList.add('x-dl-tile-error');
+      if (labelEl) labelEl.textContent = 'Download timed out — try again';
+      setTimeout(() => {
+        btn.classList.remove('x-dl-tile-error');
+        if (labelEl) labelEl.innerHTML = origLabel;
+      }, 2000);
+      btn.classList.remove('x-dl-tile-processing');
+      btn.disabled = false;
+      if (bar) bar.style.width = '0%';
+    };
+
+    xhr.send();
   }
 
   form?.addEventListener('submit', async (e) => {
@@ -967,6 +1253,7 @@ const copy = {
 
     setLoading(true);
     resultMount.innerHTML = '';
+    showLoadingCard();
 
     try {
       const res = await fetch('/api/x-download', {
@@ -974,6 +1261,7 @@ const copy = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
+      clearLoadingCard();
       const text = await res.text();
       let json: any;
       try {
@@ -988,6 +1276,7 @@ const copy = {
 
       renderResult(json.video, url);
     } catch (err: any) {
+      clearLoadingCard();
       showError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);

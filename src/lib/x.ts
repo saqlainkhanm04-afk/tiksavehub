@@ -378,27 +378,15 @@ async function fetchFromYtDlp(tweetUrl: string): Promise<XTweetMeta | null> {
 export async function fetchTweetMeta(tweetUrl: string, tweetId: string): Promise<XTweetMeta> {
   const cacheKey = `x:tweet:${tweetId}`;
   const cached = await memoSWR<XTweetMeta>(cacheKey, META_TTL_MS, META_STALE_MS, async () => {
-    console.log(`[X] Fetching meta for tweet ${tweetId}…`);
-
     const pageResult = await fetchFromTweetPage(tweetId);
-    if (pageResult && pageResult.variants.length > 0) {
-      console.log(`[X] Tweet page succeeded (${pageResult.variants.length} variants)`);
-      return pageResult;
-    }
-    console.log(`[X] Tweet page yielded no variants, trying embed…`);
+    if (pageResult && pageResult.variants.length > 0) return pageResult;
 
     const embedResult = await fetchFromEmbed(tweetId);
-    if (embedResult && embedResult.variants.length > 0) {
-      console.log(`[X] Embed succeeded (${embedResult.variants.length} variants)`);
-      return embedResult;
-    }
-    console.log(`[X] Embed yielded no variants, trying yt-dlp…`);
+    if (embedResult && embedResult.variants.length > 0) return embedResult;
 
     const ytdlpResult = await fetchFromYtDlp(tweetUrl);
-    if (ytdlpResult && ytdlpResult.variants.length > 0) {
-      console.log(`[X] yt-dlp succeeded (${ytdlpResult.variants.length} variants)`);
-      return ytdlpResult;
-    }
+    if (ytdlpResult && ytdlpResult.variants.length > 0) return ytdlpResult;
+
     console.warn(`[X] All sources exhausted for tweet ${tweetId}`);
 
     throw new Error(

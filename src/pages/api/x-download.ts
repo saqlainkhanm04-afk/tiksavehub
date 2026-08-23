@@ -1,4 +1,5 @@
 ﻿import type { APIRoute } from 'astro';
+import { spawn } from 'node:child_process';
 import { parseXUrl } from '../../lib/x-url';
 import { fetchTweetMeta, pickBestVariant } from '../../lib/x';
 import { streamFromUpstream } from '../../lib/stream';
@@ -117,6 +118,101 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
+/**
+ * Use yt-dlp to download audio (HLS segments merged natively) and pipe
+ * the result as a ReadableStream Response.  No ffmpeg required —
+ * yt-dlp's m3u8_native protocol handles segment download+concat internally.
+ */
+function streamYtDlpAudio(tweetUrl: string, filename: string): Promise<Response> {
+  const bin = process.env.YTDLP_PATH || 'yt-dlp';
+  const args = [
+    '--no-warnings',
+    '--no-playlist',
+    '--no-color',
+    '--no-check-certificates',
+    '-f', 'bestaudio',
+    '-o', '-',
+    tweetUrl,
+  ];
+
+  return new Promise((resolve, reject) => {
+    const child = spawn(bin, args, {
+      windowsHide: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, PYTHONIOENCODING: 'utf-8' },
+    });
+
+    let stderr = '';
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', (chunk: string) => { stderr += chunk; });
+
+    const timer = setTimeout(() => {
+      try { child.kill(); } catch {}
+      reject(new Error('yt-dlp audio download timed out'));
+    }, 120_000);
+
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      reject(new Error(`yt-dlp not available: ${err.message}`));
+    });
+
+    child.on('exit', (code) => {
+      clearTimeout(timer);
+      if (code !== 0 && code !== null) {
+        const detail = stderr.split(/\r?\n/).filter(Boolean).slice(-3).join(' ');
+        reject(new Error(`yt-dlp audio failed (exit ${code}): ${detail}`));
+      }
+    });
+
+    const headers = new Headers();
+    headers.set('Content-Type', 'audio/mp4');
+    headers.set('Content-Disposition', `attachment; filename="${filename}"`);
+    headers.set('Cache-Control', 'no-store');
+    headers.set('X-Accel-Buffering', 'no');
+
+    const body = new ReadableStream<Uint8Array>({
+      start(c) {
+        let finished = false;
+        const finish = () => {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          try { c.close(); } catch {}
+        };
+        const fail = (msg: string) => {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          try { child.kill(); } catch {}
+          try { c.error(new Error(msg)); } catch {}
+        };
+
+        child.stdout.on('data', (chunk: Uint8Array) => {
+          try { c.enqueue(chunk); } catch {}
+        });
+        child.stdout.on('end', () => {
+          if (child.exitCode !== null && child.exitCode !== 0) {
+            fail(`yt-dlp audio extraction failed (exit ${child.exitCode})`);
+          } else {
+            finish();
+          }
+        });
+        child.stdout.on('error', () => fail('stdout error during audio download'));
+        child.on('exit', (code) => {
+          if (!finished && code !== 0) fail(`yt-dlp exited with code ${code}`);
+          else if (!finished) finish();
+        });
+      },
+      cancel() {
+        clearTimeout(timer);
+        try { child.kill(); } catch {}
+      },
+    });
+
+    resolve(new Response(body, { status: 200, headers }));
+  });
+}
+
 export const GET: APIRoute = async ({ url, request }) => {
   const rawUrl = url.searchParams.get('url') || '';
   const mode = url.searchParams.get('dl') || 'hd';
@@ -179,28 +275,38 @@ export const GET: APIRoute = async ({ url, request }) => {
     const filename = `tiksavehub-x-video-${parsed.tweetId}.mp4`;
 
     if (mode === 'audio') {
+      // X/Twitter audio is HLS-only (m3u8_native) — no direct stream URL exists.
+      // We MUST use yt-dlp to download+merge segments, then pipe the result.
+      // Two paths: (1) yt-dlp -x with ffmpeg → mp3, (2) yt-dlp bestaudio pipe → m4a
+      const audioFilename = `tiksavehub-x-audio-${parsed.tweetId}`;
+
+      // Path 1: ffmpeg available → yt-dlp extracts audio to mp3
       const ffmpegOk = await isFfmpegAvailable();
-      if (!ffmpegOk) {
-        return streamFromUpstream(videoUrl, {
-          filename,
-          contentType: 'video/mp4',
-          accept: 'video/mp4,video/*,*/*',
-          referer: X_REFERER,
-        });
+      if (ffmpegOk) {
+        try {
+          return reencodeMp3(videoUrl, {
+            bitrateKbps: 128,
+            filename: `${audioFilename}.mp3`,
+          });
+        } catch {
+          // Fall through to pipe approach
+        }
       }
+
+      // Path 2: yt-dlp pipes bestaudio segments merged as m4a (no ffmpeg needed)
       try {
-        return reencodeMp3(videoUrl, {
-          bitrateKbps: 128,
-          filename: `tiksavehub-x-audio-${parsed.tweetId}.mp3`,
-        });
+        return await streamYtDlpAudio(parsed.sanitizedUrl, `${audioFilename}.m4a`);
       } catch {
-        return streamFromUpstream(videoUrl, {
-          filename,
-          contentType: 'video/mp4',
-          accept: 'video/mp4,video/*,*/*',
-          referer: X_REFERER,
-        });
+        // Fall through to video
       }
+
+      // Last resort: stream the raw video
+      return streamFromUpstream(videoUrl, {
+        filename,
+        contentType: 'video/mp4',
+        accept: 'video/mp4,video/*,*/*',
+        referer: X_REFERER,
+      });
     }
 
     return streamFromUpstream(videoUrl, {

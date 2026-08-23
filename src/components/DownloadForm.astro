@@ -477,6 +477,7 @@
       const xhr = new XMLHttpRequest();
       xhr.open('GET', `/api/download?url=${encodeURIComponent(origUrl)}&dl=${type}`);
       xhr.responseType = 'blob';
+      xhr.timeout = 120_000;
 
       // Headers arrive only after the server has prepared the stream,
       // which for uncached videos includes the metadata fetch. Show an

@@ -845,6 +845,7 @@ const meta = typeMeta[type];
       const xhr = new XMLHttpRequest();
       xhr.open('GET', `/api/instagram-download?url=${encodeURIComponent(origUrl)}&type=${currentTabType}&dl=${type}`);
       xhr.responseType = 'blob';
+      xhr.timeout = 120_000;
 
       xhr.onprogress = function (e) {
         if (e.lengthComputable && bar && labelEl) {

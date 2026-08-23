@@ -1358,14 +1358,20 @@ const showSectionNav = isToolPage(currentPath);
 </style>
 
 <script>
-  // Scroll effect
+  // Scroll effect (throttled via rAF)
   const nav = document.getElementById('site-nav');
+  let navTicking = false;
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 8) {
-      nav?.classList.add('scrolled');
-    } else {
-      nav?.classList.remove('scrolled');
-    }
+    if (navTicking) return;
+    navTicking = true;
+    requestAnimationFrame(() => {
+      if (window.scrollY > 8) {
+        nav?.classList.add('scrolled');
+      } else {
+        nav?.classList.remove('scrolled');
+      }
+      navTicking = false;
+    });
   }, { passive: true });
 
   // Hamburger toggle

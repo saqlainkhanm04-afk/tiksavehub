@@ -1,0 +1,499 @@
+---
+// Snapchat to MP3 — SEO-optimized landing page
+// URL: /snapchat-to-mp3
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import SnapchatDownloadForm from '../components/SnapchatDownloadForm.astro';
+import StatsSection from '../components/StatsSection.astro';
+import SocialShare from '../components/SocialShare.astro';
+
+const faqData = [
+  {
+    id: 'sc-mp3-convert',
+    q: 'How to convert Snapchat video to MP3 online?',
+    a: 'To convert a Snapchat video to MP3 online, paste the Snapchat video link into TikSaveHub, select the Audio tab, and click Download. TikSaveHub extracts the audio track and converts it to a high-quality MP3 file in seconds — no app or software needed.',
+  },
+  {
+    id: 'sc-mp3-quality',
+    q: 'What MP3 quality does TikSaveHub produce?',
+    a: 'TikSaveHub extracts Snapchat audio as MP3 at 128kbps — a balanced quality that sounds great on any device while keeping file sizes manageable. The audio is extracted directly from the original Snapchat video without re-encoding artifacts.',
+  },
+  {
+    id: 'sc-mp3-free',
+    q: 'Is the Snapchat to MP3 converter free?',
+    a: 'Yes, TikSaveHub is 100% free with no daily limits — convert as many Snapchat videos to MP3 as you want without paying or registering. There are no caps, no premium tier, and no hidden fees.',
+  },
+  {
+    id: 'sc-mp3-sources',
+    q: 'Which Snapchat videos can I convert to MP3?',
+    a: 'Any public Snapchat video can be converted to MP3 — Spotlight videos, public posts, and stories all work. Just paste the Snapchat link and TikSaveHub will extract the audio. Private content cannot be accessed.',
+  },
+  {
+    id: 'sc-mp3-download',
+    q: 'Where does the MP3 file save?',
+    a: 'The MP3 file saves to your browser\'s default Downloads folder. On iPhone, it goes to Files → Downloads (you can then save it to Apple Music or another app). On Android, it saves to your Downloads folder and appears in your music library. On desktop, it lands in your Downloads folder.',
+  },
+  {
+    id: 'sc-mp3-iphone',
+    q: 'How do I get the MP3 on my iPhone?',
+    a: 'To get the MP3 on your iPhone, open Safari, paste the Snapchat link into TikSaveHub, tap Download Audio, then go to Safari → Downloads → tap the file. From there, you can save it to Apple Music, Files, or share it via AirDrop.',
+  },
+  {
+    id: 'sc-mp3-ringtone',
+    q: 'Can I use the MP3 as a ringtone?',
+    a: 'Yes, you can use the extracted MP3 as a ringtone. After downloading, transfer the MP3 to your phone and use your device\'s ringtone settings to set it as your custom ringtone. On iPhone, you may need to use GarageBand or a similar app to trim the audio to ringtone length.',
+  },
+  {
+    id: 'sc-mp3-legality',
+    q: 'Is it legal to convert Snapchat videos to MP3?',
+    a: 'Downloading content for personal use is generally acceptable, but respect copyright laws. Do not distribute or commercially use copyrighted audio. TikSaveHub is for personal use only — please respect content creators\' rights.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+---
+
+<Layout
+  title="Snapchat to MP3 — Extract Audio from Snapchat Videos Free | TikSaveHub"
+  description="Convert Snapchat videos to MP3 audio — free, fast, high-quality 128kbps. Extract audio from Spotlight, stories, and public snaps."
+  keywords="snapchat to mp3, snapchat audio downloader, convert snapchat to mp3, extract snapchat audio, snapchat video to mp3, download snapchat audio"
+  canonical="/snapchat-to-mp3"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="snapchat"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Snapchat to MP3"
+  appRating={{ value: '4.8', count: '4260' }}
+>
+  <!-- JSON-LD -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
+      { "@type": "ListItem", "position": 2, "name": "Snapchat to MP3", "item": "https://tiksavehub.com/snapchat-to-mp3" }
+    ]
+  })} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Convert Snapchat Videos to MP3",
+    "description": "Step-by-step guide to extract audio from Snapchat videos as MP3 using TikSaveHub.",
+    "totalTime": "PT1M",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Copy the Snapchat video link",
+        "text": "Open the Snapchat app or website, find the video you want to extract audio from, and copy the URL.",
+        "url": "https://tiksavehub.com/snapchat-to-mp3#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Paste and select Audio tab",
+        "text": "Go to TikSaveHub, select the Audio tab, and paste the copied Snapchat link into the input field.",
+        "url": "https://tiksavehub.com/snapchat-to-mp3#how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Download the MP3",
+        "text": "Click the Download Audio button to save the MP3 file to your device.",
+        "url": "https://tiksavehub.com/snapchat-to-mp3#how-it-works"
+      }
+    ],
+    "tool": [{ "@type": "HowToTool", "name": "Web Browser" }]
+  })} />
+
+  <!-- Hero -->
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1" />
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
+            <span itemprop="name">Snapchat to MP3</span>
+            <meta itemprop="position" content="2" />
+          </li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Free · 128kbps · No Sign-Up
+        </span>
+      </div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        Snapchat to MP3 — Extract Audio Free
+      </h1>
+
+      <p class="dl-hero-subline headline-gradient">
+        Convert Snapchat videos to MP3 audio — free, fast, high-quality.
+      </p>
+
+      <p class="dl-hero-sub text-body-lg">
+        Extract audio from any public Snapchat video as a high-quality MP3 — free, fast, no sign-up.
+        Paste a Snapchat link (Spotlight, stories, or posts) and download the audio.
+      </p>
+
+      <div class="dl-hero-form-wrap">
+        <SnapchatDownloadForm mode="mp3" />
+      </div>
+
+      <div class="dl-hero-trust">
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        100% Free
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        128kbps Quality
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Instant Conversion
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Works on Mobile
+      </span>
+      </div>
+
+      <div class="dl-hero-share">
+        <SocialShare
+          url="/snapchat-to-mp3"
+          title="Snapchat to MP3 — Extract Audio Free"
+          description="Convert Snapchat videos to MP3 audio. Free, fast, high-quality."
+          image="/og-downloader.png"
+        />
+      </div>
+    </div>
+  </section>
+
+  <StatsSection stats={[
+    { value: '500K+', label: 'Snapchat Audios Extracted', sub: 'Convert Snapchat to MP3 instantly', icon: 'download' },
+    { value: '120+', label: 'Countries Supported', sub: 'Extract audio from anywhere', icon: 'globe' },
+    { value: '4.8', label: 'Fast & Free MP3 Conversion', sub: 'No login required', icon: 'star' },
+  ]} />
+
+  <!-- SEO Content -->
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
+          <h2 id="seo-about-headline" class="section-headline">
+            Extract audio from Snapchat videos as MP3.
+          </h2>
+
+          <div class="seo-article">
+            <p>
+              TikSaveHub lets you extract audio from any public Snapchat video as a high-quality MP3 file. Whether you want to save a soundtrack from a Spotlight video, a voice recording from a friend's snap, or a funny audio clip, TikSaveHub converts Snapchat videos to MP3 in seconds. No app installation, no browser extension, no account creation needed.
+            </p>
+
+            <h3 class="text-highlight">How the Snapchat to MP3 converter works</h3>
+            <p>
+              Using TikSaveHub is incredibly simple. First, open Snapchat and find the video you want to extract audio from. Copy the URL from the share button or address bar — Spotlight videos, public posts, and stories all work. Next, come back to TikSaveHub, select the Audio tab, and paste that link into the input field. Click the Download Audio button, and our servers extract the audio track in seconds. You'll then see a preview with the audio file ready to download as an MP3.
+            </p>
+
+            <h3 class="text-highlight">What audio quality do you get?</h3>
+            <p>
+              TikSaveHub extracts Snapchat audio at 128kbps — a balanced quality that sounds great on any device while keeping file sizes manageable. The audio is extracted directly from the original Snapchat video without re-encoding artifacts, so you get clean, clear sound. Perfect for listening offline, using as a ringtone, or adding to your music library.
+            </p>
+
+            <h3 class="text-highlight">Works on any device</h3>
+            <p>
+              Whether you're on an Android phone, an iPhone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can convert Snapchat videos to MP3. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor.
+            </p>
+
+            <h3 class="text-highlight">Safe, private, and completely free</h3>
+            <p>
+              We take your privacy seriously. TikSaveHub does not require you to create an account, enter an email address, or provide any personal information. We do not store your download history, and we do not track your browsing behavior. The entire conversion process happens server-side, so there is nothing stored on your device except the final MP3 file. And unlike many other tools, TikSaveHub is 100% free with no daily caps.
+            </p>
+
+            <p>
+              Looking for more tools? You can also download <a href="/snapchat-downloader">Snapchat videos</a>, save <a href="/snapchat-story-downloader">Snapchat stories</a>, or extract audio from <a href="/tiktok-to-mp3">TikTok videos</a> the same way.
+            </p>
+          </div>
+        </div>
+
+        <aside class="seo-content-sidebar">
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Quick Links</h3>
+            <ul class="seo-sidebar-list">
+              <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Video Downloader</a></li>
+              <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
+              <li><a href="#how-it-works">How It Works</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Supported Sources</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              <li>snapchat.com/spotlight/…</li>
+              <li>snapchat.com/p/…</li>
+              <li>story.snapchat.com/s/…</li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card seo-sidebar-highlight">
+            <h3 class="seo-sidebar-title">Convert Now</h3>
+            <p class="seo-sidebar-text">Paste a Snapchat link above and get your MP3 in seconds.</p>
+            <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Try Now</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Step-by-Step Guide</span>
+        <h2 id="dl-steps-headline" class="section-headline">How to convert Snapchat to MP3.</h2>
+        <p class="section-sub text-body-lg">Three simple steps — no technical skills required.</p>
+      </div>
+      <div class="dl-steps-grid">
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <h3 class="dl-step-title">Copy the Snapchat video link</h3>
+          <p class="dl-step-body">Open Snapchat, find the video you want audio from, and copy the URL from the share button or address bar.</p>
+        </article>
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">Paste into TikSaveHub Audio tab</h3>
+          <p class="dl-step-body">Go to TikSaveHub, select the Audio tab, and paste the copied link into the input field.</p>
+        </article>
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">Download the MP3</h3>
+          <p class="dl-step-body">Tap "Download Audio" to save the MP3 to your device. The file saves instantly — no app or account needed.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="dl-faq-headline" class="section-headline">Frequently asked questions.</h2>
+      </div>
+      <div class="dl-faq-list" role="list">
+        {faqData.map((faq) => (
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button class="dl-faq-trigger" id={`${faq.id}-btn`} aria-expanded="false" aria-controls={`${faq.id}-panel`} type="button">
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div id={`${faq.id}-panel`} class="dl-faq-panel" role="region" aria-labelledby={`${faq.id}-btn`} hidden>
+              <p class="dl-faq-a" set:html={faq.a}></p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+    <div class="dl-cta-inner container-page">
+      <h2 id="dl-cta-headline" class="dl-cta-headline">Ready to extract audio?</h2>
+      <p class="dl-cta-sub">Paste a Snapchat link above and get your MP3 in seconds — no account, no hassle.</p>
+      <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+        Convert to MP3
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Internal Links -->
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">Explore TikSaveHub.</h2>
+      <div class="dl-internal-grid">
+        <a href="/snapchat-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          <span class="dl-internal-title">Snapchat Video Downloader</span>
+          <span class="dl-internal-desc">Download Snapchat Spotlight videos in HD.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/snapchat-story-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          <span class="dl-internal-title">Snapchat Story Downloader</span>
+          <span class="dl-internal-desc">Save Snapchat stories before they expire.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/tiktok-to-mp3" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+          <span class="dl-internal-title">TikTok to MP3</span>
+          <span class="dl-internal-desc">Convert TikTok videos to MP3 audio.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/facebook-to-mp3" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+          <span class="dl-internal-title">Facebook to MP3</span>
+          <span class="dl-internal-desc">Extract audio from Facebook videos.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/instagram-audio-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span>
+          <span class="dl-internal-title">Instagram Audio Downloader</span>
+          <span class="dl-internal-desc">Extract audio from Instagram Reels.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .dl-hero { position: relative; padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl); overflow: hidden; background-color: var(--color-canvas); text-align: center; }
+  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.85; }
+  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-lg); }
+  .dl-breadcrumb { margin-bottom: var(--spacing-sm); }
+  .breadcrumb-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: var(--text-body-sm); color: var(--color-mute); }
+  .breadcrumb-list li + li::before { content: '/'; margin-right: 6px; color: var(--color-hairline-strong); }
+  .breadcrumb-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .dl-badge-row { display: flex; justify-content: center; }
+  .dl-badge { animation: fadeInUp 0.5s ease 0.1s both; }
+  .badge-dot { display: inline-block; width: 6px; height: 6px; background: linear-gradient(135deg, #7928ca, #a855f7); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
+  .dl-hero-headline { font-size: clamp(36px, 6vw, 56px); font-weight: 600; line-height: 1.05; letter-spacing: -2.5px; color: var(--color-ink); margin: 0; max-width: 700px; text-wrap: balance; animation: fadeInUp 0.5s ease 0.2s both; }
+  .headline-gradient { background: linear-gradient(135deg, #7928ca 0%, #a855f7 40%, #c084fc 70%, #7928ca 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .dl-hero-subline { font-size: clamp(20px, 3vw, 28px); font-weight: 600; line-height: 1.2; letter-spacing: -0.5px; margin: 0; max-width: 560px; animation: fadeInUp 0.5s ease 0.25s both; }
+  .dl-hero-sub { color: var(--color-body); margin: 0; max-width: 560px; animation: fadeInUp 0.5s ease 0.3s both; }
+  .dl-hero-form-wrap { width: 100%; max-width: 760px; animation: fadeInUp 0.5s ease 0.4s both; }
+  .dl-hero-trust { display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap; justify-content: center; animation: fadeInUp 0.5s ease 0.5s both; }
+  .dl-hero-share { animation: fadeInUp 0.5s ease 0.55s both; }
+  .trust-chip { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-body-sm); font-weight: 500; color: var(--color-body); padding: 0 var(--spacing-md); height: 36px; border-radius: var(--radius-full); border: 1px solid var(--color-hairline); background-color: var(--color-canvas); transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+  .trust-chip svg { color: #7928ca; }
+  .trust-chip:hover { border-color: var(--color-hairline-strong); transform: translateY(-2px); box-shadow: 0 4px 12px -2px rgba(121, 40, 202, 0.2); }
+
+  .dl-steps-section { background-color: var(--color-canvas); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-steps-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4xl); }
+  .dl-steps-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
+  .dl-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg); width: 100%; }
+  .dl-step-card { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-xl); border-radius: var(--radius-lg); border: 1px solid var(--color-hairline); background-color: var(--color-canvas); transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .dl-step-card:hover { transform: translateY(-4px); box-shadow: inset 0 0 0 1px #00000014, 0px 2px 2px #0000000a, 0px 8px 16px -4px #0000001a; }
+  .dl-step-num { color: var(--color-mute); font-size: 11px; letter-spacing: 0.1em; }
+  .dl-step-icon { width: 48px; height: 48px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #7928ca15, #a855f720); color: #7928ca; box-shadow: inset 0 0 0 1px #7928ca25; }
+  .dl-step-title { font-size: var(--text-display-sm); font-weight: 600; letter-spacing: -0.6px; color: var(--color-ink); margin: 0; }
+  .dl-step-body { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.65; margin: 0; }
+  @media (max-width: 960px) { .dl-steps-grid { grid-template-columns: 1fr; max-width: 480px; } }
+  @media (max-width: 600px) { .dl-hero { padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl); } .dl-steps-section { padding: var(--spacing-3xl) var(--spacing-md); } .dl-hero-headline { font-size: clamp(22px, 5vw, 32px); letter-spacing: -1px; } .trust-chip { font-size: var(--text-caption); height: 36px; padding: 0 var(--spacing-sm); } .breadcrumb-list { font-size: 11px; } }
+
+  .dl-faq-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4xl); max-width: 760px; margin-inline: auto; }
+  .dl-faq-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); width: 100%; }
+  .dl-faq-list { width: 100%; display: flex; flex-direction: column; border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; background-color: var(--color-canvas); box-shadow: inset 0 0 0 1px #00000008, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .dl-faq-item { border-bottom: 1px solid var(--color-hairline); }
+  .dl-faq-item:last-child { border-bottom: none; }
+  .dl-faq-trigger { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-md); width: 100%; padding: var(--spacing-lg); cursor: pointer; background: none; border: none; text-align: left; font-family: inherit; transition: background-color 0.15s ease; }
+  .dl-faq-trigger:hover { background-color: var(--color-canvas-soft); }
+  .dl-faq-trigger:focus-visible { outline: 2px solid #7928ca; outline-offset: -2px; }
+  .dl-faq-trigger[aria-expanded="true"] { background-color: var(--color-canvas-soft); }
+  .dl-faq-q { font-size: var(--text-body-md); font-weight: 500; color: var(--color-ink); line-height: 1.4; letter-spacing: -0.3px; flex: 1; }
+  .dl-faq-chevron { flex-shrink: 0; color: var(--color-mute); display: flex; align-items: center; transition: transform 0.25s ease; }
+  .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron { transform: rotate(180deg); }
+  .dl-faq-panel { padding: 0 var(--spacing-lg) var(--spacing-lg); animation: fadeInUp 0.25s ease forwards; }
+  .dl-faq-a { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.65; margin: 0; letter-spacing: -0.1px; }
+  @media (max-width: 600px) { .dl-faq-section { padding: var(--spacing-3xl) var(--spacing-md); } .dl-faq-trigger { padding: var(--spacing-md); min-height: 48px; } .dl-faq-panel { padding: 0 var(--spacing-md) var(--spacing-md); } }
+
+  .dl-cta-band { background-color: var(--color-ink); color: var(--color-on-primary); padding: var(--spacing-5xl) var(--spacing-lg); text-align: center; }
+  .dl-cta-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-lg); }
+  .dl-cta-headline { font-size: var(--text-display-lg); font-weight: 600; letter-spacing: -1.28px; color: var(--color-on-primary); margin: 0; }
+  .dl-cta-sub { font-size: var(--text-body-lg); color: color-mix(in srgb, var(--color-on-primary), transparent 40%); margin: 0; max-width: 480px; }
+  .dl-cta-btn { gap: 8px; background-color: var(--color-canvas) !important; color: var(--color-ink) !important; }
+  .dl-cta-btn:hover { background-color: var(--color-canvas-soft) !important; transform: translateY(-2px); }
+  @media (max-width: 600px) { .dl-cta-band { padding: var(--spacing-3xl) var(--spacing-md); } }
+
+  .section-eyebrow { color: var(--color-mute); }
+  .section-headline { font-size: var(--text-display-lg); font-weight: 600; line-height: 1.25; letter-spacing: -1.28px; color: var(--color-ink); margin: 0; max-width: 540px; }
+  .section-sub { color: var(--color-body); margin: 0; max-width: 480px; }
+
+  .dl-internal-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); border-top: 1px solid var(--color-hairline); }
+  .dl-internal-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
+  .dl-internal-headline { text-align: center; max-width: 400px; }
+  .dl-internal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); width: 100%; }
+  .dl-internal-card { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-hairline); background-color: var(--color-canvas); text-decoration: none; transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; position: relative; }
+  .dl-internal-card:hover { border-color: var(--color-hairline-strong); transform: translateY(-3px); box-shadow: inset 0 0 0 1px #00000008, 0px 2px 2px #0000000a, 0px 8px 16px -4px #0000001a; }
+  .dl-internal-icon { width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #7928ca12, #a855f718); color: #7928ca; box-shadow: inset 0 0 0 1px #7928ca25; }
+  .dl-internal-title { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); letter-spacing: -0.3px; }
+  .dl-internal-desc { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.5; margin: 0; }
+  .dl-internal-arrow { position: absolute; top: var(--spacing-lg); right: var(--spacing-lg); color: var(--color-mute); font-size: 18px; transition: color 0.15s ease, transform 0.25s ease; }
+  .dl-internal-card:hover .dl-internal-arrow { color: var(--color-ink); transform: translateX(4px); }
+  @media (max-width: 960px) { .dl-internal-grid { grid-template-columns: 1fr; max-width: 480px; } }
+  @media (max-width: 600px) { .dl-internal-section { padding: var(--spacing-3xl) var(--spacing-md); } }
+
+  .seo-content-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .seo-content-inner { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
+  .seo-content-grid { display: grid; grid-template-columns: 1fr 320px; gap: var(--spacing-3xl); align-items: start; }
+  .seo-content-main { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .seo-article { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+  .seo-article p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; letter-spacing: -0.1px; }
+  .text-highlight { background: linear-gradient(135deg, #7928ca 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; letter-spacing: -0.3px; }
+  .seo-article h3 { font-size: var(--text-display-sm); font-weight: 600; letter-spacing: -0.6px; color: var(--color-ink); margin: var(--spacing-sm) 0 0 0; line-height: 1.35; }
+  .seo-content-sidebar { display: flex; flex-direction: column; gap: var(--spacing-md); position: sticky; top: 80px; }
+  .seo-sidebar-card { background-color: var(--color-canvas); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .seo-sidebar-highlight { background: linear-gradient(135deg, #7928ca08, #a855f708); border: 1px solid #7928ca25; }
+  .seo-sidebar-title { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: 0 0 var(--spacing-md) 0; }
+  .seo-sidebar-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .seo-sidebar-list li { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.5; }
+  .seo-sidebar-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
+  .seo-sidebar-list a:hover { color: var(--color-ink); }
+  .seo-sidebar-mono li { font-family: var(--font-mono); font-size: var(--text-caption); color: var(--color-mute); }
+  .seo-sidebar-text { font-size: var(--text-body-sm); color: var(--color-body); margin: 0 0 var(--spacing-md) 0; line-height: 1.5; }
+  .seo-sidebar-cta { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+  @media (max-width: 960px) { .seo-content-grid { grid-template-columns: 1fr; } .seo-content-sidebar { position: static; display: grid; grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .seo-content-section { padding: var(--spacing-3xl) var(--spacing-md); } .seo-content-sidebar { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      const panelId = btn.getAttribute('aria-controls')!;
+      const panel = document.getElementById(panelId);
+      document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger').forEach((otherBtn) => {
+        if (otherBtn !== btn) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          document.getElementById(otherBtn.getAttribute('aria-controls')!)?.setAttribute('hidden', '');
+        }
+      });
+      if (isOpen) { btn.setAttribute('aria-expanded', 'false'); panel?.setAttribute('hidden', ''); }
+      else { btn.setAttribute('aria-expanded', 'true'); panel?.removeAttribute('hidden'); }
+    });
+  });
+</script>

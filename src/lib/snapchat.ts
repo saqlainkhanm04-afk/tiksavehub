@@ -1,6 +1,10 @@
 import { memoSWR } from './cache';
 import { spawn } from 'node:child_process';
 import { isFfmpegAvailable } from './audio';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { unlink, stat, readFile } from 'node:fs/promises';
+import { randomBytes } from 'node:crypto';
 
 const FFMPEG_BIN = process.env.FFMPEG_PATH || 'ffmpeg';
 const FFPROBE_BIN = process.env.FFPROBE_PATH || 'ffprobe';
@@ -341,86 +345,67 @@ async function probeVideoDimensions(sourceUrl: string): Promise<VideoDimensions 
 export async function removeSnapchatWatermark(sourceUrl: string, filename: string): Promise<Response | null> {
   if (!(await isFfmpegAvailable())) return null;
 
-  // Probe dimensions BEFORE creating the stream so ffmpeg is already running
-  // when the Response body is returned — avoids the empty-body race.
   const dims = await probeVideoDimensions(sourceUrl);
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), DELOGO_TIMEOUT_MS);
+  // Write to temp file first, then stream — piping MP4 through stdout is
+  // unreliable on Windows (MP4 muxer needs seeking, pipe:1 is non-seekable).
+  const tmpPath = join(tmpdir(), `sc-${randomBytes(8).toString('hex')}.mp4`);
+
+  const ffmpegArgs = [
+    '-y', '-hide_banner', '-loglevel', 'error',
+    '-headers', SC_CDN_HEADERS,
+    '-reconnect', '1', '-reconnect_streamed', '1', '-reconnect_delay_max', '5',
+    '-i', sourceUrl,
+  ];
+
+  if (dims) {
+    const wmW = Math.round(dims.width * 0.15);
+    const wmH = Math.round(dims.height * 0.06);
+    const wmX = dims.width - wmW - Math.round(dims.width * 0.03);
+    const wmY = dims.height - wmH - Math.round(dims.height * 0.04);
+    ffmpegArgs.push('-vf', `delogo=x=${wmX}:y=${wmY}:width=${wmW}:height=${wmH}`);
+    ffmpegArgs.push('-c:v', 'libx264', '-preset', 'fast', '-crf', '23');
+    ffmpegArgs.push('-c:a', 'copy');
+  } else {
+    ffmpegArgs.push('-c', 'copy');
+  }
+
+  ffmpegArgs.push('-movflags', 'faststart', tmpPath);
+
+  const ok = await new Promise<boolean>((resolve) => {
+    const child = spawn(FFMPEG_BIN, ffmpegArgs, {
+      windowsHide: true,
+      stdio: ['ignore', 'ignore', 'pipe'],
+    });
+    let stderr = '';
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', (c: string) => { stderr += c; });
+    child.on('exit', (code) => resolve(code === 0));
+    child.on('error', () => resolve(false));
+  });
+
+  if (!ok) {
+    try { await unlink(tmpPath); } catch {}
+    return null;
+  }
+
+  // Read the temp file into memory and return as a Response.
+  const fileStat = await stat(tmpPath).catch(() => null);
+  if (!fileStat || fileStat.size === 0) {
+    try { await unlink(tmpPath); } catch {}
+    return null;
+  }
+
+  const fileBytes = await readFile(tmpPath);
+
+  // Clean up temp file.
+  await unlink(tmpPath).catch(() => {});
 
   const headers = new Headers();
   headers.set('Content-Type', 'video/mp4');
   headers.set('Content-Disposition', `attachment; filename="${filename}"`);
+  headers.set('Content-Length', String(fileBytes.length));
   headers.set('Cache-Control', 'no-store');
-  headers.set('X-Accel-Buffering', 'no');
 
-  // Build ffmpeg args based on whether we have dimensions for delogo
-  const ffmpegArgs = dims
-    ? (() => {
-        const wmW = Math.round(dims.width * 0.15);
-        const wmH = Math.round(dims.height * 0.06);
-        const wmX = dims.width - wmW - Math.round(dims.width * 0.03);
-        const wmY = dims.height - wmH - Math.round(dims.height * 0.04);
-        const delogoFilter = `delogo=x=${wmX}:y=${wmY}:width=${wmW}:height=${wmH}`;
-        return [
-          '-y', '-hide_banner', '-loglevel', 'error',
-          '-headers', SC_CDN_HEADERS,
-          '-reconnect', '1', '-reconnect_streamed', '1', '-reconnect_delay_max', '5',
-          '-i', sourceUrl,
-          '-vf', delogoFilter,
-          '-c:v', 'libx264', '-preset', 'fast', '-crf', '23',
-          '-c:a', 'copy',
-          '-f', 'mp4',
-          'pipe:1',
-        ];
-      })()
-    : [
-        '-y', '-hide_banner', '-loglevel', 'error',
-        '-headers', SC_CDN_HEADERS,
-        '-reconnect', '1', '-reconnect_streamed', '1', '-reconnect_delay_max', '5',
-        '-i', sourceUrl,
-        '-c', 'copy',
-        '-f', 'mp4',
-        'pipe:1',
-      ];
-
-  const child = spawn(FFMPEG_BIN, ffmpegArgs, {
-    windowsHide: true,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-
-  let stderr = '';
-  child.stderr.setEncoding('utf8');
-  child.stderr.on('data', (c: string) => { stderr += c; });
-
-  const body = new ReadableStream<Uint8Array>({
-    start(controller) {
-      child.stdout.on('data', (c: Uint8Array) => { try { controller.enqueue(c); } catch {} });
-      child.stdout.on('end', () => {
-        clearTimeout(timer);
-        if (child.exitCode !== null && child.exitCode !== 0) {
-          const detail = stderr.split('\n').filter(Boolean).slice(-1)[0] || '';
-          try { controller.error(new Error(`ffmpeg failed${detail ? `: ${detail}` : ''}`)); } catch {}
-        } else {
-          try { controller.close(); } catch {}
-        }
-      });
-      child.on('error', () => {
-        clearTimeout(timer);
-        try { controller.error(new Error('ffmpeg not available')); } catch {}
-      });
-      child.on('exit', (code) => {
-        clearTimeout(timer);
-        if (code !== 0) {
-          try { controller.error(new Error(`ffmpeg exit ${code}`)); } catch {}
-        }
-      });
-    },
-    cancel() {
-      clearTimeout(timer);
-      try { child.kill(); } catch {}
-    },
-  });
-
-  return new Response(body, { status: 200, headers });
+  return new Response(fileBytes, { status: 200, headers });
 }

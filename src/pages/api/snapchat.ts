@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { spawn } from 'node:child_process';
 import { parseSnapchatUrl } from '../../lib/snapchat-url';
-import { fetchSnapchatMedia } from '../../lib/snapchat';
+import { fetchSnapchatMedia, removeSnapchatWatermark } from '../../lib/snapchat';
 import { streamFromUpstream } from '../../lib/stream';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
@@ -289,6 +289,10 @@ export const GET: APIRoute = async ({ url, request }) => {
         referer: SC_REFERER,
       });
     }
+
+    // Try ffmpeg delogo to remove Snapchat watermark; fall back to raw stream
+    const delogoResponse = await removeSnapchatWatermark(videoUrl, filename);
+    if (delogoResponse) return delogoResponse;
 
     return streamFromUpstream(videoUrl, {
       filename,

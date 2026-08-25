@@ -359,11 +359,13 @@ export async function removeSnapchatWatermark(sourceUrl: string, filename: strin
   ];
 
   if (dims) {
+    // Snapchat watermark = ghost icon + timestamp in the TOP-RIGHT corner.
+    // Cover generous area: ~15% width, ~8% height, positioned at top-right.
     const wmW = Math.round(dims.width * 0.15);
-    const wmH = Math.round(dims.height * 0.06);
-    const wmX = dims.width - wmW - Math.round(dims.width * 0.03);
-    const wmY = dims.height - wmH - Math.round(dims.height * 0.04);
-    ffmpegArgs.push('-vf', `delogo=x=${wmX}:y=${wmY}:width=${wmW}:height=${wmH}`);
+    const wmH = Math.round(dims.height * 0.08);
+    const wmX = dims.width - wmW - Math.round(dims.width * 0.02);
+    const wmY = Math.round(dims.height * 0.01);
+    ffmpegArgs.push('-vf', `delogo=x=${wmX}:y=${wmY}:w=${wmW}:h=${wmH}`);
     ffmpegArgs.push('-c:v', 'libx264', '-preset', 'fast', '-crf', '23');
     ffmpegArgs.push('-c:a', 'copy');
   } else {

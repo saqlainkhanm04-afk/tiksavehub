@@ -380,18 +380,62 @@ async function fetchEmbed(url: string): Promise<Partial<FacebookMedia>> {
   return media;
 }
 
-/** Resolve fb.watch short links to their final Facebook page URL. */
-async function resolveShortUrl(url: string): Promise<string> {
-  const resp = await fetch(url, {
-    method: 'GET',
-    headers: { 'User-Agent': UA_DESKTOP },
-    redirect: 'follow',
-    signal: AbortSignal.timeout(20_000),
-  });
-  if (!resp.ok || !resp.url) {
-    throw coded('That Facebook short link could not be resolved.', FB_ERR.INVALID_RESPONSE);
+/**
+ * Resolve share links, fb.watch short links, and mobile URLs to their final
+ * canonical Facebook page URL.  Facebook share links (/share/r/, /share/v/,
+ * fb.watch) redirect server-side to the real media page — but Cobalt and
+ * other extractors can't follow those redirects, so we must expand them
+ * first.
+ *
+ * Tracking query params (mibextid, ref, __tn__, etc.) are stripped from the
+ * resolved URL so it stays cache-friendly.
+ */
+const SHARE_SHORT_RE = /^\/share\/[rvp]\//i;
+const TRACKING_PARAMS = new Set([
+  'mibextid', 'ref', 's', '_rdr', 'wtsid', 'eid', 'ft', 'ftid', 'fref',
+  'extid', 'tn', '__tn__', '__cft__[0]', '__xts__', 'qid', 'epa', 'n',
+  'sfnsn', 'sfnsmo', 'source', 'rdid', 'locale', 'patrk',
+]);
+
+function stripTracking(u: URL): URL {
+  for (const key of [...u.searchParams.keys()]) {
+    if (TRACKING_PARAMS.has(key.toLowerCase())) u.searchParams.delete(key);
   }
-  return resp.url;
+  return u;
+}
+
+async function resolveFacebookUrl(url: string): Promise<string> {
+  // Only resolve links that actually need it: fb.watch, /share/r|v|p/,
+  // or mobile hosts that may redirect.
+  const needsResolve =
+    /fb\.watch\//i.test(url) ||
+    SHARE_SHORT_RE.test(new URL(url).pathname) ||
+    /m\.facebook\.com|touch\.facebook\.com|mobile\.facebook\.com/i.test(url);
+  if (!needsResolve) return url;
+
+  try {
+    const resp = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': UA_DESKTOP,
+        'Accept': 'text/html',
+      },
+      redirect: 'follow',
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (resp.ok && resp.url) {
+      let resolved = new URL(resp.url);
+      // Normalise host to www.facebook.com
+      const host = resolved.hostname.toLowerCase().replace(/^(m|mobile|touch|web)\./, 'www.');
+      resolved.hostname = host;
+      stripTracking(resolved);
+      // Ensure trailing slash for consistent cache keys
+      let path = resolved.pathname.replace(/\/+$/, '');
+      resolved.pathname = path + '/';
+      return resolved.toString();
+    }
+  } catch { /* fall through — use original URL */ }
+  return url;
 }
 
 /**
@@ -408,10 +452,9 @@ async function resolveShortUrl(url: string): Promise<string> {
  */
 export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedia> {
   return memoSWR(`fb:media:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
-    let pageUrl = inputUrl;
-    if (/^\s*https?:\/\/fb\.watch\//i.test(inputUrl)) {
-      pageUrl = await resolveShortUrl(inputUrl);
-    }
+    // Resolve share/short links to canonical URLs before extraction.
+    // Cobalt and the page scraper can't follow Facebook's redirects.
+    let pageUrl = await resolveFacebookUrl(inputUrl);
 
     const errors: string[] = [];
 
@@ -708,11 +751,14 @@ export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedi
   return memoSWR(`fb:story:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
     const errors: string[] = [];
 
+    // Resolve share/short links to canonical URLs before extraction.
+    const resolvedUrl = await resolveFacebookUrl(inputUrl);
+
     // First: try to extract story segments directly from the page HTML.
     // The story.php page may contain data-sjs blobs even when
     // fetchFacebookMedia's extractMediaFromPageHtml doesn't find playable_url.
     try {
-      const { html } = await fetchPage(inputUrl);
+      const { html } = await fetchPage(resolvedUrl);
       const segments = parseStoryPage(html);
       const videoSeg = segments.find((s) => s.kind === 'video' && (s.hdUrl || s.sdUrl));
       if (videoSeg) {
@@ -730,7 +776,7 @@ export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedi
         };
       }
       // Check if the page is login-walled (story pages behind login)
-      if (detectUnavailable(html, inputUrl) === FB_ERR.LOGIN_REQUIRED) {
+      if (detectUnavailable(html, resolvedUrl) === FB_ERR.LOGIN_REQUIRED) {
         errors.push(`[${FB_ERR.LOGIN_REQUIRED}] Story page requires login.`);
       }
     } catch (err: any) {
@@ -738,8 +784,8 @@ export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedi
     }
 
     // Second: try the classic video pipeline (page → embed → yt-dlp).
-    const candidates = new Set<string>([inputUrl]);
-    const storyFbid = inputUrl.match(/[?&]story_fbid=(\d+)/)?.[1];
+    const candidates = new Set<string>([resolvedUrl]);
+    const storyFbid = resolvedUrl.match(/[?&]story_fbid=(\d+)/)?.[1];
     if (storyFbid) {
       candidates.add(`https://www.facebook.com/video.php?v=${storyFbid}`);
     }
@@ -768,7 +814,7 @@ export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedi
     }
 
     // Third: try the reader proxy as a last resort for flagged IPs.
-    const proxyHtml = await fetchStoryViaReaderProxy(inputUrl);
+    const proxyHtml = await fetchStoryViaReaderProxy(resolvedUrl);
     if (proxyHtml && proxyHtml.length > 500) {
       const proxySegments = parseStoryPage(proxyHtml);
       const proxyVideo = proxySegments.find((s) => s.kind === 'video' && (s.hdUrl || s.sdUrl));

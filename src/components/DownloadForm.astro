@@ -2,6 +2,9 @@
 // DownloadForm — interactive TikTok URL input with fetch & result rendering
 ---
 
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<div id="cf-turnstile-container" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true"></div>
+
 <section id="download-form" class="download-form-section">
   <div class="download-form-wrap">
     <form id="tiktok-form" class="form-row" role="search" aria-label="TikTok video download form" onsubmit="return false;">
@@ -374,6 +377,36 @@
   const errorText = document.getElementById('error-text') as HTMLElement;
   const resultMount = document.getElementById('result-mount') as HTMLElement;
 
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  let turnstileToken: string | null = null;
+  let turnstileReady = false;
+
+  function initTurnstile() {
+    if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
+    const c = document.getElementById('cf-turnstile-container');
+    if (!c) return;
+    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
+      'error-callback': () => { turnstileToken = null; turnstileReady = false; },
+      'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
+    });
+  }
+  setTimeout(initTurnstile, 1000);
+
+  function getTurnstileToken(): Promise<string | null> {
+    return new Promise((resolve) => {
+      if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
+      const c = document.getElementById('cf-turnstile-container');
+      if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+        callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
+        'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+        'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+      });
+      setTimeout(() => resolve(turnstileToken), 8000);
+    });
+  }
+
   document.querySelectorAll<HTMLButtonElement>('.paste-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const target = document.getElementById(btn.dataset.pasteTarget || '') as HTMLInputElement | null;
@@ -554,7 +587,9 @@
     resultMount.innerHTML = '';
 
     try {
-      const res = await fetch(`/api/download?url=${encodeURIComponent(url)}`);
+      const token = await getTurnstileToken();
+      const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
+      const res = await fetch(`/api/download?url=${encodeURIComponent(url)}${tokenParam}`);
       const text = await res.text();
       let json: any;
       try {

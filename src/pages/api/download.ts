@@ -22,12 +22,17 @@ const STREAM_CONFIG: StreamConfig = {
   filename: 'tiksavehub-video.mp4',
   contentType: 'video/mp4',
   accept: 'video/mp4,video/*,*/*',
-  referer: 'https://tikwm.com/',
 };
 
-// HD first, then fall back down the quality ladder (some ISPs/CDN edges
-// block the HD host — e.g. v16-notes.tiktokcdn-us.com — while the SD host
-// stays reachable, so we retry with the next best URL instead of failing).
+function refererForUrl(videoUrl: string): string {
+  try {
+    const host = new URL(videoUrl).hostname;
+    if (host.includes('tiktok')) return 'https://www.tiktok.com/';
+    if (host.includes('tikwm')) return 'https://tikwm.com/';
+  } catch {}
+  return 'https://www.tiktok.com/';
+}
+
 function pickStreamCandidates(meta: TikTokVideoMeta, isHd: boolean): string[] {
   const order = isHd
     ? [meta.hdplay, meta.play, meta.wmplay]
@@ -35,11 +40,6 @@ function pickStreamCandidates(meta: TikTokVideoMeta, isHd: boolean): string[] {
   return [...new Set(order.filter((u): u is string => Boolean(u)))];
 }
 
-// Tries each candidate in order, cycling for a bounded number of attempts:
-// the HD host gets one quick shot (it may be blocked), and the normally
-// reachable URLs get a retry to ride out transient CDN resets. When the
-// cache has held the stream URLs too long (TikTok signs them with an
-// expiry), a metadata refresh re-signs them before the final attempts.
 async function streamFirstReachable(
   candidates: string[],
   isHd: boolean,
@@ -54,6 +54,7 @@ async function streamFirstReachable(
       try {
         return await streamFromUpstream(url, {
           ...STREAM_CONFIG,
+          referer: refererForUrl(url),
           timeoutMs: attempts === 0 && isHd ? HD_ATTEMPT_TIMEOUT_MS : DEFAULT_STREAM_TIMEOUT_MS,
         });
       } catch (err) {
@@ -78,6 +79,7 @@ export const GET: APIRoute = async (ctx) => {
   initRequestEnv(getEnv(ctx));
   const videoUrl = url.searchParams.get('url');
   const dl = url.searchParams.get('dl');
+  const turnstileToken = url.searchParams.get('turnstileToken') || undefined;
 
   if (!videoUrl) {
     return new Response(
@@ -117,7 +119,7 @@ export const GET: APIRoute = async (ctx) => {
         }
         const refreshCandidates = async (): Promise<string[]> => {
           try {
-            const fresh = await fetchTikTokMetaWithFallback(canonical);
+            const fresh = await fetchTikTokMetaWithFallback(canonical, { turnstileToken });
             const freshCandidates = pickStreamCandidates(fresh, isHd);
             if (freshCandidates.length > 0) {
               cacheWrite('tiktok', 'tt', canonical, 'tt', {
@@ -147,7 +149,7 @@ export const GET: APIRoute = async (ctx) => {
       );
     }
 
-    const meta = await fetchTikTokMetaWithFallback(canonical);
+    const meta = await fetchTikTokMetaWithFallback(canonical, { turnstileToken });
     const candidates = pickStreamCandidates(meta, isHd);
     cacheWrite('tiktok', 'tt', canonical, 'tt', {
       args: { hd: String(isHd) },

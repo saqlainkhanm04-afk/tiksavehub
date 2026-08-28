@@ -44,10 +44,19 @@ async function cobaltGetBearerToken(turnstileToken: string): Promise<string | nu
       },
       signal: AbortSignal.timeout(10_000),
     });
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      console.error(`[cobalt] session exchange failed: ${resp.status} ${errText}`);
+      return null;
+    }
     const data = await resp.json() as { token?: string };
-    return data.token || null;
-  } catch {
+    if (!data.token) {
+      console.error('[cobalt] session exchange returned no token');
+      return null;
+    }
+    return data.token;
+  } catch (err: any) {
+    console.error(`[cobalt] session exchange error: ${err?.message ?? err}`);
     return null;
   }
 }
@@ -70,6 +79,30 @@ function cobaltHeaders(bearerToken?: string): Record<string, string> {
 export interface CobaltAudioResult {
   url: string;
   ext: string;
+}
+
+interface CobaltResponse {
+  status?: string;
+  url?: string;
+  filename?: string;
+  tunnel?: string[];
+  picker?: Array<{ type?: string; url?: string }>;
+  audio?: string;
+  error?: { code?: string };
+}
+
+function extractCobaltUrl(data: CobaltResponse): string | null {
+  if (data.url) return data.url;
+  if (data.status === 'local-processing' && Array.isArray(data.tunnel) && data.tunnel.length > 0) {
+    return data.tunnel[0];
+  }
+  if (data.status === 'picker') {
+    if (data.audio) return data.audio;
+    if (Array.isArray(data.picker) && data.picker.length > 0) {
+      return data.picker[0]?.url || null;
+    }
+  }
+  return null;
 }
 
 /**
@@ -104,13 +137,27 @@ export async function cobaltExtractAudio(
       signal: AbortSignal.timeout(30_000),
     });
 
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      console.error(`[cobalt] audio request failed: ${resp.status} ${errText}`);
+      return null;
+    }
 
-    const data = await resp.json() as { status?: string; url?: string };
-    if (data.status === 'error' || !data.url) return null;
+    const data = await resp.json() as CobaltResponse;
+    if (data.status === 'error') {
+      console.error(`[cobalt] audio error: ${data.error?.code ?? 'unknown'}`);
+      return null;
+    }
 
-    return { url: data.url, ext: 'mp3' };
-  } catch {
+    const url = extractCobaltUrl(data);
+    if (!url) {
+      console.error(`[cobalt] audio: no downloadable URL in response (status=${data.status})`);
+      return null;
+    }
+
+    return { url, ext: 'mp3' };
+  } catch (err: any) {
+    console.error(`[cobalt] audio exception: ${err?.message ?? err}`);
     return null;
   }
 }
@@ -146,13 +193,27 @@ export async function cobaltExtractVideo(
       signal: AbortSignal.timeout(30_000),
     });
 
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      console.error(`[cobalt] video request failed: ${resp.status} ${errText}`);
+      return null;
+    }
 
-    const data = await resp.json() as { status?: string; url?: string };
-    if (data.status === 'error' || !data.url) return null;
+    const data = await resp.json() as CobaltResponse;
+    if (data.status === 'error') {
+      console.error(`[cobalt] video error: ${data.error?.code ?? 'unknown'}`);
+      return null;
+    }
 
-    return { url: data.url };
-  } catch {
+    const url = extractCobaltUrl(data);
+    if (!url) {
+      console.error(`[cobalt] video: no downloadable URL in response (status=${data.status})`);
+      return null;
+    }
+
+    return { url };
+  } catch (err: any) {
+    console.error(`[cobalt] video exception: ${err?.message ?? err}`);
     return null;
   }
 }

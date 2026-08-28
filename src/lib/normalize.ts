@@ -40,7 +40,15 @@ export function normalizeTikTokUrl(raw: string): string {
     const url = new URL(ensureScheme(raw));
     url.hash = '';
     url.search = '';
-    if (url.hostname.endsWith('tiktok.com')) url.hostname = 'www.tiktok.com';
+    if (
+    url.hostname.endsWith('tiktok.com') &&
+    url.hostname !== 'vm.tiktok.com' &&
+    url.hostname !== 'vt.tiktok.com' &&
+    !url.hostname.endsWith('.vm.tiktok.com') &&
+    !url.hostname.endsWith('.vt.tiktok.com')
+  ) {
+    url.hostname = 'www.tiktok.com';
+  }
     if (url.pathname.length > 1) url.pathname = url.pathname.replace(/\/+$/, '');
     return url.toString();
   } catch {

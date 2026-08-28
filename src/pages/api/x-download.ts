@@ -148,52 +148,8 @@ export const GET: APIRoute = async (ctx) => {
   }
 
   try {
-  const cached = await cacheHit('x', 'x', parsed.tweetId, 'video');
-  const cachedData = cached?.data as Record<string, unknown> | undefined;
-
-  let videoUrl: string | null = null;
-
-  if (cachedData) {
-    if (mode === 'hd') {
-      videoUrl = (cachedData.hdUrl as string) || (cachedData.sdUrl as string) || null;
-    } else {
-      videoUrl = (cachedData.sdUrl as string) || (cachedData.hdUrl as string) || null;
-    }
-  }
-
-  if (!videoUrl) {
-    const meta = await fetchTweetMeta(parsed.sanitizedUrl, parsed.tweetId);
-    const variant = mode === 'hd' ? pickBestVariant(meta.variants, true) : pickBestVariant(meta.variants, false);
-    videoUrl = variant?.url || pickBestVariant(meta.variants, true)?.url || null;
-
-    if (videoUrl) {
-      await cacheWrite('x', 'x', parsed.tweetId, 'video', {
-        args: { type: 'video' },
-        mediaUrl: videoUrl,
-        thumb: meta.thumbnail,
-        title: meta.text.slice(0, 200),
-        data: {
-          tweetId: meta.tweetId,
-          username: meta.username,
-          authorName: meta.authorName,
-          text: meta.text,
-          thumbnail: meta.thumbnail,
-          hdUrl: pickBestVariant(meta.variants, true)?.url || null,
-          sdUrl: pickBestVariant(meta.variants, false)?.url || null,
-        },
-      });
-    }
-  }
-
-    if (!videoUrl) {
-      return json({ success: false, error: 'No downloadable video found.' }, 404);
-    }
-
-    const filename = `tiksavehub-x-video-${parsed.tweetId}.mp4`;
-
     if (mode === 'audio') {
       const audioFilename = `tiksavehub-x-audio-${parsed.tweetId}`;
-
       const audio = await cobaltExtractAudio(parsed.sanitizedUrl, turnstileToken);
       if (audio?.url) {
         return streamFromUpstream(audio.url, {
@@ -202,12 +158,54 @@ export const GET: APIRoute = async (ctx) => {
           accept: 'audio/*,*/*',
         });
       }
-
       return json(
         { success: false, error: 'Audio extraction is not available for this X/Twitter link. Please try downloading the video instead and convert it locally.' },
         501
       );
     }
+
+    const cached = await cacheHit('x', 'x', parsed.tweetId, 'video');
+    const cachedData = cached?.data as Record<string, unknown> | undefined;
+
+    let videoUrl: string | null = null;
+
+    if (cachedData) {
+      if (mode === 'hd') {
+        videoUrl = (cachedData.hdUrl as string) || (cachedData.sdUrl as string) || null;
+      } else {
+        videoUrl = (cachedData.sdUrl as string) || (cachedData.hdUrl as string) || null;
+      }
+    }
+
+    if (!videoUrl) {
+      const meta = await fetchTweetMeta(parsed.sanitizedUrl, parsed.tweetId);
+      const variant = mode === 'hd' ? pickBestVariant(meta.variants, true) : pickBestVariant(meta.variants, false);
+      videoUrl = variant?.url || pickBestVariant(meta.variants, true)?.url || null;
+
+      if (videoUrl) {
+        await cacheWrite('x', 'x', parsed.tweetId, 'video', {
+          args: { type: 'video' },
+          mediaUrl: videoUrl,
+          thumb: meta.thumbnail,
+          title: meta.text.slice(0, 200),
+          data: {
+            tweetId: meta.tweetId,
+            username: meta.username,
+            authorName: meta.authorName,
+            text: meta.text,
+            thumbnail: meta.thumbnail,
+            hdUrl: pickBestVariant(meta.variants, true)?.url || null,
+            sdUrl: pickBestVariant(meta.variants, false)?.url || null,
+          },
+        });
+      }
+    }
+
+    if (!videoUrl) {
+      return json({ success: false, error: 'No downloadable video found.' }, 404);
+    }
+
+    const filename = `tiksavehub-x-video-${parsed.tweetId}.mp4`;
 
     return streamFromUpstream(videoUrl, {
       filename,

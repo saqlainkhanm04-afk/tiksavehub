@@ -39,3 +39,5 @@ Temp/
 
 # jetbrains setting folder
 .idea/
+
+.wrangler/

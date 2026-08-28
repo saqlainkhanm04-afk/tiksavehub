@@ -1,6 +1,30 @@
 ---
 export const prerender = true;
 import Layout from '../layouts/Layout.astro';
+
+const contactJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ContactPage',
+      name: 'Contact Us — TikSaveHub',
+      description: 'Get in touch with TikSaveHub for support, inquiries, or feedback.',
+      url: 'https://tiksavehub.com/contact',
+    },
+    {
+      '@type': 'Organization',
+      name: 'TikSaveHub',
+      url: 'https://tiksavehub.com',
+      logo: 'https://tiksavehub.com/logo.png',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: 'support@tiksavehub.com',
+        availableLanguage: 'English',
+      },
+    },
+  ],
+});
 ---
 
 <Layout
@@ -9,6 +33,8 @@ import Layout from '../layouts/Layout.astro';
   keywords="contact tiksavehub, tiksavehub support, contact us, tiktok downloader help"
   canonical="/contact"
   ogImage="/og-contact.png"
+  skipSoftwareApp
+  jsonLd={contactJsonLd}
 >
   <section class="legal-section" aria-labelledby="legal-headline">
     <div class="legal-inner container-page">
@@ -44,9 +70,9 @@ import Layout from '../layouts/Layout.astro';
 
           <section class="legal-clause">
             <h2 class="legal-h2">Contact Information</h2>
-            <p class="legal-contact">
-              <strong>Email:</strong> <a href="mailto:samneil7582@gmail.com">samneil7582@gmail.com</a>
-            </p>
+              <p class="legal-contact">
+                <strong>Email:</strong> <a href="mailto:support@tiksavehub.com">support@tiksavehub.com</a>
+              </p>
           </section>
 
           <section class="legal-clause">

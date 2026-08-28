@@ -1,17 +1,15 @@
 ---
 // Footer component — 3-column footer following DESIGN.md footer spec
 interface Props {
-  platform?: 'tiktok' | 'instagram' | 'facebook' | 'x';
+  platform?: 'tiktok' | 'instagram' | 'facebook' | 'x' | 'snapchat';
 }
-
-import { sectionHref } from '../lib/pageSections';
 
 const { platform = 'tiktok' } = Astro.props;
 const year = new Date().getFullYear();
 const isInstagram = platform === 'instagram';
 const isFacebook = platform === 'facebook';
 const isX = platform === 'x';
-const currentPath = Astro.url.pathname;
+const isSnapchat = platform === 'snapchat';
 ---
 
 <footer id="site-footer" class="site-footer">
@@ -36,28 +34,37 @@ const currentPath = Astro.url.pathname;
             ? 'Download Facebook videos, Reels, and audio in HD. Free, fast, and no sign-up required.'
             : isX
               ? 'Download X (Twitter) videos and GIFs in HD. Free, fast, and no sign-up required.'
-              : 'Download TikTok videos without watermarks. Free, fast, and always HD quality.'}
+              : isSnapchat
+                ? 'Download Snapchat videos, Spotlight clips, and Stories in HD. Free, fast, and no sign-up required.'
+                : 'Download TikTok videos without watermarks. Free, fast, and always HD quality.'}
       </p>
       <p class="footer-copy">&copy; {year} TikSaveHub. All rights reserved.</p>
     </div>
 
     <!-- Quick Links -->
     <div class="footer-col">
-      <p class="footer-col-label text-caption-mono">Quick Links</p>
+      <p class="footer-col-label text-caption-mono">Tools</p>
       <ul class="footer-link-list">
-        <li><a href={sectionHref(currentPath, 'download-form')} class="footer-link" id="footer-link-download">Download Video</a></li>
-        <li><a href="/tiktok-video-downloader-without-watermark" class="footer-link" id="footer-link-downloader">TikTok Downloader</a></li>
-        <li><a href={sectionHref(currentPath, 'how-it-works')} class="footer-link" id="footer-link-how">How It Works</a></li>
-        <li><a href={sectionHref(currentPath, 'features')} class="footer-link" id="footer-link-features">Features</a></li>
-        <li><a href={sectionHref(currentPath, 'faq')} class="footer-link" id="footer-link-faq">FAQ</a></li>
-        <li><a href="/blog" class="footer-link" id="footer-link-blog">Blog</a></li>
+        <li><a href="/tiktok-video-downloader-without-watermark" class="footer-link" id="footer-link-tiktok">TikTok Downloader</a></li>
+        <li><a href="/tiktok-to-mp3" class="footer-link" id="footer-link-tiktok-mp3">TikTok to MP3</a></li>
+        <li><a href="/instagram-reels-downloader-without-watermark" class="footer-link" id="footer-link-ig-reels">Instagram Reels Downloader</a></li>
+        <li><a href="/instagram-video-downloader-without-watermark" class="footer-link" id="footer-link-ig-video">Instagram Video Downloader</a></li>
+        <li><a href="/instagram-story-downloader-without-watermark" class="footer-link" id="footer-link-ig-story">Instagram Story Downloader</a></li>
+        <li><a href="/facebook-video-downloader" class="footer-link" id="footer-link-fb-video">Facebook Video Downloader</a></li>
+        <li><a href="/facebook-reels-downloader" class="footer-link" id="footer-link-fb-reels">Facebook Reels Downloader</a></li>
+        <li><a href="/facebook-to-mp3" class="footer-link" id="footer-link-fb-mp3">Facebook to MP3</a></li>
+        <li><a href="/x-video-downloader" class="footer-link" id="footer-link-x">X (Twitter) Downloader</a></li>
+        <li><a href="/snapchat-downloader" class="footer-link" id="footer-link-sc">Snapchat Downloader</a></li>
+        <li><a href="/snapchat-story-downloader" class="footer-link" id="footer-link-sc-story">Snapchat Story Downloader</a></li>
+        <li><a href="/snapchat-to-mp3" class="footer-link" id="footer-link-sc-mp3">Snapchat to MP3</a></li>
       </ul>
     </div>
 
-    <!-- Legal -->
+    <!-- Resources -->
     <div class="footer-col">
-      <p class="footer-col-label text-caption-mono">Legal</p>
+      <p class="footer-col-label text-caption-mono">Resources</p>
       <ul class="footer-link-list">
+        <li><a href="/blog" class="footer-link" id="footer-link-blog">Blog</a></li>
         <li><a href="/privacy" class="footer-link" id="footer-link-privacy">Privacy Policy</a></li>
         <li><a href="/terms" class="footer-link" id="footer-link-terms">Terms of Service</a></li>
         <li><a href="/dmca" class="footer-link" id="footer-link-dmca">DMCA</a></li>
@@ -76,7 +83,9 @@ const currentPath = Astro.url.pathname;
             ? 'TikSaveHub is not affiliated with Facebook or Meta Platforms, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from Meta CDNs. Please respect content creators\' rights and copyright regulations.'
             : isX
               ? 'TikSaveHub is not affiliated with X Corp. or Twitter, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from X/Twitter CDNs. Please respect content creators\' rights and copyright regulations.'
-              : 'TikSaveHub is not affiliated with TikTok or ByteDance Ltd. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'}
+              : isSnapchat
+                ? 'TikSaveHub is not affiliated with Snap Inc. or Snapchat. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from Snapchat CDNs. Please respect content creators\' rights and copyright regulations.'
+                : 'TikSaveHub is not affiliated with TikTok or ByteDance Ltd. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'}
       </p>
     </div>
   </div>

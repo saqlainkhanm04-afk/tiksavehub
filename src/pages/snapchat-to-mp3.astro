@@ -51,29 +51,63 @@ const faqData = [
   },
 ];
 
-const faqJsonLd = JSON.stringify({
+const combinedJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.a.replace(/<[^>]*>/g, ''),
+  '@graph': [
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqData.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a.replace(/<[^>]*>/g, ''),
+        },
+      })),
     },
-  })),
+    {
+      '@type': 'HowTo',
+      name: 'How to Convert Snapchat Videos to MP3',
+      description: 'Step-by-step guide to extract audio from Snapchat videos as MP3 using TikSaveHub.',
+      totalTime: 'PT1M',
+      step: [
+        {
+          '@type': 'HowToStep',
+          name: 'Copy the Snapchat video link',
+          text: 'Open the Snapchat app or website, find the video you want to extract audio from, and copy the URL.',
+          url: 'https://tiksavehub.com/snapchat-to-mp3#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Paste and select Audio tab',
+          text: 'Go to TikSaveHub, select the Audio tab, and paste the copied Snapchat link into the input field.',
+          url: 'https://tiksavehub.com/snapchat-to-mp3#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Download the MP3',
+          text: 'Click the Download Audio button to save the MP3 file to your device.',
+          url: 'https://tiksavehub.com/snapchat-to-mp3#how-it-works',
+        },
+      ],
+      tool: [
+        { '@type': 'HowToTool', name: 'TikSaveHub' },
+        { '@type': 'HowToTool', name: 'Web Browser' },
+      ],
+    },
+  ],
 });
 ---
 
 <Layout
-  title="Snapchat to MP3 — Extract Audio from Snapchat Videos Free 2026 | TikSaveHub"
+  title="Snapchat to MP3 — Extract Audio from Snapchat Videos Free | TikSaveHub"
   description="Convert Snapchat videos to MP3 audio — free, fast, high-quality 128kbps. Extract audio from Spotlight, stories, and public snaps on any device. No app needed."
   keywords="snapchat to mp3, snapchat audio downloader, convert snapchat to mp3, extract snapchat audio, snapchat video to mp3, download snapchat audio, snapchat sound extractor, save snapchat music"
   canonical="/snapchat-to-mp3"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="snapchat"
-  jsonLd={faqJsonLd}
+  jsonLd={combinedJsonLd}
   appName="TikSaveHub — Snapchat to MP3"
   appRating={{ value: '4.8', count: '4260' }}
 >
@@ -85,34 +119,6 @@ const faqJsonLd = JSON.stringify({
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
       { "@type": "ListItem", "position": 2, "name": "Snapchat to MP3", "item": "https://tiksavehub.com/snapchat-to-mp3" }
     ]
-  })} />
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    "name": "How to Convert Snapchat Videos to MP3",
-    "description": "Step-by-step guide to extract audio from Snapchat videos as MP3 using TikSaveHub.",
-    "totalTime": "PT1M",
-    "step": [
-      {
-        "@type": "HowToStep",
-        "name": "Copy the Snapchat video link",
-        "text": "Open the Snapchat app or website, find the video you want to extract audio from, and copy the URL.",
-        "url": "https://tiksavehub.com/snapchat-to-mp3#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Paste and select Audio tab",
-        "text": "Go to TikSaveHub, select the Audio tab, and paste the copied Snapchat link into the input field.",
-        "url": "https://tiksavehub.com/snapchat-to-mp3#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Download the MP3",
-        "text": "Click the Download Audio button to save the MP3 file to your device.",
-        "url": "https://tiksavehub.com/snapchat-to-mp3#how-it-works"
-      }
-    ],
-    "tool": [{ "@type": "HowToTool", "name": "Web Browser" }]
   })} />
 
   <!-- Hero -->

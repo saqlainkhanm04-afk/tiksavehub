@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
-import { spawn } from 'node:child_process';
 import { parseSnapchatUrl } from '../../lib/snapchat-url';
 import { fetchSnapchatMedia, removeSnapchatWatermark } from '../../lib/snapchat';
+import { cobaltExtractAudio } from '../../lib/cobalt';
 import { streamFromUpstream } from '../../lib/stream';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
-import { isFfmpegAvailable, reencodeMp3 } from '../../lib/audio';
+import { getEnv, initRequestEnv } from '../../lib/init-env';
 
 export const prerender = false;
 
@@ -43,7 +43,16 @@ function userMessageFor(err: any): string {
   return 'Failed to fetch this video. Please check the link and try again.';
 }
 
-export const POST: APIRoute = async ({ request }) => {
+const MAX_POST_BODY_BYTES = 8192;
+
+export const POST: APIRoute = async (ctx) => {
+  initRequestEnv(getEnv(ctx));
+  const { request } = ctx;
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > MAX_POST_BODY_BYTES) {
+    return json({ success: false, error: 'Request body too large.' }, 413);
+  }
+
   let body: any;
   try {
     body = await request.json();
@@ -52,6 +61,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const rawUrl = typeof body?.url === 'string' ? body.url : '';
+  const turnstileToken = typeof body?.turnstileToken === 'string' ? body.turnstileToken : undefined;
   if (!rawUrl.trim()) {
     return json({ success: false, error: 'Missing "url" in the request body.' }, 400);
   }
@@ -64,13 +74,10 @@ export const POST: APIRoute = async ({ request }) => {
   if (!parsed.isValid) {
     return json({ success: false, error: parsed.error || 'Invalid Snapchat URL.' }, 422);
   }
-  if (parsed.linkType === 'profile') {
-    return json({ success: false, error: 'Profile links cannot be downloaded. Please use a Spotlight, Story, or Post link.' }, 422);
-  }
 
   const mediaId = parsed.mediaId || parsed.username || 'unknown';
 
-  const cached = cacheHit('snapchat', 'snapchat', mediaId, 'video');
+    const cached = await cacheHit('snapchat', 'snapchat', mediaId, 'video');
   const cachedData = cached?.data as Record<string, unknown> | undefined;
   if (cachedData && cachedData.videoUrl) {
     return json({ success: true, type: 'snapchat-video', video: cachedData, fromCache: true }, 200, true);
@@ -78,7 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const snapUrl = parsed.sanitizedUrl;
-    const meta = await fetchSnapchatMedia(snapUrl, mediaId);
+    const meta = await fetchSnapchatMedia(snapUrl, mediaId, turnstileToken);
 
     const payload = {
       mediaId: meta.mediaId,
@@ -106,102 +113,12 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
-/**
- * Use yt-dlp to download audio from Snapchat and pipe the result.
- */
-function streamYtDlpAudio(snapUrl: string, filename: string): Promise<Response> {
-  const bin = process.env.YTDLP_PATH || 'yt-dlp';
-  const args = [
-    '--no-warnings',
-    '--no-playlist',
-    '--no-color',
-    '--no-check-certificates',
-    '-f', 'bestaudio',
-    '-o', '-',
-    snapUrl,
-  ];
-
-  return new Promise((resolve, reject) => {
-    const child = spawn(bin, args, {
-      windowsHide: true,
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env, PYTHONIOENCODING: 'utf-8' },
-    });
-
-    let stderr = '';
-    child.stderr.setEncoding('utf8');
-    child.stderr.on('data', (chunk: string) => { stderr += chunk; });
-
-    const timer = setTimeout(() => {
-      try { child.kill(); } catch {}
-      reject(new Error('yt-dlp audio download timed out'));
-    }, 120_000);
-
-    child.on('error', (err) => {
-      clearTimeout(timer);
-      reject(new Error(`yt-dlp not available: ${err.message}`));
-    });
-
-    child.on('exit', (code) => {
-      clearTimeout(timer);
-      if (code !== 0 && code !== null) {
-        const detail = stderr.split(/\r?\n/).filter(Boolean).slice(-3).join(' ');
-        reject(new Error(`yt-dlp audio failed (exit ${code}): ${detail}`));
-      }
-    });
-
-    const headers = new Headers();
-    headers.set('Content-Type', 'audio/mp4');
-    headers.set('Content-Disposition', `attachment; filename="${filename}"`);
-    headers.set('Cache-Control', 'no-store');
-    headers.set('X-Accel-Buffering', 'no');
-
-    const body = new ReadableStream<Uint8Array>({
-      start(c) {
-        let finished = false;
-        const finish = () => {
-          if (finished) return;
-          finished = true;
-          clearTimeout(timer);
-          try { c.close(); } catch {}
-        };
-        const fail = (msg: string) => {
-          if (finished) return;
-          finished = true;
-          clearTimeout(timer);
-          try { child.kill(); } catch {}
-          try { c.error(new Error(msg)); } catch {}
-        };
-
-        child.stdout.on('data', (chunk: Uint8Array) => {
-          try { c.enqueue(chunk); } catch {}
-        });
-        child.stdout.on('end', () => {
-          if (child.exitCode !== null && child.exitCode !== 0) {
-            fail(`yt-dlp audio extraction failed (exit ${child.exitCode})`);
-          } else {
-            finish();
-          }
-        });
-        child.stdout.on('error', () => fail('stdout error during audio download'));
-        child.on('exit', (code) => {
-          if (!finished && code !== 0) fail(`yt-dlp exited with code ${code}`);
-          else if (!finished) finish();
-        });
-      },
-      cancel() {
-        clearTimeout(timer);
-        try { child.kill(); } catch {}
-      },
-    });
-
-    resolve(new Response(body, { status: 200, headers }));
-  });
-}
-
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async (ctx) => {
+  initRequestEnv(getEnv(ctx));
+  const { url, request } = ctx;
   const rawUrl = url.searchParams.get('url') || '';
   const mode = url.searchParams.get('dl') || 'hd';
+  const turnstileToken = url.searchParams.get('turnstileToken') || undefined;
 
   if (!rawUrl.trim()) {
     return json({ success: false, error: 'Missing "url" parameter.' }, 400);
@@ -219,7 +136,7 @@ export const GET: APIRoute = async ({ url, request }) => {
   const mediaId = parsed.mediaId || parsed.username || 'unknown';
 
   try {
-    const cached = cacheHit('snapchat', 'snapchat', mediaId, 'video');
+  const cached = await cacheHit('snapchat', 'snapchat', mediaId, 'video');
     const cachedData = cached?.data as Record<string, unknown> | undefined;
 
     let videoUrl: string | null = null;
@@ -233,7 +150,7 @@ export const GET: APIRoute = async ({ url, request }) => {
     }
 
     if (!videoUrl) {
-      const meta = await fetchSnapchatMedia(parsed.sanitizedUrl, mediaId);
+      const meta = await fetchSnapchatMedia(parsed.sanitizedUrl, mediaId, turnstileToken);
       videoUrl = mode === 'hd' ? (meta.videoHd || meta.videoUrl) : (meta.videoSd || meta.videoHd || meta.videoUrl);
 
       if (videoUrl) {
@@ -264,30 +181,19 @@ export const GET: APIRoute = async ({ url, request }) => {
     if (mode === 'audio') {
       const audioFilename = `tiksavehub-snapchat-audio-${mediaId}`;
 
-      const ffmpegOk = await isFfmpegAvailable();
-      if (ffmpegOk) {
-        try {
-          return reencodeMp3(videoUrl, {
-            bitrateKbps: 128,
-            filename: `${audioFilename}.mp3`,
-          });
-        } catch {
-          // Fall through to pipe approach
-        }
+      const audio = await cobaltExtractAudio(parsed.sanitizedUrl, turnstileToken);
+      if (audio?.url) {
+        return streamFromUpstream(audio.url, {
+          filename: `${audioFilename}.mp3`,
+          contentType: 'audio/mpeg',
+          accept: 'audio/*,*/*',
+        });
       }
 
-      try {
-        return await streamYtDlpAudio(parsed.sanitizedUrl, `${audioFilename}.m4a`);
-      } catch {
-        // Fall through to video
-      }
-
-      return streamFromUpstream(videoUrl, {
-        filename,
-        contentType: 'video/mp4',
-        accept: 'video/mp4,video/*,*/*',
-        referer: SC_REFERER,
-      });
+      return json(
+        { success: false, error: 'Audio extraction is not available for this Snapchat link. Please try downloading the video instead and convert it locally.' },
+        501
+      );
     }
 
     // Try ffmpeg delogo to remove Snapchat watermark; fall back to raw stream

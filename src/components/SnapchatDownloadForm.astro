@@ -6,9 +6,10 @@
 
 interface Props {
   mode?: 'video' | 'story' | 'mp3';
+  showAudio?: boolean;
 }
 
-const { mode = 'video' } = Astro.props;
+const { mode = 'video', showAudio = true } = Astro.props;
 
 const tabLinks = [
   {
@@ -26,13 +27,13 @@ const tabLinks = [
     active: mode === 'story',
     icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
   },
-  {
-    mode: 'mp3',
+  ...(showAudio ? [{
+    mode: 'mp3' as const,
     label: 'Audio',
     href: '/snapchat-to-mp3',
     active: mode === 'mp3',
     icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
-  },
+  }] : []),
 ];
 
 const copy = {
@@ -61,6 +62,9 @@ const copy = {
 ---
 
 <section id="download-form" class="download-form-section" data-type="snapchat" data-mode={mode}>
+  <!-- Cloudflare Turnstile — invisible widget for cobalt API auth -->
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <div id="cf-turnstile-container" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true"></div>
   <div class="download-form-wrap">
     <nav class="sc-tabs" aria-label="Choose Snapchat download type">
       {
@@ -475,11 +479,6 @@ const copy = {
     pointer-events: none;
   }
 
-  .url-input {
-    padding-left: 42px !important;
-    padding-right: 128px !important;
-  }
-
   .paste-btn,
   .clear-btn {
     position: absolute;
@@ -643,7 +642,7 @@ const copy = {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-md);
-    border: 1px solid #f5b3b380;
+    border: 1px solid var(--color-error-soft);
     animation: fadeInUp 0.3s ease forwards;
   }
 
@@ -1147,7 +1146,51 @@ const copy = {
   const MODE = (document.getElementById('download-form') as HTMLElement | null)?.dataset.mode || 'video';
   const isMp3Mode = MODE === 'mp3';
 
-  function renderResult(video: any, inputUrl: string) {
+  // --- Cloudflare Turnstile for cobalt API auth ---
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  let turnstileToken: string | null = null;
+  let turnstileReady = false;
+
+  function initTurnstile() {
+    if (typeof (window as any).turnstile === 'undefined') {
+      // Script not loaded yet — retry in 500ms
+      setTimeout(initTurnstile, 500);
+      return;
+    }
+    const container = document.getElementById('cf-turnstile-container');
+    if (!container) return;
+    (window as any).turnstile.render(container, {
+      sitekey: COBALT_TURNSTILE_SITEKEY,
+      appearance: 'interaction-only',
+      callback: (token: string) => { turnstileToken = token; turnstileReady = true; },
+      'error-callback': () => { turnstileToken = null; turnstileReady = false; },
+      'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
+    });
+  }
+  initTurnstile();
+
+  /** Get a fresh turnstile token — re-render if expired or missing. */
+  function getTurnstileToken(): Promise<string | null> {
+    return new Promise((resolve) => {
+      if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
+      // Re-render widget to get a fresh token
+      const container = document.getElementById('cf-turnstile-container');
+      if (!container || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      container.innerHTML = '';
+      (window as any).turnstile.render(container, {
+        sitekey: COBALT_TURNSTILE_SITEKEY,
+        appearance: 'interaction-only',
+        callback: (token: string) => { turnstileToken = token; turnstileReady = true; resolve(token); },
+        'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+        'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+      });
+      // Timeout fallback — if turnstile doesn't resolve in 8s, proceed without token
+      setTimeout(() => resolve(turnstileToken), 8000);
+    });
+  }
+  // --- End Turnstile ---
+
+  function renderResult(video: any, _inputUrl: string) {
     if (!video) {
       showError('No video data found. Please check the link and try again.');
       return;
@@ -1179,7 +1222,7 @@ const copy = {
 
     const audioTile = '<button class="sc-dl-tile sc-dl-tile-audio' + (isMp3Mode ? ' sc-dl-tile-prime' : '') + '" id="sc-btn-dl-audio" type="button" data-dl="audio" aria-label="Download audio as MP3"><span class="sc-dl-tile-icon" aria-hidden="true">' + musicIcon + '</span><span class="sc-dl-tile-label">Download <strong>Audio (MP3)</strong></span>' + (isMp3Mode ? '<span class="sc-dl-tile-badge">Recommended</span>' : '') + '<span class="sc-dl-proc-bar"></span></button>';
 
-    const tiles = isMp3Mode ? [audioTile] : [hdTile, sdTile, audioTile].filter(Boolean).join('');
+    const tiles = isMp3Mode ? [audioTile] : [hdTile, sdTile].filter(Boolean).join('');
 
     resultMount.innerHTML =
       '<div class="sc-result-card animate-fade-in-up" role="region" aria-label="Download result">' +
@@ -1222,8 +1265,11 @@ const copy = {
     if (labelEl) labelEl.textContent = 'Processing… 0%';
     if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/snapchat?url=' + encodeURIComponent(url) + '&dl=' + dlType);
+    // Get fresh turnstile token before download
+    getTurnstileToken().then((token) => {
+      const xhr = new XMLHttpRequest();
+      const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
+      xhr.open('GET', '/api/snapchat?url=' + encodeURIComponent(url) + '&dl=' + dlType + tokenParam);
     xhr.responseType = 'blob';
     xhr.timeout = 120_000;
 
@@ -1288,6 +1334,7 @@ const copy = {
     };
 
     xhr.send();
+    }); // end getTurnstileToken().then
   }
 
   form?.addEventListener('submit', async (e) => {
@@ -1301,7 +1348,7 @@ const copy = {
     }
 
     if (!URL_PATTERN.test(url)) {
-      showError('Please enter a valid Snapchat link (e.g. snapchat.com/spotlight/..., story.snapchat.com/s/..., or snapchat.com/p/...).');
+      showError('Please enter a valid Snapchat link (e.g. snapchat.com/spotlight/..., story.snapchat.com/s/..., snapchat.com/p/..., snapchat.com/@user/highlight/..., or snapchat.com/@username for stories).');
       return;
     }
 
@@ -1309,10 +1356,11 @@ const copy = {
     resultMount.innerHTML = '';
 
     try {
+      const token = await getTurnstileToken();
       const res = await fetch('/api/snapchat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, turnstileToken: token || undefined }),
       });
       const text = await res.text();
       let json: any;

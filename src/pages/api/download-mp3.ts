@@ -10,10 +10,13 @@ import {
   availableBitrates,
   reencodeMp3,
 } from '../../lib/audio';
+import { getEnv, initRequestEnv } from '../../lib/init-env';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async (ctx) => {
+  initRequestEnv(getEnv(ctx));
+  const { url, request } = ctx;
   const videoUrl = url.searchParams.get('url');
   const dl = url.searchParams.get('dl');
   const brParam = url.searchParams.get('br');
@@ -42,7 +45,7 @@ export const GET: APIRoute = async ({ url, request }) => {
 
   try {
     const canonical = await resolveTikTokShortLink(normalizeTikTokUrl(videoUrl));
-    const cached = cacheHit('tiktok', 'tt', canonical, 'audio');
+    const cached = await cacheHit('tiktok', 'tt', canonical, 'audio');
 
     const fresh = async () => {
       const meta = await fetchTikTokMetaWithFallback(canonical);

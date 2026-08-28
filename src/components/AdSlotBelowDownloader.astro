@@ -1,0 +1,108 @@
+---
+/**
+ * AdSlotBelowDownloader — Native 300x250 banner below download result box.
+ * Shows after the user interacts with the downloader (paste or download click).
+ * 
+ * Props:
+ *   className — additional CSS classes
+ *   adId — Monetag zone ID
+ *   showAfter — trigger: 'paste' | 'download' | 'always' (default: 'always')
+ */
+interface Props {
+  className?: string;
+  adId?: string;
+  showAfter?: 'paste' | 'download' | 'always';
+}
+
+const { className = '', adId, showAfter = 'always' } = Astro.props;
+const zoneId = adId || 'below-result';
+---
+
+<div
+  class={`ad-slot-below ${className}`}
+  data-ad-zone={zoneId}
+  data-ad-trigger={showAfter}
+  aria-hidden="true"
+>
+  <div class="ad-below-inner">
+    <div class="ad-placeholder ad-placeholder-below" id={`ad-below-${zoneId}`}>
+      <span class="ad-label">Advertisement</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ad-slot-below {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-lg) 0;
+  }
+
+  .ad-below-inner {
+    width: 100%;
+    max-width: 340px;
+    min-height: 250px;
+  }
+
+  .ad-placeholder {
+    width: 100%;
+    min-height: 250px;
+    background-color: var(--color-canvas-soft-2);
+    border: 1px dashed var(--color-hairline);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ad-label {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  /* Trigger-based visibility: hidden until trigger fires */
+  .ad-slot-below[data-ad-trigger="paste"][data-ad-visible="false"],
+  .ad-slot-below[data-ad-trigger="download"][data-ad-visible="false"] {
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    .ad-below-inner {
+      max-width: 100%;
+      min-height: 200px;
+    }
+
+    .ad-placeholder {
+      min-height: 200px;
+    }
+  }
+</style>
+
+<script>
+  // Monetag below-result ad — trigger-based visibility
+  (function initAdBelow() {
+    const adSlots = document.querySelectorAll('[data-ad-zone][data-ad-trigger]');
+    adSlots.forEach(slot => {
+      const trigger = slot.getAttribute('data-ad-trigger');
+      if (trigger === 'always') {
+        slot.setAttribute('data-ad-visible', 'true');
+        return;
+      }
+
+      // Start hidden
+      slot.setAttribute('data-ad-visible', 'false');
+
+      // Listen for trigger events on the page
+      const eventName = trigger === 'paste' ? 'tiksavehub:paste' : 'tiksavehub:download';
+      document.addEventListener(eventName, () => {
+        slot.setAttribute('data-ad-visible', 'true');
+      }, { once: true });
+    });
+  })();
+</script>

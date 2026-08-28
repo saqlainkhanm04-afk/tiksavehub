@@ -83,6 +83,49 @@ const faqJsonLd = JSON.stringify({
     },
   })),
 });
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to Download Instagram Reels Without Watermark',
+  description: 'Step-by-step guide to download Instagram Reels in HD quality without watermark using TikSaveHub.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Copy the Instagram Reel link',
+      text: 'Open the Instagram app, find the Reel you want to save, tap the share icon, and select Copy Link.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Paste the link into TikSaveHub',
+      text: 'Visit TikSaveHub.com and paste the copied Reel link into the download input field.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Click Download',
+      text: 'Click the Download button and wait a few seconds while the Reel is processed.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Save the HD video',
+      text: 'Choose the HD MP4 option (no watermark) and save the video file to your device.',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
 ---
 
 <Layout
@@ -93,7 +136,7 @@ const faqJsonLd = JSON.stringify({
   ogImage="/og-downloader.png"
   ogType="website"
   platform="instagram"
-  jsonLd={faqJsonLd}
+  jsonLd={combinedJsonLd}
   appName="TikSaveHub — Instagram Reels Downloader"
   appRating={{ value: '4.9', count: '12450' }}
 >
@@ -260,7 +303,7 @@ const faqJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
-              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader Without Watermark</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
               <li><a href="#how-it-works">How It Works</a></li>
               <li><a href="#features">Features</a></li>
               <li><a href="#faq">FAQ</a></li>
@@ -524,12 +567,12 @@ const faqJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Need to save Instagram videos and Reels? Try the video downloader.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+        <a href="/instagram-audio-downloader" class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           </span>
-          <span class="dl-internal-title">Instagram Reels Downloader</span>
-          <span class="dl-internal-desc">You're here — download Instagram Reels without watermark in HD.</span>
+          <span class="dl-internal-title">Instagram Audio Downloader</span>
+          <span class="dl-internal-desc">Extract audio from Instagram Reels and videos as MP3.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
         <a href="/instagram-story-downloader-without-watermark" class="dl-internal-card">

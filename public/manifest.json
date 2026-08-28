@@ -1,0 +1,25 @@
+{
+  "name": "TikSaveHub — Download TikTok, Instagram, Facebook & X Videos in HD",
+  "short_name": "TikSaveHub",
+  "description": "Download videos from TikTok, Instagram, Facebook, and X (Twitter) in HD quality without watermarks. Free, fast, and no sign-up required.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#007cf0",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "entertainment"]
+}

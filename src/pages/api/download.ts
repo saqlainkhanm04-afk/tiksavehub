@@ -4,6 +4,7 @@ import { streamFromUpstream } from '../../lib/stream';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
 import { resolveTikTokShortLink, normalizeTikTokUrl } from '../../lib/normalize';
+import { getEnv, initRequestEnv } from '../../lib/init-env';
 
 export const prerender = false;
 
@@ -72,7 +73,9 @@ async function streamFirstReachable(
   throw lastError ?? new Error('No video URL available.');
 }
 
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async (ctx) => {
+  const { url, request } = ctx;
+  initRequestEnv(getEnv(ctx));
   const videoUrl = url.searchParams.get('url');
   const dl = url.searchParams.get('dl');
 
@@ -100,7 +103,7 @@ export const GET: APIRoute = async ({ url, request }) => {
   try {
     const isHd = dl === 'hd';
     const canonical = await resolveTikTokShortLink(normalizeTikTokUrl(videoUrl));
-    const cached = cacheHit('tiktok', 'tt', canonical, 'tt');
+    const cached = await cacheHit('tiktok', 'tt', canonical, 'tt');
 
     if (cached?.data) {
       const meta = cached.data as TikTokVideoMeta;

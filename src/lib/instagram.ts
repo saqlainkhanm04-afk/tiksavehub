@@ -1,9 +1,10 @@
 import { memoSWR, cacheGet, cacheSet, cacheDelete } from './cache';
-import { fetchInstagramWithYtDlp, instagramUrlFor } from './ytdlp';
-import { ensureInstagramEnv } from './ig-env';
-import { withCookiePool, poolSize } from './ig-cookie-pool';
+import type { CfEnv } from './env';
+import { envStr } from './env';
 
-ensureInstagramEnv();
+let _env: CfEnv = {};
+export function setInstagramEnv(env: CfEnv) { _env = env; }
+function readSession(): string { return envStr(_env, 'IG_SESSIONID'); }
 
 const STORY_TTL_MS = 6 * 60 * 60 * 1000;
 const STORY_STALE_MS = 6 * 60 * 60 * 1000;
@@ -57,12 +58,7 @@ export interface InstagramParseResult {
   username?: string;
 }
 
-function readSession(): string {
-  return process.env.IG_SESSIONID || '';
-}
-
 export function hasSession(): boolean {
-  if (poolSize() > 0) return true;
   return Boolean(readSession());
 }
 
@@ -75,16 +71,16 @@ export function hasSession(): boolean {
 function getSessionCookie(cookieOverride?: string): string {
   if (cookieOverride) return cookieOverride;
 
-  // Full browser cookie jar (recommended): Instagram's web API now expects the
-  // whole cookie family (mid, ig_did, rur, datr...) — sessionid alone gets 403.
-  const full = process.env.IG_COOKIES || '';
+  const full = envStr(_env, 'IG_COOKIES');
   if (full.trim()) return full.trim();
 
   const parts: string[] = [];
   const session = readSession();
   if (session) parts.push(`sessionid=${session}`);
-  if (process.env.IG_DS_USER_ID) parts.push(`ds_user_id=${process.env.IG_DS_USER_ID}`);
-  if (process.env.IG_CSRF_TOKEN) parts.push(`csrftoken=${process.env.IG_CSRF_TOKEN}`);
+  const dsUserId = envStr(_env, 'IG_DS_USER_ID');
+  const csrfToken = envStr(_env, 'IG_CSRF_TOKEN');
+  if (dsUserId) parts.push(`ds_user_id=${dsUserId}`);
+  if (csrfToken) parts.push(`csrftoken=${csrfToken}`);
   return parts.join('; ');
 }
 
@@ -132,12 +128,22 @@ async function getCsrfToken(cookieOverride?: string): Promise<{ token: string; c
       },
       signal: AbortSignal.timeout(15_000),
     });
-    const setCookies = resp.headers.getSetCookie();
+    // getSetCookie() not available in CF Workers — parse Set-Cookie manually
+    // Use rawHeaders to get all Set-Cookie values (Headers API may merge them)
+    const setCookies: string[] = [];
+    const raw = resp.headers.getSetCookie?.();
+    if (raw && raw.length > 0) {
+      setCookies.push(...raw);
+    } else {
+      // Fallback: single Set-Cookie header
+      const sc = resp.headers.get('set-cookie');
+      if (sc) setCookies.push(sc);
+    }
     const csrfCookie = setCookies.find((c) => c.startsWith('csrftoken='));
     const token = csrfCookie ? csrfCookie.split(';')[0].replace('csrftoken=', '') : '';
     const cookies = setCookies.map((c) => c.split(';')[0]).join('; ');
     return {
-      token: token || process.env.IG_CSRF_TOKEN || '',
+      token: token || envStr(_env, 'IG_CSRF_TOKEN'),
       cookies: [sessionCookie, cookies].filter(Boolean).join('; '),
     };
   });
@@ -208,27 +214,17 @@ function errorWithCode(message: string, code?: string): Error {
  * fresh token.
  */
 async function withSessionRetry<T>(fn: (cookie?: string) => Promise<T>): Promise<T> {
-  // If there's no cookie pool (single legacy cookie), fall back to the
-  // original one-retry behaviour.
-  if (poolSize() <= 1) {
-    try {
+  try {
+    return await fn();
+  } catch (err: any) {
+    const msg = err?.message || String(err);
+    const code = err?.code || '';
+    if (isSessionBlockedMessage(msg) || isSessionBlockedMessage(code)) {
+      cacheDelete('ig:csrf');
       return await fn();
-    } catch (err: any) {
-      const msg = err?.message || String(err);
-      const code = err?.code || '';
-      if (isSessionBlockedMessage(msg) || isSessionBlockedMessage(code)) {
-        cacheDelete('ig:csrf');
-        return await fn();
-      }
-      throw err;
     }
+    throw err;
   }
-
-  // Multi-cookie pool: let `withCookiePool` handle rotation.
-  return withCookiePool(async (cookie) => {
-    cacheDelete(`ig:csrf:${cookie.slice(0, 32)}`);
-    return fn(cookie);
-  });
 }
 
 /**
@@ -247,7 +243,7 @@ async function apiGet(
   opts: { requireSession?: boolean; extra?: Record<string, string>; cookieOverride?: string } = {}
 ): Promise<{ status: number; json: any }> {
   const sessionCookie = getSessionCookie(opts.cookieOverride);
-  const sessionAvailable = Boolean(opts.cookieOverride) || poolSize() > 0 || Boolean(readSession());
+  const sessionAvailable = Boolean(opts.cookieOverride) || Boolean(readSession());
 
   if (opts.requireSession && !sessionAvailable) {
     throw errorWithCode(ERR_SESSION_MISSING, ERR_SESSION_MISSING);
@@ -263,7 +259,7 @@ async function apiGet(
         'X-IG-App-ID': '936619743392459',
         'X-ASBD-ID': '129477',
         'X-IG-WWW-Claim': '0',
-        'X-CSRFToken': csrfFromCookie(sessionCookie) || process.env.IG_CSRF_TOKEN || '',
+        'X-CSRFToken': csrfFromCookie(sessionCookie) || envStr(_env, 'IG_CSRF_TOKEN'),
         Origin: 'https://www.instagram.com',
         Referer: 'https://www.instagram.com/',
         'Sec-Fetch-Site': 'same-origin',
@@ -405,7 +401,7 @@ async function fetchFromEmbed(shortcode: string): Promise<any> {
   throw lastError || new Error('Embed fallback failed.');
 }
 
-async function fetchShortcodeWithFallbacks(shortcode: string, type: string = 'video'): Promise<any> {
+async function fetchShortcodeWithFallbacks(shortcode: string, _type: string = 'video'): Promise<any> {
   const errors: string[] = [];
 
   // Primary: public GraphQL with fresh CSRF.
@@ -439,7 +435,7 @@ async function fetchShortcodeWithFallbacks(shortcode: string, type: string = 'vi
       signal: AbortSignal.timeout(20_000),
     });
     if (resp.ok) {
-      const json = await resp.json();
+      const json = await resp.json() as Record<string, any>;
       const media = json?.graphql?.shortcode_media ?? json?.items?.[0];
       if (media) return media;
       errors.push('__a=1 returned no media.');
@@ -448,14 +444,6 @@ async function fetchShortcodeWithFallbacks(shortcode: string, type: string = 'vi
     }
   } catch (err: any) {
     errors.push(err?.message || '__a=1 failed.');
-  }
-
-  // Fallback: yt-dlp binary (if installed on the server) — the most reliable
-  // free provider because it sends a full browser-like request with cookies.
-  try {
-    return await fetchInstagramWithYtDlp(instagramUrlFor(shortcode, type));
-  } catch (err: any) {
-    errors.push(err?.message || 'yt-dlp failed.');
   }
 
   throw new Error(errors[errors.length - 1] || 'Could not load this Instagram content.');
@@ -468,16 +456,6 @@ export async function fetchMediaByShortcode(shortcode: string, type: string = 'v
         return await fetchMediaByMediaId(shortcodeToMediaId(shortcode));
       } catch (err: any) {
         if (err?.message === ERR_LOGIN_REQUIRED) {
-          // If the pool has multiple cookies, try with the next one before giving up.
-          if (poolSize() > 1) {
-            try {
-              return await withCookiePool(async (cookie) => {
-                return fetchMediaByMediaId(shortcodeToMediaId(shortcode), cookie);
-              });
-            } catch {
-              // fall through to the fallbacks below
-            }
-          }
           throw new Error('Could not retrieve this content with the configured Instagram session.');
         }
         throw err;
@@ -584,15 +562,6 @@ async function fetchStoryWithSession(username: string | undefined, mediaId: stri
   } catch (err: any) {
     if (err?.message === ERR_LOGIN_REQUIRED || err?.message === ERR_SESSION_MISSING) throw err;
     errors.push(err?.message || 'Media info lookup failed.');
-  }
-
-  // Layer 3: yt-dlp with the session cookie header (handles both photo and video stories).
-  if (username) {
-    try {
-      return await fetchInstagramWithYtDlp(`https://www.instagram.com/stories/${username}/${mediaId}/`);
-    } catch (err: any) {
-      errors.push(err?.message || 'yt-dlp story fetch failed.');
-    }
   }
 
   throw new Error(errors[errors.length - 1] || ERR_STORY_EXPIRED);

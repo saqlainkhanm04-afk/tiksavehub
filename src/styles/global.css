@@ -546,6 +546,11 @@ html.dark .step-connector {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
+  .url-input {
+    padding-left: 44px !important;
+    padding-right: 112px !important;
+  }
+
   .form-input-lg::placeholder {
     color: var(--color-mute);
   }

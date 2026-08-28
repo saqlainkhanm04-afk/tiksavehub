@@ -9,12 +9,14 @@ import {
   fetchFacebookStorySet,
   fetchFacebookStoryAsFiles,
   FB_ERR,
+  setFacebookEnv,
 } from '../../lib/facebook';
 import { buildZip } from '../../lib/zip';
 import { streamFromUpstream } from '../../lib/stream';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
 import { isFfmpegAvailable, reencodeMp3 } from '../../lib/audio';
+import { getEnv, initRequestEnv } from '../../lib/init-env';
 
 export const prerender = false;
 
@@ -119,7 +121,7 @@ function storyMessageFor(err: any): string {
     return 'This story requires a Facebook login to view (private or restricted account). Please try another public story link.';
   }
   if (code === FB_ERR.NO_MEDIA) {
-    return 'This story could not be downloaded. Facebook stories expire after 24 hours or may be private — please copy a fresh story link and try again.';
+    return 'This story could not be downloaded. It may have expired, require login, or be from a private account — try a fresh public story link.';
   }
   if (code === FB_ERR.NOT_AVAILABLE) {
     return 'This story is private or has expired. Facebook stories disappear after 24 hours — try a fresh public story link.';
@@ -127,7 +129,18 @@ function storyMessageFor(err: any): string {
   return userMessageFor(err);
 }
 
-export const POST: APIRoute = async ({ request }) => {
+const MAX_POST_BODY_BYTES = 8192; // 8 KB — only a JSON {url,mode} object is expected
+
+export const POST: APIRoute = async (ctx) => {
+  const { request } = ctx;
+  const env = getEnv(ctx);
+  setFacebookEnv(env);
+  initRequestEnv(env);
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > MAX_POST_BODY_BYTES) {
+    return json({ success: false, error: 'Request body too large.' }, 413);
+  }
+
   let body: any;
   try {
     body = await request.json();
@@ -176,7 +189,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
     try {
-      const cached = id ? cacheHit('facebook', 'fb', id, 'photo') : null;
+      const cached = id ? await cacheHit('facebook', 'fb', id, 'photo') : null;
       const cachedData = cached?.data as Record<string, unknown> | undefined;
       if (cachedData && Array.isArray(cachedData.photos) && (cachedData.photos as any[]).length) {
         return json({ success: true, type: 'facebook-photo', photo: cachedData, fromCache: true }, 200, true);
@@ -236,7 +249,7 @@ export const POST: APIRoute = async ({ request }) => {
   const isStory = parsed.linkType === 'story';
 
   try {
-    const cached = isStory ? null : id ? cacheHit('facebook', 'fb', id, 'video') : null;
+    const cached = isStory ? null : id ? await cacheHit('facebook', 'fb', id, 'video') : null;
     const cachedData = cached?.data as Record<string, unknown> | undefined;
     if (cachedData) {
       return json({ success: true, type: 'facebook', video: cachedData, fromCache: true }, 200, true);
@@ -317,9 +330,14 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async (ctx) => {
+  const { url, request } = ctx;
+  const env = getEnv(ctx);
+  setFacebookEnv(env);
+  initRequestEnv(env);
   const rawUrl = url.searchParams.get('url') || '';
   const mode = url.searchParams.get('dl') || url.searchParams.get('mode') || '';
+  const turnstileToken = url.searchParams.get('turnstileToken') || undefined;
 
   if (!rawUrl) {
     return json({ success: false, error: 'Missing "url" query parameter.' }, 400);
@@ -343,7 +361,7 @@ export const GET: APIRoute = async ({ url, request }) => {
   // Photo download mode.
   if (parsed.linkType === 'photo') {
     try {
-      const cached = id ? cacheHit('facebook', 'fb', id, 'photo') : null;
+      const cached = id ? await cacheHit('facebook', 'fb', id, 'photo') : null;
       const cachedData = cached?.data as Record<string, unknown> | undefined;
 
       // Bundle mode: download every photo of the post into one ZIP.
@@ -505,7 +523,7 @@ export const GET: APIRoute = async ({ url, request }) => {
   }
 
   try {
-    const cached = isStory ? null : id ? cacheHit('facebook', 'fb', id, 'video') : null;
+    const cached = isStory ? null : id ? await cacheHit('facebook', 'fb', id, 'video') : null;
     const cachedData = cached?.data as Record<string, unknown> | undefined;
     const media = cachedData || null;
 
@@ -514,11 +532,16 @@ export const GET: APIRoute = async ({ url, request }) => {
     let audioExt: string | null = null;
 
     if (mode === 'audio') {
-      const audio = await fetchFacebookAudio(parsed.sanitizedUrl);
+      const audio = await fetchFacebookAudio(parsed.sanitizedUrl, turnstileToken);
       if (audio?.url) {
         isAudio = true;
-        audioExt = audio.ext || 'm4a';
+        audioExt = audio.ext || 'mp3';
         mediaUrl = audio.url;
+      } else {
+        return json(
+          { success: false, error: 'Audio extraction is not available for this Facebook link. Please try downloading the video instead and convert it locally.' },
+          501
+        );
       }
     }
 
@@ -567,9 +590,9 @@ export const GET: APIRoute = async ({ url, request }) => {
         });
       }
       return streamFromUpstream(mediaUrl, {
-        filename: `tiksavehub-facebook-audio.${audioExt || 'm4a'}`,
-        contentType: 'audio/mp4',
-        accept: 'audio/mp4,audio/mpeg,audio/*,*/*',
+        filename: `tiksavehub-facebook-audio.${audioExt || 'mp3'}`,
+        contentType: 'audio/mpeg',
+        accept: 'audio/mpeg,audio/mp4,audio/*,*/*',
         referer: FACEBOOK_REFERER,
       });
     }

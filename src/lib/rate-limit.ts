@@ -1,7 +1,20 @@
-const WINDOW_MS = 60_000;
-const RATE_LIMIT_PER_MIN = Number(process.env.RATE_LIMIT_PER_MIN || 30);
+/**
+ * Rate limiter — in-memory sliding window per IP.
+ * In CF Workers, state is per-isolate (not distributed).
+ * Acceptable for basic abuse prevention; use CF WAF Rules for production.
+ */
 
+import type { CfEnv } from './env';
+import { envNum } from './env';
+
+const WINDOW_MS = 60_000;
+const rateMap = new Map<string, number[]>();
 let lastCleanup = Date.now();
+let limitPerMin = 30;
+
+export function configureRateLimit(env: CfEnv): void {
+  limitPerMin = envNum(env, 'RATE_LIMIT_PER_MIN', 30);
+}
 
 export function clientIpFrom(request: Request): string {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
@@ -9,8 +22,12 @@ export function clientIpFrom(request: Request): string {
   return request.headers.get('cf-connecting-ip') || 'unknown';
 }
 
-export function isRateLimited(ip: string, limitPerMin: number = RATE_LIMIT_PER_MIN): boolean {
-  if (limitPerMin <= 0) return false;
+export function isRateLimited(
+  ip: string,
+  overrideLimit?: number
+): boolean {
+  const limit = overrideLimit ?? limitPerMin;
+  if (limit <= 0) return false;
 
   const now = Date.now();
   if (now - lastCleanup > WINDOW_MS) {
@@ -19,7 +36,7 @@ export function isRateLimited(ip: string, limitPerMin: number = RATE_LIMIT_PER_M
   }
 
   const hits = (rateMap.get(ip) || []).filter((t) => now - t < WINDOW_MS);
-  if (hits.length >= limitPerMin) {
+  if (hits.length >= limit) {
     rateMap.set(ip, hits);
     return true;
   }
@@ -28,8 +45,6 @@ export function isRateLimited(ip: string, limitPerMin: number = RATE_LIMIT_PER_M
   rateMap.set(ip, hits);
   return false;
 }
-
-const rateMap = new Map<string, number[]>();
 
 function cleanup(): void {
   const now = Date.now();

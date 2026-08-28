@@ -89,6 +89,9 @@ const copy = {
 ---
 
 <section id="download-form" class="download-form-section" data-type="facebook" data-mode={mode}>
+  <!-- Cloudflare Turnstile — invisible widget for cobalt API auth -->
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <div id="cf-turnstile-container" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true"></div>
   <div class="download-form-wrap">
     <nav class="fb-tabs" aria-label="Choose Facebook download type">
       {
@@ -503,11 +506,6 @@ const copy = {
     pointer-events: none;
   }
 
-  .url-input {
-    padding-left: 42px !important;
-    padding-right: 128px !important;
-  }
-
   .paste-btn,
   .clear-btn {
     position: absolute;
@@ -671,7 +669,7 @@ const copy = {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-md);
-    border: 1px solid #f5b3b380;
+    border: 1px solid var(--color-error-soft);
     animation: fadeInUp 0.3s ease forwards;
   }
 
@@ -1354,6 +1352,37 @@ const copy = {
   const isPhotoMode = MODE === 'photo';
   const isStoryMode = MODE === 'story';
 
+  // --- Cloudflare Turnstile for cobalt API auth ---
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  let turnstileToken: string | null = null;
+  let turnstileReady = false;
+  function initTurnstile() {
+    if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
+    const c = document.getElementById('cf-turnstile-container');
+    if (!c) return;
+    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
+      'error-callback': () => { turnstileToken = null; turnstileReady = false; },
+      'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
+    });
+  }
+  initTurnstile();
+  function getTurnstileToken(): Promise<string | null> {
+    return new Promise((resolve) => {
+      if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
+      const c = document.getElementById('cf-turnstile-container');
+      if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      c.innerHTML = '';
+      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+        callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
+        'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+        'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+      });
+      setTimeout(() => resolve(turnstileToken), 8000);
+    });
+  }
+  // --- End Turnstile ---
+
   function renderResult(data: any, inputUrl: string) {
     const { cover, duration, title, hdplay, sdplay, play } = data || {};
     const hdUrl: string = hdplay || play || '';
@@ -1372,7 +1401,7 @@ const copy = {
       const zipTile =
         count > 1
           ? `
-          <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-zip" type="button">
+          <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-zip" type="button" aria-label="Download all ${count} media files as ZIP">
             <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
             <span class="dl-tile-label">Download <strong>All Media</strong> (${count} items)</span>
             <span class="dl-tile-badge">ZIP</span>
@@ -1386,7 +1415,7 @@ const copy = {
           const segTitle: string = s.title || (isVideo ? `Story Video ${i + 1}` : `Story Photo ${i + 1}`);
           const segCover: string = s.cover || '';
           const thumb = segCover
-            ? `<img src="${segCover}" alt="${segTitle}" class="story-seg-thumb" loading="lazy" width="56" height="56" referrerpolicy="no-referrer" onerror="this.closest('.story-seg-thumb-wrap').classList.add('thumb-failed')">`
+            ? `<img src="${segCover}" alt="${segTitle}" class="story-seg-thumb" loading="lazy" width="56" height="56" referrerpolicy="no-referrer" data-proxy="0" onerror="if(this.dataset.proxy==='0'){this.dataset.proxy='1';this.src='/api/proxy-image?url='+encodeURIComponent(this.src)}else{this.closest('.story-seg-thumb-wrap').classList.add('thumb-failed')}">`
             : `<div class="story-seg-thumb story-seg-thumb-fallback" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
@@ -1407,13 +1436,13 @@ const copy = {
                 <span class="dl-hd-badge" aria-hidden="true">HD</span>
                 <span class="dl-proc-bar"></span>
               </button>
-              <button class="dl-tile" id="btn-dl-sd-${i}" type="button">
+              <button class="dl-tile" id="btn-dl-sd-${i}" type="button" aria-label="Download SD video ${i + 1}">
                 <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
                 <span class="dl-tile-label">Download <strong>SD Video</strong></span>
                 <span class="dl-proc-bar"></span>
               </button>`
             : `
-              <button class="dl-tile dl-tile-fb" id="btn-dl-photo-${i}" type="button">
+              <button class="dl-tile dl-tile-fb" id="btn-dl-photo-${i}" type="button" aria-label="Download photo ${i + 1}">
                 <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
                 <span class="dl-tile-label">Download <strong>Photo</strong></span>
                 <span class="dl-proc-bar"></span>
@@ -1449,7 +1478,8 @@ const copy = {
                 width="120"
                 height="160"
                 referrerpolicy="no-referrer"
-                onerror="this.closest('.result-thumb-wrap').classList.add('thumb-failed')"
+                data-proxy="0"
+                onerror="if(this.dataset.proxy==='0'){this.dataset.proxy='1';this.src='/api/proxy-image?url='+encodeURIComponent(this.src)}else{this.closest('.result-thumb-wrap').classList.add('thumb-failed')}"
                 ${!cover ? 'hidden' : ''} />
               ${!cover ? `<div class="result-thumb-fallback" aria-hidden="true">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1511,7 +1541,7 @@ const copy = {
               ${photos
                 .map(
                   (p, i) =>
-                    `<img class="photo-grid-item${i >= PREVIEW_PHOTOS ? ' photo-grid-hidden' : ''}" src="${p.cover || p.photoUrl || ''}" alt="Facebook photo ${i + 1} of ${count}" loading="lazy" width="120" height="120" referrerpolicy="no-referrer" onerror="this.style.display='none'">`
+                    `<img class="photo-grid-item${i >= PREVIEW_PHOTOS ? ' photo-grid-hidden' : ''}" src="${p.cover || p.photoUrl || ''}" alt="Facebook photo ${i + 1} of ${count}" loading="lazy" width="120" height="120" referrerpolicy="no-referrer" data-proxy="0" onerror="if(this.dataset.proxy==='0'){this.dataset.proxy='1';this.src='/api/proxy-image?url='+encodeURIComponent(this.src)}else{this.style.display='none'}">`
                 )
                 .join('')}
               ${count > PREVIEW_PHOTOS ? `<button type="button" class="photo-grid-item photo-grid-more" id="btn-grid-more" aria-label="Show all ${count} photos">+${count - PREVIEW_PHOTOS}</button>` : ''}
@@ -1539,7 +1569,8 @@ const copy = {
                 width="200"
                 height="200"
                 referrerpolicy="no-referrer"
-                onerror="this.closest('.result-thumb-wrap').classList.add('thumb-failed')"
+                data-proxy="0"
+                onerror="if(this.dataset.proxy==='0'){this.dataset.proxy='1';this.src='/api/proxy-image?url='+encodeURIComponent(this.src)}else{this.closest('.result-thumb-wrap').classList.add('thumb-failed')}"
                 ${!cover && !photoHref ? 'hidden' : ''} />
               ${!cover && !photoHref ? `<div class="result-thumb-fallback" aria-hidden="true">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1560,7 +1591,7 @@ const copy = {
                 ${count > 1 ? `<p class="photo-count">${count} photos found in this post</p>` : ''}
               </div>
               <div class="result-actions">
-                <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-photo" type="button">
+                <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-photo" type="button" aria-label="Download Facebook photos">
                   <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
                   <span class="dl-tile-label">${btnLabel}</span>
                   ${badge}
@@ -1596,14 +1627,14 @@ const copy = {
       </button>`;
 
     const sdTile = `
-      <button class="dl-tile" id="btn-dl-sd" type="button">
+      <button class="dl-tile" id="btn-dl-sd" type="button" aria-label="Download SD video">
         <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
         <span class="dl-tile-label">Download <strong>SD Video</strong></span>
         <span class="dl-proc-bar"></span>
       </button>`;
 
     const audioTile = `
-      <button class="dl-tile dl-tile-audio${isMp3Mode ? ' dl-tile-prime' : ''}" id="btn-dl-audio" type="button">
+      <button class="dl-tile dl-tile-audio${isMp3Mode ? ' dl-tile-prime' : ''}" id="btn-dl-audio" type="button" aria-label="Download audio as MP3">
         <span class="dl-tile-icon" aria-hidden="true">${musicIcon}</span>
         <span class="dl-tile-label">Download <strong>Audio (MP3)</strong></span>
         ${isMp3Mode ? '<span class="dl-tile-badge">Recommended</span>' : ''}
@@ -1624,7 +1655,8 @@ const copy = {
               width="120"
               height="160"
               referrerpolicy="no-referrer"
-              onerror="this.closest('.result-thumb-wrap').classList.add('thumb-failed')"
+              data-proxy="0"
+              onerror="if(this.dataset.proxy==='0'){this.dataset.proxy='1';this.src='/api/proxy-image?url='+encodeURIComponent(this.src)}else{this.closest('.result-thumb-wrap').classList.add('thumb-failed')}"
               ${!cover ? 'hidden' : ''} />
             ${!cover ? `<div class="result-thumb-fallback" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1674,9 +1706,11 @@ const copy = {
 
       const xhr = new XMLHttpRequest();
       const idxParam = typeof idx === 'number' && idx >= 0 ? `&idx=${idx}` : '';
+      getTurnstileToken().then((token) => {
+      const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
       xhr.open(
         'GET',
-        `/api/facebook?url=${encodeURIComponent(inputUrl)}&dl=${mode}${idxParam}`
+        `/api/facebook?url=${encodeURIComponent(inputUrl)}&dl=${mode}${idxParam}${tokenParam}`
       );
       xhr.responseType = 'blob';
       xhr.timeout = 120_000;
@@ -1727,6 +1761,7 @@ const copy = {
       };
 
       xhr.send();
+      }); // end getTurnstileToken().then
     }
 
     hdBtn?.addEventListener('click', () => startDownload('hd', hdBtn));
@@ -1757,10 +1792,11 @@ const copy = {
     resultMount.innerHTML = '';
 
     try {
+      const token = await getTurnstileToken();
       const res = await fetch('/api/facebook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, mode: MODE }),
+        body: JSON.stringify({ url, mode: MODE, turnstileToken: token || undefined }),
       });
       const text = await res.text();
       let json: any;

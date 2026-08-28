@@ -13,6 +13,9 @@ const copy = {
 ---
 
 <section id="download-form" class="download-form-section" data-type="x">
+  <!-- Cloudflare Turnstile — invisible widget for cobalt API auth -->
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <div id="cf-turnstile-container" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true"></div>
   <div class="download-form-wrap">
     <form id="x-form" class="form-row" role="search" aria-label="X video download form" onsubmit="return false;">
       <div class="input-wrap">
@@ -198,11 +201,6 @@ const copy = {
     pointer-events: none;
   }
 
-  .url-input {
-    padding-left: 42px !important;
-    padding-right: 128px !important;
-  }
-
   .paste-btn,
   .clear-btn {
     position: absolute;
@@ -366,7 +364,7 @@ const copy = {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-md);
-    border: 1px solid #f5b3b380;
+    border: 1px solid var(--color-error-soft);
     animation: fadeInUp 0.3s ease forwards;
   }
 
@@ -946,6 +944,37 @@ const copy = {
   const URL_PATTERN =
     /^(https?:\/\/)?(www\.|mobile\.|m\.|)?(twitter\.com|x\.com)\//i;
 
+  // --- Cloudflare Turnstile for cobalt API auth ---
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  let turnstileToken: string | null = null;
+  let turnstileReady = false;
+  function initTurnstile() {
+    if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
+    const c = document.getElementById('cf-turnstile-container');
+    if (!c) return;
+    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
+      'error-callback': () => { turnstileToken = null; turnstileReady = false; },
+      'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
+    });
+  }
+  initTurnstile();
+  function getTurnstileToken(): Promise<string | null> {
+    return new Promise((resolve) => {
+      if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
+      const c = document.getElementById('cf-turnstile-container');
+      if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      c.innerHTML = '';
+      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+        callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
+        'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+        'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+      });
+      setTimeout(() => resolve(turnstileToken), 8000);
+    });
+  }
+  // --- End Turnstile ---
+
   function setLoading(loading: boolean) {
     downloadBtn.disabled = loading;
     btnLabel.hidden = loading;
@@ -1169,7 +1198,9 @@ const copy = {
     if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
 
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/x-download?url=' + decodeURIComponent(encodedUrl) + '&dl=' + dlType);
+    getTurnstileToken().then((token) => {
+    const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
+    xhr.open('GET', '/api/x-download?url=' + decodeURIComponent(encodedUrl) + '&dl=' + dlType + tokenParam);
     xhr.responseType = 'blob';
     xhr.timeout = 120_000;
 
@@ -1234,6 +1265,7 @@ const copy = {
     };
 
     xhr.send();
+    }); // end getTurnstileToken().then
   }
 
   form?.addEventListener('submit', async (e) => {
@@ -1256,10 +1288,11 @@ const copy = {
     showLoadingCard();
 
     try {
+      const token = await getTurnstileToken();
       const res = await fetch('/api/x-download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, turnstileToken: token || undefined }),
       });
       clearLoadingCard();
       const text = await res.text();

@@ -51,29 +51,63 @@ const faqData = [
   },
 ];
 
-const faqJsonLd = JSON.stringify({
+const combinedJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.a.replace(/<[^>]*>/g, ''),
+  '@graph': [
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqData.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a.replace(/<[^>]*>/g, ''),
+        },
+      })),
     },
-  })),
+    {
+      '@type': 'HowTo',
+      name: 'How to Download Snapchat Stories',
+      description: 'Step-by-step guide to download Snapchat stories in HD quality using TikSaveHub before they expire.',
+      totalTime: 'PT1M',
+      step: [
+        {
+          '@type': 'HowToStep',
+          name: 'Copy the Snapchat story link',
+          text: 'Open the Snapchat app, find the story you want to save, and copy the URL from the share button or address bar.',
+          url: 'https://tiksavehub.com/snapchat-story-downloader#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Paste the link into TikSaveHub',
+          text: 'Go to TikSaveHub, select the Story tab, and paste the copied story link into the input field.',
+          url: 'https://tiksavehub.com/snapchat-story-downloader#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Download the story as MP4',
+          text: 'Click the Download button to save the story as an HD MP4 to your device before it expires.',
+          url: 'https://tiksavehub.com/snapchat-story-downloader#how-it-works',
+        },
+      ],
+      tool: [
+        { '@type': 'HowToTool', name: 'TikSaveHub' },
+        { '@type': 'HowToTool', name: 'Web Browser' },
+      ],
+    },
+  ],
 });
 ---
 
 <Layout
-  title="Snapchat Story Downloader — Save Stories Before They Expire 2026 | TikSaveHub"
+  title="Snapchat Story Downloader — Save Stories Before They Expire | TikSaveHub"
   description="Download Snapchat stories before they disappear — free, fast, HD quality, no sign-up. Save Snapchat stories as MP4 on iPhone, Android, or desktop. Works with story.snapchat.com links."
   keywords="snapchat story downloader, download snapchat stories, save snapchat stories, snapchat story download online, story.snapchat.com downloader, save snapchat story hd, snapchat story saver, download snapchat story before expires, save story from snapchat"
   canonical="/snapchat-story-downloader"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="snapchat"
-  jsonLd={faqJsonLd}
+  jsonLd={combinedJsonLd}
   appName="TikSaveHub — Snapchat Story Downloader"
   appRating={{ value: '4.8', count: '4260' }}
 >
@@ -85,34 +119,6 @@ const faqJsonLd = JSON.stringify({
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
       { "@type": "ListItem", "position": 2, "name": "Snapchat Story Downloader", "item": "https://tiksavehub.com/snapchat-story-downloader" }
     ]
-  })} />
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    "name": "How to Download Snapchat Stories",
-    "description": "Step-by-step guide to download Snapchat stories in HD quality using TikSaveHub before they expire.",
-    "totalTime": "PT1M",
-    "step": [
-      {
-        "@type": "HowToStep",
-        "name": "Copy the Snapchat story link",
-        "text": "Open the Snapchat app, find the story you want to save, and copy the URL from the share button or address bar.",
-        "url": "https://tiksavehub.com/snapchat-story-downloader#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Paste the link into TikSaveHub",
-        "text": "Go to TikSaveHub, select the Story tab, and paste the copied story link into the input field.",
-        "url": "https://tiksavehub.com/snapchat-story-downloader#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Download the story as MP4",
-        "text": "Click the Download button to save the story as an HD MP4 to your device before it expires.",
-        "url": "https://tiksavehub.com/snapchat-story-downloader#how-it-works"
-      }
-    ],
-    "tool": [{ "@type": "HowToTool", "name": "Web Browser" }]
   })} />
 
   <!-- Hero -->
@@ -153,7 +159,7 @@ const faqJsonLd = JSON.stringify({
       </p>
 
       <div class="dl-hero-form-wrap">
-        <SnapchatDownloadForm mode="story" />
+        <SnapchatDownloadForm mode="story" showAudio={false} />
       </div>
 
       <div class="dl-hero-trust">

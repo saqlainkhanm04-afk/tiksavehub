@@ -83,6 +83,49 @@ const faqJsonLd = JSON.stringify({
     },
   })),
 });
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to Download Facebook Videos in HD',
+  description: 'Step-by-step guide to download Facebook videos, Reels, and posts in HD quality using TikSaveHub.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Copy the Facebook video link',
+      text: 'Open the Facebook video you want to save, click the Share button, and select Copy Link.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Paste the link into TikSaveHub',
+      text: 'Visit TikSaveHub.com and paste the copied Facebook link into the download input field.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Click Download',
+      text: 'Click the Download button and wait a few seconds while the video is processed.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Save the HD video',
+      text: 'Choose the HD MP4 option and save the video file to your device.',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
 ---
 
 <Layout
@@ -93,7 +136,7 @@ const faqJsonLd = JSON.stringify({
   ogImage="/og-downloader.png"
   ogType="website"
   platform="facebook"
-  jsonLd={faqJsonLd}
+  jsonLd={combinedJsonLd}
   appName="TikSaveHub — Facebook Video Downloader"
   appRating={{ value: '4.8', count: '11230' }}
 >

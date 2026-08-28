@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import cloudflare from '@astrojs/cloudflare';
 import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 import { posts } from './src/data/blog-posts.js';
@@ -21,6 +22,9 @@ const seoPages = [
   '/facebook-story-downloader',
   '/facebook-photo-downloader',
   '/x-video-downloader',
+  '/snapchat-downloader',
+  '/snapchat-story-downloader',
+  '/snapchat-to-mp3',
   '/blog',
   '/contact',
   '/privacy',
@@ -33,13 +37,13 @@ const customPages = [
   ...posts.map((p) => `${site}/blog/${p.slug}`),
 ];
 
+const isProd = process.argv.includes('build') || process.argv.includes('preview');
+
 export default defineConfig({
   site,
   output: 'server',
+  adapter: isProd ? cloudflare({ imageService: 'compile' }) : node({ mode: 'standalone' }),
   server: { port: 3000 },
-  adapter: node({
-    mode: 'standalone',
-  }),
   integrations: [
     sitemap({
       customPages,

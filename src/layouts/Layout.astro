@@ -11,7 +11,7 @@ interface Props {
   ogType?: string;
   keywords?: string;
   noindex?: boolean;
-  platform?: 'tiktok' | 'instagram' | 'facebook' | 'x';
+  platform?: 'tiktok' | 'instagram' | 'facebook' | 'x' | 'snapchat';
   jsonLd?: string;
   appName?: string;
   appRating?: { value: string; count: string };
@@ -108,6 +108,14 @@ const structuredData =
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T1HSMNWEX2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-T1HSMNWEX2');
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
@@ -115,6 +123,7 @@ const structuredData =
     <meta name="keywords" content={keywords} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title="TikSaveHub Blog" href="/rss.xml" />
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
@@ -133,13 +142,24 @@ const structuredData =
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiksavehub" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
     <meta name="twitter:image:alt" content={title} />
 
-    <!-- Favicon -->
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Preconnect to analytics -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+    <!-- Favicon & PWA -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Theme color matches the page background in light & dark mode -->
     <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
@@ -162,6 +182,33 @@ const structuredData =
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-15RCTH6L8J');
+    </script>
+
+    <!-- Monetag Ad Hooks (dispatches paste/download/result events for ad triggers) -->
+    <script is:inline>
+      (function(){
+        var EVENTS={PASTE:'tiksavehub:paste',DOWNLOAD:'tiksavehub:download',RESULT:'tiksavehub:result'};
+        document.addEventListener('click',function(e){
+          var t=e.target;
+          if(t.closest('[data-ad-hook="paste"]')||t.closest('.paste-btn')){
+            document.dispatchEvent(new CustomEvent(EVENTS.PASTE));
+          }
+          if(t.closest('[data-ad-hook="download"]')||t.closest('.download-submit-btn')||t.closest('[id*="download-btn"]')||t.closest('.dl-tile')||t.closest('.fb-dl-tile')||t.closest('.sc-dl-tile')||t.closest('.ig-dl-tile')){
+            document.dispatchEvent(new CustomEvent(EVENTS.DOWNLOAD));
+          }
+        },true);
+        var rm=document.getElementById('result-mount');
+        if(rm){
+          new MutationObserver(function(muts){
+            for(var i=0;i<muts.length;i++){
+              if(muts[i].addedNodes.length>0){
+                document.dispatchEvent(new CustomEvent(EVENTS.RESULT));
+                break;
+              }
+            }
+          }).observe(rm,{childList:true});
+        }
+      })();
     </script>
 
     {structuredData && <script is:inline type="application/ld+json" set:html={structuredData}></script>}

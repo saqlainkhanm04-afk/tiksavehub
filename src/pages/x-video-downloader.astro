@@ -26,8 +26,8 @@ const faqData = [
   },
   {
     id: 'x-gif-downloader',
-    q: 'What is the best Twitter GIF downloader in 2026?',
-    a: 'TikSaveHub is the best Twitter GIF downloader in 2026 \u2014 it converts X/Twitter GIFs to high-quality MP4 files with one click. X/Twitter actually stores GIFs as MP4 video files. TikSaveHub detects the animated GIF format and downloads it as a standard MP4 that plays on any device. Paste any tweet link containing a GIF and download it instantly.',
+    q: 'What is the best Twitter GIF downloader?',
+    a: 'TikSaveHub is the best Twitter GIF downloader \u2014 it converts X/Twitter GIFs to high-quality MP4 files with one click. X/Twitter actually stores GIFs as MP4 video files. TikSaveHub detects the animated GIF format and downloads it as a standard MP4 that plays on any device. Paste any tweet link containing a GIF and download it instantly.',
   },
   {
     id: 'x-thread-video',
@@ -71,17 +71,51 @@ const faqData = [
   },
 ];
 
-const faqJsonLd = JSON.stringify({
+const combinedJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.a.replace(/<[^>]*>/g, ''),
+  '@graph': [
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqData.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a.replace(/<[^>]*>/g, ''),
+        },
+      })),
     },
-  })),
+    {
+      '@type': 'HowTo',
+      name: 'How to Download X (Twitter) Videos',
+      description: 'Step-by-step guide to download X/Twitter videos in HD quality using TikSaveHub \u2014 free, no sign-up required.',
+      totalTime: 'PT1M',
+      step: [
+        {
+          '@type': 'HowToStep',
+          name: 'Copy the X/Twitter link',
+          text: 'Open the X app or website, find the video tweet you want to download, tap the Share button, and select Copy Link. You can also copy the URL from your browser\'s address bar.',
+          url: 'https://tiksavehub.com/x-video-downloader#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Paste the link into TikSaveHub',
+          text: 'Go to TikSaveHub and paste the copied X/Twitter link into the input field at the top of the page. Use the Paste button to grab it from your clipboard.',
+          url: 'https://tiksavehub.com/x-video-downloader#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Download HD or SD',
+          text: 'Click the Download button. Choose Download HD Video or Download SD Video to save the MP4 to your device. You can also convert to MP3 audio.',
+          url: 'https://tiksavehub.com/x-video-downloader#how-it-works',
+        },
+      ],
+      tool: [
+        { '@type': 'HowToTool', name: 'TikSaveHub' },
+        { '@type': 'HowToTool', name: 'Web Browser' },
+      ],
+    },
+  ],
 });
 ---
 
@@ -93,7 +127,7 @@ const faqJsonLd = JSON.stringify({
   ogImage="/og-downloader.png"
   ogType="website"
   platform="x"
-  jsonLd={faqJsonLd}
+  jsonLd={combinedJsonLd}
   appName="TikSaveHub — X/Twitter Video Downloader"
   appRating={{ value: '4.8', count: '9840' }}
 >
@@ -104,39 +138,6 @@ const faqJsonLd = JSON.stringify({
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
       { "@type": "ListItem", "position": 2, "name": "X/Twitter Video Downloader", "item": "https://tiksavehub.com/x-video-downloader" }
-    ]
-  })} />
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    "name": "How to Download X (Twitter) Videos",
-    "description": "Step-by-step guide to download X/Twitter videos in HD quality using TikSaveHub — free, no sign-up required.",
-    "totalTime": "PT1M",
-    "step": [
-      {
-        "@type": "HowToStep",
-        "name": "Copy the X/Twitter link",
-        "text": "Open the X app or website, find the video tweet you want to download, tap the Share button, and select 'Copy Link'. You can also copy the URL from your browser's address bar.",
-        "url": "https://tiksavehub.com/x-video-downloader#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Paste the link into TikSaveHub",
-        "text": "Go to TikSaveHub and paste the copied X/Twitter link into the input field at the top of the page. Use the Paste button to grab it from your clipboard.",
-        "url": "https://tiksavehub.com/x-video-downloader#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Download HD or SD",
-        "text": "Click the Download button. Choose 'Download HD Video' or 'Download SD Video' to save the MP4 to your device. You can also convert to MP3 audio.",
-        "url": "https://tiksavehub.com/x-video-downloader#how-it-works"
-      }
-    ],
-    "tool": [
-      {
-        "@type": "HowToTool",
-        "name": "Web Browser"
-      }
     ]
   })} />
 
@@ -387,7 +388,7 @@ const faqJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-step-title">Download HD or SD</h3>
           <p class="dl-step-body">
-            Tap "Download HD Video" or "Download SD Video" to save the MP4 to your device. The file saves instantly — no app or account needed. The file saves instantly — no app or account needed.
+            Choose "Download HD Video" for the best quality or "Download SD Video" for a smaller file. The MP4 saves directly to your device — no app or account needed.
           </p>
         </article>
       </div>

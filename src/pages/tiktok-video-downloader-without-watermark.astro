@@ -83,6 +83,49 @@ const faqJsonLd = JSON.stringify({
     },
   })),
 });
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to Download TikTok Videos Without Watermark',
+  description: 'Step-by-step guide to download TikTok videos in HD quality without watermark using TikSaveHub.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Copy the TikTok video link',
+      text: 'Open the TikTok app, find the video you want to save, tap Share, and select Copy Link.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Paste the link into TikSaveHub',
+      text: 'Visit TikSaveHub.com and paste the copied TikTok link into the download input field.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Click Download',
+      text: 'Click the Download button and wait a few seconds while the video is processed.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Save the HD video',
+      text: 'Choose the HD MP4 option (no watermark) and save the video file to your device.',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
 ---
 
 <Layout
@@ -92,7 +135,7 @@ const faqJsonLd = JSON.stringify({
   canonical="/tiktok-video-downloader-without-watermark"
   ogImage="/og-downloader.png"
   ogType="website"
-  jsonLd={faqJsonLd}
+  jsonLd={combinedJsonLd}
   appName="TikSaveHub — TikTok Video Downloader"
   appRating={{ value: '4.9', count: '12450' }}
 >

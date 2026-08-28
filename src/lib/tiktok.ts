@@ -1,5 +1,4 @@
 import { memo, memoSWR } from './cache';
-import { fetchTikTokWithYtDlp } from './ytdlp';
 import { resolveTikTokShortLink } from './normalize';
 
 const TIKWM_HOSTS = ['https://tikwm.com/api/', 'https://www.tikwm.com/api/'];
@@ -45,11 +44,6 @@ export interface TikTokVideoMeta {
   quality?: { width: number; height: number };
 }
 
-/**
- * Try TikTok's own item-detail API for the best (often 1080p) no-watermark
- * rendition. Returns null on any failure (challenge/blocked/parse) — callers
- * must fall back to tikwm's URL, never throw.
- */
 export async function fetchTikTokItemDetail(itemId: string): Promise<{ url: string; width: number; height: number; bitrate?: number } | null> {
   try {
     const controller = new AbortController();
@@ -138,7 +132,7 @@ async function resolveShortLink(url: string): Promise<string> {
       const finalUrl = cleanUrl(resp.url);
       if (/\/video\/\d+/.test(finalUrl)) return finalUrl;
     } catch {
-      // fall through and let the upstream API resolve the short link itself
+      // fall through
     }
     return cleanUrl(url);
   });
@@ -161,7 +155,6 @@ function raceFirstSuccess<T>(
 
   const started = new Array(fallbacks.length).fill(false);
   let pending = 0;
-  const lastErrors: unknown[] = [];
   const controllers: AbortController[] = [];
 
   const abortAll = () => {
@@ -180,15 +173,11 @@ function raceFirstSuccess<T>(
         (value) => {
           if (done) return;
           done = true;
-          if (timer) {
-            clearTimeout(timer);
-            timer = null;
-          }
+          if (timer) { clearTimeout(timer); timer = null; }
           abortAll();
           resolveFirst!(value);
         },
-        (error) => {
-          lastErrors.push(error);
+        () => {
           pending--;
           if (done) return;
           if (pending === 0) {
@@ -208,21 +197,14 @@ function raceFirstSuccess<T>(
     (value) => {
       if (done) return;
       done = true;
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
+      if (timer) { clearTimeout(timer); timer = null; }
       abortAll();
       resolveFirst!(value);
     },
-    (error) => {
-      lastErrors.push(error);
+    () => {
       pending--;
       if (done) return;
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
+      if (timer) { clearTimeout(timer); timer = null; }
       if (pending === 0) {
         done = true;
         abortAll();
@@ -234,7 +216,6 @@ function raceFirstSuccess<T>(
   );
 
   timer = setTimeout(startFallbacks, thresholdMs);
-
   return promise;
 }
 
@@ -263,29 +244,21 @@ async function fetchFromHost(host: string, videoUrl: string, signal?: AbortSigna
     signal?.removeEventListener('abort', onAbort);
   }
 
-  if (!response.ok) {
-    throw new Error(`Upstream API returned ${response.status}`);
-  }
+  if (!response.ok) throw new Error(`Upstream API returned ${response.status}`);
 
   const text = await response.text();
   let data: any;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    throw new Error('Upstream returned invalid response.');
-  }
+  try { data = JSON.parse(text); } catch { throw new Error('Upstream returned invalid response.'); }
 
   if (data.code !== 0 || !data.data) {
     throw new Error(data.msg || 'Could not retrieve video. The link may be private or expired.');
   }
-
   return data.data;
 }
 
 function normalize(data: any): TikTokVideoMeta {
   const musicSource = data.music_info ?? data.music;
   const author = data.author ?? {};
-
   return {
     play: data.play ?? data.hdplay ?? null,
     hdplay: data.hdplay ?? data.play ?? null,
@@ -333,31 +306,20 @@ export async function fetchTikTokMetaWithFallback(
   const { ttlMs = META_TTL_MS } = opts;
   const resolved = await resolveTikTokShortLink(videoUrl);
   return memoSWR(`tt:fb:${resolved}`, ttlMs, META_STALE_MS, async () => {
-    const retryable = (e: any): boolean => {
-      if (!e) return false;
-      const msg = String(e?.message ?? '');
-      if (msg.includes('invalid or expired') || msg.includes('Url parsing is failed')) return false;
-      return true;
-    };
-    try {
-      const data = await loadTikTokData(resolved);
-      const meta = normalize(data);
-      const itemId = itemIdFromUrl(resolved);
-      if (itemId) {
-        const direct = await fetchTikTokItemDetail(itemId);
-        if (direct?.url) {
-          meta.hdplay = direct.url;
-          if (direct.width && direct.height) {
-            meta.quality = { width: direct.width, height: direct.height };
-          }
+    const data = await loadTikTokData(resolved);
+    const meta = normalize(data);
+    // Try item-detail API for 1080p upgrade
+    const itemId = itemIdFromUrl(resolved);
+    if (itemId) {
+      const direct = await fetchTikTokItemDetail(itemId);
+      if (direct?.url) {
+        meta.hdplay = direct.url;
+        if (direct.width && direct.height) {
+          meta.quality = { width: direct.width, height: direct.height };
         }
       }
-      return meta;
-    } catch (primaryErr) {
-      if (!retryable(primaryErr)) throw primaryErr;
-      const ytData = await fetchTikTokWithYtDlp(resolved);
-      return normalize(ytData);
     }
+    return meta;
   });
 }
 

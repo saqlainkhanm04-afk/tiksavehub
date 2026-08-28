@@ -179,11 +179,6 @@
     pointer-events: none;
   }
 
-  .url-input {
-    padding-left: 42px !important;
-    padding-right: 88px !important;
-  }
-
   .paste-btn {
     position: absolute;
     right: 8px;
@@ -328,7 +323,7 @@
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-md);
-    border: 1px solid #f5b3b380;
+    border: 1px solid var(--color-error-soft);
     animation: fadeInUp 0.3s ease forwards;
   }
 
@@ -605,7 +600,7 @@
 
     try {
       const res = await fetch(`/api/download-mp3?url=${encodeURIComponent(url)}`);
-      const json = await res.json();
+      const json = await res.json() as { success?: boolean; error?: string };
 
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Failed to fetch audio. Please try again.');

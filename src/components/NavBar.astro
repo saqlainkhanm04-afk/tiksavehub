@@ -44,7 +44,13 @@ const showSectionNav = isToolPage(currentPath);
         <span class="x-nav-icon" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </span>
-        X / Twitter
+        Twitter
+      </a>
+      <a href="/snapchat-downloader" class="nav-link nav-link-sc" id="nav-link-sc">
+        <span class="sc-nav-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </span>
+        Snapchat
       </a>
       <a href="/blog" class="nav-link nav-link-blog" id="nav-link-blog">
         <span class="blog-nav-icon" aria-hidden="true">
@@ -91,7 +97,7 @@ const showSectionNav = isToolPage(currentPath);
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
         </button>
-      <a href={downloadHref} class="btn-nav" id="nav-cta-download">Download Free</a>
+      <a href={downloadHref} class="btn-nav nav-cta-download" id="nav-cta-download">Download Free</a>
     </div>
     </div>
 
@@ -140,7 +146,13 @@ const showSectionNav = isToolPage(currentPath);
         <span class="x-nav-icon" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </span>
-        X / Twitter
+        Twitter
+      </a>
+      <a href="/snapchat-downloader" class="mobile-nav-link mobile-nav-link-sc" id="mob-link-sc">
+        <span class="sc-nav-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </span>
+        Snapchat
       </a>
       <a href="/blog" class="mobile-nav-link mobile-nav-link-blog" id="mob-link-blog">
         <span class="blog-nav-icon" aria-hidden="true">
@@ -311,6 +323,87 @@ const showSectionNav = isToolPage(currentPath);
   .nav-link:hover {
     color: var(--color-ink);
     background-color: var(--color-canvas-soft-2);
+  }
+
+  /* ─── Snapchat Nav Button ─── */
+  .nav-link-sc {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(255, 252, 0, 0.12), rgba(255, 200, 0, 0.12)) !important;
+    border: 1px solid rgba(255, 200, 0, 0.25) !important;
+    color: #ca8a04 !important;
+    font-weight: 600 !important;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation: sc-nav-pulse 2s ease-in-out infinite;
+  }
+
+  .nav-link-sc::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 252, 0, 0.15), rgba(255, 200, 0, 0.15));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav-link-sc:hover {
+    transform: scale(1.05) !important;
+    box-shadow:
+      0 0 20px rgba(255, 252, 0, 0.3),
+      0 0 40px rgba(255, 200, 0, 0.15) !important;
+    border-color: rgba(255, 200, 0, 0.5) !important;
+    color: #a16207 !important;
+    animation: none !important;
+  }
+
+  .nav-link-sc:hover::before { opacity: 1; }
+  .nav-link-sc:active { transform: scale(0.92) !important; transition-duration: 0.1s !important; }
+  .nav-link-sc > * { position: relative; z-index: 1; }
+  .nav-link-sc:hover .sc-nav-icon { animation: sc-icon-bounce 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+  .sc-nav-icon { display: flex; align-items: center; transition: transform 0.2s ease; }
+
+  @keyframes sc-nav-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 252, 0, 0); } 50% { box-shadow: 0 0 8px 2px rgba(255, 252, 0, 0.15); } }
+  @keyframes sc-icon-bounce { 0% { transform: translateY(0) scale(1); } 30% { transform: translateY(-3px) scale(1.15); } 50% { transform: translateY(-1px) scale(1.05); } 70% { transform: translateY(-2px) scale(1.1); } 100% { transform: translateY(0) scale(1); } }
+
+  .dark .nav-link-sc { color: #facc15 !important; }
+  .dark .nav-link-sc:hover { color: #fde047 !important; border-color: rgba(250, 204, 21, 0.5) !important; }
+
+  /* ─── Mobile Snapchat Nav Link ─── */
+  .mobile-nav-link-sc {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    color: #ca8a04 !important;
+    font-weight: 600 !important;
+    background: linear-gradient(135deg, rgba(255, 252, 0, 0.08), rgba(255, 200, 0, 0.08)) !important;
+    border: 1px solid rgba(255, 200, 0, 0.2) !important;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease !important;
+    animation: sc-nav-pulse 2s ease-in-out infinite;
+  }
+
+  .mobile-nav-link-sc:hover {
+    background: linear-gradient(135deg, rgba(255, 252, 0, 0.15), rgba(255, 200, 0, 0.15)) !important;
+    border-color: rgba(255, 200, 0, 0.4) !important;
+    transform: translateX(4px);
+  }
+
+  /* ─── Snapchat Click Animation ─── */
+  .nav-link-sc.sc-clicked,
+  .mobile-nav-link-sc.sc-clicked {
+    animation: sc-click-pop 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
+  }
+
+  @keyframes sc-click-pop {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 252, 0, 0.4); }
+    30% { transform: scale(0.88); box-shadow: 0 0 0 6px rgba(255, 252, 0, 0); }
+    60% { transform: scale(1.08); box-shadow: 0 0 20px 4px rgba(255, 252, 0, 0.2); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 252, 0, 0); }
   }
 
   /* ─── Blog Nav Button ─── */
@@ -807,6 +900,26 @@ const showSectionNav = isToolPage(currentPath);
     align-items: center;
     gap: var(--spacing-xs);
     flex-shrink: 0;
+  }
+
+  /* ─── Active Nav Link State ─── */
+  .nav-link-active {
+    color: var(--color-ink) !important;
+    background-color: var(--color-canvas-soft-2) !important;
+    font-weight: 500 !important;
+  }
+  html.dark .nav-link-active {
+    color: #fafafa !important;
+    background-color: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* ─── Download Free CTA — never truncate ─── */
+  .nav-cta-download {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-width: 0;
+    width: auto;
+    padding-inline: var(--spacing-sm) !important;
   }
 
   .nav-hamburger {
@@ -1450,6 +1563,15 @@ const showSectionNav = isToolPage(currentPath);
     });
   });
 
+  // Snapchat nav button click animation
+  const scNavLinks = document.querySelectorAll('.nav-link-sc, .mobile-nav-link-sc');
+  scNavLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      link.classList.add('sc-clicked');
+      setTimeout(() => link.classList.remove('sc-clicked'), 400);
+    });
+  });
+
   // Dark mode toggle with animation
   const themeToggle = document.getElementById('theme-toggle');
   const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
@@ -1466,4 +1588,42 @@ const showSectionNav = isToolPage(currentPath);
 
   themeToggle?.addEventListener('click', () => toggleTheme(themeToggle));
   mobileThemeToggle?.addEventListener('click', () => toggleTheme(mobileThemeToggle));
+
+  // Active nav link highlighting based on current route
+  (function setActiveNavLink() {
+    const path = window.location.pathname;
+    const linkMap: Record<string, string[]> = {
+      'nav-link-downloader': ['/tiktok-video-downloader-without-watermark'],
+      'nav-link-mp3': ['/tiktok-to-mp3'],
+      'nav-link-ig': ['/instagram-video-downloader-without-watermark', '/instagram-reels-downloader-without-watermark', '/instagram-story-downloader-without-watermark', '/instagram-audio-downloader'],
+      'nav-link-fb': ['/facebook-video-downloader', '/facebook-reels-downloader', '/facebook-to-mp3', '/facebook-story-downloader', '/facebook-photo-downloader'],
+      'nav-link-x': ['/x-video-downloader'],
+      'nav-link-sc': ['/snapchat-downloader', '/snapchat-story-downloader', '/snapchat-to-mp3'],
+      'nav-link-blog': ['/blog'],
+    };
+
+    const mobMap: Record<string, string[]> = {
+      'mob-link-downloader': ['/tiktok-video-downloader-without-watermark'],
+      'mob-link-mp3': ['/tiktok-to-mp3'],
+      'mob-link-ig': ['/instagram-video-downloader-without-watermark', '/instagram-reels-downloader-without-watermark', '/instagram-story-downloader-without-watermark', '/instagram-audio-downloader'],
+      'mob-link-fb': ['/facebook-video-downloader', '/facebook-reels-downloader', '/facebook-to-mp3', '/facebook-story-downloader', '/facebook-photo-downloader'],
+      'mob-link-x': ['/x-video-downloader'],
+      'mob-link-sc': ['/snapchat-downloader', '/snapchat-story-downloader', '/snapchat-to-mp3'],
+      'mob-link-blog': ['/blog'],
+    };
+
+    function applyActive(map: Record<string, string[]>) {
+      for (const [id, routes] of Object.entries(map)) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const isActive = routes.some(r => path === r || path.startsWith(r + '/'));
+        if (isActive) {
+          el.classList.add('nav-link-active');
+        }
+      }
+    }
+
+    applyActive(linkMap);
+    applyActive(mobMap);
+  })();
 </script>

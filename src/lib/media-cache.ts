@@ -1,4 +1,11 @@
-import { kvStart, kvSet, kvDel, kvGetRaw } from './kv';
+/**
+ * Media cache — backed by KV (Cloudflare) or in-memory Map (dev).
+ * No disk I/O, no Node.js APIs.
+ */
+
+import { kvSet, kvDel, kvGetRaw, kvInit } from './kv';
+import type { CfEnv } from './env';
+import { envNum } from './env';
 
 export interface MediaCacheValue {
   args: Record<string, string>;
@@ -11,55 +18,73 @@ export interface MediaCacheValue {
   provider?: 'primary' | 'fallback' | 'ytdlp' | 'from_cache';
 }
 
-const MEDIA_TTL_MS = Number(process.env.MEDIA_TTL_MS || 24 * 60 * 60 * 1000);
-const INSTAGRAM_MEDIA_TTL_MS = Number(process.env.INSTAGRAM_MEDIA_TTL_MS || 12 * 60 * 60 * 1000);
-const YTDLP_TTL_MS = Number(process.env.YTDLP_TTL_MS || 48 * 60 * 60 * 1000);
-const MAX_CACHE_AGE_MS = Number(process.env.MAX_CACHE_AGE_MS || 48 * 60 * 60 * 1000);
+export function initMediaCache(env: CfEnv): void {
+  kvInit(env.CACHE ?? null);
+}
+
+const DEFAULT_MEDIA_TTL = 24 * 60 * 60 * 1000;
+const DEFAULT_IG_TTL = 12 * 60 * 60 * 1000;
+const DEFAULT_MAX_AGE = 48 * 60 * 60 * 1000;
 const VALIDATE_THRESHOLD_MS = 6 * 60 * 60 * 1000;
 const PROBE_TIMEOUT_MS = 8_000;
 
-kvStart();
+let mediaTtl = DEFAULT_MEDIA_TTL;
+let igTtl = DEFAULT_IG_TTL;
+let maxCacheAge = DEFAULT_MAX_AGE;
+
+export function configureMediaCache(env: CfEnv): void {
+  mediaTtl = envNum(env, 'MEDIA_TTL_MS', DEFAULT_MEDIA_TTL);
+  igTtl = envNum(env, 'INSTAGRAM_MEDIA_TTL_MS', DEFAULT_IG_TTL);
+  maxCacheAge = envNum(env, 'MAX_CACHE_AGE_MS', DEFAULT_MAX_AGE);
+}
 
 export function mediaKey(prefix: string, canonical: string, mode: string): string {
   return `media:${prefix}:${mode}:${canonical}`;
 }
 
 export function ttlForPlatform(platform: string): number {
-  if (platform === 'instagram') return INSTAGRAM_MEDIA_TTL_MS;
-  if (platform === 'tiktok') return MEDIA_TTL_MS;
-  return MEDIA_TTL_MS;
+  if (platform === 'instagram') return igTtl;
+  return mediaTtl;
 }
 
-export function cacheRead(prefix: string, canonical: string, mode: string): MediaCacheValue | null {
+export async function cacheRead(
+  prefix: string,
+  canonical: string,
+  mode: string
+): Promise<MediaCacheValue | null> {
   const key = mediaKey(prefix, canonical, mode);
-  const entry = kvGetRaw<MediaCacheValue>(key);
+  const entry = await kvGetRaw<MediaCacheValue>(key);
   if (!entry) return null;
   if (entry.exp <= Date.now()) return null;
   return entry.value;
 }
 
-export function cacheWrite(
+export async function cacheWrite(
   platform: string,
   prefix: string,
   canonical: string,
   mode: string,
   value: Omit<MediaCacheValue, 'extractedAt' | 'expiresAt'>
-): MediaCacheValue {
+): Promise<MediaCacheValue> {
   const now = Date.now();
   const ttl = ttlForPlatform(platform);
-  const expiresAt = Math.min(now + ttl, now + MAX_CACHE_AGE_MS);
+  const expiresAt = Math.min(now + ttl, now + maxCacheAge);
   const stored: MediaCacheValue = {
     ...value,
     provider: 'from_cache',
     extractedAt: now,
     expiresAt,
   };
-  kvSet(mediaKey(prefix, canonical, mode), stored, ttl);
+  await kvSet(mediaKey(prefix, canonical, mode), stored, ttl);
   return stored;
 }
 
-export function invalidateCache(prefix: string, canonical: string, mode: string): void {
-  kvDel(mediaKey(prefix, canonical, mode));
+export async function invalidateCache(
+  prefix: string,
+  canonical: string,
+  mode: string
+): Promise<void> {
+  await kvDel(mediaKey(prefix, canonical, mode));
 }
 
 async function probeUrl(url: string): Promise<boolean> {
@@ -91,19 +116,19 @@ export async function lazilyValidate(
 
   try {
     const ok = await probeUrl(value.mediaUrl);
-    if (!ok) invalidateCache(prefix, canonical, mode);
+    if (!ok) await invalidateCache(prefix, canonical, mode);
   } catch {
-    // Validation is best-effort; leave the entry as-is.
+    // best-effort
   }
 }
 
-export function cacheHit(
+export async function cacheHit(
   _platform: string,
   prefix: string,
   canonical: string,
   mode: string
-): MediaCacheValue | null {
-  const value = cacheRead(prefix, canonical, mode);
+): Promise<MediaCacheValue | null> {
+  const value = await cacheRead(prefix, canonical, mode);
   if (!value) return null;
   lazilyValidate(prefix, canonical, mode, value).catch(() => {});
   return value;
@@ -119,4 +144,4 @@ export function inFlightOn<T>(key: string, task: () => Promise<T>): Promise<T> {
   return promise;
 }
 
-export { MEDIA_TTL_MS, INSTAGRAM_MEDIA_TTL_MS, YTDLP_TTL_MS };
+export { mediaTtl as MEDIA_TTL_MS, igTtl as INSTAGRAM_MEDIA_TTL_MS };

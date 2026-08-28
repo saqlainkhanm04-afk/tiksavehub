@@ -1,5 +1,5 @@
 import { memoSWR } from './cache';
-import { fetchFacebookWithYtDlp, fetchFacebookAudioWithYtDlp } from './ytdlp';
+import { type CfEnv, envStr } from './env';
 import {
   type PhotoCandidate,
   MIN_FULL_PHOTO_SCORE,
@@ -22,8 +22,11 @@ const UA_DESKTOP =
 const UA_IPHONE =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 
+let _env: CfEnv = {};
+export function setFacebookEnv(env: CfEnv) { _env = env; }
+
 function getFbCookie(): string {
-  return process.env.FB_COOKIES || '';
+  return envStr(_env, 'FB_COOKIES');
 }
 
 export interface FacebookMedia {
@@ -478,28 +481,36 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
       }
     });
 
-    const ytTask = startWhenPageDelays(2500, async () => {
-      try {
-        return await fetchFacebookWithYtDlp(inputUrl);
-      } catch (err: any) {
-        errors.push(err?.message || 'yt-dlp failed.');
-        return null;
-      }
-    });
-
-    const [pageResult, embedResult, ytResult] = await Promise.allSettled([pageTask, embedTask, ytTask]);
+    const [pageResult, embedResult] = await Promise.allSettled([pageTask, embedTask]);
 
     if (pageResult.status === 'rejected') throw pageResult.reason;
 
     if (pageResult.value) {
       const media = pageResult.value;
+      let cover = media.cover ?? '';
+
+      // Page may return video URLs but no thumbnail (flagged/throttled IPs
+      // serve shells without preferred_thumbnail/og:image). Grab cover from
+      // whichever embed/yt-dlp result already completed, or do a quick
+      // desktop-page probe.
+      if (!cover) {
+        const embedMedia = embedResult.status === 'fulfilled' ? embedResult.value : null;
+        cover = embedMedia?.cover || '';
+        if (!cover) {
+          try {
+            const extra = await fetchDesktopPageMeta(pageUrl);
+            cover = extra?.cover || '';
+          } catch { /* best effort */ }
+        }
+      }
+
       return {
         title: media.title ?? 'Facebook Video',
-        cover: media.cover ?? '',
+        cover,
         duration: media.duration ?? 0,
         hdUrl: media.hdUrl ?? null,
         sdUrl: media.sdUrl ?? null,
-        author: { name: media.author?.name ?? '', avatar: media.author?.avatar ?? '' },
+        author: { name: media.author?.name ?? '', avatar: media.author?.avatar ?? cover },
         like_count: media.like_count ?? 0,
         comment_count: media.comment_count ?? 0,
         share_count: media.share_count ?? 0,
@@ -508,8 +519,7 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
     }
 
     const winner =
-      (embedResult.status === 'fulfilled' ? embedResult.value : null) ||
-      (ytResult.status === 'fulfilled' ? ytResult.value : null);
+      (embedResult.status === 'fulfilled' ? embedResult.value : null) as FacebookMedia | null;
     if (winner) {
       return {
         title: winner.title || 'Facebook Video',
@@ -538,11 +548,42 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
  * video pages, so we try several URL variants in parallel — the story
  * permalink (story.php?story_fbid=…&id=…), the classic video page
  * (video.php?v=…), and yt-dlp — and use the first one that yields media.
+ * Also tries the reader proxy as a last resort for flagged IPs.
  */
 export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedia> {
   return memoSWR(`fb:story:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
     const errors: string[] = [];
 
+    // First: try to extract story segments directly from the page HTML.
+    // The story.php page may contain data-sjs blobs even when
+    // fetchFacebookMedia's extractMediaFromPageHtml doesn't find playable_url.
+    try {
+      const { html } = await fetchPage(inputUrl);
+      const segments = parseStoryPage(html);
+      const videoSeg = segments.find((s) => s.kind === 'video' && (s.hdUrl || s.sdUrl));
+      if (videoSeg) {
+        return {
+          title: videoSeg.title || 'Facebook Story',
+          cover: videoSeg.cover,
+          duration: videoSeg.duration,
+          hdUrl: videoSeg.hdUrl ?? null,
+          sdUrl: videoSeg.sdUrl ?? null,
+          author: { name: '', avatar: videoSeg.cover },
+          like_count: 0,
+          comment_count: 0,
+          share_count: 0,
+          view_count: 0,
+        };
+      }
+      // Check if the page is login-walled (story pages behind login)
+      if (detectUnavailable(html, inputUrl) === FB_ERR.LOGIN_REQUIRED) {
+        errors.push(`[${FB_ERR.LOGIN_REQUIRED}] Story page requires login.`);
+      }
+    } catch (err: any) {
+      errors.push(err?.message || 'Direct story page parse failed.');
+    }
+
+    // Second: try the classic video pipeline (page → embed → yt-dlp).
     const candidates = new Set<string>([inputUrl]);
     const storyFbid = inputUrl.match(/[?&]story_fbid=(\d+)/)?.[1];
     if (storyFbid) {
@@ -572,14 +613,36 @@ export async function fetchFacebookStory(inputUrl: string): Promise<FacebookMedi
       }
     }
 
-    const last = errors[errors.length - 1] || 'Could not load this story.';
-    if (errors.some((e) => e.includes(FB_ERR.LOGIN_REQUIRED))) {
-      throw coded('This story requires a Facebook login to view.', FB_ERR.LOGIN_REQUIRED);
+    // Third: try the reader proxy as a last resort for flagged IPs.
+    const proxyHtml = await fetchStoryViaReaderProxy(inputUrl);
+    if (proxyHtml && proxyHtml.length > 500) {
+      const proxySegments = parseStoryPage(proxyHtml);
+      const proxyVideo = proxySegments.find((s) => s.kind === 'video' && (s.hdUrl || s.sdUrl));
+      if (proxyVideo) {
+        return {
+          title: proxyVideo.title || 'Facebook Story',
+          cover: proxyVideo.cover,
+          duration: proxyVideo.duration,
+          hdUrl: proxyVideo.hdUrl ?? null,
+          sdUrl: proxyVideo.sdUrl ?? null,
+          author: { name: '', avatar: proxyVideo.cover },
+          like_count: 0,
+          comment_count: 0,
+          share_count: 0,
+          view_count: 0,
+        };
+      }
     }
+
+    // All paths exhausted — determine the best error message.
+    if (errors.some((e) => e.includes(FB_ERR.LOGIN_REQUIRED))) {
+      throw coded('This story requires a Facebook login to view (private or restricted account). Please try another public story link.', FB_ERR.LOGIN_REQUIRED);
+    }
+    const last = errors[errors.length - 1] || 'Could not load this story.';
     if (last.toLowerCase().includes('private') || last.toLowerCase().includes('deleted')) {
       throw coded('This story is private or was deleted.', FB_ERR.NOT_AVAILABLE);
     }
-    throw coded('Could not load this Facebook story.', FB_ERR.NO_MEDIA);
+    throw coded('Could not load this Facebook story. It may have expired or require login.', FB_ERR.NO_MEDIA);
   });
 }
 
@@ -737,14 +800,47 @@ export function parseStoryPage(html: string): FacebookStorySegment[] {
 }
 
 /**
+ * Try fetching a story page through the reader proxy (r.jina.ai) which uses
+ * a clean (unflagged) IP. Returns the raw HTML so parseStoryPage can extract
+ * data-sjs blobs. Never throws — returns empty string on failure.
+ */
+async function fetchStoryViaReaderProxy(url: string): Promise<string> {
+  const attempt = async (u: string): Promise<string> => {
+    try {
+      const resp = await fetch(`https://r.jina.ai/${u}`, {
+        headers: {
+          'Accept': 'text/html',
+          'User-Agent': 'Mozilla/5.0 (compatible; TikSaveHub/1.0)',
+        },
+        signal: AbortSignal.timeout(READER_FALLBACK_TIMEOUT_MS),
+      });
+      if (!resp.ok) return '';
+      return await resp.text();
+    } catch {
+      return '';
+    }
+  };
+
+  // Try the original URL first, then one host variant — reader proxies
+  // rate-limit, so keep attempts low.
+  let html = await attempt(url);
+  if (!html || html.length < 500) {
+    const variants = hostVariantsOf(url);
+    if (variants.length > 1) {
+      html = await attempt(variants[1]);
+    }
+  }
+  return html;
+}
+
+/**
  * Fetch EVERY segment of a Facebook story — multi-segment stories carry
  * several videos/photos in one story, and previously only the first video was
  * ever extracted. Story pages are fetched across host variants and user agents
  * in PARALLEL (flagged IPs shell some variants; the variant that yields the
  * most segments wins — same pattern as the photo pipeline). When no page
- * exposes the attachments JSON (heavily shelled pages), fall back to the
- * classic single-video pipeline (page → embed → yt-dlp) so single-segment
- * stories keep working unchanged.
+ * exposes the attachments JSON (heavily shelled pages), try the reader proxy
+ * (clean IP) as a fallback before falling to the classic single-video pipeline.
  */
 export async function fetchFacebookStorySet(inputUrl: string): Promise<FacebookStorySet> {
   return memoSWR(`fb:storyset:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
@@ -767,8 +863,20 @@ export async function fetchFacebookStorySet(inputUrl: string): Promise<FacebookS
     }
 
     if (bestSegments.length === 0) {
-      // No attachments JSON anywhere (flag-walled shells) — fall back to the
-      // classic single-video pipeline.
+      // No attachments JSON anywhere from native fetches (flag-walled shells).
+      // Try the reader proxy — it uses a clean IP that can see story data.
+      const proxyHtml = await fetchStoryViaReaderProxy(inputUrl);
+      if (proxyHtml && proxyHtml.length > 500) {
+        const proxySegments = parseStoryPage(proxyHtml);
+        if (proxySegments.length > 0) {
+          bestSegments = proxySegments;
+          bestHtml = proxyHtml;
+        }
+      }
+    }
+
+    if (bestSegments.length === 0) {
+      // Still no segments — fall back to the classic single-video pipeline.
       const single = await fetchFacebookStory(inputUrl);
       if (!single.hdUrl && !single.sdUrl) {
         throw coded('Could not load this Facebook story.', FB_ERR.NO_MEDIA);
@@ -809,12 +917,11 @@ export async function fetchFacebookStorySet(inputUrl: string): Promise<FacebookS
   });
 }
 
-/** Best-effort audio track extraction (yt-dlp bestaudio). */
-export async function fetchFacebookAudio(inputUrl: string): Promise<FacebookAudioResult | null> {
+/** Best-effort audio track extraction via cobalt.tools API. */
+export async function fetchFacebookAudio(inputUrl: string, turnstileToken?: string): Promise<FacebookAudioResult | null> {
   try {
-    const audio = await fetchFacebookAudioWithYtDlp(inputUrl);
-    if (!audio?.url) return null;
-    return { url: audio.url, ext: audio.ext && audio.ext !== 'unknown' ? audio.ext : 'm4a' };
+    const { cobaltExtractAudio } = await import('./cobalt');
+    return await cobaltExtractAudio(inputUrl, turnstileToken);
   } catch {
     return null;
   }

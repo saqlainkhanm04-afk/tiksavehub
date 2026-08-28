@@ -14,6 +14,9 @@ export const TOOL_PAGES = [
   '/facebook-story-downloader',
   '/facebook-photo-downloader',
   '/x-video-downloader',
+  '/snapchat-downloader',
+  '/snapchat-story-downloader',
+  '/snapchat-to-mp3',
 ];
 
 export const DEFAULT_TOOL_PAGE = '/tiktok-video-downloader-without-watermark';

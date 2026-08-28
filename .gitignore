@@ -31,6 +31,9 @@ data/
 .env
 .env.production
 
+# dev probe scripts and test captures
+Temp/
+
 # macOS-specific files
 .DS_Store
 

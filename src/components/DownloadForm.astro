@@ -186,11 +186,6 @@
     pointer-events: none;
   }
 
-  .url-input {
-    padding-left: 42px !important;
-    padding-right: 88px !important;
-  }
-
   .paste-btn {
     position: absolute;
     right: 8px;
@@ -331,7 +326,7 @@
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-md);
-    border: 1px solid #f5b3b380;
+    border: 1px solid var(--color-error-soft);
     animation: fadeInUp 0.3s ease forwards;
   }
 
@@ -443,12 +438,12 @@
           </div>
           <div class="result-info">
             <div class="result-actions">
-          <button class="dl-tile dl-tile-sd" id="btn-dl-sd" type="button">
+          <button class="dl-tile dl-tile-sd" id="btn-dl-sd" type="button" aria-label="Download video without watermark">
             <span class="dl-tile-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
             <span class="dl-tile-label">Without Watermark</span>
             <span class="dl-proc-bar"></span>
           </button>
-          <button class="dl-tile dl-tile-hd" id="btn-dl-hd" type="button">
+          <button class="dl-tile dl-tile-hd" id="btn-dl-hd" type="button" aria-label="Download HD video without watermark">
             <span class="dl-tile-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
             <span class="dl-tile-label">Without Watermark <strong>HD</strong></span>
             <span class="dl-proc-bar"></span>

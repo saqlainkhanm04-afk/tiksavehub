@@ -1,0 +1,6 @@
+name = "tiksavehub"
+compatibility_date = "2026-08-28"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true

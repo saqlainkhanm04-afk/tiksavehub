@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Facebook video downloader guide cover">
+  <defs>
+    <linearGradient id="mesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1877f2" stop-opacity="0.2"/>
+      <stop offset="0.5" stop-color="#7c3aed" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ec4899" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="fb-icon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1877f2"/>
+      <stop offset="1" stop-color="#0d5bc4"/>
+    </linearGradient>
+    <linearGradient id="arrow-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#ec4899"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#mesh)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="700" cy="80" r="72" fill="none" stroke="#1877f2" stroke-opacity="0.14" stroke-width="2"/>
+  <circle cx="100" cy="380" r="58" fill="none" stroke="#7c3aed" stroke-opacity="0.12" stroke-width="2"/>
+  <circle cx="680" cy="360" r="44" fill="none" stroke="#ec4899" stroke-opacity="0.1" stroke-width="2"/>
+
+  <!-- Facebook "f" icon -->
+  <g transform="translate(160,85)">
+    <rect width="180" height="180" rx="40" fill="url(#fb-icon)" opacity="0.95"/>
+    <path d="M126 90c0-22 18-40 40-40s40 18 40 40-18 40-40 40v24h-24v-24h-16V90z" fill="#ffffff" opacity="0"/>
+    <text x="108" y="148" font-family="Arial, sans-serif" font-size="130" font-weight="700" fill="#ffffff" text-anchor="middle">f</text>
+  </g>
+
+  <!-- Download arrow icon -->
+  <g transform="translate(370,120)">
+    <circle cx="50" cy="50" r="46" fill="url(#arrow-grad)" opacity="0.9"/>
+    <path d="M50 28v36M34 50l16 16 16-16" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="28" y1="72" x2="72" y2="72" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Right text column -->
+  <text x="560" y="148" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff" letter-spacing="-1.2" text-anchor="middle">Facebook Video</text>
+  <text x="560" y="184" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff" letter-spacing="-1.2" text-anchor="middle">Downloader Guide</text>
+  <text x="560" y="218" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="500" fill="#d4d4d8" text-anchor="middle">HD · No Watermark · Free</text>
+
+  <!-- Feature badges row 1 -->
+  <rect x="430" y="252" width="150" height="42" rx="13" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="458" cy="273" r="10" fill="#1877f2"/>
+  <path d="M453 273l4 4 6-7" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="478" y="278" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#18181b">HD 1080p</text>
+
+  <rect x="596" y="252" width="170" height="42" rx="13" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="624" cy="273" r="10" fill="#7c3aed"/>
+  <path d="M619 273l4 4 6-7" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="644" y="278" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#18181b">No Watermark</text>
+
+  <!-- Feature badges row 2 -->
+  <rect x="430" y="304" width="150" height="42" rx="13" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="458" cy="325" r="10" fill="#10b981"/>
+  <path d="M453 325l4 4 6-7" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="478" y="330" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#18181b">100% Free</text>
+
+  <rect x="596" y="304" width="170" height="42" rx="13" fill="#ffffff" fill-opacity="0.94"/>
+  <circle cx="624" cy="325" r="10" fill="#ec4899"/>
+  <path d="M619 325l4 4 6-7" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="644" y="330" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#18181b">All Devices</text>
+
+  <!-- Bottom CTA pill -->
+  <rect x="430" y="366" width="336" height="38" rx="19" fill="#171717"/>
+  <text x="598" y="390" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">Download any Facebook video &#8594;</text>
+</svg>

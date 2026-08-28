@@ -61,29 +61,63 @@ const faqData = [
   },
 ];
 
-const faqJsonLd = JSON.stringify({
+const combinedJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.a.replace(/<[^>]*>/g, ''),
+  '@graph': [
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqData.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a.replace(/<[^>]*>/g, ''),
+        },
+      })),
     },
-  })),
+    {
+      '@type': 'HowTo',
+      name: 'How to Download Snapchat Videos',
+      description: 'Step-by-step guide to download Snapchat videos and Spotlight clips in HD quality using TikSaveHub \u2014 free, no sign-up required.',
+      totalTime: 'PT1M',
+      step: [
+        {
+          '@type': 'HowToStep',
+          name: 'Copy the Snapchat link',
+          text: 'Open the Snapchat app or website, find the video or Spotlight you want to download, and copy the URL from the share button or address bar.',
+          url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Paste the link into TikSaveHub',
+          text: 'Go to TikSaveHub and paste the copied Snapchat link into the input field at the top of the page. Use the Paste button to grab it from your clipboard.',
+          url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
+        },
+        {
+          '@type': 'HowToStep',
+          name: 'Download HD or SD',
+          text: 'Click the Download button. Choose Download HD Video or Download SD Video to save the MP4 to your device. You can also convert to MP3 audio.',
+          url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
+        },
+      ],
+      tool: [
+        { '@type': 'HowToTool', name: 'TikSaveHub' },
+        { '@type': 'HowToTool', name: 'Web Browser' },
+      ],
+    },
+  ],
 });
 ---
 
 <Layout
-  title="Snapchat Video Downloader — HD Free Download Spotlight & Stories 2026 | TikSaveHub"
+  title="Snapchat Video Downloader — HD Free Download Spotlight & Stories | TikSaveHub"
   description="Download Snapchat videos, Spotlight clips, and Stories in HD — free, fast, no sign-up. Save Snapchat videos as MP4 or extract audio as MP3. Works on iPhone, Android, and desktop."
   keywords="snapchat video downloader, download snapchat videos, snapchat spotlight downloader, save snapchat videos, snapchat video download online, snapchat downloader hd, download snapchat spotlight, snapchat story downloader, snapchat video saver, download snapchat on iphone, download snapchat on android"
   canonical="/snapchat-downloader"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="snapchat"
-  jsonLd={faqJsonLd}
+  jsonLd={combinedJsonLd}
   appName="TikSaveHub — Snapchat Video Downloader"
   appRating={{ value: '4.8', count: '4260' }}
 >
@@ -94,39 +128,6 @@ const faqJsonLd = JSON.stringify({
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
       { "@type": "ListItem", "position": 2, "name": "Snapchat Video Downloader", "item": "https://tiksavehub.com/snapchat-downloader" }
-    ]
-  })} />
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    "name": "How to Download Snapchat Videos",
-    "description": "Step-by-step guide to download Snapchat videos and Spotlight clips in HD quality using TikSaveHub — free, no sign-up required.",
-    "totalTime": "PT1M",
-    "step": [
-      {
-        "@type": "HowToStep",
-        "name": "Copy the Snapchat link",
-        "text": "Open the Snapchat app or website, find the video or Spotlight you want to download, and copy the URL from the share button or address bar.",
-        "url": "https://tiksavehub.com/snapchat-downloader#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Paste the link into TikSaveHub",
-        "text": "Go to TikSaveHub and paste the copied Snapchat link into the input field at the top of the page. Use the Paste button to grab it from your clipboard.",
-        "url": "https://tiksavehub.com/snapchat-downloader#how-it-works"
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Download HD or SD",
-        "text": "Click the Download button. Choose 'Download HD Video' or 'Download SD Video' to save the MP4 to your device. You can also convert to MP3 audio.",
-        "url": "https://tiksavehub.com/snapchat-downloader#how-it-works"
-      }
-    ],
-    "tool": [
-      {
-        "@type": "HowToTool",
-        "name": "Web Browser"
-      }
     ]
   })} />
 

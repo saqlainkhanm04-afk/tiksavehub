@@ -200,8 +200,7 @@ const { eyebrow = 'FAQ', headline = 'Frequently asked questions.', faqs, prefix 
 </style>
 
 <script>
-  const root = document.querySelector('.dl-faq-list') as HTMLElement | null;
-  if (root) {
+  document.querySelectorAll<HTMLElement>('.dl-faq-list').forEach((root) => {
     const triggers = root.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
     triggers.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -226,5 +225,5 @@ const { eyebrow = 'FAQ', headline = 'Frequently asked questions.', faqs, prefix 
         }
       });
     });
-  }
+  });
 </script>

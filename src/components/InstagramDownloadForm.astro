@@ -78,6 +78,9 @@ const meta = typeMeta[type];
 ---
 
 <section id="download-form" class="download-form-section" data-type={type}>
+  <!-- Cloudflare Turnstile — invisible widget for cobalt API auth -->
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <div id="cf-turnstile-container" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true"></div>
   <div class="download-form-wrap">
     <nav class="ig-tabs" aria-label="Choose Instagram download type">
       {
@@ -520,11 +523,6 @@ const meta = typeMeta[type];
     pointer-events: none;
   }
 
-  .url-input {
-    padding-left: 42px !important;
-    padding-right: 88px !important;
-  }
-
   .paste-btn {
     position: absolute;
     right: 8px;
@@ -665,7 +663,7 @@ const meta = typeMeta[type];
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-md);
-    border: 1px solid #f5b3b380;
+    border: 1px solid var(--color-error-soft);
     animation: fadeInUp 0.3s ease forwards;
   }
 
@@ -716,6 +714,37 @@ const meta = typeMeta[type];
   const section = document.getElementById('download-form') as HTMLElement;
   const currentTabType = (section?.dataset.type || 'video') as 'video' | 'reels' | 'story' | 'audio';
   const typeLabel = currentTabType.charAt(0).toUpperCase() + currentTabType.slice(1);
+
+  // --- Cloudflare Turnstile for cobalt API auth ---
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  let turnstileToken: string | null = null;
+  let turnstileReady = false;
+  function initTurnstile() {
+    if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
+    const c = document.getElementById('cf-turnstile-container');
+    if (!c) return;
+    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
+      'error-callback': () => { turnstileToken = null; turnstileReady = false; },
+      'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
+    });
+  }
+  initTurnstile();
+  function getTurnstileToken(): Promise<string | null> {
+    return new Promise((resolve) => {
+      if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
+      const c = document.getElementById('cf-turnstile-container');
+      if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      c.innerHTML = '';
+      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+        callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
+        'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+        'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
+      });
+      setTimeout(() => resolve(turnstileToken), 8000);
+    });
+  }
+  // --- End Turnstile ---
 
   document.querySelectorAll<HTMLButtonElement>('.paste-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -779,26 +808,26 @@ const meta = typeMeta[type];
     let actions = '';
     if (currentTabType === 'audio') {
       actions = `
-        <button class="dl-tile dl-tile-hd" id="btn-dl-audio" type="button">
+        <button class="dl-tile dl-tile-hd" id="btn-dl-audio" type="button" aria-label="Download Instagram audio as MP3">
           <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
           <span class="dl-tile-label">Download <strong>MP3 Audio</strong></span>
           <span class="dl-proc-bar"></span>
         </button>`;
     } else if (currentTabType === 'story') {
       actions = `
-        <button class="dl-tile dl-tile-sd" id="btn-dl-story" type="button">
+        <button class="dl-tile dl-tile-sd" id="btn-dl-story" type="button" aria-label="Download Instagram story">
           <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
           <span class="dl-tile-label">Download <strong>Story</strong></span>
           <span class="dl-proc-bar"></span>
         </button>`;
     } else {
       actions = `
-        <button class="dl-tile dl-tile-sd" id="btn-dl-sd" type="button">
+        <button class="dl-tile dl-tile-sd" id="btn-dl-sd" type="button" aria-label="Download Instagram video without watermark">
           <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
           <span class="dl-tile-label">Without Watermark</span>
           <span class="dl-proc-bar"></span>
         </button>
-        <button class="dl-tile dl-tile-hd" id="btn-dl-hd" type="button">
+        <button class="dl-tile dl-tile-hd" id="btn-dl-hd" type="button" aria-label="Download Instagram video in HD without watermark">
           <span class="dl-tile-icon" aria-hidden="true">${dlIcon}</span>
           <span class="dl-tile-label">Without Watermark <strong>HD</strong></span>
           <span class="dl-proc-bar"></span>
@@ -843,7 +872,9 @@ const meta = typeMeta[type];
       if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
 
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', `/api/instagram-download?url=${encodeURIComponent(origUrl)}&type=${currentTabType}&dl=${type}`);
+      getTurnstileToken().then((token) => {
+      const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
+      xhr.open('GET', `/api/instagram-download?url=${encodeURIComponent(origUrl)}&type=${currentTabType}&dl=${type}${tokenParam}`);
       xhr.responseType = 'blob';
       xhr.timeout = 120_000;
 
@@ -889,6 +920,7 @@ const meta = typeMeta[type];
       };
 
       xhr.send();
+      }); // end getTurnstileToken().then
     }
 
     sdBtn?.addEventListener('click', () => startDownload('sd', sdBtn));
@@ -910,7 +942,7 @@ const meta = typeMeta[type];
           <span class="stories-hint">Active stories from this account</span>
         </div>
         ${count > 1 ? `
-          <button class="stories-dl-all-btn" id="btn-dl-all" type="button">
+          <button class="stories-dl-all-btn" id="btn-dl-all" type="button" aria-label="Download all Instagram stories">
             ${dlAllIcon}
             <span class="stories-dl-all-label">Download All</span>
           </button>
@@ -929,7 +961,7 @@ const meta = typeMeta[type];
             <img src="${s.cover || ''}" alt="Story ${i + 1}" class="story-thumb" loading="lazy" width="110" height="195" />
             ${badge}
           </div>
-          <button class="story-dl-btn" type="button" data-index="${i}" data-story-url="${encodeURIComponent('/stories/' + (s.author?.unique_id || 'user') + '/' + s.mediaId + '/')}" data-stream-url="${(s.downloadUrl || '').replace(/&/g, '&amp;')}" data-is-photo="${s.isPhoto ? '1' : '0'}">
+          <button class="story-dl-btn" type="button" aria-label="Download story ${i + 1}" data-index="${i}" data-story-url="${encodeURIComponent('/stories/' + (s.author?.unique_id || 'user') + '/' + s.mediaId + '/')}" data-stream-url="${(s.downloadUrl || '').replace(/&/g, '&amp;')}" data-is-photo="${s.isPhoto ? '1' : '0'}">
             ${dlIcon}
           </button>
           <div class="story-dl-overlay" id="story-overlay-${i}" hidden>
@@ -961,7 +993,7 @@ const meta = typeMeta[type];
       }
       const resp = await fetch(apiUrl);
       if (!resp.ok) {
-        const errJson = await resp.json().catch(() => null);
+        const errJson = await resp.json().catch(() => null) as { error?: string } | null;
         throw new Error(errJson?.error || `Server returned ${resp.status}`);
       }
       const blob = await resp.blob();
@@ -1141,7 +1173,9 @@ const meta = typeMeta[type];
     }
 
     try {
-      const res = await fetch(`/api/instagram-download?url=${encodeURIComponent(url)}&type=${currentTabType}`);
+      const token = await getTurnstileToken();
+      const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
+      const res = await fetch(`/api/instagram-download?url=${encodeURIComponent(url)}&type=${currentTabType}${tokenParam}`);
       if ((window as any).__igPhaseTimer) { clearInterval((window as any).__igPhaseTimer); delete (window as any).__igPhaseTimer; }
       const text = await res.text();
       let json: any;

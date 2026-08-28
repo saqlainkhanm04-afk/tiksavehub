@@ -1,0 +1,102 @@
+---
+/**
+ * AdSlotHeader — Top banner ad slot (728x90 / responsive)
+ * Place above the main downloader card on tool pages.
+ * 
+ * Props:
+ *   className — additional CSS classes
+ *   adId — Monetag zone ID (set via MONETAG_HEADER_ZONE_ID env or default)
+ */
+interface Props {
+  className?: string;
+  adId?: string;
+}
+
+const { className = '', adId } = Astro.props;
+const zoneId = adId || 'header-banner';
+---
+
+<div class={`ad-slot-header ${className}`} data-ad-zone={zoneId} aria-hidden="true">
+  <div class="ad-header-inner">
+    <div class="ad-placeholder ad-placeholder-header" id={`ad-header-${zoneId}`}>
+      <!-- Monetag tag will be injected here -->
+      <span class="ad-label">Advertisement</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ad-slot-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-md) 0;
+  }
+
+  .ad-header-inner {
+    width: 100%;
+    max-width: 728px;
+    min-height: 90px;
+  }
+
+  .ad-placeholder {
+    width: 100%;
+    min-height: 90px;
+    background-color: var(--color-canvas-soft-2);
+    border: 1px dashed var(--color-hairline);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ad-label {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  @media (max-width: 768px) {
+    .ad-header-inner {
+      max-width: 100%;
+      min-height: 60px;
+    }
+
+    .ad-placeholder {
+      min-height: 60px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .ad-header-inner {
+      min-height: 50px;
+    }
+
+    .ad-placeholder {
+      min-height: 50px;
+    }
+  }
+</style>
+
+<script>
+  // Monetag integration hook
+  // When Monetag script is loaded, it replaces placeholder content with actual ads.
+  // This script handles lazy loading and click tracking.
+  (function initAdHeader() {
+    const adEl = document.querySelector('[data-ad-zone="header-banner"] .ad-placeholder');
+    if (!adEl) return;
+
+    // Placeholder — real Monetag tag integration will replace this.
+    // To integrate: paste your Monetag <script> tag inside the placeholder div,
+    // or use the Monetag SDK to dynamically inject the ad unit.
+    // Example:
+    //   const script = document.createElement('script');
+    //   script.src = 'https://alwingalla.com/tag/tag.js';
+    //   script.dataset.zoneId = 'YOUR_ZONE_ID';
+    //   adEl.appendChild(script);
+  })();
+</script>

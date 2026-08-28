@@ -1,4 +1,4 @@
-export type SnapchatLinkType = 'spotlight' | 'story' | 'post' | 'profile' | 'unknown';
+export type SnapchatLinkType = 'spotlight' | 'story' | 'post' | 'profile' | 'highlight' | 'playlist' | 'unknown';
 
 export interface SnapchatUrlParseResult {
   isValid: boolean;
@@ -8,13 +8,6 @@ export interface SnapchatUrlParseResult {
   sanitizedUrl: string;
   error: string | null;
 }
-
-const SC_HOSTS = new Set([
-  'snapchat.com',
-  'www.snapchat.com',
-  'm.snapchat.com',
-  'story.snapchat.com',
-]);
 
 // /spotlight/{id} or /@user/spotlight/{id}
 const SPOTLIGHT_RE = /^\/(?:@[\w.-]+\/)?spotlight\/([A-Za-z0-9_-]{4,80})\/?$/;
@@ -27,6 +20,12 @@ const STORY_RE = /^\/s\/([A-Za-z0-9_.-]{1,30})\/([A-Za-z0-9_-]{4,80})\/?$/;
 
 // /add/{username} (profile)
 const ADD_RE = /^\/add\/([A-Za-z0-9_.-]{1,30})\/?$/;
+
+// /@username (profile page)
+const PROFILE_RE = /^\/@([\w.-]{1,30})\/?$/;
+
+// /@username/highlight/{uuid} (saved highlights)
+const HIGHLIGHT_RE = /^\/@([\w.-]{1,30})\/highlight\/([A-Za-z0-9_-]{8,40})\/?$/;
 
 function invalid(error: string): SnapchatUrlParseResult {
   return { isValid: false, linkType: null, mediaId: null, username: null, sanitizedUrl: '', error };
@@ -90,6 +89,19 @@ export function parseSnapchatUrl(raw: string): SnapchatUrlParseResult {
     };
   }
 
+  // /@username/highlight/{uuid}
+  const highlightMatch = pathname.match(HIGHLIGHT_RE);
+  if (highlightMatch) {
+    return {
+      isValid: true,
+      linkType: 'highlight',
+      mediaId: highlightMatch[2],
+      username: highlightMatch[1],
+      sanitizedUrl: `https://www.snapchat.com/@${highlightMatch[1]}/highlight/${highlightMatch[2]}`,
+      error: null,
+    };
+  }
+
   // /add/{username}
   const addMatch = pathname.match(ADD_RE);
   if (addMatch) {
@@ -99,6 +111,19 @@ export function parseSnapchatUrl(raw: string): SnapchatUrlParseResult {
       mediaId: null,
       username: addMatch[1],
       sanitizedUrl: `https://www.snapchat.com/add/${addMatch[1]}`,
+      error: null,
+    };
+  }
+
+  // /@username (profile page — extract stories/spotlights as playlist)
+  const profileMatch = pathname.match(PROFILE_RE);
+  if (profileMatch) {
+    return {
+      isValid: true,
+      linkType: 'playlist',
+      mediaId: null,
+      username: profileMatch[1],
+      sanitizedUrl: `https://www.snapchat.com/@${profileMatch[1]}`,
       error: null,
     };
   }

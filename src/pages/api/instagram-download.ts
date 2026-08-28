@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { streamFromUpstream } from '../../lib/stream';
+import { cobaltExtractAudio } from '../../lib/cobalt';
 import {
   parseInstagramUrl,
   fetchMediaByShortcode,
@@ -14,10 +15,11 @@ import {
   ERR_LOGIN_REQUIRED,
   ERR_STORY_EXPIRED,
   ERR_HIGHLIGHTS_UNSUPPORTED,
+  setInstagramEnv,
 } from '../../lib/instagram';
 import { cacheHit, cacheWrite } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
-import { fetchInstagramAudioWithYtDlp, instagramUrlFor } from '../../lib/ytdlp';
+import { getEnv, initRequestEnv } from '../../lib/init-env';
 
 export const prerender = false;
 
@@ -29,11 +31,15 @@ function contentId(parsed: ReturnType<typeof parseInstagramUrl>): string | null 
   return null;
 }
 
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async (ctx) => {
+  const { url, request } = ctx;
+  setInstagramEnv(getEnv(ctx));
+  initRequestEnv(getEnv(ctx));
   const videoUrl = url.searchParams.get('url');
   const dl = url.searchParams.get('dl');
   const typeParam = url.searchParams.get('type');
   const streamUrl = url.searchParams.get('stream');
+  const turnstileToken = url.searchParams.get('turnstileToken') || undefined;
 
   // Fast path: stream directly from a pre-resolved CDN URL (used by multi-story downloads).
   if (dl && streamUrl) {
@@ -95,7 +101,7 @@ export const GET: APIRoute = async ({ url, request }) => {
 
   try {
     if (id) {
-      const cached = cacheHit('instagram', 'ig', id, mode);
+      const cached = await cacheHit('instagram', 'ig', id, mode);
       const cachedData = cached?.data as Record<string, unknown> | undefined;
       // Audio entries are only reusable once they carry the audio_format marker
       // (older cache rows stored the video stream under audio mode by mistake).
@@ -207,12 +213,11 @@ export const GET: APIRoute = async ({ url, request }) => {
         downloadUrl = realAudio;
         audioExt = /\.mp3(?:\?|$)/i.test(realAudio) ? 'mp3' : 'm4a';
       } else if (parsed.shortcode) {
-        const audio = await fetchInstagramAudioWithYtDlp(
-          instagramUrlFor(parsed.shortcode, parsed.type)
-        );
+        const igUrl = `https://www.instagram.com/${parsed.type === 'reels' ? 'reel' : parsed.type}/${parsed.shortcode}/`;
+        const audio = await cobaltExtractAudio(igUrl, turnstileToken);
         if (audio?.url) {
           downloadUrl = audio.url;
-          audioExt = audio.ext && audio.ext !== 'unknown' ? audio.ext : 'm4a';
+          audioExt = 'mp3';
         }
       }
 

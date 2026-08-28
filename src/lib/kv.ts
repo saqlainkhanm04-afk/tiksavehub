@@ -1,132 +1,91 @@
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+/**
+ * KV adapter — uses Cloudflare KV bindings when available,
+ * falls back to in-memory Map for local dev.
+ *
+ * In CF Workers, KV operations are async. The API is intentionally
+ * identical to the old kv.ts so callers need minimal changes.
+ */
 
 export interface KvEntry<T> {
   value: T;
   exp: number;
 }
 
-const MAX_ENTRIES = Number(process.env.CACHE_MAX_ENTRIES || 2000);
-const SNAPSHOT_INTERVAL_MS = 60_000;
-const FLUSH_INTERVAL_MS = 5_000;
+let kvNamespace: KVNamespace | null = null;
+const memStore = new Map<string, KvEntry<unknown>>();
 
-const store = new Map<string, KvEntry<unknown>>();
-const inflight = new Map<string, Promise<unknown>>();
-
-let cacheFile = process.env.CACHE_FILE;
-let lastFlush = Date.now();
-let scheduled = false;
-let snapTimer: NodeJS.Timeout | null = null;
-
-function defaultCacheFile(): string {
-  return join(process.cwd(), 'data', 'cache', 'media-cache.json');
+/** Initialize with a KV binding (called once per request in CF Workers). */
+export function kvInit(kv?: KVNamespace | null): void {
+  kvNamespace = kv ?? null;
 }
 
-function ensureFile(): string {
-  if (!cacheFile) cacheFile = defaultCacheFile();
-  return cacheFile;
-}
-
-function makeSnapshot(): void {
-  const now = Date.now();
-  if (now - lastFlush < FLUSH_INTERVAL_MS) return;
-  lastFlush = now;
-  try {
-    const file = ensureFile();
-    mkdirSync(dirname(file), { recursive: true });
-    const payload: Record<string, KvEntry<unknown>> = {};
-    for (const [key, entry] of store) {
-      if (entry.exp > now) payload[key] = entry;
-      else store.delete(key);
+export async function kvGet<T>(key: string): Promise<T | undefined> {
+  if (kvNamespace) {
+    const raw = await kvNamespace.get(key, 'json');
+    if (!raw) return undefined;
+    const entry = raw as KvEntry<T>;
+    if (entry.exp <= Date.now()) {
+      await kvNamespace.delete(key);
+      return undefined;
     }
-    writeFileSync(file, JSON.stringify(payload), 'utf8');
-  } catch (err) {
-    console.error('[KV] snapshot failed:', (err as Error)?.message ?? err);
+    return entry.value;
   }
-}
-
-function loadSnapshot(): void {
-  if (store.size > 0) return;
-  const file = ensureFile();
-  if (!existsSync(file)) return;
-  try {
-    const raw = readFileSync(file, 'utf8');
-    const parsed = JSON.parse(raw) as Record<string, KvEntry<unknown>>;
-    if (typeof parsed !== 'object' || parsed === null) return;
-    for (const [key, entry] of Object.entries(parsed)) {
-      if (entry && typeof entry.exp === 'number' && entry.exp > Date.now()) {
-        store.set(key, entry);
-      }
-    }
-  } catch (err) {
-    console.error('[KV] Could not load KV snapshot:', (err as Error)?.message ?? err);
-  }
-}
-
-function scheduleFlush(): void {
-  if (scheduled) return;
-  scheduled = true;
-  setTimeout(() => {
-    scheduled = false;
-    if (store.size > 0) makeSnapshot();
-  }, FLUSH_INTERVAL_MS);
-}
-
-export function kvGet<T>(key: string): T | undefined {
-  const entry = store.get(key) as KvEntry<T> | undefined;
+  // In-memory fallback (dev)
+  const entry = memStore.get(key) as KvEntry<T> | undefined;
   if (!entry) return undefined;
   if (entry.exp <= Date.now()) {
-    store.delete(key);
+    memStore.delete(key);
     return undefined;
   }
   return entry.value;
 }
 
-export function kvGetRaw<T>(key: string): KvEntry<T> | undefined {
-  const entry = store.get(key) as KvEntry<T> | undefined;
-  if (!entry) return undefined;
-  if (entry.exp <= Date.now()) {
-    store.delete(key);
-    return undefined;
+export async function kvGetRaw<T>(key: string): Promise<KvEntry<T> | undefined> {
+  if (kvNamespace) {
+    const raw = await kvNamespace.get(key, 'json');
+    if (!raw) return undefined;
+    return raw as KvEntry<T>;
   }
-  return entry;
+  return memStore.get(key) as KvEntry<T> | undefined;
 }
 
-export function kvSet<T>(key: string, value: T, ttlMs: number): void {
-  store.set(key, { value, exp: Date.now() + ttlMs });
-  if (store.size > MAX_ENTRIES) evictOldest();
-  scheduleFlush();
+export async function kvSet<T>(key: string, value: T, ttlMs: number): Promise<void> {
+  const entry: KvEntry<T> = { value, exp: Date.now() + ttlMs };
+  if (kvNamespace) {
+    const expirationTtl = Math.max(60, Math.floor(ttlMs / 1000));
+    await kvNamespace.put(key, JSON.stringify(entry), { expirationTtl });
+  } else {
+    memStore.set(key, entry);
+  }
 }
 
-export function kvHas(key: string): boolean {
-  return kvGet(key) !== undefined;
+export async function kvHas(key: string): Promise<boolean> {
+  const v = await kvGet(key);
+  return v !== undefined;
 }
 
-export function kvDel(key: string): void {
-  store.delete(key);
-  scheduleFlush();
+export async function kvDel(key: string): Promise<void> {
+  if (kvNamespace) {
+    await kvNamespace.delete(key);
+  } else {
+    memStore.delete(key);
+  }
 }
 
-export function kvSize(): number {
+export async function kvSize(): Promise<number> {
+  if (kvNamespace) {
+    // KV doesn't support listing count efficiently; return 0
+    return 0;
+  }
   const now = Date.now();
-  for (const [key, entry] of store) {
-    if (entry.exp <= now) store.delete(key);
+  for (const [key, entry] of memStore) {
+    if (entry.exp <= now) memStore.delete(key);
   }
-  return store.size;
+  return memStore.size;
 }
 
 export function kvRemoteCount(): number {
-  return store.size;
-}
-
-function evictOldest(): void {
-  let entries = [...store.entries()].sort((a, b) => a[1].exp - b[1].exp);
-  const limit = Math.max(100, Math.floor(MAX_ENTRIES * 0.8));
-  while (entries.length > limit) {
-    const [key] = entries[0];
-    store.delete(key);
-    entries = entries.slice(1);
-  }
+  return memStore.size;
 }
 
 export async function kvMemo<T>(
@@ -134,41 +93,10 @@ export async function kvMemo<T>(
   ttlMs: number,
   loader: () => Promise<T>
 ): Promise<T> {
-  const cached = kvGet<T>(key);
+  const cached = await kvGet<T>(key);
   if (cached !== undefined) return cached;
 
-  const existing = inflight.get(key) as Promise<T> | undefined;
-  if (existing) return existing;
-
-  const promise = loader()
-    .then((value) => {
-      kvSet(key, value, ttlMs);
-      inflight.delete(key);
-      return value;
-    })
-    .catch((error) => {
-      inflight.delete(key);
-      throw error;
-    });
-  inflight.set(key, promise);
-  return promise;
-}
-
-export function kvStart(): void {
-  loadSnapshot();
-  if (snapTimer) return;
-  snapTimer = setInterval(() => makeSnapshot(), SNAPSHOT_INTERVAL_MS);
-  snapTimer.unref?.();
-}
-
-if (typeof process !== 'undefined') {
-  process.on('exit', () => makeSnapshot());
-  process.on('SIGTERM', () => {
-    makeSnapshot();
-    process.exit(0);
-  });
-  process.on('SIGINT', () => {
-    makeSnapshot();
-    process.exit(0);
-  });
+  const value = await loader();
+  await kvSet(key, value, ttlMs);
+  return value;
 }

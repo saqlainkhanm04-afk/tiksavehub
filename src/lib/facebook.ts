@@ -418,7 +418,6 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
         errors.push('Page markup contained no playable URLs.');
         return null;
       } catch (err: any) {
-        if (err?.code === FB_ERR.NOT_AVAILABLE || err?.code === FB_ERR.LOGIN_REQUIRED) throw err;
         errors.push(err?.message || 'Page fetch failed.');
         return null;
       }
@@ -451,9 +450,10 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
           if (g.done) finish(null);
           else task().then(finish, () => finish(null));
         }).catch(() => {
-          // Page threw (private/404/login) — definitive, don't start extras.
+          // Page threw — still try embed/yt-dlp on flagged IPs where
+          // "content isn't available" shells appear for public videos.
           clearTimeout(timer);
-          finish(null);
+          task().then(finish, () => finish(null));
         });
       });
 
@@ -483,7 +483,26 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
 
     const [pageResult, embedResult] = await Promise.allSettled([pageTask, embedTask]);
 
-    if (pageResult.status === 'rejected') throw pageResult.reason;
+    if (pageResult.status === 'rejected') {
+      // Page threw — but don't give up yet; embed/yt-dlp may have succeeded
+      // on flagged IPs where Facebook returns login shells for public videos.
+      const winner = embedResult.status === 'fulfilled' ? embedResult.value : null;
+      if (winner) {
+        return {
+          title: winner.title || 'Facebook Video',
+          cover: winner.cover ?? '',
+          duration: winner.duration ?? 0,
+          hdUrl: winner.hdUrl ?? null,
+          sdUrl: winner.sdUrl ?? null,
+          author: { name: winner.author?.name ?? '', avatar: winner.author?.avatar || winner.cover || '' },
+          like_count: 0,
+          comment_count: 0,
+          share_count: 0,
+          view_count: 0,
+        };
+      }
+      throw pageResult.reason;
+    }
 
     if (pageResult.value) {
       const media = pageResult.value;

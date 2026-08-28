@@ -68,13 +68,17 @@ function userMessageFor(err: any, needsLoginHint = false): string {
   const code = err?.code ?? '';
 
   if (code === FB_ERR.NOT_AVAILABLE) {
-    return 'This video is private or was deleted. Please try another public Facebook video link.';
+    // Use the upstream message if it's descriptive (multi-layer fallback adds context)
+    if (msg.length > 40 && msg !== 'This video is private or was deleted.') return msg;
+    return 'This video appears to be private, restricted, or unavailable. It may be in a closed group or shared with limited audience. Please try another public Facebook video link.';
   }
   if (code === FB_ERR.LOGIN_REQUIRED || needsLoginHint) {
     return 'This video requires a Facebook login to view. Please try another public Facebook video link.';
   }
   if (code === FB_ERR.NO_MEDIA) {
-    return 'This video does not contain any downloadable media. Please try another link.';
+    // Use the upstream message if it's descriptive (multi-layer fallback adds context)
+    if (msg.length > 40 && msg !== 'This video does not contain any downloadable media.') return msg;
+    return 'This video could not be downloaded right now. Facebook may be rate-limiting or blocking the request. Please try again in a few minutes or try another public link.';
   }
   if (code === FB_ERR.TIMEOUT || err?.name === 'TimeoutError' || err?.name === 'AbortError') {
     return 'The server took too long to respond. Please try again in a moment.';
@@ -92,7 +96,7 @@ function userMessageFor(err: any, needsLoginHint = false): string {
     msg.includes('returned 5');
 
   if (isFetchFailed) {
-    return 'This video could not be fetched right now. Please try again later.';
+    return 'This video could not be fetched right now. Facebook may be blocking the request. Please try again later.';
   }
   if (msg.includes('yt-dlp is not installed') || msg.includes('yt-dlp is disabled')) {
     return 'This video could not be fetched right now. Please try again later.';
@@ -101,7 +105,7 @@ function userMessageFor(err: any, needsLoginHint = false): string {
     return 'This video may be unavailable or restricted. Please try another public Facebook link.';
   }
 
-  return 'Failed to fetch this video. Please check the link and try again.';
+  return 'This video could not be downloaded right now. Please check the link and try again.';
 }
 
 function photoMessageFor(err: any): string {

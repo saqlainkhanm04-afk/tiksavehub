@@ -400,6 +400,11 @@ async function resolveShortUrl(url: string): Promise<string> {
  * IPs; when it is shelled (flagged/throttled IPs), the embed plugin page and
  * the yt-dlp fallback run at the same time so the slowest single source
  * bounds the total (was: sequential page → embed → yt-dlp).
+ *
+ * Multi-layer fallback:
+ *   Layer 1: page HTML + embed plugin (parallel with grace window)
+ *   Layer 2: cobalt.tools video extraction (when page+embed both fail)
+ *   Layer 3: direct CDN regex extraction from page HTML (last resort)
  */
 export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedia> {
   return memoSWR(`fb:media:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
@@ -410,11 +415,12 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
 
     const errors: string[] = [];
 
+    // ─── Layer 1: page HTML + embed plugin (parallel) ───────────────────
     const pageTask = (async () => {
       try {
         const { html } = await fetchPage(pageUrl);
         const media = extractMediaFromPageHtml(html);
-        if (media?.hdUrl || media?.sdUrl) return media;
+        if (media?.hdUrl || media?.sdUrl) return { media, html };
         errors.push('Page markup contained no playable URLs.');
         return null;
       } catch (err: any) {
@@ -423,10 +429,6 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
       }
     })();
 
-    // Grace window: the page fetch usually wins fast on healthy IPs, so the
-    // expensive embed/yt-dlp sources only start when the page is slow or
-    // shelled (flagged/throttled IPs) — they then run in parallel instead of
-    // sequentially after the page verdict.
     const pageGate = pageTask.then(
       (m) => ({ done: Boolean(m) }),
       () => {
@@ -450,8 +452,6 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
           if (g.done) finish(null);
           else task().then(finish, () => finish(null));
         }).catch(() => {
-          // Page threw — still try embed/yt-dlp on flagged IPs where
-          // "content isn't available" shells appear for public videos.
           clearTimeout(timer);
           task().then(finish, () => finish(null));
         });
@@ -483,9 +483,36 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
 
     const [pageResult, embedResult] = await Promise.allSettled([pageTask, embedTask]);
 
+    // Page succeeded with media — return immediately (fast path).
+    if (pageResult.status === 'fulfilled' && pageResult.value) {
+      const { media } = pageResult.value;
+      let cover = media.cover ?? '';
+      if (!cover) {
+        const embedMedia = embedResult.status === 'fulfilled' ? embedResult.value : null;
+        cover = embedMedia?.cover || '';
+        if (!cover) {
+          try {
+            const extra = await fetchDesktopPageMeta(pageUrl);
+            cover = extra?.cover || '';
+          } catch { /* best effort */ }
+        }
+      }
+      return {
+        title: media.title ?? 'Facebook Video',
+        cover,
+        duration: media.duration ?? 0,
+        hdUrl: media.hdUrl ?? null,
+        sdUrl: media.sdUrl ?? null,
+        author: { name: media.author?.name ?? '', avatar: media.author?.avatar ?? cover },
+        like_count: media.like_count ?? 0,
+        comment_count: media.comment_count ?? 0,
+        share_count: media.share_count ?? 0,
+        view_count: media.view_count ?? 0,
+      };
+    }
+
+    // Page failed but embed succeeded — return embed result.
     if (pageResult.status === 'rejected') {
-      // Page threw — but don't give up yet; embed/yt-dlp may have succeeded
-      // on flagged IPs where Facebook returns login shells for public videos.
       const winner = embedResult.status === 'fulfilled' ? embedResult.value : null;
       if (winner) {
         return {
@@ -501,65 +528,173 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
           view_count: 0,
         };
       }
-      throw pageResult.reason;
     }
 
-    if (pageResult.value) {
-      const media = pageResult.value;
-      let cover = media.cover ?? '';
+    // Page returned null (no media) but embed succeeded.
+    const embedWinner =
+      (embedResult.status === 'fulfilled' ? embedResult.value : null) as FacebookMedia | null;
+    if (embedWinner) {
+      return {
+        title: embedWinner.title || 'Facebook Video',
+        cover: embedWinner.cover ?? '',
+        duration: embedWinner.duration ?? 0,
+        hdUrl: embedWinner.hdUrl ?? null,
+        sdUrl: embedWinner.sdUrl ?? null,
+        author: { name: embedWinner.author?.name ?? '', avatar: embedWinner.author?.avatar || embedWinner.cover || '' },
+        like_count: 0,
+        comment_count: 0,
+        share_count: 0,
+        view_count: 0,
+      };
+    }
 
-      // Page may return video URLs but no thumbnail (flagged/throttled IPs
-      // serve shells without preferred_thumbnail/og:image). Grab cover from
-      // whichever embed/yt-dlp result already completed, or do a quick
-      // desktop-page probe.
-      if (!cover) {
-        const embedMedia = embedResult.status === 'fulfilled' ? embedResult.value : null;
-        cover = embedMedia?.cover || '';
-        if (!cover) {
-          try {
-            const extra = await fetchDesktopPageMeta(pageUrl);
-            cover = extra?.cover || '';
-          } catch { /* best effort */ }
+    // ─── Layer 2: cobalt.tools video extraction ─────────────────────────
+    // cobalt can extract video from Facebook URLs even when page+embed are
+    // shelled. Requires either COBALT_API_KEY or a Turnstile token from client.
+    // We try with NO turnstile token first (works if API key is configured);
+    // if that fails, we still continue to Layer 3 — never block on cobalt.
+    try {
+      const { cobaltExtractVideo } = await import('./cobalt');
+      const cobaltResult = await cobaltExtractVideo(pageUrl);
+      if (cobaltResult?.url) {
+        console.error('[Facebook] Layer 2: cobalt returned a video URL');
+        return {
+          title: 'Facebook Video',
+          cover: '',
+          duration: 0,
+          hdUrl: cobaltResult.url,
+          sdUrl: null,
+          author: { name: '', avatar: '' },
+          like_count: 0,
+          comment_count: 0,
+          share_count: 0,
+          view_count: 0,
+        };
+      }
+    } catch (err: any) {
+      errors.push(`Cobalt: ${err?.message || 'extraction failed'}`);
+    }
+
+    // ─── Layer 3: direct CDN regex extraction from page HTML ────────────
+    // Last resort: re-fetch the page (if we didn't get HTML from Layer 1)
+    // and scan for Facebook CDN video URLs via regex. Works on some flagged
+    // IPs where the page HTML is large but embed/page JSON extraction fails.
+    try {
+      let pageHtml = '';
+      // Reuse HTML from pageTask if available
+      if (pageResult.status === 'fulfilled' && pageResult.value?.html) {
+        pageHtml = pageResult.value.html;
+      } else {
+        // Fetch the page ourselves as a last-ditch effort
+        const cookie = getFbCookie();
+        const resp = await fetch(pageUrl, {
+          headers: {
+            'User-Agent': UA_DESKTOP,
+            'Accept': 'text/html,application/xhtml+xml,*/*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            ...(cookie ? { 'Cookie': cookie } : {}),
+          },
+          redirect: 'follow',
+          signal: AbortSignal.timeout(8_000),
+        });
+        if (resp.ok) {
+          pageHtml = await resp.text();
         }
       }
 
-      return {
-        title: media.title ?? 'Facebook Video',
-        cover,
-        duration: media.duration ?? 0,
-        hdUrl: media.hdUrl ?? null,
-        sdUrl: media.sdUrl ?? null,
-        author: { name: media.author?.name ?? '', avatar: media.author?.avatar ?? cover },
-        like_count: media.like_count ?? 0,
-        comment_count: media.comment_count ?? 0,
-        share_count: media.share_count ?? 0,
-        view_count: media.view_count ?? 0,
-      };
+      if (pageHtml.length > 200) {
+        const cdnMedia = extractMediaFromCdnRegex(pageHtml);
+        if (cdnMedia) {
+          console.error('[Facebook] Layer 3: CDN regex found video URLs');
+          return cdnMedia;
+        }
+      }
+    } catch (err: any) {
+      errors.push(`CDN regex: ${err?.message || 'extraction failed'}`);
     }
 
-    const winner =
-      (embedResult.status === 'fulfilled' ? embedResult.value : null) as FacebookMedia | null;
-    if (winner) {
-      return {
-        title: winner.title || 'Facebook Video',
-        cover: winner.cover ?? '',
-        duration: winner.duration ?? 0,
-        hdUrl: winner.hdUrl ?? null,
-        sdUrl: winner.sdUrl ?? null,
-        author: { name: winner.author?.name ?? '', avatar: winner.author?.avatar || winner.cover || '' },
-        like_count: winner.like_count ?? 0,
-        comment_count: winner.comment_count ?? 0,
-        share_count: winner.share_count ?? 0,
-        view_count: winner.view_count ?? 0,
-      };
-    }
-
+    // ─── All layers failed — graceful error ─────────────────────────────
     const last = errors[errors.length - 1] || 'Could not load this video.';
-    if (last.toLowerCase().includes('private') || last.toLowerCase().includes('deleted')) {
-      throw coded('This video is private or was deleted.', FB_ERR.NOT_AVAILABLE);
+    const lower = last.toLowerCase();
+    if (lower.includes('private') || lower.includes('deleted') || lower.includes('not available')) {
+      throw coded(
+        'This video appears to be private, restricted, or unavailable. It may be in a closed group or shared with limited audience. Please try another public Facebook video link.',
+        FB_ERR.NOT_AVAILABLE
+      );
     }
-    throw coded('Could not load this Facebook video.', FB_ERR.NO_MEDIA);
+    throw coded(
+      'This video could not be downloaded right now. Facebook may be blocking the request. Please try again in a few minutes or try another public link.',
+      FB_ERR.NO_MEDIA
+    );
   });
+}
+
+/**
+ * Layer 3 helper: extract Facebook video CDN URLs directly from page HTML
+ * using regex. Catches URLs that JSON extraction misses on flagged IPs.
+ */
+function extractMediaFromCdnRegex(html: string): FacebookMedia | null {
+  if (html.length < 500) return null;
+
+  // Match Facebook video CDN URLs: video.twimg.com, *.fbcdn.net video paths,
+  // and browser_native/playable_url embedded in HTML/JSON
+  const videoUrlPatterns = [
+    // Direct CDN progressive MP4 URLs
+    /https?:\/\/video\.[\w.-]*fbcdn\.net\/[^"'\s\\]+\.mp4(?:[^"'\s\\]*)/g,
+    // browser_native_hd/sd URLs in JSON
+    /"browser_native_(?:hd|sd)_url"\s*:\s*"((?:[^"\\]|\\.)*)"/g,
+    // playable_url variants in JSON
+    /"playable_url(?:_quality_hd)?"\s*:\s*"((?:[^"\\]|\\.)*)"/g,
+    // hd_src / sd_src in embed-style markup
+    /"(?:hd|sd)_src(?:_no_ratelimit)?"\s*:\s*"((?:[^"\\]|\\.)*)"/g,
+    // General fbcdn video URLs in src attributes
+    /https?:\/\/[\w.-]*fbcdn\.net\/v\/[^"'\s\\]+\.mp4(?:[^"'\s\\]*)/g,
+    // Mobile video URLs
+    /https?:\/\/[\w.-]*fbcdn\.net\/(?:z|safe_image|video)[^"'\s\\]+\.mp4(?:[^"'\s\\]*)/g,
+  ];
+
+  const seen = new Set<string>();
+  let bestHd: string | null = null;
+  let bestSd: string | null = null;
+
+  for (const pattern of videoUrlPatterns) {
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(html)) !== null) {
+      let url = (match[1] || match[0]).replace(/\\u003F/g, '?').replace(/\\\//g, '/').replace(/&amp;/g, '&');
+      if (!url.startsWith('http')) continue;
+      // Clean trailing escapes
+      url = url.split('"')[0].split("'")[0].split('\\')[0];
+      if (seen.has(url)) continue;
+      seen.add(url);
+
+      // Classify as HD or SD based on URL characteristics
+      const isHd = /quality_hd|1080|720|hd_src/i.test(url) || /\/v\/.*_hd/i.test(url);
+      if (isHd && !bestHd) bestHd = url;
+      else if (!bestSd) bestSd = url;
+    }
+  }
+
+  const hdUrl = bestHd || bestSd;
+  const sdUrl = bestSd || bestHd;
+  if (!hdUrl) return null;
+
+  // Try to extract title from og:title or <title>
+  const ogTitle = getMetaContent(html, 'og:title') || '';
+  const title = ogTitle.replace(/\s*\|\s*Facebook\s*$/i, '').trim() || 'Facebook Video';
+  const cover = getMetaContent(html, 'og:image') || '';
+
+  return {
+    title,
+    cover,
+    duration: 0,
+    hdUrl,
+    sdUrl: sdUrl !== hdUrl ? sdUrl : null,
+    author: { name: '', avatar: '' },
+    like_count: 0,
+    comment_count: 0,
+    share_count: 0,
+    view_count: 0,
+  };
 }
 
 /**

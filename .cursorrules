@@ -1,0 +1,33 @@
+# tiksavehub — AI Agent Rules
+
+## First Action
+Always read `PROJECT_MEMORY.md` at the start of every session. It contains all project context.
+
+## Environment
+- Cloudflare Workers / Pages (Edge runtime ONLY)
+- NO Node.js modules (fs, child_process, http, etc.)
+- NO binaries (ffmpeg, yt-dlp)
+- NO VPS, NO SSH, NO systemctl
+- Deploy via: `npx wrangler deploy` or GitHub auto-deploy
+
+## Code Standards
+- TypeScript strict mode
+- All fetch() must be Edge-compatible (Web API standard)
+- TailwindCSS v4 for styling
+- Astro .astro components with vanilla JS <script> tags (no React)
+- Always run `astro check` after changes (0 new errors)
+
+## Critical Invariants
+- Facebook photo quality lock (facebook-photo-quality.ts) — NEVER weaken
+- Instagram session requires full device-bound cookie jar
+- cobalt.ts handles multiple response types (tunnel, redirect, local-processing, picker)
+
+## Deployment
+- User deploys via local Wrangler CLI or GitHub push
+- NEVER suggest SSH, VPS, systemctl, or any Linux server commands
+- NEVER suggest npm scripts that require node:fs or child_process
+
+## Skills to Always Use
+- atro
+- tailwind-4-docs
+- web-design-guidelines

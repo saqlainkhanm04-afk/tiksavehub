@@ -458,6 +458,34 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
 
     const errors: string[] = [];
 
+    // ─── Layer 0: multi-API free downloader sources ─────────────────────
+    // Try 3 free third-party APIs BEFORE scraping Facebook directly.
+    // These APIs maintain their own sessions and return direct CDN URLs,
+    // bypassing IP blocks on the server itself. Each source has try/catch
+    // so if one is down, we silently fall through to the next source,
+    // and eventually to the native scraping pipeline.
+    try {
+      const { fetchFacebookMediaViaMultiApi } = await import('./fb-multi-api');
+      const multiResult = await fetchFacebookMediaViaMultiApi(pageUrl);
+      if (multiResult?.hdUrl || multiResult?.sdUrl) {
+        console.error('[Facebook] Layer 0: multi-API returned video URLs');
+        return {
+          title: multiResult.title || 'Facebook Video',
+          cover: multiResult.cover || '',
+          duration: multiResult.duration || 0,
+          hdUrl: multiResult.hdUrl ?? null,
+          sdUrl: multiResult.sdUrl ?? null,
+          author: { name: multiResult.author?.name ?? '', avatar: multiResult.author?.avatar ?? '' },
+          like_count: multiResult.like_count ?? 0,
+          comment_count: multiResult.comment_count ?? 0,
+          share_count: multiResult.share_count ?? 0,
+          view_count: multiResult.view_count ?? 0,
+        };
+      }
+    } catch (err: any) {
+      errors.push(`Multi-API: ${err?.message || 'all sources failed'}`);
+    }
+
     // ─── Layer 1: page HTML + embed plugin (parallel) ───────────────────
     const pageTask = (async () => {
       try {
@@ -657,6 +685,11 @@ export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedi
     }
 
     // ─── All layers failed — graceful error ─────────────────────────────
+    // errors[] contains context from every layer that was tried:
+    //   Layer 0: multi-API (ryzendesu, deliriussapi, cobalt, fdown)
+    //   Layer 1: page HTML + embed plugin
+    //   Layer 2: cobalt.tools
+    //   Layer 3: CDN regex extraction
     const last = errors[errors.length - 1] || 'Could not load this video.';
     const lower = last.toLowerCase();
     if (lower.includes('private') || lower.includes('deleted') || lower.includes('not available')) {

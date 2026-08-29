@@ -425,19 +425,62 @@ async function fetchShortcodeWithFallbacks(shortcode: string, _type: string = 'v
   }
 
   // Fallback: legacy __a=1 endpoint.
+  // Instagram now serves HTML for __a=1 on many IPs — the video data is
+  // embedded as JSON blobs inside the page. We extract video_versions and
+  // display_url from the HTML when the JSON parse fails.
   try {
     const resp = await fetch(`https://www.instagram.com/p/${shortcode}/?__a=1`, {
       headers: {
         'User-Agent': USER_AGENT,
-        Accept: 'application/json, text/plain, */*',
+        Accept: 'application/json, text/html, text/plain, */*',
       },
       redirect: 'follow',
       signal: AbortSignal.timeout(20_000),
     });
     if (resp.ok) {
-      const json = await resp.json() as Record<string, any>;
-      const media = json?.graphql?.shortcode_media ?? json?.items?.[0];
-      if (media) return media;
+      const text = await resp.text();
+
+      // Try JSON parse first (old behavior — some IPs still serve JSON).
+      try {
+        const json = JSON.parse(text) as Record<string, any>;
+        const media = json?.graphql?.shortcode_media ?? json?.items?.[0];
+        if (media) return media;
+      } catch {
+        // Not JSON — extract from HTML.
+      }
+
+      // HTML fallback: extract video_versions JSON blob from the page.
+      const vvMatch = text.match(/"video_versions"\s*:\s*(\[[^\]]*\])/);
+      if (vvMatch) {
+        try {
+          const versions = JSON.parse(vvMatch[1].replace(/\\\//g, '/'));
+          if (Array.isArray(versions) && versions.length > 0) {
+            // Sort by width descending (type 103 = highest quality typically).
+            const sorted = [...versions].sort((a: any, b: any) => (b.width || b.type || 0) - (a.width || a.type || 0));
+            const videoUrl = sorted[0]?.url?.replace(/\\\//g, '/');
+            if (videoUrl) {
+              // Extract thumbnail from display_url or image_versions2.
+              const displayMatch = text.match(/"display_url"\s*:\s*"([^"]+)"/);
+              const thumbnail = displayMatch ? displayMatch[1].replace(/\\\//g, '/') : '';
+
+              return {
+                video_versions: sorted.map((v: any) => ({
+                  url: v.url?.replace(/\\\//g, '/'),
+                  width: v.width || 0,
+                  height: v.height || 0,
+                  type: v.type || 0,
+                })),
+                image_versions2: thumbnail ? { candidates: [{ url: thumbnail }] } : undefined,
+                display_url: thumbnail,
+                __a1_html_fallback: true,
+              };
+            }
+          }
+        } catch {
+          // video_versions JSON malformed — skip.
+        }
+      }
+
       errors.push('__a=1 returned no media.');
     } else {
       errors.push(`__a=1 returned ${resp.status}.`);

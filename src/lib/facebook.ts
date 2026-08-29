@@ -413,15 +413,20 @@ async function resolveFacebookUrl(url: string): Promise<string> {
     /m\.facebook\.com|touch\.facebook\.com|mobile\.facebook\.com/i.test(url);
   if (!needsResolve) return url;
 
+  // IMPORTANT: Facebook's 302 redirect for /share/r|v|p/ links is only
+  // served to non-browser User-Agents (curl, wget, etc.). Browser UAs
+  // (Chrome, Firefox) get a JS/login shell instead of the redirect.
+  const RESOLVE_UA = 'curl/8.0';
+
   try {
     const resp = await fetch(url, {
       method: 'GET',
       headers: {
-        'User-Agent': UA_DESKTOP,
-        'Accept': 'text/html',
+        'User-Agent': RESOLVE_UA,
+        'Accept': '*/*',
       },
       redirect: 'follow',
-      signal: AbortSignal.timeout(5_000),
+      signal: AbortSignal.timeout(8_000),
     });
     if (resp.ok && resp.url) {
       let resolved = new URL(resp.url);

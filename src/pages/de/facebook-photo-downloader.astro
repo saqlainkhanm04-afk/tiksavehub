@@ -1,0 +1,92 @@
+---
+// Facebook Photo Downloader — SEO-optimized landing page (Deutsch)
+// URL: /facebook-photo-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbStepsSection from '../../components/FbStepsSection.astro';
+import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbFaqSection from '../../components/FbFaqSection.astro';
+import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbInternalLinks from '../../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+
+const faqData = [
+  { id: 'photo-hd', q: 'Wie kann ich Facebook-Fotos in voller Auflösung herunterladen?', a: 'Kopiere den Link des Facebook-Beitrags, füge ihn bei TikSaveHub ein und klicke auf Herunterladen. Alle Fotos des Beitrags werden in Originalauflösung heruntergeladen.' },
+  { id: 'photo-zip', q: 'Kann ich mehrere Facebook-Fotos als ZIP herunterladen?', a: 'Ja, wenn ein Beitrag mehrere Fotos enthält, werden alle Fotos als praktische ZIP-Datei in voller Auflösung heruntergeladen.' },
+  { id: 'photo-private', q: 'Kann ich private Facebook-Fotos herunterladen?', a: 'Nein, TikSaveHub kann nur öffentliche Facebook-Fotos herunterladen.' },
+  { id: 'photo-quality', q: 'In welcher Qualität werden Facebook-Fotos heruntergeladen?', a: 'Die Fotos werden in der maximal verfügbaren Auflösung heruntergeladen — bis zu 2048x2048 Pixel.' },
+  { id: 'photo-iphone', q: 'Wie speichere ich Facebook-Fotos auf dem iPhone?', a: 'Öffne Safari, füge den Link bei TikSaveHub ein und tippe auf Herunterladen — das Foto wird in der Fotos-App gespeichert.' },
+  { id: 'photo-free', q: 'Ist der Facebook-Foto-Download wirklich kostenlos?', a: 'Ja, TikSaveHub ist 100% kostenlos. Lade so viele Fotos herunter wie du möchtest, ohne Grenzen.' },
+  { id: 'photo-multiple', q: 'Warum bekomme ich nur 1 Foto, wenn das Album mehrere Fotos hat?', a: 'Wenn du einen "Teilen"-Link einfügst, können wir aufgrund von Facebooks Zugriffsbeschränkungen nur zuverlässig das erste Foto abrufen. Für weitere Fotos öffne jedes Foto einzeln in deinem Browser, kopiere die direkte URL aus der Adresszeile und füge sie hier einzeln ein.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Facebook Foto Downloader | Kostenlos Volle Auflösung | TikSaveHub"
+  description="Facebook-Fotos in voller Auflösung herunterladen — kostenlos, schnell, ohne Anmeldung. Speichere FB-Fotos in HD auf iPhone, Android und PC."
+  keywords="facebook foto downloader, facebook foto speichern, facebook foto download, fb foto herunterladen"
+  canonical="/facebook-photo-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Facebook Photo Downloader"
+  lang="de"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Facebook Photo Downloader", "item": "https://tiksavehub.com/facebook-photo-downloader" } ] })} />
+
+  <FbHeroSection
+    crumb="Facebook Photo Downloader"
+    badge="Kostenlos · Volle Auflösung · Kein Konto nötig"
+    title="Facebook Foto Downloader — Volle Auflösung, Kostenlos"
+    subline="Facebook-Fotos in voller Auflösung herunterladen. Kostenlos und schnell."
+    sub="Speichere Fotos von Facebook-Beiträgen in maximaler Auflösung — kostenlos, schnell, ohne Anmeldung. Füge den Facebook-Beitrags-Link ein und lade alle Fotos als ZIP herunter."
+    trust={['100% Kostenlos', 'Volle Auflösung', 'Kein Konto nötig', 'ZIP-Support', 'Funktioniert auf jedem Gerät']}
+    shareUrl="/facebook-photo-downloader"
+    shareTitle="Facebook Foto Downloader — Kostenlos in HD"
+    shareDescription="Lade Facebook-Fotos in voller Auflösung herunter. Kostenlos und schnell."
+  >
+    <FacebookDownloadForm mode="photo" lang="de" />
+  </FbHeroSection>
+
+  <StatsSection stats={[ { value: '100% Kostenlos', label: 'Facebook-Fotos sofort ohne Wasserzeichen herunterladen', icon: 'download' }, { value: 'Kein Konto', label: 'Funktioniert auf jedem Gerät, überall auf der Welt', icon: 'globe' }, { value: 'HD-Qualität', label: 'Originalauflösung, kein Wasserzeichen, kein Login nötig', icon: 'star' } ]} />
+
+  <FbStepsSection
+    eyebrow="Schritt-für-Schritt-Anleitung"
+    headline="So lädst du Facebook-Fotos herunter."
+    sub="Drei einfache Schritte."
+    steps={[ { num: '01', icon: 'copy', title: 'Beitrags-Link kopieren', body: 'Öffne Facebook, finde den Beitrag mit dem Foto, das du speichern möchtest, tippe auf Freigabe und wähle „Link kopieren".' }, { num: '02', icon: 'paste', title: 'Bei TikSaveHub einfügen', body: 'Kehre hierher zurück und füge den Link in das Eingabefeld ein.' }, { num: '03', icon: 'download', title: 'Fotos herunterladen', body: 'Klicke auf Herunterladen. Bei mehreren Fotos werden sie als ZIP-Datei zusammengefasst.' } ]} />
+
+  <FbFeaturesSection
+    eyebrow="Funktionen"
+    headline="Warum TikSaveHub für Facebook-Fotos die richtige Wahl ist."
+    features={[ { icon: 'shield', accent: 'develop', title: 'Volle Auflösung', body: 'Lade mit bis zu 2048x2048 Pixel herunter — in Originalqualität.' }, { icon: 'list', accent: 'preview', title: 'Mehrere Fotos als ZIP', body: 'Bei mehreren Fotos im Beitrag werden sie als praktische ZIP-Datei heruntergeladen.' }, { icon: 'zap', accent: 'ship', title: 'Superschnell', body: 'Downloads in Sekunden — einfügen, klicken, fertig.' }, { icon: 'globe', accent: 'develop', title: 'Anonym', body: 'Lade herunter, ohne dass der Eigentümer davon erfährt. Komplett privat.' }, { icon: 'device', accent: 'preview', title: 'Funktioniert auf jedem Gerät', body: 'iPhone, Android, PC, Mac — funktioniert in jedem Browser.' }, { icon: 'music', accent: 'ship', title: 'Kostenlos und unbegrenzt', body: 'Keine täglichen Grenzen, keine Kosten. So viele Downloads wie du möchtest.' } ]} />
+
+  <FbFaqSection eyebrow="FAQ" headline="Fragen zu Facebook Foto Downloads." prefix="photo" faqs={faqData} />
+
+  <FbCtaBand headline="Speichere deine Lieblings-Fotos von Facebook." sub="Kostenlos, schnell, in voller Auflösung — füge den Link ein und lade herunter." ctaHref="#download-tool" ctaLabel="Fotos jetzt herunterladen" />
+
+  <FbInternalLinks
+    headline="Weitere kostenlose Facebook-Tools"
+    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos in HD herunter.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Speichere Facebook Reels ohne Wasserzeichen.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Speichere Facebook-Stories, bevor sie verschwinden.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook-zu-MP3-Konverter', desc: 'Extrahiere MP3-Audio aus Facebook-Videos.' } ]}
+  />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Weitere Tools</h2>
+      <div class="related-tools-grid">
+            <a href="/de/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/de/tiktok-to-mp3" class="related-tool-link">TikTok zu MP3</a>
+            <a href="/de/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/de/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

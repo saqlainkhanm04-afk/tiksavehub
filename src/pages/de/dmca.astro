@@ -1,0 +1,91 @@
+---
+export const prerender = true;
+import Layout from '../../layouts/Layout.astro';
+
+const lastUpdated = '2025-01-01';
+---
+
+<Layout
+  title="DMCA — TikSaveHub"
+  description="Die DMCA-Konformitätsseite von TikSaveHub. Erfahre, wie urheberrechtlich geschützte Inhalte gemeldet und unsere Urheberrechtsrichtlinie befolgt werden."
+  keywords="dmca,urheberrecht,urheberrechtsverletzung,entfernungsanfrage,tiksavehub dmca"
+  canonical="/dmca"
+  ogImage="/og-dmca.png"
+  lang="de"
+  skipSoftwareApp
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner container-page">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a href="/"><span>Startseite</span></a><meta itemprop="position" content="1" /></li>
+          <li aria-current="page"><span>DMCA</span><meta itemprop="position" content="2" /></li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">Rechtliches</span>
+        <h1 id="legal-headline" class="legal-title">DMCA-Konformität</h1>
+        <p class="legal-meta">Zuletzt aktualisiert: {lastUpdated} &middot; Gültig ab: {lastUpdated}</p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">1. Urheberrechtsverletzungs-Meldung</h2>
+            <p>TikSaveHub respektiert das geistige Eigentum anderer und erwartet von seinen Nutzern dasselbe. Gemäß dem Digital Millennium Copyright Act (DMCA) werden wir auf Benachrichtigungen über angebliche Urheberrechtsverletzungen, die an unseren benannten Urheberrechtsbeauftragten gerichtet werden, prompt reagieren.</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">2. So reichen Sie eine DMCA-Meldung ein</h2>
+            <p>Wenn Sie glauben, dass über TikSaveHub zugängliche Inhalte Ihre Urheberrechte verletzen, senden Sie bitte eine schriftliche Benachrichtigung an unseren benannten Beauftragten mit folgenden Informationen:</p>
+            <ul class="legal-list">
+              <li>Physische oder elektronische Signatur des Urheberrechtsinhabers oder seines Bevollmächtigten.</li>
+              <li>Identifizierung des urheberrechtlich geschützten Werks, von dem behauptet wird, es sei verletzt worden.</li>
+              <li>URL oder Ort des verletzenden Materials auf TikSaveHub.</li>
+              <li>Ihre Kontaktdaten: Name, Adresse, Telefonnummer, E-Mail-Adresse.</li>
+              <li>Eine Erklärung, dass Sie ein gutgläubiges Überzeugung haben, dass die Nutzung nicht vom Urheberrechtsinhaber, dessen Bevollmächtigtem oder dem Gesetz genehmigt wurde.</li>
+              <li>Eine Erklärung unter Strafe des Meineids, dass die Informationen in der Meldung korrekt sind und Sie befugt sind, im Namen des Urheberrechtsinhabers zu handeln.</li>
+            </ul>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">3. Senden Sie Ihre DMCA-Meldung an</h2>
+            <p>Senden Sie DMCA-Meldungen an folgende Adresse:</p>
+            <p class="legal-contact"><strong>E-Mail:</strong> <a href="mailto:samneil7582@gmail.com">samneil7582@gmail.com</a><br /><strong>Betreff:</strong> DMCA Notice</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">4. Gegenmeldung</h2>
+            <p>Wenn Sie glauben, dass Ihr Material fälschlicherweise entfernt wurde oder der Zugang dazu gesperrt wurde, können Sie eine Gegenmeldung einreichen. Diese muss enthalten:</p>
+            <ul class="legal-list">
+              <li>Ihre physische oder elektronische Signatur.</li>
+              <li>Identifizierung des entfernten Materials und des Ortes vor der Entfernung.</li>
+              <li>Eine Erklärung unter Strafe des Meineids, dass das Material aufgrund eines Irrtums oder einer Fehlidentifizierung entfernt wurde.</li>
+              <li>Ihren Namen, Ihre Adresse, Telefonnummer und E-Mail-Adresse.</li>
+              <li> Eine Einwilligung in die Zuständigkeit des Bundesbezirksgerichts an Ihrem Wohnort oder des Gerichtsstandes, an dem TikSaveHub seinen Sitz haben könnte.</li>
+            </ul>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">5. Wiederholungstäter</h2>
+            <p>Gemäß DMCA und anderen geltenden Gesetzen behält sich TikSaveHub das Recht vor, die Konten von Nutzern unter angemessenen Umständen zu kündigen, die als Wiederholungstäter gelten. Wir behalten uns auch das Recht vor, den Zugang von Nutzern einzuschränken und/oder ihre Konten zu beenden, die die geistigen Eigentumsrechte anderer verletzen.</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">6. Einschränkungen</h2>
+            <p>TikSaveHub ist ein Video-Downloader. Wir hosten, speichern oder verbreiten keine urheberrechtlich geschützten Inhalte auf unseren Servern. Heruntergeladene Videos werden direkt an das Gerät des Nutzers ausgeliefert und nicht von uns gespeichert. Wir nehmen Urheberrechtsvorwürfe jedoch ernst und untersuchen alle gültigen DMCA-Meldungen.</p>
+          </section>
+
+        </div>
+      </div>
+
+      <div class="legal-back"><a href="/" class="btn-primary-sm">&larr; Zurück zu TikSaveHub</a></div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section{background-color:var(--color-canvas-soft);padding:var(--spacing-5xl) var(--spacing-lg)}.legal-inner{display:flex;flex-direction:column;gap:var(--spacing-2xl);max-width:760px;margin-inline:auto}.legal-breadcrumb{margin-bottom:0}.breadcrumb-list{display:flex;align-items:center;gap:6px;list-style:none;margin:0;padding:0;font-size:var(--text-body-sm);color:var(--color-mute)}.breadcrumb-list li+li::before{content:'/';margin-right:6px;color:var(--color-hairline-strong)}.breadcrumb-list a{color:var(--color-body);text-decoration:none;transition:color .15s ease}.breadcrumb-list a:hover{color:var(--color-ink)}.legal-header{display:flex;flex-direction:column;gap:var(--spacing-sm)}.section-eyebrow{color:var(--color-mute)}.legal-title{font-size:var(--text-display-xl);font-weight:600;line-height:1.05;letter-spacing:-2.5px;color:var(--color-ink);margin:0}.legal-meta{font-size:var(--text-body-sm);color:var(--color-mute);margin:0}.legal-card{background-color:var(--color-canvas);border-radius:var(--radius-lg);padding:var(--spacing-3xl);box-shadow:inset 0 0 0 1px #0000000a,0 1px 1px #00000005,0 4px 8px #0000000a}.legal-content{display:flex;flex-direction:column;gap:var(--spacing-2xl)}.legal-clause{display:flex;flex-direction:column;gap:var(--spacing-md)}.legal-h2{font-size:var(--text-display-md);font-weight:600;letter-spacing:-1.28px;color:var(--color-ink);margin:0;line-height:1.25}.legal-content p{font-size:var(--text-body-md);color:var(--color-body);line-height:1.75;margin:0;letter-spacing:-.1px}.legal-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--spacing-sm)}.legal-list li{font-size:var(--text-body-md);color:var(--color-body);line-height:1.7;padding-left:20px;position:relative;letter-spacing:-.1px}.legal-list li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,var(--color-grad-develop-start),var(--color-cyan))}.legal-content a{color:var(--color-link);text-decoration:underline;text-underline-offset:2px;transition:color .15s ease}.legal-content a:hover{color:var(--color-link-deep)}.legal-contact{background-color:var(--color-canvas-soft);border-radius:var(--radius-md);padding:var(--spacing-lg);font-size:var(--text-body-md);color:var(--color-body);line-height:1.75}.legal-contact strong{font-weight:600;color:var(--color-ink)}.legal-back{display:flex;justify-content:center}.btn-primary-sm{display:inline-flex;align-items:center;gap:var(--spacing-xs);padding:var(--spacing-xs) var(--spacing-lg);border-radius:var(--radius-full);background-color:var(--color-ink);color:var(--color-on-primary);font-size:var(--text-body-sm);font-weight:500;text-decoration:none;transition:opacity .2s ease,transform .2s ease;border:none;cursor:pointer;line-height:2.2;letter-spacing:-.1px}.btn-primary-sm:hover{opacity:.85;transform:translateY(-1px)}.dark .legal-card{box-shadow:inset 0 0 0 1px #ffffff0a,0 1px 1px #00000010,0 4px 8px #00000020}.dark .legal-contact{background-color:var(--color-canvas-soft-2)}@media(max-width:600px){.legal-section{padding:var(--spacing-4xl) var(--spacing-md)}.legal-title{font-size:32px;letter-spacing:-1.5px}.legal-card{padding:var(--spacing-lg)}.legal-h2{font-size:var(--text-display-sm)}.breadcrumb-list{font-size:var(--text-caption)}}
+</style>

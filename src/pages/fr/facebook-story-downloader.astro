@@ -1,0 +1,91 @@
+---
+// Facebook Story Downloader — SEO-optimized landing page (FR)
+// URL: /facebook-story-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbStepsSection from '../../components/FbStepsSection.astro';
+import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbFaqSection from '../../components/FbFaqSection.astro';
+import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbInternalLinks from '../../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+
+const faqData = [
+  { id: 'story-hd', q: 'Comment puis-je télécharger une story Facebook en HD ?', a: 'Copiez le lien de la story Facebook publique, collez-le sur TikSaveHub et cliquez sur télécharger. Si la story est disponible, elle sera enregistrée en MP4 qualité originale.' },
+  { id: 'story-24h', q: 'Les stories Facebook disparaissent-elles après 24 heures ?', a: 'Oui, les stories Facebook disparaissent automatiquement après 24 heures. Vous pouvez copier le lien et la télécharger avant qu\'elle ne disparaisse.' },
+  { id: 'story-private', q: 'Puis-je télécharger une story Facebook privée ?', a: 'Non, TikSaveHub ne peut télécharger que les stories Facebook publiques.' },
+  { id: 'story-no-login', q: 'Dois-je me connecter à Facebook pour télécharger une story ?', a: 'Non, aucune connexion n\'est requise. Il vous suffit du lien de la story publique pour la télécharger.' },
+  { id: 'story-iphone', q: 'Comment enregistrer une story Facebook sur iPhone ?', a: 'Ouvrez Safari, collez le lien sur TikSaveHub et appuyez sur télécharger — le MP4 sera enregistré dans l\'application Fichiers.' },
+  { id: 'story-android', q: 'Comment enregistrer une story Facebook sur Android ?', a: 'Ouvrez Chrome, collez le lien sur TikSaveHub et appuyez sur télécharger — la vidéo sera enregistrée dans le dossier Téléchargements.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Téléchargeur de Stories Facebook — Gratuit & Anonyme | TikSaveHub"
+  description="Téléchargez les stories Facebook avant qu'elles ne disparaissent. Gratuit, rapide et anonyme. Enregistrez des stories FB en HD sans connexion."
+  keywords="téléchargeur story facebook, facebook stories download, story facebook telecharger, enregistrer story facebook"
+  canonical="/facebook-story-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Facebook Story Downloader"
+  lang="fr"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Facebook Story Downloader", "item": "https://tiksavehub.com/facebook-story-downloader" } ] })} />
+
+  <FbHeroSection
+    crumb="Facebook Story Downloader"
+    badge="Gratuit · HD · Anonyme"
+    title="Facebook Story Downloader — Enregistrez avant la disparition"
+    subline="Enregistrez les stories Facebook en HD avant qu'elles ne disparaissent. Gratuit et anonyme."
+    sub="Les stories Facebook disparaissent après 24 heures. Téléchargez-les avant qu'elles ne disparaissent sans connexion — gratuit et rapide. Collez le lien de la story Facebook et enregistrez le MP4."
+    trust={['100% Gratuit', 'Anonyme', 'HD', 'Sans inscription', 'Fonctionne sur tous les appareils']}
+    shareUrl="/facebook-story-downloader"
+    shareTitle="Facebook Story Downloader — Gratuit & Anonyme"
+    shareDescription="Téléchargez les stories Facebook avant qu'elles ne disparaissent. Gratuit et anonyme."
+  >
+    <FacebookDownloadForm mode="story" />
+  </FbHeroSection>
+
+  <StatsSection stats={[ { value: '100% Gratuit', label: 'Téléchargez des vidéos TikTok instantanément sans filigrane', icon: 'download' }, { value: 'Sans Inscription', label: 'Fonctionne sur tous les appareils, du monde entier', icon: 'globe' }, { value: 'Qualité HD', label: 'Résolution originale, sans filigrane, sans connexion', icon: 'star' } ]} />
+
+  <FbStepsSection
+    eyebrow="Guide Étape par Étape"
+    headline="Comment télécharger des stories Facebook."
+    sub="Trois étapes simples."
+    steps={[ { num: '01', icon: 'copy', title: 'Copiez le lien de la story', body: 'Ouvrez Facebook, trouvez la story que vous souhaitez enregistrer, appuyez sur Partager et copiez le lien.' }, { num: '02', icon: 'paste', title: 'Collez-le sur TikSaveHub', body: 'Revenez ici et collez le lien dans le champ de saisie.' }, { num: '03', icon: 'download', title: 'Téléchargez la story', body: 'Cliquez sur télécharger pour enregistrer le fichier MP4 sur votre appareil.' } ]} />
+
+  <FbFeaturesSection
+    eyebrow="Fonctionnalités"
+    headline="Pourquoi choisir TikSaveHub pour les stories Facebook."
+    features={[ { icon: 'shield', accent: 'develop', title: 'Sans filigrane', body: 'Téléchargez la story sans altération — aucun filigrane ajouté.' }, { icon: 'zap', accent: 'preview', title: 'Enregistrez avant la disparition', body: 'Sauvegardez les stories éphémères qui disparaissent après 24 heures.' }, { icon: 'music', accent: 'ship', title: 'Ultra rapide', body: 'Téléchargement en quelques secondes — collez, cliquez, enregistré.' }, { icon: 'globe', accent: 'develop', title: 'Anonyme', body: 'Téléchargez sans que le propriétaire le sache. Entièrement privé.' }, { icon: 'device', accent: 'preview', title: 'Fonctionne sur tous les appareils', body: 'iPhone, Android, PC, Mac — fonctionne sur tous les navigateurs.' }, { icon: 'list', accent: 'ship', title: 'Gratuit et illimité', body: 'Pas de limite quotidienne, pas de coût. Téléchargez autant que vous voulez.' } ]} />
+
+  <FbFaqSection eyebrow="FAQ" headline="Questions sur les stories Facebook." prefix="story" faqs={faqData} />
+
+  <FbCtaBand headline="Enregistrez cette story avant qu'elle ne disparaisse." sub="Gratuit, rapide et anonyme — collez le lien de la story et enregistrez-la en HD." ctaHref="#download-tool" ctaLabel="Télécharger la story maintenant" />
+
+  <FbInternalLinks
+    headline="Autres outils Facebook gratuits"
+    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Téléchargez des vidéos Facebook en HD.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Enregistrez des Reels Facebook sans filigrane.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Extrayez l\'audio MP3 de vidéos Facebook.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Enregistrez des photos Facebook en résolution complète.' } ]}
+  />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Plus d'Outils</h2>
+      <div class="related-tools-grid">
+            <a href="/fr/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/fr/tiktok-to-mp3" class="related-tool-link">TikTok en MP3</a>
+            <a href="/fr/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/fr/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

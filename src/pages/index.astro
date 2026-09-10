@@ -96,6 +96,27 @@ const tools = [
     badge: null,
   },
   {
+    title: 'Facebook Story Downloader',
+    description: 'Download Facebook Stories before they expire. Free and anonymous.',
+    href: '/facebook-story-downloader',
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Facebook Photo Downloader',
+    description: 'Download Facebook photos and albums in full HD quality.',
+    href: '/facebook-photo-downloader',
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Instagram Audio Downloader',
+    description: 'Extract audio from Instagram Reels and videos as high-quality MP3.',
+    href: '/instagram-audio-downloader',
+    icon: 'audio',
+    badge: null,
+  },
+  {
     title: 'X (Twitter) Video Downloader',
     description: 'Download videos and GIFs from X (Twitter) in HD quality.',
     href: '/x-video-downloader',
@@ -129,6 +150,66 @@ const itemListJsonLd = {
   })),
 };
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is TikSaveHub free to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. TikSaveHub is 100% free with no hidden fees. You can download unlimited videos from TikTok, Instagram, Facebook, and X without paying anything.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to install an app?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. TikSaveHub works entirely in your browser. No app, extension, or software installation is required.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I download private videos?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. TikSaveHub only works with public videos that you can view in a browser. Private account content cannot be accessed.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What devices are supported?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'TikSaveHub works on all modern devices — iPhone, Android, Windows PC, Mac, and tablets. Any browser (Safari, Chrome, Firefox, Edge) will work.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is it legal to download videos?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Downloading videos for personal use is generally allowed. Always respect copyright and get permission before reposting or using content commercially.',
+      },
+    },
+  ],
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://tiksavehub.com',
+    },
+  ],
+};
+
 const features = [
   {
     title: 'HD Quality',
@@ -159,9 +240,8 @@ const features = [
   keywords="tiktok downloader, instagram downloader, facebook downloader, x video downloader, download videos without watermark, hd video downloader, free video downloader"
   canonical="/"
   ogImage="/og-default.png"
-  jsonLd={JSON.stringify([organizationJsonLd, websiteJsonLd, itemListJsonLd])}
+  jsonLd={JSON.stringify([organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd, breadcrumbJsonLd])}
   appName="TikSaveHub"
-  appRating={{ value: '4.9', count: '12450' }}
 >
   <!-- Hero -->
   <section class="home-hero" aria-labelledby="home-headline">

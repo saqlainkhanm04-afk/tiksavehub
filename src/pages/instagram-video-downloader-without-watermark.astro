@@ -32,7 +32,7 @@ const faqData = [
   {
     id: 'faq-no-watermark',
     q: 'Can I download an Instagram video without a watermark?',
-    a: 'Yes. TikSaveHub provides the original Instagram video file as-is, so no additional watermark is added. The downloaded video will appear exactly as it does on Instagram (unless the creator themselves added a watermark).',
+    a: 'Yes. TikSaveHub is a free Instagram video watermark remover — it provides the original Instagram video file as-is, so no additional watermark is added. The downloaded video will appear exactly as it does on Instagram (unless the creator themselves added a watermark). Every download is completely free.',
   },
   {
     id: 'faq-original-audio',
@@ -57,7 +57,7 @@ const faqData = [
   {
     id: 'faq-no-limit',
     q: 'Does TikSaveHub have a daily download limit?',
-    a: 'If configured with zero daily caps, no fixed limit applies. TikSaveHub can then download unlimited public Instagram videos, similar to tools that advertise \u2018no daily limit\u2019. (Actual download success still depends on factors like Instagram’s availability.)',
+    a: 'If configured with zero daily caps, no fixed limit applies. TikSaveHub can then download unlimited public Instagram videos, similar to tools that advertise ‘no daily limit’. (Actual download success still depends on factors like Instagram’s availability.)',
   },
   {
     id: 'faq-multi-carousel',
@@ -68,6 +68,21 @@ const faqData = [
     id: 'faq-quality',
     q: 'What video quality will I get when I download an Instagram video?',
     a: 'You will get the highest resolution Instagram provides for that post. TikSaveHub fetches the best available quality (usually up to 1080p Full HD if the creator uploaded in HD). If only a lower resolution exists, you will receive that maximum instead.',
+  },
+  {
+    id: 'faq-igtv',
+    q: 'Can I download IGTV videos from Instagram?',
+    a: 'Yes. TikSaveHub supports IGTV video downloads. Paste the IGTV link (instagram.com/tv/...) and download the full-length video as an MP4 in the highest available quality — no watermark, no sign-up.',
+  },
+  {
+    id: 'faq-repost',
+    q: 'Can I download Instagram videos to repost on TikTok or YouTube Shorts?',
+    a: 'Yes. Download the clean MP4 from TikSaveHub and use it as needed — always respect the original creator\'s rights and give credit when reposting their content on other platforms.',
+  },
+  {
+    id: 'faq-reels-stories',
+    q: 'Can I download Instagram Reels and Stories too?',
+    a: 'Yes. TikSaveHub supports Instagram Reels, Stories, posts, and IGTV. Use our dedicated <a href="/instagram-reels-downloader-without-watermark">Instagram Reels downloader</a> for Reels or our <a href="/instagram-story-downloader-without-watermark">Instagram Story downloader</a> for Stories — all free, no watermark, no sign-up.',
   },
 ];
 
@@ -86,16 +101,15 @@ const faqJsonLd = JSON.stringify({
 ---
 
 <Layout
-  title="Instagram Video Downloader Without Watermark — TikSaveHub"
-  description="Save Instagram videos in HD without the watermark — free, fast, no sign-up. The best online Instagram video downloader."
-  keywords="instagram video downloader without watermark, instagram video downloader no watermark, instagram reels downloader, free instagram video downloader, instagram video downloader online, download instagram videos, save instagram reels"
+  title="Instagram Video Without Watermark — Free Video Downloader | TikSaveHub"
+  description="Download Instagram video without watermark — free video downloader for IG reels, posts, IGTV. Save as HD MP4 on any device. No login, no app needed."
+  keywords="instagram video without watermark, video downloader free, instagram reels video, instagram video downloader without watermark, free instagram video downloader, instagram video downloader online, download instagram videos, save instagram reels, instagram video watermark remover, instagram story video"
   canonical="/instagram-video-downloader-without-watermark"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="instagram"
   jsonLd={faqJsonLd}
   appName="TikSaveHub — Instagram Video Downloader"
-  appRating={{ value: '4.9', count: '12450' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -113,15 +127,13 @@ const faqJsonLd = JSON.stringify({
     <div class="dl-hero-inner container-page">
       <!-- Breadcrumb -->
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
-        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1" />
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
-            <span itemprop="name">Instagram Video Downloader</span>
-            <meta itemprop="position" content="2" />
-          </li>
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Instagram Video Downloader</span>
+                  </li>
         </ol>
       </nav>
 
@@ -133,15 +145,15 @@ const faqJsonLd = JSON.stringify({
       </div>
 
       <h1 id="dl-hero-headline" class="dl-hero-headline">
-        Instagram Video Downloader Without Watermark
+        Instagram Video Without Watermark
       </h1>
 
       <p class="dl-hero-subline headline-gradient">
-        Save Instagram videos in HD — free and instant.
+        Free video downloader for Instagram — HD quality, no watermark.
       </p>
 
       <p class="dl-hero-sub text-body-lg">
-        Save any Instagram video in HD quality — free, fast, no sign-up, and no watermark.
+        Free video downloader — save any Instagram video without watermark in HD quality.
         Just paste an Instagram post link and save instantly.
       </p>
 
@@ -180,26 +192,7 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- Stats -->
-  <StatsSection stats={[
-    {
-      value: '10M+',
-      label: 'Instagram Videos Downloaded',
-      sub: 'Download Instagram videos & posts instantly',
-      icon: 'download',
-    },
-    {
-      value: '150+',
-      label: 'Countries Using Our Instagram Downloader',
-      sub: 'Download Instagram content from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.9',
-      label: 'Fast & Free Instagram Video Download',
-      sub: 'No watermark, no login required',
-      icon: 'star',
-    },
-  ]} />
+  <StatsSection platform="Instagram" />
 
   <!-- SEO Content Section — 600+ words -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
@@ -208,37 +201,37 @@ const faqJsonLd = JSON.stringify({
         <div class="seo-content-main">
           <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
           <h2 id="seo-about-headline" class="section-headline">
-            Save Instagram videos in clean HD quality.
+            Free video downloader for Instagram — no watermark.
           </h2>
 
           <div class="seo-article">
             <p>
-              TikSaveHub lets you save any Instagram video directly to your device in high quality. Whether you found a stunning video on your Explore page, a tutorial you want to reference later, or a creative video you'd like to share on other platforms, TikSaveHub gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. Just paste the link and download.
+              TikSaveHub is a free video downloader that lets you save any Instagram video directly to your device in HD quality — completely without watermark. Whether you found a stunning video on your Explore page, a tutorial you want to reference later, or a creative video you'd like to share on other platforms, our video downloader for Instagram gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. Just paste the link and download. TikSaveHub is also a reliable Instagram video watermark remover, so every saved video looks clean and professional.
             </p>
 
             <h3 class="text-highlight">Why remove the Instagram watermark?</h3>
             <p>
-              Instagram videos shared via third-party tools often carry platform watermarks that can be distracting. TikSaveHub delivers a polished HD video without any overlay, giving you clean footage you can repurpose, edit, or simply enjoy offline without visual clutter.
+              Every Instagram video comes with a floating overlay that displays the creator's username. While this is great for attribution, it can be distracting when you want to watch a video offline or share it on another platform. As an Instagram video watermark remover, TikSaveHub delivers a clean, no watermark video that you can repurpose, edit, or simply enjoy offline without visual clutter. Download Instagram video without watermark every time — it's completely free.
             </p>
 
             <h3 class="text-highlight">How the Instagram video saver works</h3>
             <p>
-              Using TikSaveHub is incredibly simple. First, open the Instagram app or website and find the video you want to save. Tap the Share button (or the three-dot menu) and select "Copy Link" to grab the URL. Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers will process the content in under three seconds. You'll then see a preview with options to download the HD version. Click your preferred option, and the MP4 file saves directly to your device.
+              Using TikSaveHub as your free video downloader for Instagram is incredibly simple. First, open the Instagram app or website and find the video you want to save. Tap the Share button (or the three-dot menu) and select "Copy Link" to grab the URL. Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers will process the content in under three seconds. You'll then see a preview with options to download the HD version. Click your preferred option, and the MP4 file saves directly to your device.
             </p>
 
             <h3 class="text-highlight">Download Instagram videos online — works on any device</h3>
             <p>
-              One of the biggest advantages of using TikSaveHub is that it works everywhere. Whether you're on an iPhone, an Android phone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Instagram videos. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor.
+              One of the biggest advantages of using TikSaveHub is that it works everywhere. Whether you're on an iPhone, an Android phone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Instagram videos. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor. This free video downloader works the same across all devices — no matter if you're using Chrome, Safari, Firefox, or Edge.
             </p>
 
             <h3 class="text-highlight">HD quality — every single time</h3>
             <p>
-              When you use TikSaveHub to download Instagram videos, you always get the highest available quality. We deliver the original file that the creator uploaded — up to 1080p HD — without adding extra re-encoding or compression. This means the video keeps the original quality, exactly as you see it on Instagram. Whether you're saving a cinematic travel video, the result stays crisp and clear.
+              When you use TikSaveHub to download Instagram videos, you always get the highest available quality. We deliver the original file that the creator uploaded — up to 1080p HD — without adding extra re-encoding or compression. This means the video keeps the original quality, exactly as you see it on Instagram. Whether you're saving a cinematic travel video, an Instagram Reel, or a quick clip, the result stays crisp and clear. Every Instagram video download is free and watermark-free.
             </p>
 
             <h3 class="text-highlight">Safe, private, and completely free</h3>
             <p>
-              We take your privacy seriously. TikSaveHub doesn't require you to create an account, enter an email address, or provide any personal information. We don't store your download history, and we don't track your browsing behavior. The entire download process happens server-side, so there's nothing stored on your device except the final video file. And unlike many other Instagram saving tools that charge fees or limit downloads, TikSaveHub is 100% free with no daily caps. You can download as many videos as you want, every single day.
+              We take your privacy seriously. TikSaveHub doesn't require you to create an account, enter an email address, or provide any personal information. We don't store your download history, and we don't track your browsing behavior. The entire download process happens server-side, so there's nothing stored on your device except the final video file. And unlike many other Instagram saving tools that charge fees or limit downloads, TikSaveHub is a free video downloader with no daily caps. You can download as many videos as you want, every single day — every video without watermark.
             </p>
 
             <h3 class="text-highlight">Supports Instagram video post links</h3>
@@ -247,7 +240,7 @@ const faqJsonLd = JSON.stringify({
             </p>
 
             <p>
-              Looking for more Instagram tools? You can also download <a href="/instagram-reels-downloader-without-watermark">Instagram Reels without watermark</a> or extract audio as MP3 with the <a href="/instagram-audio-downloader">Instagram audio downloader</a>.
+              Looking for more Instagram tools? You can also download <a href="/instagram-reels-downloader-without-watermark">Instagram Reels without watermark</a>, save <a href="/instagram-story-downloader-without-watermark">Instagram Stories</a>, or extract audio as MP3 with the <a href="/instagram-audio-downloader">Instagram audio downloader</a>. TikSaveHub is your free video downloader for Instagram — no watermark, no limits.
             </p>
 
             <p>
@@ -260,11 +253,21 @@ const faqJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
-              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader Without Watermark</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#faq">FAQ</a></li>
-              <li><a href="/blog">Blog</a></li>
+              <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
+              <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
+              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
+              <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
+              <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
+              <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
+              <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
+              <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
+              <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
+              <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
+              <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
             </ul>
           </div>
 

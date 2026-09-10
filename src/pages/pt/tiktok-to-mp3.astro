@@ -1,0 +1,107 @@
+---
+// TikTok to MP3 — SEO-optimized landing page (Portuguese)
+// URL: /pt/tiktok-to-mp3
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import DownloadForm from '../../components/DownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  { id: 'mp3-how', q: 'Como converter vídeos do TikTok em MP3?', a: 'Cole o link do vídeo do TikTok no TikSaveHub e selecione a opção MP3. Você receberá um arquivo MP3 de alta qualidade.' },
+  { id: 'mp3-quality', q: 'Qual é a qualidade do MP3?', a: 'Você recebe arquivos MP3 de alta qualidade com até 320kbps.' },
+  { id: 'mp3-free', q: 'Converter TikTok para MP3 é gratuito?', a: 'Sim, o TikSaveHub é 100% gratuito.' },
+  { id: 'mp3-no-login', q: 'Preciso fazer login no TikTok?', a: 'Não, apenas o link público do vídeo é necessário.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  lang="pt"
+  title="TikTok to MP3 — Extraia Áudio de Vídeos do TikTok | TikSaveHub"
+  description="Converta vídeos do TikTok em MP3 de alta qualidade. Até 320kbps. Grátis, rápido, sem cadastro."
+  keywords="tiktok mp3 converter, tiktok to mp3, baixar audio tiktok, tiktok mp3 download, converter tiktok para mp3"
+  canonical="/tiktok-to-mp3"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="tiktok"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — TikTok to MP3"
+>
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> Grátis · Alta Qualidade · 320kbps</span></div>
+      <h1 id="dl-hero-headline" class="dl-hero-headline">TikTok to MP3</h1>
+      <p class="dl-hero-sub text-body-lg">Converta vídeos do TikTok em MP3 de alta qualidade. Grátis e rápido. Salve trilhas sonoras, músicas e áudios offline.</p>
+      <div class="dl-hero-form" id="download-tool"><DownloadForm mode="mp3" /></div>
+      <div class="dl-hero-trust">
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% Grátis</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Até 320kbps</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sem Cadastro</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sem Marca d'Água</span>
+      </div>
+    </div>
+  </section>
+
+  <StatsSection stats={[ { value: '100% Gratuito', label: 'Extraia áudio do TikTok instantaneamente, sem login', icon: 'download' }, { value: 'Sem Cadastro', label: 'Funciona em qualquer dispositivo, de qualquer lugar', icon: 'globe' }, { value: 'Qualidade HD', label: 'Alta Taxa de Bits — Qualidade de som MP3 nítida e clara', icon: 'star' } ]} />
+
+  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <span class="section-eyebrow text-caption-mono">Perguntas Frequentes</span>
+      <h2 id="dl-faq-headline" class="section-headline">Perguntas sobre TikTok to MP3</h2>
+      <div class="dl-faq-grid">
+        {faqData.map((faq) => (
+          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <SocialShare url="/tiktok-to-mp3" title="TikTok to MP3 — Extraia Áudio de Vídeos do TikTok" description="Converta vídeos do TikTok em MP3 de alta qualidade. Grátis." />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Mais Ferramentas</h2>
+      <div class="related-tools-grid">
+            <a href="/pt/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/pt/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+            <a href="/pt/instagram-story-downloader-without-watermark" class="related-tool-link">Instagram Story Downloader</a>
+            <a href="/pt/instagram-audio-downloader" class="related-tool-link">Instagram Audio Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
+  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
+  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
+  .dl-badge-row { display: flex; justify-content: center; }
+  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
+  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
+  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
+  .dl-hero-form { width: 100%; max-width: 640px; }
+  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
+  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
+  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
+  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
+  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
+  .dl-faq-q::-webkit-details-marker { display: none; }
+  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
+  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
+  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
+  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+
+  .related-tools-section { padding: var(--spacing-2xl) 0; }
+  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
+  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
+  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
+  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+</style>

@@ -2,36 +2,48 @@
 // StatsSection — social proof with premium design
 
 interface Props {
+  platform?: string;
   stats?: Array<{
     value: string;
     label: string;
-    sub: string;
+    sub?: string;
     icon: 'download' | 'globe' | 'star';
   }>;
 }
 
+const platformLabels: Record<string, string> = {
+  TikTok: 'Download TikTok videos instantly without watermark',
+  Instagram: 'Download Instagram Reels instantly without watermark',
+  Facebook: 'Download Facebook videos instantly without watermark',
+  X: 'Download X videos instantly without watermark',
+  Snapchat: 'Download Snapchat videos instantly without watermark',
+};
+
+const { platform, stats: customStats } = Astro.props;
+
+const downloadLabel = platform
+  ? platformLabels[platform] ?? `Download ${platform} videos instantly without watermark`
+  : platformLabels.TikTok;
+
 const defaultStats = [
   {
-    value: '10M+',
-    label: 'TikTok Videos Downloaded',
-    sub: 'Download TikTok videos instantly without watermark',
+    value: '100% Free',
+    label: downloadLabel,
     icon: 'download',
   },
   {
-    value: '150+',
-    label: 'Countries Using Our TikTok Downloader',
-    sub: 'Download TikTok videos online from anywhere',
+    value: 'No Sign-Up',
+    label: 'Works on any device, from anywhere in the world',
     icon: 'globe',
   },
   {
-    value: '4.9',
-    label: 'Fast & Free TikTok Video Download',
-    sub: 'No watermark, no login required',
+    value: 'HD Quality',
+    label: 'Original resolution, no watermark, no login required',
     icon: 'star',
   },
 ];
 
-const { stats = defaultStats } = Astro.props;
+const stats = customStats ?? defaultStats;
 ---
 
 <section id="stats" class="stats-section" aria-label="TikSaveHub statistics — social proof">
@@ -53,7 +65,7 @@ const { stats = defaultStats } = Astro.props;
           {stat.value}{stat.icon === 'star' && <span class="stat-star" aria-label="stars">★★★★★</span>}
         </p>
         <p class="stat-label">{stat.label}</p>
-        <p class="stat-sub">{stat.sub}</p>
+        {('sub' in stat && stat.sub) && <p class="stat-sub">{stat.sub}</p>}
       </div>
     ))}
   </div>

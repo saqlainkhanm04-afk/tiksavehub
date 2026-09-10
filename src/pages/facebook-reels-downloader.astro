@@ -72,8 +72,18 @@ const faqData = [
   },
   {
     id: 'reels-whyfail',
-    q: 'Why can\u2019t I download a Facebook Reel?',
+    q: 'Why can’t I download a Facebook Reel?',
     a: 'Downloads usually fail if the Reel is set to private, has been deleted by the owner, or the copied URL is incomplete. Make sure you copy a fresh link directly from the Share menu of a public post.',
+  },
+  {
+    id: 'reels-save-phone',
+    q: 'How to save Facebook Reels to phone gallery?',
+    a: 'Copy the Reel link from Facebook (tap Share → Copy Link), paste it into TikSaveHub, and tap Download. The HD MP4 saves to your Downloads folder (Android) or Files app (iPhone). Move it to your Gallery or Photos app for easy access.',
+  },
+  {
+    id: 'reels-with-audio',
+    q: 'Can I download Facebook Reels with sound or music?',
+    a: 'Yes. TikSaveHub preserves the original audio in every Facebook Reel download. The MP4 file includes both video and sound exactly as the creator uploaded it. For audio-only, use our Facebook to MP3 converter.',
   },
 ];
 
@@ -93,7 +103,7 @@ const faqJsonLd = JSON.stringify({
 
 <Layout
   title="Facebook Reels Downloader HD 1080p — No Watermark, Free | TikSaveHub"
-  description="Download Facebook Reels in HD 1080p free, no watermark, no sign-up. Save any fb Reel on iPhone, Android or PC as MP4 — fast, private, and unlimited."
+  description="Download Facebook Reels without watermark in HD 1080p. Free FB Reels downloader — save short videos as MP4 on any device. No login, no app needed."
   keywords="download facebook reels hd 1080p free, facebook reels downloader no watermark online, download facebook reels for iphone, facebook reels downloader, save facebook reels, facebook reel downloader hd, fb reels downloader free, download facebook reels android"
   canonical="/facebook-reels-downloader"
   ogImage="/og-downloader.png"
@@ -101,7 +111,6 @@ const faqJsonLd = JSON.stringify({
   platform="facebook"
   jsonLd={faqJsonLd}
   appName="TikSaveHub — Facebook Reels Downloader"
-  appRating={{ value: '4.8', count: '11230' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -129,36 +138,27 @@ const faqJsonLd = JSON.stringify({
   </FbHeroSection>
 
   <!-- Stats -->
-  <StatsSection stats={[
-    {
-      value: '8M+',
-      label: 'Facebook Reels Downloaded',
-      sub: 'Save FB Reels in HD instantly',
-      icon: 'download',
-    },
-    {
-      value: '150+',
-      label: 'Countries Using Our FB Reels Saver',
-      sub: 'Download Facebook Reels from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.8',
-      label: 'Free HD Facebook Reels Download',
-      sub: 'No watermark, no login required',
-      icon: 'star',
-    },
-  ]} />
+  <StatsSection platform="Facebook" />
 
   <!-- SEO Content Section — 600+ words -->
   <FbSeoArticle
     headline="Download Facebook Reels in full HD — free and watermark-free."
     quickLinks={[
-      { label: 'Facebook Reels Downloader', href: '#download-tool' },
-      { label: 'How It Works', href: '#how-it-works' },
-      { label: 'Features', href: '#features' },
-      { label: 'FAQ', href: '#faq' },
+      { label: 'TikTok Video Downloader', href: '/tiktok-video-downloader-without-watermark' },
+      { label: 'TikTok to MP3', href: '/tiktok-to-mp3' },
+      { label: 'Instagram Reels Downloader', href: '/instagram-reels-downloader-without-watermark' },
+      { label: 'Instagram Video Downloader', href: '/instagram-video-downloader-without-watermark' },
+      { label: 'Instagram Story Downloader', href: '/instagram-story-downloader-without-watermark' },
+      { label: 'Instagram Audio Downloader', href: '/instagram-audio-downloader' },
       { label: 'Facebook Video Downloader', href: '/facebook-video-downloader' },
+      { label: 'Facebook Reels Downloader', href: '#download-tool' },
+      { label: 'Facebook Story Downloader', href: '/facebook-story-downloader' },
+      { label: 'Facebook to MP3', href: '/facebook-to-mp3' },
+      { label: 'Facebook Photo Downloader', href: '/facebook-photo-downloader' },
+      { label: 'Snapchat Downloader', href: '/snapchat-downloader' },
+      { label: 'Snapchat Story Downloader', href: '/snapchat-story-downloader' },
+      { label: 'Snapchat to MP3', href: '/snapchat-to-mp3' },
+      { label: 'X/Twitter Video Downloader', href: '/x-video-downloader' },
     ]}
     supportedLinks={['facebook.com/reel/…', 'facebook.com/watch/?v=…', 'facebook.com/user/videos/…', 'fb.watch/…']}
   >
@@ -268,13 +268,13 @@ const faqJsonLd = JSON.stringify({
         icon: 'music',
         accent: 'preview',
         title: 'MP3 Audio Extraction',
-        body: 'Convert any Reel\u2019s soundtrack to MP3 with one tap. Save trending Reel music and voice clips for offline listening.',
+        body: 'Convert any Reel’s soundtrack to MP3 with one tap. Save trending Reel music and voice clips for offline listening.',
       },
       {
         icon: 'zap',
         accent: 'ship',
         title: 'Lightning Fast',
-        body: 'Server-side processing with parallel chunk streaming means downloads start in seconds — paste, click, and it\u2019s yours.',
+        body: 'Server-side processing with parallel chunk streaming means downloads start in seconds — paste, click, and it’s yours.',
       },
       {
         icon: 'list',

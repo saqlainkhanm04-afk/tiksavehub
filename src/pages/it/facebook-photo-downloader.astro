@@ -1,0 +1,92 @@
+---
+// Facebook Photo Downloader — SEO-optimized landing page (Italian)
+// URL: /facebook-photo-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbStepsSection from '../../components/FbStepsSection.astro';
+import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbFaqSection from '../../components/FbFaqSection.astro';
+import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbInternalLinks from '../../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+
+const faqData = [
+  { id: 'photo-hd', q: 'Come scaricare foto Facebook in alta definizione?', a: 'Copia il link del post Facebook, incollalo su TikSaveHub e clicca Download. Tutte le foto del post verranno scaricate nella risoluzione originale.' },
+  { id: 'photo-zip', q: 'Posso scaricare più foto Facebook contemporaneamente?', a: 'Sì, se il post contiene più foto, tutte le foto vengono scaricate insieme in un file ZIP ad alta risoluzione.' },
+  { id: 'photo-private', q: 'Posso scaricare foto Facebook private?', a: 'No, TikSaveHub può scaricare solo le foto Facebook pubbliche.' },
+  { id: 'photo-quality', q: 'Qual è la qualità delle foto scaricate?', a: 'Le foto vengono scaricate alla massima risoluzione disponibile, fino a 2048x2048 pixel.' },
+  { id: 'photo-iphone', q: 'Come salvare foto Facebook su iPhone?', a: 'Apri Safari, incolla il link su TikSaveHub e tocca Download per salvare la foto nell\'App Foto.' },
+  { id: 'photo-free', q: 'Il download delle foto Facebook è gratuito?', a: 'Sì, TikSaveHub è al 100% gratuito. Scarica quante foto vuoi senza limiti.' },
+  { id: 'photo-multiple', q: 'Perché ricevo solo 1 foto quando l\'album ne contiene più di una?', a: 'Quando incolli un link "Condivisione", possiamo recuperare solo la prima foto in modo affidabile a causa delle restrizioni di accesso di Facebook. Per le foto aggiuntivi, apri ogni foto individualmente nel tuo browser, copia l\'URL diretto dalla barra degli indirizzi e incollalo qui una per una.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Scarica Foto Facebook in HD | Gratis | TikSaveHub"
+  description="Scarica foto Facebook in alta definizione, fino a 2048x2048px. Gratis, veloce, nessuna registrazione. Supporta ZIP per album multipli."
+  keywords="facebook photo downloader, scaricare foto facebook, facebook image download"
+  canonical="/facebook-photo-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Facebook Photo Downloader"
+  lang="it"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Facebook Photo Downloader", "item": "https://tiksavehub.com/facebook-photo-downloader" } ] })} />
+
+  <FbHeroSection
+    crumb="Facebook Photo Downloader"
+    badge="Gratis · Risoluzione originale · Nessuna registrazione"
+    title="Facebook Photo Downloader — Risoluzione originale, gratis"
+    subline="Scarica foto da Facebook in risoluzione originale. Gratuito e veloce."
+    sub="Salva le foto dei post Facebook alla massima risoluzione — gratuito, veloce e senza registrazione. Incolla il link del post Facebook e scarica tutte le foto in ZIP."
+    trust={['100% gratuito', 'Risoluzione originale', 'Nessuna registrazione', 'Supporto ZIP', 'Funziona su tutti i dispositivi']}
+    shareUrl="/facebook-photo-downloader"
+    shareTitle="Facebook Photo Downloader — Gratis HD"
+    shareDescription="Scarica foto da Facebook in risoluzione originale. Gratuito e veloce."
+  >
+    <FacebookDownloadForm mode="photo" lang="it" />
+  </FbHeroSection>
+
+  <StatsSection stats={[ { value: '100% Gratuito', label: 'Scarica foto Facebook istantaneamente senza filigrana', icon: 'download' }, { value: 'Senza Registrazione', label: 'Funziona su qualsiasi dispositivo, da qualsiasi luogo', icon: 'globe' }, { value: 'Qualità HD', label: 'Risoluzione originale, senza filigrana, senza login', icon: 'star' } ]} />
+
+  <FbStepsSection
+    eyebrow="Guida passo dopo passo"
+    headline="Come scaricare foto da Facebook."
+    sub="3 semplici passaggi."
+    steps={[ { num: '01', icon: 'copy', title: 'Copia il link del post', body: 'Apri Facebook, trova il post con le foto che vuoi salvare, tocca Condividi e poi "Copia link".' }, { num: '02', icon: 'paste', title: 'Incolla su TikSaveHub', body: 'Torna qui e incolla il link nel campo di inserimento.' }, { num: '03', icon: 'download', title: 'Scarica le foto', body: 'Clicca Download. Se ci sono più foto, verranno scaricate insieme in un file ZIP.' } ]} />
+
+  <FbFeaturesSection
+    eyebrow="Funzionalità"
+    headline="Perché scegliere TikSaveHub per le foto Facebook."
+    features={[ { icon: 'shield', accent: 'develop', title: 'Risoluzione originale', body: 'Scarica fino a 2048x2048 pixel — qualità originale.' }, { icon: 'list', accent: 'preview', title: 'Più foto in ZIP', body: 'Se il post ha più foto, scaricale insieme in un comodo file ZIP.' }, { icon: 'zap', accent: 'ship', title: 'Veloce come la luce', body: 'Download in pochi secondi — incolla, clicca, salva.' }, { icon: 'globe', accent: 'develop', title: 'Anonimo', body: 'Scarica senza che il proprietario lo sappia. Completamente privato.' }, { icon: 'device', accent: 'preview', title: 'Funziona ovunque', body: 'iPhone, Android, PC, Mac — funziona su qualsiasi browser.' }, { icon: 'music', accent: 'ship', title: 'Gratis e illimitato', body: 'Nessun limite giornaliero, nessun costo. Scarica quante volte vuoi.' } ]} />
+
+  <FbFaqSection eyebrow="Domande frequenti" headline="Domande sulle foto Facebook." prefix="photo" faqs={faqData} />
+
+  <FbCtaBand headline="Salva le tue foto Facebook preferite." sub="Gratuito, veloce, risoluzione originale — incolla il link e scarica." ctaHref="#download-tool" ctaLabel="Scarica foto ora" />
+
+  <FbInternalLinks
+    headline="Altri strumenti Facebook gratuiti"
+    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Scarica video Facebook in HD.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Salva i Reels Facebook senza marchio d\'acqua.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Salva le storie Facebook prima che scompaiano.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Estrai l\'audio dei video Facebook in MP3.' } ]}
+  />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Altri Strumenti</h2>
+      <div class="related-tools-grid">
+            <a href="/it/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/it/tiktok-to-mp3" class="related-tool-link">TikTok a MP3</a>
+            <a href="/it/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/it/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

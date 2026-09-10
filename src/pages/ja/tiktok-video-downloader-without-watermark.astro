@@ -1,0 +1,1622 @@
+---
+// TikTok Video Downloader — SEO-optimized landing page (Japanese)
+// URL: /ja/tiktok-video-downloader-without-watermark
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import DownloadForm from '../../components/DownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  {
+    id: 'dl-ww',
+    q: 'TikSaveHubでTikTokの動画をウォーターマークなしでダウンロードするにはどうすればいいですか？',
+    a: 'TikSaveHubは、TikTokサーバーから元の動画ファイルを取得することで、ウォーターマークなしでTikTokの動画を保存できます。ツールはTikTokのロゴとユーザー名のオーバーレイを削除し、ブランディングなしのクリーンなMP4動画を提供します。TikTokの動画リンクをコピーしてTikSaveHubのダウンローダーに貼り付けるだけです。TikSaveHubはウォーターマークのないソース動画をTikTokのサーバーから取得するため、ダウンロードされた動画はクリエイターがアップロードしたそのままの表示になります。',
+  },
+  {
+    id: 'dl-hd',
+    q: 'TikSaveHubでTikTokの動画をHD 1080p品質で保存できますか？',
+    a: 'はい — TikSaveHubは利用可能な最高品質を提供します。元のTikTok動画に1080p HDストリームがある場合、TikSaveHubはそのフルHDバージョンをダウンロードします。TikTok動画は複数の解像度で提供されることがよくあり、TikSaveHubは自動的に最適なものを選択します。HDストリームが存在する場合、ダウンローダーはそれを取得します。動画に低品質なストリームしかない場合は、ウォーターマークなしのクリーンな元のバージョンが提供されます。',
+  },
+  {
+    id: 'dl-iphone',
+    q: 'iPhone（Safari）でTikSaveHubを使用してTikTokの動画をダウンロードできますか？',
+    a: 'はい、TikSaveHubはiPhoneのSafariやChromeなどのモバイルブラウザで動作します。iOS 13以降に更新した後、Safariを開いてTikSaveHubにアクセスし、TikTokのリンクを貼り付けて動画を保存します。TikTokの共有ボタンをタップしてリンクをコピーし、TikSaveHubの入力フィールドに貼り付けるだけです。動画はSafariで直接ダウンロードされます。（注：iOS 12以前のiPhoneではAppleのダウンロード制限に直面する可能性があるため、デバイスが最新であることを確認してください。）',
+  },
+  {
+    id: 'dl-devices',
+    q: 'AndroidやPCでTikSaveHubを使用してTikTokの動画をダウンロードできますか？',
+    a: 'もちろん。TikSaveHubはブラウザベースであるため、すべてのAndroidデバイスおよびデスクトップ/ラップトップ（Windows、Mac、Linux）で動作します。ブラウザにTikTokのリンクを貼り付けるだけで動画がダウンロードされます。AndroidフォンでもPC/Macでも、Chrome、Firefox、Edge、または最新のブラウザでTikSaveHubを開いてください。アプリやWebからTikTok動画のURLをコピーし、TikSaveHubに貼り付けてダウンロードをクリックするだけです。別のアプリは不要で、動画は高品質でデバイスに保存されます。',
+  },
+  {
+    id: 'dl-links',
+    q: 'TikSaveHubはどのTikTokリンク形式をサポートしていますか？（例：vm.tiktok.comやvt.tiktok.com）',
+    a: 'TikSaveHubはすべてのTikTokリンク形式をサポートしています。完全なURL（tiktok.com/…）も、短縮URL（vm.tiktok.com/…やvt.tiktok.com/…）も使用できます。これらはすべてダウンローダーによって自動的に解決されます。リンクの取得方法に関係なく、TikSaveHubはそれを認識します。TikTokリンクをサイトに貼り付けると、ツールは形式を自動的に検出します。',
+  },
+  {
+    id: 'dl-free',
+    q: 'TikSaveHubは無料で使用できますか？登録やソフトウェアのインストールは必要ですか？',
+    a: 'はい。TikSaveHubは隠れた料金やサブスクリプションなしで100%無料です。登録したり、アプリや拡張機能をダウンロードしたりする必要はありません — ブラウザでリンクを使うだけです。すべての処理はオンラインで行われ、TikTokのURLを貼り付けるだけで即座にダウンロードできます。TikSaveHubはダウンロード履歴を保存せず、使用状況も追跡しないため、プライバシーが守られます。',
+  },
+  {
+    id: 'dl-account',
+    q: 'TikTokの動画をダウンロードするにはTikTokアカウントが必要ですか？',
+    a: 'いいえ、TikTokアカウントは不要です。TikSaveHubにはパブリックな動画リンクが必要なだけです。動画がTikTokでアクセス可能な場合、ログインせずにダウンロードできます。パブリックなTikTok動画のリンクをコピーして（共有 → リンクをコピー）TikSaveHubに貼り付けるだけです。コンテンツがプライベートまたは制限されている場合、TikSaveHubはアクセスできません。',
+  },
+  {
+    id: 'dl-legal',
+    q: 'ウォーターマークなしでTikTokの動画をダウンロードすることは合法ですか？',
+    a: '個人使用（オフライン視聴など）でのTikTok動画のダウンロードは一般的に許可されていますが、許可なく他人のコンテンツを共有したり、商用利用したりすると著作権違反になる可能性があります。TikSaveHubは個人の利便性と学習を目的としています。ダウンロードした動画を倫理的に使用することをおすすめします。',
+  },
+  {
+    id: 'dl-remove',
+    q: 'TikSaveHubはTikTokのウォーターマークをどのように除去しますか？',
+    a: 'TikSaveHubはTikTokサーバーに保存されているオリジナルのビデオストリームにアクセスします。TikTokはローカルに保存するときのみウォーターマークを追加するため、ツールは手を加えないソース動画を取得し、ロゴやオーバーレイなしで配信します。つまり、TikTokはストリーミング用の各動画のクリーン版を保持しています。TikSaveHubはそのオリジナルファイルを見つけてダウンロードするため、保存された動画はアップロードされたそのままの見た目になります。',
+  },
+  {
+    id: 'dl-private',
+    q: 'TikSaveHubはプライベートTikTokアカウントの動画をダウンロードできますか？',
+    a: 'いいえ。TikSaveHubはパブリックなTikTok動画のみで動作します。プライベートプロフィールのコンテンツにアクセスしたり、ダウンロードしたりすることはできません。動画がプライベートに設定されているか、TikTokで特別な権限が必要な場合、TikSaveHubは取得できません。',
+  },
+  {
+    id: 'dl-format',
+    q: 'ダウンロードしたTikTok動画のファイル形式と品質はどのようになりますか？',
+    a: 'TikSaveHubからのダウンロードはMP4ファイルとして保存されます。動画品質はTikTokが提供する利用可能な最高品質（最大1080p HD）です。TikSaveHubはオリジナルのエンコーディングを取得するため、クリエイターが1080p動画をアップロードした場合、その解像度が得られます。追加の圧縮は適用されません。',
+  },
+  {
+    id: 'dl-limits',
+    q: 'TikTok動画のダウンロード数に制限はありますか？',
+    a: 'いいえ。TikSaveHubはダウンロード制限や日次上限を設けていません。望むだけのTikTok動画を無料で貼り付けて保存できます。すべてのダウンロードは数秒で処理されるため、好きなだけこのツールを使用できます。',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'ウォーターマークなしでTikTok動画をダウンロードする方法',
+  description: 'TikSaveHubを使用してTikTok動画をHD品質でウォーターマークなしでダウンロードするステップバイステップガイド。',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'TikTok動画のリンクをコピー',
+      text: 'TikTokアプリを開き、保存したい動画を見つけて共有をタップし、リンクをコピーを選択します。',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'リンクをTikSaveHubに貼り付け',
+      text: 'TikSaveHub.comにアクセスし、コピーしたTikTokリンクをダウンロード入力フィールドに貼り付けます。',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'ダウンロードをクリック',
+      text: 'ダウンロードボタンをクリックし、動画が処理されるまで数秒お待ちください。',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'HD動画を保存',
+      text: 'HD MP4オプション（ウォーターマークなし）を選択し、動画ファイルをデバイスに保存します。',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
+---
+
+<Layout
+  lang="ja"
+  title="TikTokビデオダウンローダー ウォーターマークなし（HD） — TikSaveHub"
+  description="TikTok動画をHD品質でウォーターマークなしで保存 — 無料、高速、登録不要。最高のオンラインTikTok動画セーバー。"
+  keywords="tiktok video downloader without watermark, tiktok video downloader no watermark, tiktok video downloader, free tiktok video downloader, tiktok video downloader online, download tiktok videos, save tiktok videos"
+  canonical="/tiktok-video-downloader-without-watermark"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  jsonLd={combinedJsonLd}
+  appName="TikSaveHub — TikTokビデオダウンローダー"
+>
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://tiksavehub.com" },
+      { "@type": "ListItem", "position": 2, "name": "TikTokビデオダウンローダー", "item": "https://tiksavehub.com/tiktok-video-downloader-without-watermark" }
+    ]
+  })} />
+
+  <!-- Hero Section -->
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/ja"><span>ホーム</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>TikTokビデオダウンローダー</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          無料 · ウォーターマークなし · HD品質
+        </span>
+      </div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        TikTokビデオダウンローダー ウォーターマークなし
+      </h1>
+
+      <p class="dl-hero-subline headline-gradient">
+        HD品質で動画を保存 — 無料で即時ダウンロード。
+      </p>
+
+      <p class="dl-hero-sub text-body-lg">
+        すべてのTikTok動画をHD品質で保存 — 無料、高速、登録不要、ユーザー名オーバーマークなし。
+        リンクを貼り付けるだけで即座に保存できます。
+      </p>
+
+      <div class="dl-hero-form-wrap">
+        <DownloadForm />
+      </div>
+
+      <div class="dl-hero-trust">
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        100%無料
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        ウォーターマークなし
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        HD品質
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        モバイルで動作
+      </span>
+      </div>
+
+      <div class="dl-hero-share">
+        <SocialShare
+          url="/tiktok-video-downloader-without-watermark"
+          title="TikTokビデオダウンローダー ウォーターマークなし（HD） — TikSaveHub"
+          description="TikTok動画をHD品質でウォーターマークなしで保存 — 無料、高速、登録不要。"
+          image="/og-downloader.png"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsSection />
+
+  <!-- SEO Content Section -->
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">TikSaveHubについて</span>
+          <h2 id="seo-about-headline" class="section-headline">
+            TikTok動画をクリーンなHD品質で保存。
+          </h2>
+
+          <div class="seo-article">
+            <p>
+              TikSaveHubは、TikTok動画を高品質で直接デバイスに保存できるツールです。For Youページで面白いクリップを見つけた場合、後で参照したいチュートリアルがある場合、またはInstagram ReelsやYouTube Shortsで共有したいクリエイティブな動画がある場合でも、TikSaveHubは数秒で最適化されたMP4ファイルを提供します。アプリのインストール、ブラウザ拡張機能、アカウント作成は不要。リンクを貼り付けてダウンロードするだけです。
+            </p>
+
+            <h3 class="text-highlight">なぜTikTokのウォーターマークを除去するのか？</h3>
+            <p>
+              TikTokのすべての動画にはクリエイターのユーザー名を表示するフローティングオーバーレイが付いています。帰属表示としては優れていますが、オフラインで動画を視聴したり、他のプラットフォームで共有したりする際には気を散らす原因となります。TikSaveHubはオーバーレイのないクリーンなHD動画を提供し、再利用、編集、またはオフラインで視聴できます。
+            </p>
+
+            <h3 class="text-highlight">TikTok動画セーバーの仕組み</h3>
+            <p>
+              TikSaveHubの使用は非常にシンプルです。まず、TikTokアプリまたはWebサイトを開いて保存したい動画を見つけます。共有ボタンをタップして「リンクをコピー」を選択します。次に、TikSaveHubに戻り、ページ上部の入力フィールドにリンクを貼り付けます。ダウンロードボタンをクリックすると、サーバーが3秒以内に動画を処理します。HDバージョンまたは標準バージョンのダウンロードオプションが表示されます。希望のオプションをクリックすると、MP4ファイルがデバイスに直接保存されます。
+            </p>
+
+            <h3 class="text-highlight">オンラインでTikTok動画をダウンロード — すべてのデバイスで動作</h3>
+            <p>
+              TikSaveHubの最大の利点の1つは、どこでも動作することです。iPhone、Android、Windows PC、Mac、タブレット — WebブラウザがあればTikTok動画を保存できます。別のアプリをインストールする必要がないため、ストレージ容量を節約し、サードパーティアプリケーションのリスクを回避できます。ツールは完全にレスポンシブ対応しており、6インチのフォン画面でも27インチのデスクトップモニターでもシームレスな体験を提供します。
+            </p>
+
+            <h3 class="text-highlight">HD品質 — いつでも</h3>
+            <p>
+              TikSaveHubを使用してTikTok動画をダウンロードすると、常に利用可能な最高品質が得られます。クリエイターがアップロードしたオリジナルファイル（最大1080p HD）を、追加の再エンコーディングや圧縮なしで配信します。つまり、動画はTikTokで見られるのと同等のオリジナル品質を維持します。
+            </p>
+
+            <h3 class="text-highlight">安全、プライベート、完全無料</h3>
+            <p>
+              プライバシーを真剣に受け止めています。TikSaveHubはアカウント作成、メールアドレス入力、個人情報の提供を必要としません。ダウンロード履歴を保存せず、ブラウジング行動も追跡しません。ダウンロードプロセスはすべてサーバーサイドで行われ、最終的な動画ファイル以外はデバイスに保存されません。費用を徴収したり、ダウンロードを制限したりする他のTikTok動画保存ツールとは異なり、TikSaveHubは日次上限なしの100%無料です。
+            </p>
+
+            <h3 class="text-highlight">すべてのTikTokリンク形式をサポート</h3>
+            <p>
+              TikSaveHubはすべてのタイプのTikTok動画URLをサポートします。共有メニューからの長いリンク（tiktok.com/@user/video/...）、短縮共有リンク（vm.tiktok.com/...）、モバイル共有リンク（vt.tiktok.com/...）など、すべて認識して処理します。テキストメッセージ、ソーシャルメディアの投稿、ブラウザのアドレスバーなど、どこからでもリンクを取得でき、毎回正常に動作します。
+            </p>
+
+            <p>
+              試してみますか？上にスクロールして、最初のTikTokリンクをダウンロードフォームに貼り付けてください。世界中のユーザーから信頼されている高速で簡単なダウンロード。手間なく、望み通りの動画が手に入ります。
+            </p>
+          </div>
+        </div>
+
+        <aside class="seo-content-sidebar">
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">クイックリンク</h3>
+            <ul class="seo-sidebar-list">
+              <li><a href="/ja/tiktok-video-downloader-without-watermark">TikTok動画ダウンローダー</a></li>
+              <li><a href="/ja/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/ja/instagram-reels-downloader-without-watermark">Instagram Reelsダウンローダー</a></li>
+              <li><a href="/ja/instagram-video-downloader-without-watermark">Instagram動画ダウンローダー</a></li>
+              <li><a href="/ja/instagram-story-downloader-without-watermark">Instagramストーリーダウンローダー</a></li>
+              <li><a href="/ja/instagram-audio-downloader">Instagram音声ダウンローダー</a></li>
+              <li><a href="/ja/facebook-video-downloader">Facebook動画ダウンローダー</a></li>
+              <li><a href="/ja/facebook-reels-downloader">Facebook Reelsダウンローダー</a></li>
+              <li><a href="/ja/facebook-story-downloader">Facebookストーリーダウンローダー</a></li>
+              <li><a href="/ja/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/ja/facebook-photo-downloader">Facebook写真ダウンローダー</a></li>
+              <li><a href="/ja/snapchat-downloader">Snapchatダウンローダー</a></li>
+              <li><a href="/ja/snapchat-story-downloader">Snapchatストーリーダウンローダー</a></li>
+              <li><a href="/ja/snapchat-to-mp3">Snapchat to MP3</a></li>
+              <li><a href="/ja/x-video-downloader">X/Twitter動画ダウンローダー</a></li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">サポートされているリンク</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              <li>tiktok.com/@user/video/...</li>
+              <li>vm.tiktok.com/...</li>
+              <li>vt.tiktok.com/...</li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card seo-sidebar-highlight">
+            <h3 class="seo-sidebar-title">ダウンロードを開始</h3>
+            <p class="seo-sidebar-text">上にTikTokリンクを貼り付けて、数秒で動画を取得。</p>
+            <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">今すぐ試す</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works — Detailed Steps -->
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">ステップバイステップガイド</span>
+        <h2 id="dl-steps-headline" class="section-headline">
+          TikTok動画のダウンロード方法。
+        </h2>
+        <p class="section-sub text-body-lg">
+          シンプルな3ステップ — 技術的なスキルは不要です。
+        </p>
+      </div>
+
+      <div class="dl-steps-grid">
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <h3 class="dl-step-title">TikTok動画のリンクをコピー</h3>
+          <p class="dl-step-body">
+            TikTokアプリまたはWebサイトを開き、ダウンロードしたい動画を見つけて共有ボタンをタップし、「リンクをコピー」を選択します。For Youページ、クリエイターのプロフィール、または共有リンクからのパブリックなTikTok動画であればすべて動作します。
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </div>
+          <h3 class="dl-step-title">リンクをTikSaveHubに貼り付け</h3>
+          <p class="dl-step-body">
+            TikSaveHubに戻り、コピーしたリンクをページ上部の入力フィールドに貼り付けます。システムが動画を自動的に検出し、通常3秒以内に処理を開始します。
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">HD動画をダウンロード</h3>
+          <p class="dl-step-body">
+            「HDダウンロード」ボタンをクリックして、HD MP4ファイルをデバイスに直接保存します。オフライン視聴、ソーシャルメディアでの共有、お気に入りのビデオエディタでの編集に最適です。
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+    <div class="dl-features-inner container-page">
+      <div class="dl-features-header">
+        <span class="section-eyebrow text-caption-mono">機能</span>
+        <h2 id="dl-features-headline" class="section-headline">
+          TikSaveHubが選ばれる理由。
+        </h2>
+      </div>
+
+      <div class="dl-features-grid">
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">ウォーターマークなし</h3>
+          <p class="dl-feature-body">
+            TikTok動画をTikTokのウォーターマーク完全に除去してダウンロード。Instagram、WhatsApp、YouTube Shortsなどどこでも共有できます。
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+          </div>
+          <h3 class="dl-feature-title">HD品質</h3>
+          <p class="dl-feature-body">
+            常に利用可能な最高品質を取得 — 最大1080p HD。再エンコーディングや圧縮なし。ダウンロードする動画はクリエイターがアップロードしたものと全く同じです。
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="dl-feature-title">超高速</h3>
+          <p class="dl-feature-body">
+            サーバーサイド処理により、ダウンロードは数秒で開始されます。待ち時間なし、キューなし。リンクを貼り付けてダウンロードをクリックするだけです。
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="dl-feature-title">すべてのデバイスで動作</h3>
+          <p class="dl-feature-body">
+            iPhone、Android、タブレット、デスクトップ — WebブラウザがあればTikSaveHubは動作します。アプリのインストール、拡張機能、互換性の問題はありません。
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3 class="dl-feature-title">アカウント不要</h3>
+          <p class="dl-feature-body">
+            登録不要、メール不要、パスワード不要。リンクを貼り付けてダウンロードするだけ。プライバシーを大切に — 個人データは保存しません。
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">無制限ダウンロード</h3>
+          <p class="dl-feature-body">
+            日次制限なし、上限なし、プレミアムプランなし。望むだけのTikTok動画をダウンロード — 毎日、永久に。完全無料です。
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">利用シーン</span>
+        <h2 id="dl-usecases-headline" class="section-headline">
+          TikSaveHubを使うのは誰？
+        </h2>
+      </div>
+
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">コンテンツクリエイター</h3>
+          <p class="dl-usecase-body">
+            自分のTikTok動画をダウンロードしてバックアップしたり、外部ソフトで編集したり、YouTube ShortsやInstagram Reels、その他のプラットフォームで再利用したりできます。最高のコンテンツを安全にアクセス可能に保ちましょう。
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">ソーシャルメディアマネージャー</h3>
+          <p class="dl-usecase-body">
+            ブランドアカウントを管理していますか？インスピレーション、競合分析、コンテンツカレンダーのためにトレンドのTikTok動画を保存。ダウンロードしたリファレンスクリップをライブラリに整理しましょう。
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">学生・研究者</h3>
+          <p class="dl-usecase-body">
+            ソーシャルメディアのトレンド、バイラルコンテンツのパターン、デジタルカルチャーを研究していますか？学術分析、プレゼンテーション、研究論文のためにTikTok動画をダウンロード — すべてオリジナル品質で。
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">カジュアル視聴者</h3>
+          <p class="dl-usecase-body">
+            気に入った動画を見つけたが、今すぐ視聴する時間がない？後で保存。通勤中、旅行中、インターネットのない場所でオフライン視聴するためにTikTok動画をダウンロード。
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">よくある質問</span>
+        <h2 id="dl-faq-headline" class="section-headline">
+          よくある質問。
+        </h2>
+      </div>
+
+      <div class="dl-faq-list" role="list">
+        {faqData.map((faq) => (
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button
+              class="dl-faq-trigger"
+              id={`${faq.id}-btn`}
+              aria-expanded="false"
+              aria-controls={`${faq.id}-panel`}
+              type="button"
+            >
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div
+              id={`${faq.id}-panel`}
+              class="dl-faq-panel"
+              role="region"
+              aria-labelledby={`${faq.id}-btn`}
+              hidden
+            >
+              <p class="dl-faq-a" set:html={faq.a}></p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+    <div class="dl-cta-inner container-page">
+      <h2 id="dl-cta-headline" class="dl-cta-headline">
+        ダウンロードを始めますか？
+      </h2>
+      <p class="dl-cta-sub">
+        上にTikTokリンクを貼り付けて、数秒で動画を取得 — アカウント不要、気を散らすものなし、手間なし。
+      </p>
+      <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+        ダウンロードを開始
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Internal Links Section -->
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+        TikSaveHubを探す。
+      </h2>
+      <div class="dl-internal-grid">
+        <a href="/" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+          <span class="dl-internal-title">TikSaveHubホーム</span>
+          <span class="dl-internal-desc">メインページに戻る — さらにTikTok動画をダウンロード。</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/#features" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </span>
+          <span class="dl-internal-title">機能</span>
+          <span class="dl-internal-desc">ウォーターマークなし、HD品質、高速ダウンロード — すべての機能を見る。</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/#faq" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </span>
+          <span class="dl-internal-title">FAQ</span>
+          <span class="dl-internal-desc">質問がありますか？TikTokダウンローダーに関する回答を探す。</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ─── Hero ─── */
+  .dl-hero {
+    position: relative;
+    padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    text-align: center;
+  }
+
+  .dl-hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .dl-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  /* Breadcrumb */
+  .dl-breadcrumb {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .dl-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dl-badge {
+    animation: fadeInUp 0.5s ease 0.1s both;
+  }
+
+  .badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .dl-hero-headline {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 700px;
+    animation: fadeInUp 0.5s ease 0.2s both;
+  }
+
+  .headline-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-grad-develop-start) 0%,
+      var(--color-grad-preview-start) 40%,
+      var(--color-grad-preview-end) 70%,
+      var(--color-grad-ship-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dl-hero-subline {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.25s both;
+  }
+
+  .dl-hero-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.3s both;
+  }
+
+  .dl-hero-form-wrap {
+    width: 100%;
+    max-width: 760px;
+    animation: fadeInUp 0.5s ease 0.4s both;
+  }
+
+  .dl-hero-trust {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.5s ease 0.5s both;
+  }
+
+  .dl-hero-share {
+    animation: fadeInUp 0.5s ease 0.55s both;
+  }
+
+  .trust-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-body);
+    padding: 0 var(--spacing-md);
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trust-chip svg {
+    color: var(--color-cyan-deep);
+  }
+
+  .trust-chip:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+  }
+
+  @media (hover: hover) {
+    .trust-chip:hover {
+      border-color: var(--color-hairline-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-hero {
+      padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+    }
+
+    .dl-hero-headline {
+      font-size: clamp(22px, 5vw, 32px);
+      letter-spacing: -1px;
+    }
+
+    .trust-chip {
+      font-size: var(--text-caption);
+      height: 36px;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: 11px;
+    }
+  }
+
+  /* ─── Content Section ─── */
+  .dl-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .dl-content-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .dl-content-lead {
+    font-size: var(--text-body-lg);
+    color: var(--color-ink);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .dl-content-body {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .dl-content-card-wrap {
+    position: sticky;
+    top: 80px;
+  }
+
+  .dl-content-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-content-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .dl-content-card-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .dl-content-card-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .dl-content-card-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .dl-content-card-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+  }
+
+  @media (max-width: 960px) {
+    .dl-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dl-content-card-wrap {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Steps Section ─── */
+  .dl-steps-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-steps-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-steps-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .dl-step-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-step-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-step-num {
+    color: var(--color-mute);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .dl-step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf010, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-step-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-step-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 960px) {
+    .dl-steps-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-steps-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Features Section ─── */
+  .dl-features-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-features-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-features-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feat-accent-develop {
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+  }
+
+  .feat-accent-preview {
+    background: linear-gradient(135deg, #7928ca15, #ff008020);
+    color: var(--color-grad-preview-start);
+    box-shadow: inset 0 0 0 1px #7928ca25;
+  }
+
+  .feat-accent-ship {
+    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+    color: var(--color-grad-ship-start);
+    box-shadow: inset 0 0 0 1px #ff4d4d25;
+  }
+
+  .dl-feature-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-feature-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 960px) {
+    .dl-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-features-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── Use Cases Section ─── */
+  .dl-usecases-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-usecases-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-usecases-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecase-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-usecase-card:hover {
+    border-color: var(--color-hairline-strong);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-usecase-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .dl-usecase-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .dl-usecases-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-usecases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── FAQ Section ─── */
+  .dl-faq-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .dl-faq-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-faq-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .dl-faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .dl-faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    transition: background-color 0.15s ease;
+  }
+
+  .dl-faq-trigger:hover {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-q {
+    font-size: var(--text-body-md);
+    font-weight: 500;
+    color: var(--color-ink);
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .dl-faq-chevron {
+    flex-shrink: 0;
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .dl-faq-panel {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    animation: fadeInUp 0.25s ease forwards;
+  }
+
+  .dl-faq-a {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  @media (max-width: 600px) {
+    .dl-faq-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-faq-trigger {
+      padding: var(--spacing-md);
+      min-height: 48px;
+    }
+
+    .dl-faq-panel {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+
+    .dl-faq-q {
+      font-size: var(--text-body-sm);
+    }
+  }
+
+  /* ─── CTA Band ─── */
+  .dl-cta-band {
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    text-align: center;
+  }
+
+  .dl-cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .dl-cta-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-on-primary);
+    margin: 0;
+  }
+
+  .dl-cta-sub {
+    font-size: var(--text-body-lg);
+    color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .dl-cta-btn {
+    gap: 8px;
+    background-color: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+  }
+
+  .dl-cta-btn:hover {
+    background-color: var(--color-canvas-soft) !important;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .dl-cta-band {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Shared Section Styles ─── */
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  /* ─── Internal Links Section ─── */
+  .dl-internal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .dl-internal-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-internal-headline {
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .dl-internal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-internal-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    text-decoration: none;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .dl-internal-card:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-internal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf012, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-internal-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.3px;
+  }
+
+  .dl-internal-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .dl-internal-arrow {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    color: var(--color-mute);
+    font-size: 18px;
+    transition: color 0.15s ease, transform 0.25s ease;
+  }
+
+  .dl-internal-card:hover .dl-internal-arrow {
+    color: var(--color-ink);
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 960px) {
+    .dl-internal-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-internal-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── SEO Content Section ─── */
+  .seo-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .seo-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .seo-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .seo-content-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .seo-article {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .seo-article p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .text-highlight {
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .seo-article h3 {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.35;
+  }
+
+  .seo-content-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    position: sticky;
+    top: 80px;
+  }
+
+  .seo-sidebar-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .seo-sidebar-highlight {
+    background: linear-gradient(135deg, #007cf008, #00dfd808);
+    border: 1px solid #007cf020;
+  }
+
+  .seo-sidebar-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .seo-sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .seo-sidebar-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .seo-sidebar-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .seo-sidebar-mono li {
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .seo-sidebar-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  @media (max-width: 960px) {
+    .seo-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .seo-content-sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .seo-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .seo-content-sidebar {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const dlTriggers = document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
+
+  dlTriggers.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      const panelId = btn.getAttribute('aria-controls')!;
+      const panel = document.getElementById(panelId);
+
+      dlTriggers.forEach((otherBtn) => {
+        if (otherBtn !== btn) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          const otherId = otherBtn.getAttribute('aria-controls')!;
+          document.getElementById(otherId)?.setAttribute('hidden', '');
+        }
+      });
+
+      if (isOpen) {
+        btn.setAttribute('aria-expanded', 'false');
+        panel?.setAttribute('hidden', '');
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        panel?.removeAttribute('hidden');
+      }
+    });
+  });
+</script>

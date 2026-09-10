@@ -13,12 +13,16 @@ export interface CfEnv {
   // KV namespace
   CACHE?: KVNamespace;
 
+  // Browser Run binding (Cloudflare Browser Rendering)
+  MYBROWSER?: unknown;
+
   // Secrets / vars
   IG_COOKIES?: string;
   IG_SESSIONID?: string;
   IG_DS_USER_ID?: string;
   IG_CSRF_TOKEN?: string;
   FB_COOKIES?: string;
+  FB_APP_TOKEN?: string;
   RATE_LIMIT_PER_MIN?: string;
   MEDIA_TTL_MS?: string;
   INSTAGRAM_MEDIA_TTL_MS?: string;
@@ -42,6 +46,7 @@ export function getEnv(locals?: Record<string, any>): CfEnv {
     IG_DS_USER_ID: (globalThis as any).process?.env?.IG_DS_USER_ID || '',
     IG_CSRF_TOKEN: (globalThis as any).process?.env?.IG_CSRF_TOKEN || '',
     FB_COOKIES: (globalThis as any).process?.env?.FB_COOKIES || '',
+    FB_APP_TOKEN: (globalThis as any).process?.env?.FB_APP_TOKEN || '',
     RATE_LIMIT_PER_MIN: (globalThis as any).process?.env?.RATE_LIMIT_PER_MIN || '30',
     MEDIA_TTL_MS: (globalThis as any).process?.env?.MEDIA_TTL_MS || '',
     INSTAGRAM_MEDIA_TTL_MS: (globalThis as any).process?.env?.INSTAGRAM_MEDIA_TTL_MS || '',

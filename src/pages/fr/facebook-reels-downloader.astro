@@ -1,0 +1,543 @@
+---
+// Facebook Reels Downloader — SEO-optimized landing page (FR)
+// URL: /facebook-reels-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  {
+    id: 'reels-hd1080',
+    q: 'Comment puis-je télécharger des Reels Facebook en HD 1080p ?',
+    a: 'Pour télécharger des Reels Facebook en HD 1080p, copiez simplement le lien public du Reel, collez-le dans TikSaveHub et cliquez sur télécharger. Si le Reel original a été uploadé en 1080p, notre outil extractera automatiquement et sauvegardera le fichier MP4 haute définition complet.',
+  },
+  {
+    id: 'reels-nowm',
+    q: 'Puis-je enregistrer des Reels Facebook sans filigrane ?',
+    a: 'Oui, TikSaveHub télécharge les Reels Facebook sans ajouter de filigrane, logo ou branding supplémentaire au fichier MP4. Cependant, si un filigrane a été édité dans la vidéo avant son upload sur Facebook, il ne peut pas être supprimé.',
+  },
+  {
+    id: 'reels-iphone',
+    q: 'Le téléchargeur de Reels Facebook fonctionne-t-il sur iPhone Safari ?',
+    a: 'Oui, TikSaveHub fonctionne parfaitement sur iPhone Safari sans aucune application supplémentaire. Collez simplement le lien du Reel dans Safari, appuyez sur télécharger et enregistrez le MP4 directement dans votre application Photos ou Fichiers.',
+  },
+  {
+    id: 'reels-android',
+    q: 'Comment enregistrer des Reels FB dans la galerie Android ?',
+    a: 'Pour enregistrer des Reels FB dans votre galerie Android, ouvrez Chrome, collez le lien public du Reel dans TikSaveHub et appuyez sur télécharger. Le fichier MP4 sera instantanément enregistré dans votre dossier Téléchargements et apparaîtra dans votre Galerie.',
+  },
+  {
+    id: 'reels-link-format',
+    q: 'Le téléchargeur de Reels Facebook prend-il en charge les liens facebook.com/reel ?',
+    a: 'Oui, TikSaveHub prend entièrement en charge tous les liens standards facebook.com/reel/... Copiez simplement l\'URL complète du Reel directement depuis l\'application Facebook ou le navigateur web et collez-la dans notre outil.',
+  },
+  {
+    id: 'reels-fbwatch',
+    q: 'Puis-je télécharger un Reel Facebook depuis un lien fb.watch ?',
+    a: 'Oui, les liens courts de partage fb.watch sont entièrement pris en charge. TikSaveHub résout automatiquement le lien court et extrait le Reel haute qualité original pour vous.',
+  },
+  {
+    id: 'reels-mp3',
+    q: 'Puis-je convertir un Reel Facebook en MP3 en ligne ?',
+    a: 'Oui, vous pouvez facilement convertir des Reels Facebook en MP3 en ligne. TikSaveHub extrait la piste audio du Reel et la sauvegarde en tant que fichier audio MP3 autonome.',
+  },
+  {
+    id: 'reels-audio',
+    q: 'Puis-je télécharger l\'audio original d\'un Reel Facebook ?',
+    a: 'Oui, TikSaveHub vous permet d\'extraire et de sauvegarder le son original ou la musique de fond de n\'importe quel Reel Facebook public directement en tant que piste MP3.',
+  },
+  {
+    id: 'reels-private',
+    q: 'Puis-je télécharger des Reels Facebook privés ?',
+    a: 'Non, TikSaveHub ne peut pas télécharger des Reels Facebook privés ou restreints. Pour respecter la vie privée des utilisateurs, notre outil ne traite et n\'extrait que les Reels accessibles publiquement.',
+  },
+  {
+    id: 'reels-no-login',
+    q: 'Dois-je me connecter à Facebook pour télécharger un Reel ?',
+    a: 'Aucune connexion n\'est requise. Vous pouvez télécharger des Reels Facebook publics anonymement sans entrer vos identifiants ou mots de passe Facebook.',
+  },
+  {
+    id: 'reels-no-limit',
+    q: 'Y a-t-il une limite quotidienne pour télécharger des Reels Facebook ?',
+    a: 'Non, TikSaveHub est 100% gratuit sans aucune limite quotidienne de téléchargement. Vous pouvez convertir et enregistrer autant de Reels Facebook publics que vous le souhaitez sans restriction.',
+  },
+  {
+    id: 'reels-whyfail',
+    q: 'Pourquoi ne puis-je pas télécharger un Reel Facebook ?',
+    a: 'Les téléchargements échouent généralement si le Reel est défini comme privé, a été supprimé par le propriétaire, ou l\'URL copiée est incomplète. Assurez-vous de copier un lien directement depuis le menu Partager d\'une publication publique.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+---
+
+<Layout
+  title="Téléchargeur de Reels Facebook HD 1080p — Sans Filigrane, Gratuit | TikSaveHub"
+  description="Téléchargez des Reels Facebook en HD 1080p gratuit, sans filigrane, sans inscription. Enregistrez n'importe quel Reel FB sur iPhone, Android ou PC en MP4 — rapide, privé et illimité."
+  keywords="télécharger reels facebook hd 1080p gratuit, téléchargeur reels facebook sans filigrane en ligne, télécharger reels facebook pour iphone, téléchargeur reels facebook, enregistrer reels facebook, téléchargeur reels facebook hd, téléchargeur reels fb gratuit, télécharger reels facebook android"
+  canonical="/facebook-reels-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  lang="fr"
+  appName="TikSaveHub — Téléchargeur de Reels Facebook"
+>
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://tiksavehub.com" },
+      { "@type": "ListItem", "position": 2, "name": "Téléchargeur Reels Facebook", "item": "https://tiksavehub.com/facebook-reels-downloader" }
+    ]
+  })} />
+
+  <!-- Hero Section -->
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Accueil</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Téléchargeur Reels Facebook</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Gratuit · HD 1080p · Sans Filigrane
+        </span>
+      </div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        Téléchargeur de Reels Facebook — HD 1080p, Sans Filigrane
+      </h1>
+
+      <p class="dl-hero-subline headline-gradient">
+        Téléchargez des Reels Facebook en HD 1080p — gratuit, rapide, sans filigrane.
+      </p>
+
+      <p class="dl-hero-sub text-body-lg">
+        Enregistrez n'importe quel Reel Facebook public en HD jusqu'à 1080p — gratuit, rapide, sans inscription et sans filigrane.
+        Collez un lien facebook.com/reel/… et téléchargez le MP4, ou extrayez l'audio en MP3.
+      </p>
+
+      <div class="dl-hero-form-wrap">
+        <FacebookDownloadForm mode="reels" />
+      </div>
+
+      <div class="dl-hero-trust">
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        100% Gratuit
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Sans Filigrane
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        HD jusqu'à 1080p
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Fonctionne sur iPhone
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Fonctionne sur Android
+      </span>
+      </div>
+
+      <div class="dl-hero-share">
+        <SocialShare
+          url="/facebook-reels-downloader"
+          title="Téléchargeur de Reels Facebook HD 1080p — Sans Filigrane"
+          description="Téléchargez des Reels Facebook en HD 1080p. Gratuit, rapide, sans filigrane. MP4 ou MP3."
+          image="/og-downloader.png"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsSection stats={[
+    {
+      value: '100% Gratuit',
+      label: 'Téléchargez des vidéos TikTok instantanément sans filigrane',
+      icon: 'download',
+    },
+    {
+      value: 'Sans Inscription',
+      label: 'Fonctionne sur tous les appareils, du monde entier',
+      icon: 'globe',
+    },
+    {
+      value: 'Qualité HD',
+      label: 'Résolution originale, sans filigrane, sans connexion',
+      icon: 'star',
+    },
+  ]} />
+
+  <!-- SEO Content Section — 600+ words -->
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">À propos de TikSaveHub</span>
+          <h2 id="seo-about-headline" class="section-headline">
+            Téléchargez des Reels Facebook en HD complète — gratuit et sans filigrane.
+          </h2>
+
+          <div class="seo-article">
+            <p>
+              TikSaveHub est le moyen le plus rapide de <strong>télécharger des Reels Facebook en HD 1080p gratuitement</strong>. Les Reels sont les vidéos courtes les plus partagées de Facebook — plein écran, verticales, remplies de musique et de tendances — et beaucoup d'entre elles valent la peine d'être conservées : un tutoriel de cuisine, un clip de voyage, le meilleur travail d'un créateur, ou votre propre Reel que vous souhaitez sauvegarder avant que la plateforme ne le supprime. Avec notre <strong>téléchargeur de Reels Facebook sans filigrane</strong>, aucun filigrane n'est ajouté et aucune inscription n'est requise : collez le lien, appuyez sur Télécharger, et le MP4 de qualité originale arrive sur votre appareil en quelques secondes.
+            </p>
+
+            <h3 class="text-highlight">Comment télécharger un Reel Facebook en HD 1080p</h3>
+            <p>
+              Le processus prend moins de dix secondes. Ouvrez l'application Facebook ou le site web et trouvez le Reel que vous souhaitez enregistrer. Appuyez sur le bouton Partager et sélectionnez « Copier le lien » — l'URL ressemble à <em>facebook.com/reel/1234567890/</em>. Revenez sur TikSaveHub et collez-le dans le champ de saisie en haut de cette page. Appuyez sur Télécharger et nos serveurs récupèrent les métadonnées du Reel instantanément, affichant le titre, la miniature et la résolution. Choisissez « Télécharger Vidéo HD » pour jusqu'à 1080p, ou « Télécharger Vidéo SD » pour un fichier plus petit. C'est tout — pas d'application, pas de connexion, pas de filigrane.
+            </p>
+
+            <h3 class="text-highlight">Pourquoi les utilisateurs choisissent TikSaveHub pour les Reels Facebook</h3>
+            <p>
+              La plupart des sites « téléchargeur de Reels » vous redirigent vers les magasins d'applications, limitent vos téléchargements derrière une limite quotidienne, ou vous forcent à créer un compte. TikSaveHub ne fait rien de cela. C'est un téléchargeur de Reels Facebook gratuit en ligne qui fonctionne dans n'importe quel navigateur sur n'importe quel appareil — <strong>téléchargez des Reels Facebook pour iPhone</strong>, Android, Windows ou Mac avec le même flux coller-et-télécharger. Les téléchargements sont illimités, votre historique n'est jamais stocké, et le fichier que vous recevez est l'upload original intact, donc la qualité est exactement celle que le créateur a publiée.
+            </p>
+
+            <h3 class="text-highlight">Qualité HD 1080p — exactement comme uploadé</h3>
+            <p>
+              Lorsqu'un créateur upload un Reel en 1080p, notre téléchargeur fournit 1080p. Lorsque la source n'est que 720p, vous obtenez 720p. Nous ne ré-encodons jamais, ne compressons jamais et n'ajoutons jamais de superpositions — le MP4 que vous enregistrez est une copie fidèle de l'original. Si vous préférez des fichiers plus petits pour un stockage limité, l'option SD réduit la taille tout en gardant la vidéo parfaitement regardable.
+            </p>
+
+            <h3 class="text-highlight">Enregistrez également l'audio du Reel en MP3</h3>
+            <p>
+              Parfois, vous voulez le son plus que l'image — une chanson tendance, un clip motivant, un extrait de podcast. Notre <a href="/fr/facebook-to-mp3">convertisseur Facebook en MP3</a> extrait la bande-son de n'importe quel Reel ou vidéo et la convertit en MP3 haute qualité à la volée, prête pour l'écoute hors ligne où que vous soyez.
+            </p>
+
+            <h3 class="text-highlight">Téléchargez des Reels sur iPhone, Android et bureau</h3>
+            <p>
+              Sur iPhone ou iPad, ouvrez Safari, collez le lien et appuyez sur Télécharger — le MP4 apparaît dans Fichiers sous Téléchargements. Sur Android, la vidéo est enregistrée dans votre galerie. Sur PC ou Mac, elle atterrit dans la barre de téléchargements de votre navigateur. Tout est réactif et adapté au tactile, avec des cibles de tapotement de 48px et zéro encombrement, pour une sensation native quel que soit votre écran.
+            </p>
+
+            <h3 class="text-highlight">Vie privée et sécurité — aucun compte, aucun suivi</h3>
+            <p>
+              Nous ne vous demandons pas votre e-mail, nous ne stockons pas votre historique de téléchargement et nous n'explorons jamais votre profil. La conversion se fait côté serveur et la seule chose qui atterrit sur votre téléphone, tablette ou ordinateur est le fichier vidéo final. Voici la promesse de TikSaveHub : un <strong>téléchargeur de Reels Facebook gratuit, rapide et privé sans filigrane</strong>, prêt quand vous l'êtes.
+            </p>
+
+            <p>
+              Vous voulez d'autres formats aussi ? Vous pouvez également enregistrer des <a href="/fr/facebook-video-downloader">vidéos Facebook en HD</a>, convertir des <a href="/fr/facebook-to-mp3">vidéos Facebook en MP3</a>, ou récupérer des <a href="/fr/facebook-story-downloader">stories Facebook</a> — tout gratuit, tout sans filigrane.
+            </p>
+          </div>
+        </div>
+
+        <aside class="seo-content-sidebar">
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Liens Rapides</h3>
+            <ul class="seo-sidebar-list">
+              <li><a href="/fr/tiktok-video-downloader-without-watermark">Téléchargeur Vidéos TikTok</a></li>
+              <li><a href="/fr/tiktok-to-mp3">TikTok en MP3</a></li>
+              <li><a href="/fr/instagram-reels-downloader-without-watermark">Téléchargeur Reels Instagram</a></li>
+              <li><a href="/fr/instagram-video-downloader-without-watermark">Téléchargeur Vidéos Instagram</a></li>
+              <li><a href="/fr/instagram-story-downloader-without-watermark">Téléchargeur Stories Instagram</a></li>
+              <li><a href="/fr/instagram-audio-downloader">Téléchargeur Audio Instagram</a></li>
+              <li><a href="/fr/facebook-video-downloader">Téléchargeur Vidéos Facebook</a></li>
+              <li><a href="/fr/facebook-reels-downloader">Téléchargeur Reels Facebook</a></li>
+              <li><a href="/fr/facebook-story-downloader">Téléchargeur Stories Facebook</a></li>
+              <li><a href="/fr/facebook-to-mp3">Facebook en MP3</a></li>
+              <li><a href="/fr/facebook-photo-downloader">Téléchargeur Photos Facebook</a></li>
+              <li><a href="/fr/snapchat-downloader">Téléchargeur Snapchat</a></li>
+              <li><a href="/fr/snapchat-story-downloader">Téléchargeur Stories Snapchat</a></li>
+              <li><a href="/fr/snapchat-to-mp3">Snapchat en MP3</a></li>
+              <li><a href="/fr/x-video-downloader">Téléchargeur Vidéos X/Twitter</a></li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Liens Pris en Charge</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              <li>facebook.com/reel/…</li>
+              <li>facebook.com/watch/?v=…</li>
+              <li>facebook.com/user/videos/…</li>
+              <li>fb.watch/…</li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card seo-sidebar-highlight">
+            <h3 class="seo-sidebar-title">Commencez à Télécharger</h3>
+            <p class="seo-sidebar-text">Collez un lien Reels Facebook ci-dessus et obtenez votre vidéo en quelques secondes.</p>
+            <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Essayer Maintenant</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Guide Étape par Étape</span>
+        <h2 id="dl-steps-headline" class="section-headline">
+          Comment télécharger des Reels Facebook.
+        </h2>
+        <p class="section-sub text-body-lg">
+          Trois étapes simples — aucune compétence technique requise.
+        </p>
+      </div>
+
+      <div class="dl-steps-grid">
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <h3 class="dl-step-title">Copiez le lien du Reel</h3>
+          <p class="dl-step-body">
+            Ouvrez l'application Facebook ou le site web, trouvez le Reel que vous voulez, appuyez sur Partager et sélectionnez « Copier le lien ». Tous les formats de liens fonctionnent : facebook.com/reel/…, liens Watch, publications vidéo ou liens courts fb.watch.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </div>
+          <h3 class="dl-step-title">Collez-le dans TikSaveHub</h3>
+          <p class="dl-step-body">
+            Revenez ici et collez le lien dans le champ ci-dessus — le bouton Coller le récupère directement depuis votre presse-papiers. Nous détectons le Reel et récupérons ses détails en quelques secondes.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">Téléchargez en HD 1080p ou MP3</h3>
+          <p class="dl-step-body">
+            Appuyez sur « Télécharger Vidéo HD » pour jusqu'à 1080p, ou « Télécharger Vidéo SD » pour un fichier plus petit. Vous voulez juste la bande-son ? Utilisez notre <a href="/fr/facebook-to-mp3">convertisseur Facebook en MP3</a>. Le fichier est enregistré instantanément — pas d'application ni de compte nécessaire.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+    <div class="dl-features-inner container-page">
+      <div class="dl-features-header">
+        <span class="section-eyebrow text-caption-mono">Fonctionnalités</span>
+        <h2 id="dl-features-headline" class="section-headline">
+          Pourquoi TikSaveHub se démarque pour les Reels.
+        </h2>
+      </div>
+
+      <div class="dl-features-grid">
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Sans Filigrane</h3>
+          <p class="dl-feature-body">
+            Téléchargez les Reels exactement comme le créateur les a uploadés — qualité originale, sans superposition, sans compression, sans filigrane ajouté.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Extraction Audio MP3</h3>
+          <p class="dl-feature-body">
+            Convertissez la bande-son de n'importe quel Reel en MP3 en un appui. Enregistrez musique tendance et clips vocaux pour l'écoute hors ligne.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Ultra Rapide</h3>
+          <p class="dl-feature-body">
+            Le traitement côté serveur avec streaming parallèle par morceaux signifie que les téléchargements commencent en quelques secondes — collez, cliquez, et c'est à vous.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="3"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Tous les Formats de Liens</h3>
+          <p class="dl-feature-body">
+            facebook.com/reel/…, liens Watch, publications vidéo et liens courts fb.watch — chaque format de lien Reels public est pris en charge.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="dl-feature-title">iPhone + Android Prêt</h3>
+          <p class="dl-feature-body">
+            Optimisé pour tous les écrans avec de grandes cibles de tapotement. Enregistrez les Reels dans votre app Fichiers, galerie ou dossier Téléchargements en un tap.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Illimité et Gratuit</h3>
+          <p class="dl-feature-body">
+            Pas de plafonds quotidiens, pas de palier premium, pas de compte. Téléchargez autant de Reels Facebook que vous le souhaitez — chaque jour, pour toujours.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="dl-faq-headline" class="section-headline">
+          Questions sur le téléchargement de Reels Facebook, réponses.
+        </h2>
+      </div>
+
+      <div class="dl-faq-list" role="list">
+        {faqData.map((faq) => (
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button
+              class="dl-faq-trigger"
+              id={`${faq.id}-btn`}
+              aria-expanded="false"
+              aria-controls={`${faq.id}-panel`}
+              type="button"
+            >
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div
+              id={`${faq.id}-panel`}
+              class="dl-faq-panel"
+              role="region"
+              aria-labelledby={`${faq.id}-btn`}
+              hidden
+            >
+              <p class="dl-faq-a">{faq.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+    <div class="dl-cta-inner container-page">
+      <h2 id="dl-cta-headline" class="dl-cta-headline">
+        Votre Reel préféré est à un clic.
+      </h2>
+      <p class="dl-cta-sub">
+        Gratuit, rapide et sans filigrane — collez un lien Reels et enregistrez-le en HD.
+      </p>
+      <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+        Télécharger un Reel Maintenant
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Cross-links -->
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+        Plus d'outils gratuits Facebook et réseaux sociaux.
+      </h2>
+      <div class="dl-internal-grid">
+        <a href="/fr/facebook-video-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Vidéos Facebook</span>
+          <span class="dl-internal-desc">Téléchargez des vidéos et liens Watch Facebook en HD.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/fr/facebook-to-mp3" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </span>
+          <span class="dl-internal-title">Convertisseur Facebook en MP3</span>
+          <span class="dl-internal-desc">Extrayez de l'audio MP3 haute qualité de n'importe quelle vidéo ou Reel Facebook.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/fr/facebook-story-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Stories Facebook</span>
+          <span class="dl-internal-desc">Enregistrez des stories Facebook en HD avant qu'elles ne disparaissent après 24 heures.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/fr/facebook-photo-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Photos Facebook</span>
+          <span class="dl-internal-desc">Enregistrez des photos Facebook publiques en résolution complète, gratuit.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/fr/instagram-video-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Vidéos Instagram</span>
+          <span class="dl-internal-desc">Enregistrez des vidéos Instagram sans filigrane en HD.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/fr/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Reels Instagram</span>
+          <span class="dl-internal-desc">Enregistrez des Reels Instagram sans filigrane.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/fr/tiktok-video-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Vidéos TikTok</span>
+          <span class="dl-internal-desc">Téléchargez des vidéos TikTok en HD sans filigrane.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

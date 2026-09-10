@@ -11,53 +11,88 @@ import SocialShare from '../components/SocialShare.astro';
 const faqData = [
   {
     id: 'sc-download-free',
-    q: 'How to download Snapchat Spotlight videos for free?',
-    a: 'To download Snapchat Spotlight videos for free, copy the Spotlight link, paste it into TikSaveHub, and click Download — no sign-up required. TikSaveHub extracts the original MP4 file directly from Snapchat\'s CDN in HD quality. Works on any device with a web browser — no app installation needed.',
+    q: 'How to download Snapchat videos for free?',
+    a: 'To download Snapchat videos for free, copy the Spotlight or video link, paste it into TikSaveHub, and click Download — no sign-up required. TikSaveHub extracts the original MP4 file directly from Snapchat\'s CDN in HD quality. Works on any device with a web browser — no app installation needed.',
+  },
+  {
+    id: 'sc-spotlight-download',
+    q: 'Can I download Snapchat Spotlight videos?',
+    a: 'Yes, TikSaveHub is a dedicated Snapchat Spotlight downloader. Copy the Spotlight share link from the Snapchat app, paste it into TikSaveHub, and tap Download. You will get the full Spotlight clip in HD quality as an MP4 file — no watermark, no sign-up.',
   },
   {
     id: 'sc-iphone-save',
-    q: 'Can I save Snapchat videos to my iPhone camera roll?',
-    a: 'Yes, you can save Snapchat videos to your iPhone camera roll using Safari — paste the Snapchat link into TikSaveHub, tap Download HD, then tap "Save Video" from your Safari Downloads. On iPhone, open Safari and navigate to TikSaveHub. Paste the Snapchat link, download the MP4, then go to Safari → Downloads → tap the file → tap "Save Video" to move it to your Photos app. No computer needed.',
+    q: 'How to save Snapchat videos on iPhone?',
+    a: 'To save Snapchat videos on iPhone, open Safari and navigate to TikSaveHub. Paste the Snapchat link, download the MP4, then go to Safari → Downloads → tap the file → tap "Save Video" to move it to your Photos app. No computer needed.',
   },
   {
     id: 'sc-android-download',
-    q: 'How do I download Snapchat videos on Android?',
+    q: 'How to download Snapchat videos on Android?',
     a: 'Download Snapchat videos on Android by pasting the Snapchat link into TikSaveHub and tapping the HD download button — the MP4 saves directly to your gallery. TikSaveHub delivers the original MP4 file in the highest available quality. The video saves to your browser\'s Downloads folder and appears in your device Gallery automatically.',
   },
   {
-    id: 'sc-spotlight-quality',
-    q: 'What quality are Snapchat Spotlight downloads?',
-    a: 'TikSaveHub downloads Snapchat Spotlight videos in the highest available quality — typically 720p or 1080p depending on the creator\'s upload. Paste the Spotlight URL and tap "Download HD Video". The original MP4 is served directly from Snapchat\'s CDN, preserving the exact quality the creator uploaded.',
+    id: 'sc-legal',
+    q: 'Is it legal to download Snapchat videos?',
+    a: 'Downloading public Snapchat videos for personal use is generally allowed. However, you should always respect the creator\'s rights — do not redistribute or repost downloaded content without permission. TikSaveHub is designed for personal offline viewing only.',
+  },
+  {
+    id: 'sc-best-downloader',
+    q: 'What is the best free Snapchat video downloader?',
+    a: 'TikSaveHub is one of the best free Snapchat video downloaders available. It supports Spotlight clips, public posts, and stories in HD quality with no sign-up, no watermarks, and no download limits. It works on iPhone, Android, PC, and Mac — all you need is a web browser.',
   },
   {
     id: 'sc-story-download',
-    q: 'Can I download Snapchat stories with this tool?',
+    q: 'Can I download Snapchat Stories with this tool?',
     a: 'Yes, TikSaveHub supports Snapchat story downloads — use the Story tab or visit /snapchat-story-downloader. Paste the story.snapchat.com link and download it as an HD MP4. Note that stories expire after 24 hours, so download them while they\'re still live.',
   },
   {
-    id: 'sc-to-mp3',
-    q: 'Can I convert Snapchat video to MP3 audio?',
-    a: 'Yes, TikSaveHub is a Snapchat video to MP3 converter — paste any Snapchat video link and click "Download Audio (MP3)" to extract the sound as a high-quality MP3 file. Perfect for saving soundtracks, voice recordings, or any audio from Snapchat videos.',
+    id: 'sc-to-mp4',
+    q: 'How to download Snapchat videos as MP4?',
+    a: 'TikSaveHub saves every Snapchat video as an MP4 file by default. Paste the Snapchat link, click Download, and choose HD or SD — the video is saved as a standard MP4 that plays on any device without conversion.',
   },
   {
-    id: 'sc-what-quality',
-    q: 'Can I choose between HD and SD quality?',
-    a: 'Yes, TikSaveHub offers both HD and SD download options for every Snapchat video. HD is the highest available quality (typically 720p or 1080p), while SD is a smaller file size for limited storage. Pick whichever suits your device and bandwidth.',
+    id: 'sc-pc-mac',
+    q: 'Does TikSaveHub work on PC and Mac for Snapchat?',
+    a: 'Yes, TikSaveHub works on any device with a web browser — Windows PC, Mac, Chromebook, Linux, iPhone, and Android. There is nothing to install. Just visit the site in your browser and paste the Snapchat link to download.',
   },
   {
-    id: 'sc-free-unlimited',
-    q: 'Is TikSaveHub\'s Snapchat downloader free and unlimited?',
-    a: 'Yes, TikSaveHub is 100% free with no daily download limits — download as many Snapchat videos as you want without paying or registering. There are no caps, no premium tier, and no hidden fees.',
+    id: 'sc-download-limits',
+    q: 'Are there limits on Snapchat video downloads?',
+    a: 'No, TikSaveHub has no daily download limits. You can download as many Snapchat videos as you want — completely free, no caps, no premium tier, and no hidden fees.',
   },
   {
-    id: 'sc-private-account',
-    q: 'Can I download videos from private Snapchat accounts?',
-    a: 'No, TikSaveHub can only process public Snapchat content. Private accounts, private stories, and password-protected content cannot be accessed or downloaded by any online tool. You must be logged into a Snapchat account that follows the private user to view their content.',
+    id: 'sc-download-with-sound',
+    q: 'How to download Snapchat videos with sound?',
+    a: 'TikSaveHub downloads Snapchat videos with their original audio intact. The MP4 file includes both the video and the sound exactly as the creator uploaded them. You can also extract just the audio as an MP3 using the MP3 download option.',
   },
   {
-    id: 'sc-safe-private',
-    q: 'Is TikSaveHub safe and private to use?',
-    a: 'Yes, TikSaveHub is completely safe and private. We do not require account creation, do not store your download history, and do not track your browsing behavior. The entire download process happens server-side, so nothing is stored on your device except the final video file.',
+    id: 'sc-profile-pictures',
+    q: 'Can I download Snapchat profile pictures?',
+    a: 'No, TikSaveHub focuses on video and Spotlight downloads. Snapchat profile pictures and Bitmoji avatars cannot be extracted through this tool. For video content, TikSaveHub handles all public formats including Spotlight, posts, and stories.',
+  },
+  {
+    id: 'sc-spotlight-viral',
+    q: 'Can I download viral Snapchat Spotlight videos?',
+    a: 'Yes. TikSaveHub is a dedicated Snapchat Spotlight downloader. Copy the Spotlight share link (tap the share icon → Copy Link), paste it into TikSaveHub, and save the full clip as a clean HD MP4 — no watermark.',
+  },
+  {
+    id: 'sc-before-expire',
+    q: 'How do I save Snapchat content before it disappears?',
+    a: 'Snapchat Spotlight videos stay up indefinitely, but stories expire after 24 hours. For stories, copy the link immediately and paste it into TikSaveHub to download before expiry. For Spotlight, you can download anytime.',
+  },
+  {
+    id: 'sc-no-notification',
+    q: 'Will Snapchat notify the creator if I download their video?',
+    a: 'No. TikSaveHub fetches the video from Snapchat\'s CDN — the same way the regular web player loads it. No notification is sent to the creator. Your download is completely private.',
+  },
+  {
+    id: 'sc-install-app',
+    q: 'Do I need to install an app or browser extension to download Snapchat videos?',
+    a: 'No. TikSaveHub is a free online Snapchat video downloader that works entirely in your browser — no app, no extension, no software to install. Just paste the Snapchat link, click Download, and save the MP4. Works on iPhone, Android, PC, and Mac.',
+  },
+  {
+    id: 'sc-best-without-watermark',
+    q: 'What is the best Snapchat video downloader without watermark?',
+    a: 'TikSaveHub is one of the best Snapchat video downloaders without watermark. It supports Spotlight clips, public posts, and stories in HD quality with no sign-up, no watermarks, and no download limits. It works directly in your browser on any device.',
   },
 ];
 
@@ -77,8 +112,8 @@ const combinedJsonLd = JSON.stringify({
     },
     {
       '@type': 'HowTo',
-      name: 'How to Download Snapchat Videos',
-      description: 'Step-by-step guide to download Snapchat videos and Spotlight clips in HD quality using TikSaveHub \u2014 free, no sign-up required.',
+      name: 'How to Download Snapchat Videos Without Watermark',
+      description: 'Step-by-step guide to download Snapchat videos and Spotlight clips in HD quality without watermark using TikSaveHub — free, no sign-up required.',
       totalTime: 'PT1M',
       step: [
         {
@@ -110,16 +145,15 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
-  title="Snapchat Video Downloader — HD Free Download Spotlight & Stories | TikSaveHub"
-  description="Download Snapchat videos, Spotlight clips, and Stories in HD — free, fast, no sign-up. Save Snapchat videos as MP4 or extract audio as MP3. Works on iPhone, Android, and desktop."
-  keywords="snapchat video downloader, download snapchat videos, snapchat spotlight downloader, save snapchat videos, snapchat video download online, snapchat downloader hd, download snapchat spotlight, snapchat story downloader, snapchat video saver, download snapchat on iphone, download snapchat on android"
+  title="Snapchat Video Downloader Without Watermark — Free Online | TikSaveHub"
+  description="Download Snapchat videos & Spotlight clips without watermark in HD. Free Snapchat video downloader online — save as MP4 on iPhone, Android, PC. No login, no app needed."
+  keywords="snapchat video downloader without watermark, snapchat downloader without watermark, snapchat video downloader online, snapchat video downloader hd, snapchat video downloader, download snapchat video, snapchat story downloader, save snapchat video, free snapchat downloader, snapchat hd download, no watermark, snapchat spotlight downloader, online snapchat download, snapchat download video without watermark, free video downloader, video downloader without watermark"
   canonical="/snapchat-downloader"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="snapchat"
   jsonLd={combinedJsonLd}
   appName="TikSaveHub — Snapchat Video Downloader"
-  appRating={{ value: '4.8', count: '4260' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -137,15 +171,13 @@ const combinedJsonLd = JSON.stringify({
     <div class="dl-hero-inner container-page">
       <!-- Breadcrumb -->
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
-        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1" />
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
-            <span itemprop="name">Snapchat Video Downloader</span>
-            <meta itemprop="position" content="2" />
-          </li>
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Snapchat Video Downloader</span>
+                  </li>
         </ol>
       </nav>
 
@@ -157,7 +189,7 @@ const combinedJsonLd = JSON.stringify({
       </div>
 
       <h1 id="dl-hero-headline" class="dl-hero-headline">
-        Snapchat Video Downloader — HD, Free, Fast
+        Snapchat Video Downloader Without Watermark — Free, HD, Online
       </h1>
 
       <p class="dl-hero-subline headline-gradient">
@@ -208,26 +240,7 @@ const combinedJsonLd = JSON.stringify({
   </section>
 
   <!-- Stats -->
-  <StatsSection stats={[
-    {
-      value: '2M+',
-      label: 'Snapchat Videos Downloaded',
-      sub: 'Download Snapchat videos instantly',
-      icon: 'download',
-    },
-    {
-      value: '120+',
-      label: 'Countries Using Our Snapchat Saver',
-      sub: 'Download Snapchat content from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.8',
-      label: 'Fast & Free Snapchat Downloads',
-      sub: 'No sign-up, no login required',
-      icon: 'star',
-    },
-  ]} />
+  <StatsSection platform="Snapchat" />
 
   <!-- SEO Content Section — 600+ words -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
@@ -236,27 +249,27 @@ const combinedJsonLd = JSON.stringify({
         <div class="seo-content-main">
           <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
           <h2 id="seo-about-headline" class="section-headline">
-            Save Snapchat videos and Spotlight clips in clean HD quality.
+            Save Snapchat videos and Spotlight clips online — free, HD, no watermark.
           </h2>
 
           <div class="seo-article">
             <p>
-              TikSaveHub lets you save any public Snapchat video directly to your device in high quality. Whether you found a viral Spotlight clip, a creative snap you want to keep, or a video from a creator you follow, TikSaveHub gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. Just paste the link and download.
+              TikSaveHub is a free Snapchat video downloader that lets you save any public Snapchat video directly to your device in high quality — completely without watermark. Whether you found a viral Spotlight clip, a creative snap you want to keep, or a video from a creator you follow, TikSaveHub gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. This free video downloader works entirely online — just paste the link and download.
             </p>
 
             <h3 class="text-highlight">How the Snapchat video downloader works</h3>
             <p>
-              Using TikSaveHub is incredibly simple. First, open Snapchat and find the video you want to save. Tap the share button or copy the URL from the address bar to grab the link — Spotlight videos, public posts, and story links all work. Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers fetch the video metadata in seconds. You'll then see a preview with the video title, thumbnail, and options to download the HD or SD version. Click your preferred option and the file saves directly to your device.
+              Using TikSaveHub as your online Snapchat video downloader is incredibly simple. First, open Snapchat and find the video you want to save. Tap the share button or copy the URL from the address bar to grab the link — Spotlight videos, public posts, and story links all work. Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers fetch the video metadata in seconds. You will then see a preview with the video title, thumbnail, and options to download the HD or SD version. Click your preferred option and the file saves directly to your device.
             </p>
 
-            <h3 class="text-highlight">Download Snapchat videos in HD quality</h3>
+            <h3 class="text-highlight">Download Snapchat videos in HD quality — without watermark</h3>
             <p>
-              TikSaveHub fetches Snapchat videos at the highest available resolution — typically 720p or 1080p. Paste any snapchat.com/spotlight/… or snapchat.com/p/… link and tap "Download HD Video". The original quality is preserved exactly as the creator uploaded it, with no re-encoding or compression, so you can watch offline, repost on your own channels, or keep your favorite content forever.
+              TikSaveHub is the Snapchat video downloader without watermark that you’ve been looking for. It fetches Snapchat videos at the highest available resolution — up to 1080p — with no overlay or branding. Paste any snapchat.com/spotlight/… or snapchat.com/p/… link and tap "Download HD Video". This free Snapchat video downloader HD preserves the original quality exactly as the creator uploaded it, with no re-encoding or compression, so you can watch offline, repost on your own channels, or keep your favorite content forever. Every download is a clean, no-watermark MP4.
             </p>
 
             <h3 class="text-highlight">Save Spotlight clips, stories, and posts</h3>
             <p>
-              Standard Spotlight videos (snapchat.com/spotlight/…), public posts (snapchat.com/p/…), and stories (story.snapchat.com/…) are fully supported. Whether it is a trending Spotlight clip, a creative snap from a popular creator, or a viral moment from a friend, the same paste-and-download flow works every time. Our Snapchat video saver automatically detects the content type and extracts the best available quality.
+              Whether you need a Snapchat story downloader for ephemeral content or want to save a viral Spotlight clip, TikSaveHub handles it all. Standard Spotlight videos (snapchat.com/spotlight/…), public posts (snapchat.com/p/…), and stories (story.snapchat.com/…) are fully supported. TikSaveHub is a dedicated Snapchat Spotlight video downloader — it automatically detects the content type and extracts the best available quality without watermark. Download Snapchat video links in one tap — online, from any browser.
             </p>
 
             <h3 class="text-highlight">Extract Snapchat audio as MP3</h3>
@@ -266,17 +279,17 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Works on any device — Android, iPhone, desktop</h3>
             <p>
-              One of the biggest advantages of using TikSaveHub is that it works everywhere. Whether you're on an Android phone, an iPhone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Snapchat videos. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor.
+              One of the biggest advantages of using TikSaveHub is that it works everywhere as a free online video downloader. Whether you are on an Android phone, an iPhone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Snapchat videos. There is no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you are on a 6-inch phone screen or a 27-inch desktop monitor.
             </p>
 
             <h3 class="text-highlight">What quality and formats do you get?</h3>
             <p>
-              Every download is an MP4 in the best available resolution — HD when the creator uploaded in HD, with an SD option whenever you want a smaller file for limited storage. TikSaveHub never re-encodes and never reduces the quality of the original upload, so the file you save is exactly the video the creator shared — sharp and ready to watch offline.
+              Every download is an MP4 in the best available resolution — HD when the creator uploaded in HD, with an SD option whenever you want a smaller file for limited storage. TikSaveHub never re-encodes and never reduces the quality of the original upload, so the file you save is exactly the video the creator shared — sharp, clean, and no watermark.
             </p>
 
             <h3 class="text-highlight">Safe, private, and completely free</h3>
             <p>
-              We take your privacy seriously. TikSaveHub does not require you to create an account, enter an email address, or provide any personal information. We do not store your download history, and we do not track your browsing behavior. The entire download process happens server-side, so there is nothing stored on your device except the final video file. And unlike many other Snapchat video saving tools that charge fees or limit downloads, TikSaveHub is 100% free with no daily caps.
+              We take your privacy seriously. TikSaveHub does not require you to create an account, enter an email address, or provide any personal information. We do not store your download history, and we do not track your browsing behavior. The entire download process happens server-side, so there is nothing stored on your device except the final video file. And unlike many other Snapchat video saving tools that charge fees or limit downloads, TikSaveHub is a free video downloader with no daily caps — completely free, forever.
             </p>
 
             <p>
@@ -284,7 +297,7 @@ const combinedJsonLd = JSON.stringify({
             </p>
 
             <p>
-              Ready to try it? Scroll up and paste your first Snapchat link into the download form. Trusted by users worldwide for fast and simple downloads. No hassle. Just your videos, exactly the way you want them.
+              Ready to try it? Scroll up and paste your first Snapchat link into the download form. Trusted by users worldwide as the go-to Snapchat video downloader without watermark. No hassle. Just your videos, exactly the way you want them.
             </p>
           </div>
         </div>
@@ -293,12 +306,21 @@ const combinedJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
-              <li><a href="/snapchat-downloader">Snapchat Video Downloader</a></li>
+              <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
+              <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
+              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
+              <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
+              <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
+              <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
+              <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
+              <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
               <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
               <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#faq">FAQ</a></li>
+              <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
             </ul>
           </div>
 
@@ -493,7 +515,7 @@ const combinedJsonLd = JSON.stringify({
         Ready to download?
       </h2>
       <p class="dl-cta-sub">
-        Paste a Snapchat link above and get your video in seconds — no account, no distractions, no hassle.
+        Paste a Snapchat link above and get your free video in seconds — no account, no distractions, no hassle.
       </p>
       <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
         Start Downloading

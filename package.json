@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node -e \"const f='dist/server/wrangler.json',j=JSON.parse(require('fs').readFileSync(f,'utf8'));j.workers_dev=false;require('fs').writeFileSync(f,JSON.stringify(j))\"",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check"
@@ -13,6 +13,7 @@
     "@astrojs/cloudflare": "^14.2.0",
     "@astrojs/node": "^11.1.4",
     "@astrojs/sitemap": "^3.7.3",
+    "@cloudflare/puppeteer": "^1.4.0",
     "@tailwindcss/vite": "^4.3.1",
     "astro": "^7.2.0",
     "tailwindcss": "^4.3.1"

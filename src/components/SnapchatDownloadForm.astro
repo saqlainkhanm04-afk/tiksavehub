@@ -1067,6 +1067,8 @@ const copy = {
 </style>
 
 <script>
+  import { attachSimProgress } from '../lib/download-progress';
+
   const form = document.getElementById('snapchat-form') as HTMLFormElement;
   const urlInput = document.getElementById('snapchat-url') as HTMLInputElement;
   const clearBtn = document.getElementById('snapchat-clear') as HTMLButtonElement;
@@ -1147,9 +1149,17 @@ const copy = {
   const isMp3Mode = MODE === 'mp3';
 
   // --- Cloudflare Turnstile for cobalt API auth ---
-  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAEl-ZmiorHhgs7jw';
   let turnstileToken: string | null = null;
   let turnstileReady = false;
+  let turnstileWidgetId: string | null = null;
+
+  function cleanupTurnstile() {
+    if (turnstileWidgetId !== null && typeof (window as any).turnstile !== 'undefined') {
+      try { (window as any).turnstile.remove(turnstileWidgetId); } catch {}
+      turnstileWidgetId = null;
+    }
+  }
 
   function initTurnstile() {
     if (typeof (window as any).turnstile === 'undefined') {
@@ -1159,7 +1169,8 @@ const copy = {
     }
     const container = document.getElementById('cf-turnstile-container');
     if (!container) return;
-    (window as any).turnstile.render(container, {
+    cleanupTurnstile();
+    turnstileWidgetId = (window as any).turnstile.render(container, {
       sitekey: COBALT_TURNSTILE_SITEKEY,
       appearance: 'interaction-only',
       callback: (token: string) => { turnstileToken = token; turnstileReady = true; },
@@ -1176,8 +1187,9 @@ const copy = {
       // Re-render widget to get a fresh token
       const container = document.getElementById('cf-turnstile-container');
       if (!container || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      cleanupTurnstile();
       container.innerHTML = '';
-      (window as any).turnstile.render(container, {
+      turnstileWidgetId = (window as any).turnstile.render(container, {
         sitekey: COBALT_TURNSTILE_SITEKEY,
         appearance: 'interaction-only',
         callback: (token: string) => { turnstileToken = token; turnstileReady = true; resolve(token); },
@@ -1222,7 +1234,9 @@ const copy = {
 
     const audioTile = '<button class="sc-dl-tile sc-dl-tile-audio' + (isMp3Mode ? ' sc-dl-tile-prime' : '') + '" id="sc-btn-dl-audio" type="button" data-dl="audio" aria-label="Download audio as MP3"><span class="sc-dl-tile-icon" aria-hidden="true">' + musicIcon + '</span><span class="sc-dl-tile-label">Download <strong>Audio (MP3)</strong></span>' + (isMp3Mode ? '<span class="sc-dl-tile-badge">Recommended</span>' : '') + '<span class="sc-dl-proc-bar"></span></button>';
 
-    const tiles = isMp3Mode ? [audioTile] : [hdTile, sdTile].filter(Boolean).join('');
+    const tiles = isMp3Mode
+      ? [audioTile]
+      : [hdTile, sdTile, audioTile].filter(Boolean).join('');
 
     resultMount.innerHTML =
       '<div class="sc-result-card animate-fade-in-up" role="region" aria-label="Download result">' +
@@ -1265,6 +1279,9 @@ const copy = {
     if (labelEl) labelEl.textContent = 'Processing… 0%';
     if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
 
+    // Simulated progress — smooth 0→85% while server prepares the stream
+    const sim = attachSimProgress(bar, labelEl, 'Processing…', { ceiling: 85, intervalMs: 250 });
+
     // Get fresh turnstile token before download
     getTurnstileToken().then((token) => {
       const xhr = new XMLHttpRequest();
@@ -1276,13 +1293,12 @@ const copy = {
     xhr.onprogress = function (e) {
       if (e.lengthComputable && bar && labelEl) {
         const pct = Math.round((e.loaded / e.total) * 100);
-        bar.style.transition = 'none';
-        bar.style.width = pct + '%';
-        labelEl.textContent = 'Processing… ' + pct + '%';
+        sim.stop(pct);
       }
     };
 
     xhr.onload = function () {
+      sim.stop(xhr.status === 200 ? 100 : undefined);
       if (xhr.status === 200) {
         const blob = xhr.response;
         const blobUrl = URL.createObjectURL(blob);
@@ -1310,6 +1326,7 @@ const copy = {
     };
 
     xhr.onerror = function () {
+      sim.stop();
       btn.classList.add('sc-dl-tile-error');
       if (labelEl) labelEl.textContent = 'Download failed — try again';
       setTimeout(() => {
@@ -1322,8 +1339,9 @@ const copy = {
     };
 
     xhr.ontimeout = function () {
+      sim.stop();
       btn.classList.add('sc-dl-tile-error');
-      if (labelEl) labelEl.textContent = 'Download timed out — try again';
+      if (labelEl) labelEl.textContent = 'Timed out — try again';
       setTimeout(() => {
         btn.classList.remove('sc-dl-tile-error');
         if (labelEl) labelEl.innerHTML = origLabel;

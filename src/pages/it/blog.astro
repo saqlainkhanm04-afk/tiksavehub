@@ -1,0 +1,141 @@
+---
+export const prerender = true;
+import Layout from '../../layouts/Layout.astro';
+import { posts } from '../../data/blog-posts';
+import SocialShare from '../../components/SocialShare.astro';
+
+const latestPosts = posts.slice(0, 5);
+
+const blogJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      name: 'Blog TikSaveHub — Consigli e Guide per il Downloader TikTok',
+      description: 'Leggi gli ultimi articoli sul blog di TikSaveHub riguardanti il downloader TikTok, consigli, aggiornamenti e tendenze.',
+      url: 'https://tiksavehub.com/blog',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tiksavehub.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://tiksavehub.com/blog' },
+      ],
+    },
+  ],
+});
+---
+
+<Layout
+  title="Blog — Consigli e Guide Downloader TikTok | TikSaveHub"
+  description="Leggi il blog di TikSaveHub per consigli, guide e aggiornamenti sul downloader TikTok, Instagram e Facebook."
+  keywords="blog tiktok downloader, consigli tiksavehub, guida tiktok, come scaricare video"
+  canonical="/blog"
+  ogImage="/og-blog.png"
+  lang="it"
+  skipSoftwareApp
+  jsonLd={blogJsonLd}
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner container-page">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Blog</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">Blog</span>
+        <h1 id="legal-headline" class="legal-title">Blog</h1>
+        <p class="legal-meta">Ultimi articoli &middot; Consigli, guide e aggiornamenti sul downloader TikTok</p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+          <section class="legal-clause">
+            <h2 class="legal-h2">Ultimi Articoli</h2>
+            {latestPosts.length > 0 ? (
+              <div class="blog-list">
+                {latestPosts.map((post) => (
+                  <article class="blog-card">
+                    <a href={`/blog/${post.slug}`} class="blog-card-link">
+                      <h3 class="blog-card-title">{post.title}</h3>
+                      <p class="blog-card-excerpt">{post.excerpt}</p>
+                      <span class="blog-card-date">{post.date}</span>
+                    </a>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p>Nessun articolo pubblicato per ora. Torna a trovarci presto!</p>
+            )}
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Presentazione</h2>
+            <p>Il blog di TikSaveHub fornisce consigli utili, guide all'uso e gli ultimi aggiornamenti sul downloader TikTok. Qui puoi trovare informazioni su come scaricare video da TikTok, Instagram e Facebook, trucchi e consigli, e guida alle nuove funzionalità.</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Categorie</h2>
+            <ul class="legal-list">
+              <li><strong>Guide all'Uso</strong> — Come utilizzare i downloader TikTok, Instagram, Facebook e Snapchat.</li>
+              <li><strong>Trucchi e Consigli</strong> — Come massimizzare l'efficienza del download dei video.</li>
+              <li><strong>Aggiornamenti</strong> — Nuove funzionalità e miglioramenti di TikSaveHub.</li>
+            </ul>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Resta Aggiornato</h2>
+            <p>Per non perdere i nuovi articoli, segui i nostri social media o iscriviti alla newsletter via email. Ti avviseremo quando verrà pubblicato un nuovo articolo.</p>
+          </section>
+        </div>
+      </div>
+
+      <div class="legal-back">
+        <a href="/" class="btn-primary-sm">&larr; Torna a TikSaveHub</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .legal-inner { display: flex; flex-direction: column; gap: var(--spacing-2xl); max-width: 760px; margin-inline: auto; }
+  .legal-breadcrumb { margin-bottom: 0; }
+  .breadcrumb-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: var(--text-body-sm); color: var(--color-mute); }
+  .breadcrumb-list li + li::before { content: '/'; margin-right: 6px; color: var(--color-hairline-strong); }
+  .breadcrumb-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .legal-header { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .section-eyebrow { color: var(--color-mute); }
+  .legal-title { font-size: var(--text-display-xl); font-weight: 600; line-height: 1.05; letter-spacing: -2.5px; color: var(--color-ink); margin: 0; }
+  .legal-meta { font-size: var(--text-body-sm); color: var(--color-mute); margin: 0; }
+  .legal-card { background-color: var(--color-canvas); border-radius: var(--radius-lg); padding: var(--spacing-3xl); box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .legal-content { display: flex; flex-direction: column; gap: var(--spacing-2xl); }
+  .legal-clause { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .legal-h2 { font-size: var(--text-display-md); font-weight: 600; letter-spacing: -1.28px; color: var(--color-ink); margin: 0; line-height: 1.25; }
+  .legal-content p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; letter-spacing: -0.1px; }
+  .legal-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .legal-list li { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; padding-left: 20px; position: relative; letter-spacing: -0.1px; }
+  .legal-list li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan)); }
+  .legal-content a { color: var(--color-link); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s ease; }
+  .legal-content a:hover { color: var(--color-link-deep); }
+  .blog-list { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+  .blog-card { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .blog-card:hover { transform: translateY(-2px); box-shadow: 0px 4px 12px #0000000a; }
+  .blog-card-link { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-lg) var(--spacing-xl); text-decoration: none; }
+  .blog-card-title { font-size: 18px; font-weight: 600; color: var(--color-ink); margin: 0; line-height: 1.3; }
+  .blog-card-excerpt { font-size: 14px; color: var(--color-body); line-height: 1.6; margin: 0; }
+  .blog-card-date { font-size: 12px; color: var(--color-mute); font-weight: 500; }
+  .legal-back { display: flex; justify-content: center; }
+  .btn-primary-sm { display: inline-flex; align-items: center; gap: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-lg); border-radius: var(--radius-full); background-color: var(--color-ink); color: var(--color-on-primary); font-size: var(--text-body-sm); font-weight: 500; text-decoration: none; transition: opacity 0.2s ease, transform 0.2s ease; border: none; cursor: pointer; line-height: 2.2; letter-spacing: -0.1px; }
+  .btn-primary-sm:hover { opacity: 0.85; transform: translateY(-1px); }
+  .dark .legal-card { box-shadow: inset 0 0 0 1px #ffffff0a, 0px 1px 1px #00000010, 0px 4px 8px #00000020; }
+  @media (max-width: 600px) { .legal-section { padding: var(--spacing-4xl) var(--spacing-md); } .legal-title { font-size: 32px; letter-spacing: -1.5px; } .legal-card { padding: var(--spacing-lg); } .legal-h2 { font-size: var(--text-display-sm); } .breadcrumb-list { font-size: var(--text-caption); } }
+</style>

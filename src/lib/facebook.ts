@@ -1,5 +1,6 @@
 import { memoSWR } from './cache';
 import { type CfEnv, envStr } from './env';
+import { parseFacebookUrl } from './facebook-url';
 import {
   type PhotoCandidate,
   MIN_FULL_PHOTO_SCORE,
@@ -11,6 +12,10 @@ import {
   isThumbOnly,
   enforcePhotoQuality,
 } from './facebook-photo-quality';
+import { runWithFallback } from './api-fallback';
+import { fetchWithBrowser } from './fb-browser';
+import { facebookSources } from './platforms/facebook';
+import type { MediaMeta } from './platforms/types';
 
 const MEDIA_TTL_MS = 12 * 60 * 60 * 1000;
 const MEDIA_STALE_MS = 12 * 60 * 60 * 1000;
@@ -282,6 +287,43 @@ async function fetchDesktopPageMeta(url: string): Promise<Partial<FacebookMedia>
   };
 }
 
+/**
+ * Detect a Facebook login wall in HTML/text content. Facebook serves these
+ * when it decides to block anonymous/bot access to a post — even publicly
+ * visible ones. The response contains form elements with "Log into Facebook",
+ * "Email or mobile number", "Password" fields, or a redirect to /login/.
+ *
+ * This is NOT a code bug — it's Facebook's variable anti-scraping behavior
+ * that affects some posts from certain IPs. Most public posts work fine;
+ * login-walled posts are an inherent limitation of anonymous scraping.
+ *
+ * NOTE: This detection is used in reader proxy paths (r.jina.ai) for photos,
+ * stories, and albums. The video pipeline (page/embed/yt-dlp) does NOT use
+ * the reader proxy, so login walls in video paths produce generic errors.
+ *
+ * DOCUMENTED in AGENTS.md under "Facebook Login Wall Limitation".
+ */
+export function detectLoginWall(text: string): boolean {
+  if (!text || text.length < 200) return false;
+  const lower = text.toLowerCase();
+  // Primary markers: the login form itself
+  if (lower.includes('log into facebook')) return true;
+  if (lower.includes('log in to facebook')) return true;
+  if (lower.includes('you must log in to continue')) return true;
+  // The email/password form fields (present in the login wall page)
+  if (lower.includes('email or mobile number') && lower.includes('password')) return true;
+  // Login redirect markers
+  if (lower.includes('url=/login/?next=') || lower.includes('url=/login/?')) return true;
+  if (lower.includes('action="/login"') || lower.includes("action='/login'")) return true;
+  // Password input field (definitive — only on login pages)
+  if (lower.includes('type="password"') || lower.includes("type='password'")) return true;
+  // CAPTCHA / challenge pages served by Facebook or reader proxies
+  if (lower.includes('requiring captcha') || lower.includes('please solve this captcha')) return true;
+  // Tiny response with only a login link and no actual post content
+  if (text.length < 800 && lower.includes('[log in]') && lower.includes('forgot account')) return true;
+  return false;
+}
+
 function detectUnavailable(html: string, finalUrl: string): string | null {
   if (/\/login(\/|$)/.test(finalUrl)) return FB_ERR.LOGIN_REQUIRED;
   const lower = html.toLowerCase();
@@ -430,6 +472,14 @@ async function resolveFacebookUrl(url: string): Promise<string> {
     });
     if (resp.ok && resp.url) {
       let resolved = new URL(resp.url);
+      // Facebook redirects /share/p/ links to a login page on some IPs
+      // (especially Cloudflare Workers datacenter IPs). If the resolved URL
+      // is a login page, discard it and use the original share URL — it's
+      // still reader-recoverable and direct-fetchable.
+      if (/\/login(\/|$|\?)/i.test(resolved.pathname + resolved.search)) {
+        console.error(`[FB-ALBUM-DEBUG] resolveFacebookUrl: redirected to login page — keeping original share URL`);
+        return url;
+      }
       // Normalise host to www.facebook.com
       const host = resolved.hostname.toLowerCase().replace(/^(m|mobile|touch|web)\./, 'www.');
       resolved.hostname = host;
@@ -455,258 +505,31 @@ async function resolveFacebookUrl(url: string): Promise<string> {
  *   Layer 2: cobalt.tools video extraction (when page+embed both fail)
  *   Layer 3: direct CDN regex extraction from page HTML (last resort)
  */
+/**
+ * Convert MediaMeta (from platform sources) back to the FacebookMedia shape
+ * that the API route expects.
+ */
+function mediaMetaToFbMedia(m: MediaMeta): FacebookMedia {
+  return {
+    title: m.title || 'Facebook Video',
+    cover: m.cover || '',
+    duration: m.duration || 0,
+    hdUrl: m.hdUrl ?? null,
+    sdUrl: m.sdUrl ?? null,
+    author: { name: m.authorName || '', avatar: m.authorAvatar || '' },
+    like_count: m.stats.likes ?? 0,
+    comment_count: m.stats.comments ?? 0,
+    share_count: m.stats.shares ?? 0,
+    view_count: m.stats.views ?? 0,
+  };
+}
+
 export async function fetchFacebookMedia(inputUrl: string): Promise<FacebookMedia> {
   return memoSWR(`fb:media:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
-    // Resolve share/short links to canonical URLs before extraction.
-    // Cobalt and the page scraper can't follow Facebook's redirects.
     let pageUrl = await resolveFacebookUrl(inputUrl);
-
-    const errors: string[] = [];
-
-    // ─── Layer 0: multi-API free downloader sources ─────────────────────
-    // Try 3 free third-party APIs BEFORE scraping Facebook directly.
-    // These APIs maintain their own sessions and return direct CDN URLs,
-    // bypassing IP blocks on the server itself. Each source has try/catch
-    // so if one is down, we silently fall through to the next source,
-    // and eventually to the native scraping pipeline.
-    try {
-      const { fetchFacebookMediaViaMultiApi } = await import('./fb-multi-api');
-      const multiResult = await fetchFacebookMediaViaMultiApi(pageUrl);
-      if (multiResult?.hdUrl || multiResult?.sdUrl) {
-        console.error('[Facebook] Layer 0: multi-API returned video URLs');
-        return {
-          title: multiResult.title || 'Facebook Video',
-          cover: multiResult.cover || '',
-          duration: multiResult.duration || 0,
-          hdUrl: multiResult.hdUrl ?? null,
-          sdUrl: multiResult.sdUrl ?? null,
-          author: { name: multiResult.author?.name ?? '', avatar: multiResult.author?.avatar ?? '' },
-          like_count: multiResult.like_count ?? 0,
-          comment_count: multiResult.comment_count ?? 0,
-          share_count: multiResult.share_count ?? 0,
-          view_count: multiResult.view_count ?? 0,
-        };
-      }
-    } catch (err: any) {
-      errors.push(`Multi-API: ${err?.message || 'all sources failed'}`);
-    }
-
-    // ─── Layer 1: page HTML + embed plugin (parallel) ───────────────────
-    const pageTask = (async () => {
-      try {
-        const { html } = await fetchPage(pageUrl);
-        const media = extractMediaFromPageHtml(html);
-        if (media?.hdUrl || media?.sdUrl) return { media, html };
-        errors.push('Page markup contained no playable URLs.');
-        return null;
-      } catch (err: any) {
-        errors.push(err?.message || 'Page fetch failed.');
-        return null;
-      }
-    })();
-
-    const pageGate = pageTask.then(
-      (m) => ({ done: Boolean(m) }),
-      () => {
-        throw null;
-      }
-    );
-    const startWhenPageDelays = <T,>(delayMs: number, task: () => Promise<T | null>): Promise<T | null> =>
-      new Promise((resolve) => {
-        let settled = false;
-        const finish = (v: T | null) => {
-          if (!settled) {
-            settled = true;
-            resolve(v);
-          }
-        };
-        const timer = setTimeout(() => {
-          task().then(finish, () => finish(null));
-        }, delayMs);
-        pageGate.then((g) => {
-          clearTimeout(timer);
-          if (g.done) finish(null);
-          else task().then(finish, () => finish(null));
-        }).catch(() => {
-          clearTimeout(timer);
-          task().then(finish, () => finish(null));
-        });
-      });
-
-    const embedTask = startWhenPageDelays(2000, async () => {
-      try {
-        const [embed, extra] = await Promise.all([
-          fetchEmbed(pageUrl),
-          fetchDesktopPageMeta(pageUrl).catch(() => null),
-        ]);
-        if (!embed.hdUrl && !embed.sdUrl) return null;
-        return {
-          title: (embed.title && embed.title !== 'Facebook Video' ? embed.title : extra?.title) || 'Facebook Video',
-          cover: embed.cover || extra?.cover || '',
-          duration: embed.duration ?? 0,
-          hdUrl: embed.hdUrl ?? null,
-          sdUrl: embed.sdUrl ?? null,
-          author: {
-            name: embed.author?.name || extra?.author?.name || '',
-            avatar: embed.author?.avatar || embed.cover || extra?.cover || '',
-          },
-        };
-      } catch (err: any) {
-        errors.push(err?.message || 'Embed fetch failed.');
-        return null;
-      }
-    });
-
-    const [pageResult, embedResult] = await Promise.allSettled([pageTask, embedTask]);
-
-    // Page succeeded with media — return immediately (fast path).
-    if (pageResult.status === 'fulfilled' && pageResult.value) {
-      const { media } = pageResult.value;
-      let cover = media.cover ?? '';
-      if (!cover) {
-        const embedMedia = embedResult.status === 'fulfilled' ? embedResult.value : null;
-        cover = embedMedia?.cover || '';
-        if (!cover) {
-          try {
-            const extra = await fetchDesktopPageMeta(pageUrl);
-            cover = extra?.cover || '';
-          } catch { /* best effort */ }
-        }
-      }
-      return {
-        title: media.title ?? 'Facebook Video',
-        cover,
-        duration: media.duration ?? 0,
-        hdUrl: media.hdUrl ?? null,
-        sdUrl: media.sdUrl ?? null,
-        author: { name: media.author?.name ?? '', avatar: media.author?.avatar ?? cover },
-        like_count: media.like_count ?? 0,
-        comment_count: media.comment_count ?? 0,
-        share_count: media.share_count ?? 0,
-        view_count: media.view_count ?? 0,
-      };
-    }
-
-    // Page failed but embed succeeded — return embed result.
-    if (pageResult.status === 'rejected') {
-      const winner = embedResult.status === 'fulfilled' ? embedResult.value : null;
-      if (winner) {
-        return {
-          title: winner.title || 'Facebook Video',
-          cover: winner.cover ?? '',
-          duration: winner.duration ?? 0,
-          hdUrl: winner.hdUrl ?? null,
-          sdUrl: winner.sdUrl ?? null,
-          author: { name: winner.author?.name ?? '', avatar: winner.author?.avatar || winner.cover || '' },
-          like_count: 0,
-          comment_count: 0,
-          share_count: 0,
-          view_count: 0,
-        };
-      }
-    }
-
-    // Page returned null (no media) but embed succeeded.
-    const embedWinner =
-      (embedResult.status === 'fulfilled' ? embedResult.value : null) as FacebookMedia | null;
-    if (embedWinner) {
-      return {
-        title: embedWinner.title || 'Facebook Video',
-        cover: embedWinner.cover ?? '',
-        duration: embedWinner.duration ?? 0,
-        hdUrl: embedWinner.hdUrl ?? null,
-        sdUrl: embedWinner.sdUrl ?? null,
-        author: { name: embedWinner.author?.name ?? '', avatar: embedWinner.author?.avatar || embedWinner.cover || '' },
-        like_count: 0,
-        comment_count: 0,
-        share_count: 0,
-        view_count: 0,
-      };
-    }
-
-    // ─── Layer 2: cobalt.tools video extraction ─────────────────────────
-    // cobalt can extract video from Facebook URLs even when page+embed are
-    // shelled. Requires either COBALT_API_KEY or a Turnstile token from client.
-    // We try with NO turnstile token first (works if API key is configured);
-    // if that fails, we still continue to Layer 3 — never block on cobalt.
-    try {
-      const { cobaltExtractVideo } = await import('./cobalt');
-      const cobaltResult = await cobaltExtractVideo(pageUrl);
-      if (cobaltResult?.url) {
-        console.error('[Facebook] Layer 2: cobalt returned a video URL');
-        return {
-          title: 'Facebook Video',
-          cover: '',
-          duration: 0,
-          hdUrl: cobaltResult.url,
-          sdUrl: null,
-          author: { name: '', avatar: '' },
-          like_count: 0,
-          comment_count: 0,
-          share_count: 0,
-          view_count: 0,
-        };
-      }
-    } catch (err: any) {
-      errors.push(`Cobalt: ${err?.message || 'extraction failed'}`);
-    }
-
-    // ─── Layer 3: direct CDN regex extraction from page HTML ────────────
-    // Last resort: re-fetch the page (if we didn't get HTML from Layer 1)
-    // and scan for Facebook CDN video URLs via regex. Works on some flagged
-    // IPs where the page HTML is large but embed/page JSON extraction fails.
-    try {
-      let pageHtml = '';
-      // Reuse HTML from pageTask if available
-      if (pageResult.status === 'fulfilled' && pageResult.value?.html) {
-        pageHtml = pageResult.value.html;
-      } else {
-        // Fetch the page ourselves as a last-ditch effort
-        const cookie = getFbCookie();
-        const resp = await fetch(pageUrl, {
-          headers: {
-            'User-Agent': UA_DESKTOP,
-            'Accept': 'text/html,application/xhtml+xml,*/*',
-            'Accept-Language': 'en-US,en;q=0.9',
-            ...(cookie ? { 'Cookie': cookie } : {}),
-          },
-          redirect: 'follow',
-          signal: AbortSignal.timeout(8_000),
-        });
-        if (resp.ok) {
-          pageHtml = await resp.text();
-        }
-      }
-
-      if (pageHtml.length > 200) {
-        const cdnMedia = extractMediaFromCdnRegex(pageHtml);
-        if (cdnMedia) {
-          console.error('[Facebook] Layer 3: CDN regex found video URLs');
-          return cdnMedia;
-        }
-      }
-    } catch (err: any) {
-      errors.push(`CDN regex: ${err?.message || 'extraction failed'}`);
-    }
-
-    // ─── All layers failed — graceful error ─────────────────────────────
-    // errors[] contains context from every layer that was tried:
-    //   Layer 0: multi-API (ryzendesu, deliriussapi, cobalt, fdown)
-    //   Layer 1: page HTML + embed plugin
-    //   Layer 2: cobalt.tools
-    //   Layer 3: CDN regex extraction
-    const last = errors[errors.length - 1] || 'Could not load this video.';
-    const lower = last.toLowerCase();
-    if (lower.includes('private') || lower.includes('deleted') || lower.includes('not available')) {
-      throw coded(
-        'This video appears to be private, restricted, or unavailable. It may be in a closed group or shared with limited audience. Please try another public Facebook video link.',
-        FB_ERR.NOT_AVAILABLE
-      );
-    }
-    throw coded(
-      'This video could not be downloaded right now. Facebook may be blocking the request. Please try again in a few minutes or try another public link.',
-      FB_ERR.NO_MEDIA
-    );
+    const result = await runWithFallback(pageUrl, facebookSources());
+    console.log(`[Facebook] Resolved via ${result.source} in ${result.attemptMs}ms`);
+    return mediaMetaToFbMedia(result.data);
   });
 }
 
@@ -1039,8 +862,10 @@ export function parseStoryPage(html: string): FacebookStorySegment[] {
 
 /**
  * Try fetching a story page through the reader proxy (r.jina.ai) which uses
- * a clean (unflagged) IP. Returns the raw HTML so parseStoryPage can extract
- * data-sjs blobs. Never throws — returns empty string on failure.
+ * a clean (unflagged) IP. Uses `web.facebook.com` host which returns full
+ * content even when www./m. are shelled. Returns the raw HTML so
+ * parseStoryPage can extract data-sjs blobs. Never throws — returns empty
+ * string on failure.
  */
 async function fetchStoryViaReaderProxy(url: string): Promise<string> {
   const attempt = async (u: string): Promise<string> => {
@@ -1053,20 +878,29 @@ async function fetchStoryViaReaderProxy(url: string): Promise<string> {
         signal: AbortSignal.timeout(READER_FALLBACK_TIMEOUT_MS),
       });
       if (!resp.ok) return '';
-      return await resp.text();
+      const text = await resp.text();
+      // Facebook login wall: the reader proxy got a login page instead of the story.
+      // This is Facebook's anti-scraping behavior — not a code bug.
+      if (detectLoginWall(text)) {
+        console.error(`[Facebook] Story reader proxy: LOGIN WALL detected from ${u} — skipping`);
+        return '';
+      }
+      return text;
     } catch {
       return '';
     }
   };
 
-  // Try the original URL first, then one host variant — reader proxies
-  // rate-limit, so keep attempts low.
-  let html = await attempt(url);
+  // KEY FIX: Always try web.facebook.com first — it returns full post content
+  // through the reader proxy even when www./m. are login-walled.
+  const webUrl = toWebHost(url);
+  let html = await attempt(webUrl);
   if (!html || html.length < 500) {
-    const variants = hostVariantsOf(url);
-    if (variants.length > 1) {
-      html = await attempt(variants[1]);
-    }
+    html = await attempt(url);
+  }
+  if (!html || html.length < 500) {
+    await new Promise((resolve) => setTimeout(resolve, 1_000));
+    html = await attempt(webUrl);
   }
   return html;
 }
@@ -1321,6 +1155,8 @@ export interface FacebookPhotoSet {
   title: string;
   cover: string;
   author: { name: string; avatar: string };
+  /** Total photos in the post when Facebook's "+N" overflow is detected. */
+  totalPhotoCount?: number;
 }
 
 // No cap: the site serves EVERY photo in a link/album. (Owner requirement:
@@ -1341,6 +1177,201 @@ function hostVariantsOf(url: string): string[] {
 }
 
 /**
+ * Fetch all photos from a Facebook album. The album page
+ * (/{user}/albums/{albumId}) lists every photo with thumbnails. We extract
+ * photo IDs from the page, then fetch each photo's full-size URL via the
+ * reader proxy (which returns signed CDN URLs that work from any IP).
+ */
+async function fetchAlbumPhotos(
+  albumId: string,
+  originalUrl: string
+): Promise<FacebookPhotoSet> {
+  console.error(`[FB-ALBUM-DEBUG] Album fetch: albumId=${albumId}`);
+  // Build album page URL variants for the reader proxy
+  const albumUrls = [
+    `https://www.facebook.com/albums/${albumId}`,
+    `https://web.facebook.com/albums/${albumId}`,
+  ];
+
+  const recovered = new Map<string, PhotoCandidate>();
+  let albumHtml = '';
+
+  // Fetch album page through reader proxy to extract all photo IDs + CDN URLs
+  for (const albumUrl of albumUrls) {
+    try {
+      console.error(`[FB-ALBUM-DEBUG] Album reader: fetching https://r.jina.ai/${toWebHost(albumUrl)}`);
+      const resp = await fetch(`https://r.jina.ai/${toWebHost(albumUrl)}`, {
+        headers: { Accept: 'text/plain' },
+        signal: AbortSignal.timeout(READER_FALLBACK_TIMEOUT_MS),
+      });
+      console.error(`[FB-ALBUM-DEBUG] Album reader: status=${resp.status} for ${albumUrl}`);
+      if (!resp.ok) {
+        console.error(`[FB-ALBUM-DEBUG] Album reader proxy returned ${resp.status} for ${albumUrl}`);
+        continue;
+      }
+      const text = await resp.text();
+      if (text.length > albumHtml.length) albumHtml = text;
+      console.error(`[FB-ALBUM-DEBUG] Album reader: got ${text.length} chars from ${albumUrl}`);
+      console.log(`[FB-RAW-DEBUG] ALBUM READER TEXT (${text.length} chars) from ${albumUrl}:`);
+      console.log(text.substring(0, 3000));
+      console.log(`[FB-RAW-DEBUG] END RAW (showing ${Math.min(text.length, 3000)} of ${text.length})`);
+
+      // Facebook login wall: skip this response
+      if (detectLoginWall(text)) {
+        console.error(`[FB-ALBUM-DEBUG] Album reader: LOGIN WALL detected from ${albumUrl} — skipping`);
+        continue;
+      }
+
+      // Extract photo IDs from photo.php?fbid= links in the album page
+      const fbidRe = /photo\.php\?fbid=(\d{5,30})/g;
+      const photoIds = new Set<string>();
+      for (const m of text.matchAll(fbidRe)) {
+        photoIds.add(m[1]);
+      }
+      console.error(`[FB-ALBUM-DEBUG] Album fbid regex found ${photoIds.size} IDs: ${[...photoIds].slice(0, 10).join(', ')}${photoIds.size > 10 ? '...' : ''}`);
+
+      // Also extract from markdown links: [text](url/photo.php?fbid=...)
+      const mdLinkRe = /\(https?:\/\/[^)]*photo\.php\?fbid=(\d{5,30})[^)]*\)/g;
+      for (const m of text.matchAll(mdLinkRe)) {
+        photoIds.add(m[1]);
+      }
+      console.error(`[FB-ALBUM-DEBUG] After markdown links: ${photoIds.size} IDs total`);
+
+      // Also extract from /photos/{id} paths
+      const photoPathRe = /\/photos\/(\d{5,30})/g;
+      for (const m of text.matchAll(photoPathRe)) {
+        photoIds.add(m[1]);
+      }
+      console.error(`[FB-ALBUM-DEBUG] After photo paths: ${photoIds.size} IDs total: ${[...photoIds].slice(0, 15).join(', ')}${photoIds.size > 15 ? '...' : ''}`);
+
+      if (photoIds.size > 0) {
+        console.error(`[FB-ALBUM-DEBUG] Album reader found ${photoIds.size} photo IDs from ${albumUrl}`);
+        // Use fetchSiblingsViaReader to get CDN URLs for all photo IDs
+        const prevSize = recovered.size;
+        const { sawLoginWall } = await fetchSiblingsViaReader(toWebHost(albumUrl), [...photoIds], recovered);
+        console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: recovered went from ${prevSize} to ${recovered.size} (wanted ${photoIds.size} IDs, loginWall=${sawLoginWall})`);
+        if (sawLoginWall) console.error(`[FB-ALBUM-DEBUG] Reader hit Facebook login wall for album ${albumUrl}`);
+        if (recovered.size >= photoIds.size) break; // Got all photos
+      }
+
+      // Also extract raw CDN URLs directly from the album page
+      const rawRe = /https?:\/\/[^()\s"']+scontent[^()\s"']*/g;
+      const seen = new Set<string>();
+      let rawCount = 0;
+      for (const m of text.matchAll(rawRe)) {
+        const raw = m[0].replace(/&amp;/g, '&');
+        if (seen.has(raw)) continue;
+        seen.add(raw);
+        if (isNonPhotoAssetUrl(raw)) continue;
+        const id = photoIdFromUrl(raw);
+        if (!id || recovered.has(id)) continue;
+        const candidate = { url: promotePhotoUrl(raw), alt: stripCtpCap(raw) };
+        if (photoQualityScore(candidate.url) > MIN_FULL_PHOTO_SCORE) {
+          recovered.set(id, candidate);
+          rawCount++;
+        }
+      }
+      console.error(`[FB-ALBUM-DEBUG] Raw CDN extraction added ${rawCount} photos (total: ${recovered.size})`);
+
+      // Also extract from markdown image syntax
+      const mdImgRe = /!\[[^\]]*\]\((https?:\/\/[^)\s]+scontent[^)\s]*)\)/g;
+      let mdCount = 0;
+      for (const m of text.matchAll(mdImgRe)) {
+        const raw = m[1].replace(/&amp;/g, '&');
+        if (seen.has(raw)) continue;
+        seen.add(raw);
+        if (isNonPhotoAssetUrl(raw)) continue;
+        const id = photoIdFromUrl(raw);
+        if (!id || recovered.has(id)) continue;
+        const candidate = { url: promotePhotoUrl(raw), alt: stripCtpCap(raw) };
+        if (photoQualityScore(candidate.url) > MIN_FULL_PHOTO_SCORE) {
+          recovered.set(id, candidate);
+          mdCount++;
+        }
+      }
+      console.error(`[FB-ALBUM-DEBUG] Markdown image extraction added ${mdCount} photos (total: ${recovered.size})`);
+
+      if (recovered.size > 0) break;
+    } catch (e: any) {
+      console.error(`[FB-ALBUM-DEBUG] Album reader failed for ${albumUrl}: ${e?.message ?? e}`);
+    }
+  }
+
+  console.error(`[FB-ALBUM-DEBUG] Album reader recovered ${recovered.size} photos from CDN`);
+
+  // If reader proxy didn't recover enough, try fetching individual photo pages
+  // with concurrency control — for large albums (50+), limit parallel requests
+  // and add delays between batches to prevent CDN URL expiry.
+  console.error(`[FB-ALBUM-DEBUG] Fallback gate: recovered.size=${recovered.size}, albumHtml.length=${albumHtml.length}`);
+  if (recovered.size < 3 && albumHtml) {
+    const fbidRe = /photo\.php\?fbid=(\d{5,30})/g;
+    const photoIds = new Set<string>();
+    for (const m of albumHtml.matchAll(fbidRe)) {
+      photoIds.add(m[1]);
+    }
+    const missingIds = [...photoIds].filter((id) => !recovered.has(id));
+    console.error(`[FB-ALBUM-DEBUG] Fallback: ${photoIds.size} IDs in HTML, ${missingIds.length} missing from recovered`);
+    if (missingIds.length > 0) {
+      console.error(`[FB-ALBUM-DEBUG] Album fallback: fetching ${missingIds.length} individual photo pages`);
+      // Process in batches of 10 with 1s delay between batches for large albums
+      const BATCH_SIZE = 10;
+      for (let i = 0; i < missingIds.length; i += BATCH_SIZE) {
+        const batch = missingIds.slice(i, i + BATCH_SIZE);
+        console.error(`[FB-ALBUM-DEBUG] Fallback batch ${Math.floor(i / BATCH_SIZE) + 1}: fetching [${batch.join(', ')}]`);
+        const full = await fetchSiblingPhotosFull(batch);
+        let batchAdded = 0;
+        for (const [id, candidate] of full) {
+          if (!recovered.has(id)) { recovered.set(id, candidate); batchAdded++; }
+        }
+        console.error(`[FB-ALBUM-DEBUG] Fallback batch ${Math.floor(i / BATCH_SIZE) + 1}: added ${batchAdded} photos (total: ${recovered.size})`);
+        // Delay between batches for large albums to prevent CDN throttling
+        if (i + BATCH_SIZE < missingIds.length) {
+          await sleep(1_000);
+        }
+      }
+    }
+  }
+
+  console.error(`[FB-ALBUM-DEBUG] Album total recovered BEFORE quality enforcement: ${recovered.size} photos`);
+
+  if (recovered.size === 0) {
+    console.error(`[FB-ALBUM-DEBUG] Album ABORT: zero photos recovered, throwing NO_MEDIA`);
+    throw coded('Could not load this Facebook album. The album may be private or empty.', FB_ERR.NO_MEDIA);
+  }
+
+  let bestCandidates = [...recovered.values()];
+  const beforeQuality = bestCandidates.length;
+  bestCandidates = enforcePhotoQuality(bestCandidates);
+  console.error(`[FB-ALBUM-DEBUG] Quality enforcement: ${beforeQuality} -> ${bestCandidates.length} photos (filtered ${beforeQuality - bestCandidates.length})`);
+
+  // Extract title from album page
+  let title = 'Facebook Album';
+  if (albumHtml) {
+    const titleMatch = albumHtml.match(/<title[^>]*>([^<]+)<\/title>/i)
+      || albumHtml.match(/^(.+?)(?:\s*[-|]\s*Facebook)$/m);
+    if (titleMatch) title = titleMatch[1].replace(/\s*\|\s*Facebook\s*$/i, '').trim() || title;
+  }
+
+  const authorMatch = albumHtml?.match(/"pageName"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  const authorName = authorMatch ? unescapeJsonString(authorMatch[1]) : '';
+
+  const photos: FacebookPhoto[] = bestCandidates.map((c) => ({
+    title,
+    cover: c.url,
+    photoUrl: c.url,
+    altUrl: c.alt !== c.url ? c.alt : undefined,
+    author: { name: authorName, avatar: c.url },
+  }));
+
+  return {
+    photos,
+    title,
+    cover: photos[0]?.cover ?? '',
+    author: { name: authorName, avatar: photos[0]?.cover ?? '' },
+  };
+}
+
+/**
  * Fetch the download URLs + metadata for a public Facebook photo post.
  * Photo pages are fetched in parallel across host variants (www/web/m/touch)
  * and user agents (desktop + iPhone — flagged IPs serve the full og:image
@@ -1349,10 +1380,61 @@ function hostVariantsOf(url: string): string[] {
  * own photo page fetched (`photo.php?fbid={id}` — the standard technique
  * downloaders use) in a further attempt to recover the full-size original.
  */
-export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookPhotoSet> {
-  return memoSWR(`fb:photos:${inputUrl}`, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
+export async function fetchFacebookPhotoSet(inputUrl: string, albumId?: string | null): Promise<FacebookPhotoSet> {
+  // When an album ID is present, fetch the full album instead of a single photo.
+  const cacheKey = albumId ? `fb:album:${albumId}` : `fb:photos:${inputUrl}`;
+  return memoSWR(cacheKey, MEDIA_TTL_MS, MEDIA_STALE_MS, async () => {
+    console.error(`[FB-ALBUM-DEBUG] fetchFacebookPhotoSet: url=${inputUrl} albumId=${albumId ?? 'none'} cacheKey=${cacheKey}`);
+
+    // ─── Share-link redirect resolution ─────────────────────────────────
+    // Facebook /share/p/{code} links are opaque shortcodes — the actual
+    // post URL (with fbid, set=a.{albumId}, etc.) is only revealed after
+    // following the 302 redirect. Without this, the URL parser sees
+    // albumId=null and the reader proxy gets a loading shell every time.
+    let resolvedUrl = inputUrl;
+    let resolvedParsed = null;
+    if (/\/share\/[rp]\//i.test(inputUrl)) {
+      try {
+        console.error(`[FB-ALBUM-DEBUG] Resolving share link: ${inputUrl}`);
+        const finalUrl = await resolveFacebookUrl(inputUrl);
+        if (finalUrl !== inputUrl) {
+          console.error(`[FB-ALBUM-DEBUG] Resolved share link ${inputUrl} → ${finalUrl}`);
+          resolvedUrl = finalUrl;
+          resolvedParsed = parseFacebookUrl(finalUrl);
+          console.error(`[FB-ALBUM-DEBUG] Re-parsed resolved URL:`, JSON.stringify(resolvedParsed, null, 2));
+          // If the resolved URL revealed an albumId, use it
+          if (resolvedParsed.albumId && !resolvedParsed.albumId.startsWith('pcb.')) {
+            console.error(`[FB-ALBUM-DEBUG] Resolved URL has albumId=${resolvedParsed.albumId} → routing to album fetch`);
+            return fetchAlbumPhotos(resolvedParsed.albumId, resolvedUrl);
+          }
+        } else {
+          console.error(`[FB-ALBUM-DEBUG] Share link did not redirect (same URL returned)`);
+        }
+      } catch (e: any) {
+        console.error(`[FB-ALBUM-DEBUG] Share link resolve failed: ${e?.message ?? e} — falling through to original URL`);
+      }
+    }
+
+    // ─── Album path: fetch all photos from a Facebook album ──────────────
+    // pcb.{postId} is NOT a real album — it's a carousel post ID used in
+    // the `set=pcb.{postId}` parameter. Skip album fetch and let the normal
+    // extraction + reader proxy path recover all carousel siblings.
+    // Also check resolvedParsed (from share-link redirect resolution above).
+    const effectiveAlbumId = albumId || resolvedParsed?.albumId || null;
+    if (effectiveAlbumId && !effectiveAlbumId.startsWith('pcb.')) {
+      console.error(`[FB-ALBUM-DEBUG] Routing to album fetch: albumId=${effectiveAlbumId} (source: ${albumId ? 'original' : 'resolved'})`);
+      return fetchAlbumPhotos(effectiveAlbumId, resolvedUrl);
+    }
+    if (effectiveAlbumId?.startsWith('pcb.')) {
+      console.error(`[FB-ALBUM-DEBUG] Carousel post detected (pcb), using reader proxy path`);
+    }
+
+    // Use resolved URL for the actual photo page fetch attempts (if resolved
+    // URL differs from original, it carries the real fbid/post path).
+    const fetchUrl = resolvedUrl !== inputUrl ? resolvedUrl : inputUrl;
+    console.error(`[FB-ALBUM-DEBUG] Using fetch URL: ${fetchUrl} (resolved=${resolvedUrl !== inputUrl})`);
     const attempts: Array<[string, string]> = [];
-    for (const u of hostVariantsOf(inputUrl)) {
+    for (const u of hostVariantsOf(fetchUrl)) {
       attempts.push([u, UA_DESKTOP], [u, UA_IPHONE]);
     }
 
@@ -1368,12 +1450,20 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       let sawTimeout = false;
       let bestHtml = '';
       let bestCandidates: PhotoCandidate[] = [];
+      let resultIdx = 0;
       for (const result of results) {
+        resultIdx++;
         if (result.status === 'rejected') {
           if (result.reason?.code === FB_ERR.NOT_AVAILABLE) sawNotFound = true;
           if (result.reason?.code === FB_ERR.TIMEOUT) sawTimeout = true;
+          console.error(`[FB-RAW-DEBUG] bestFrom result #${resultIdx}: REJECTED (${result.reason?.code ?? result.reason?.message ?? 'unknown'})`);
           continue;
         }
+        const html = result.value.html;
+        console.error(`[FB-RAW-DEBUG] bestFrom result #${resultIdx}: OK, html.length=${html.length}, truncated=${result.value.truncated}`);
+        console.log(`[FB-RAW-DEBUG] DIRECT FETCH HTML #${resultIdx} (${html.length} chars):`);
+        console.log(html.substring(0, 3000));
+        console.log(`[FB-RAW-DEBUG] END DIRECT #${resultIdx} (showing ${Math.min(html.length, 3000)} of ${html.length})`);
         if (result.value.truncated) sawTruncated = true;
         // Flagged IPs serve tiny 400/error shells for most host variants — a
         // page that small (or truncated) can't be a faithful copy of the post,
@@ -1390,6 +1480,14 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
 
     let results = await round();
     let { sawNotFound, sawTruncated, sawShell, sawTimeout, bestHtml, bestCandidates } = bestFrom(results);
+    console.error(`[Facebook] Initial round: ${bestCandidates.length} photos found, shell=${sawShell} truncated=${sawTruncated} timeout=${sawTimeout} notFound=${sawNotFound}`);
+    if (bestHtml) {
+      console.log(`[FB-RAW-DEBUG] DIRECT PAGE BEST HTML (${bestHtml.length} chars):`);
+      console.log(bestHtml.substring(0, 3000));
+      console.log(`[FB-RAW-DEBUG] END RAW (showing ${Math.min(bestHtml.length, 3000)} of ${bestHtml.length})`);
+    } else {
+      console.error(`[FB-RAW-DEBUG] No bestHtml — ALL results were rejected or had 0 candidates`);
+    }
 
     // A fully throttled IP times out every attempt — retrying immediately
     // won't lift the throttle, so skip the second round and let the reader
@@ -1417,6 +1515,26 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       }
     }
 
+    // ─── Graph API layer (optional, needs FB_APP_TOKEN) ─────────────────
+    // When FB_APP_TOKEN is set, try the Graph API which returns ALL image
+    // sizes per photo at full resolution. This is the highest-quality path
+    // and works even when the IP is fully flagged. Silent no-op when token
+    // is not configured.
+    if (bestCandidates.length < 2) {
+      try {
+        const graphCandidates = await fetchPhotosViaGraphApi(fetchUrl);
+        if (graphCandidates && graphCandidates.length > bestCandidates.length) {
+          console.error(`[Facebook] Graph API returned ${graphCandidates.length} photos`);
+          bestCandidates = graphCandidates;
+        }
+      } catch { /* silent — Graph API is optional */ }
+    }
+
+    // Track whether the reader proxy hit a Facebook login wall (anti-scraping
+    // block). This is NOT a code bug — Facebook variable-blocks some posts from
+    // anonymous/bot readers. Used to give the user a specific error message.
+    let sawLoginWallFromReader = false;
+
     // Flagged IPs shell every photo page locally — but the share page itself
     // still renders fully for unflagged readers. Fetch it once through a public
     // reader proxy and reuse its signed CDN URLs (signatures are IP-independent,
@@ -1429,13 +1547,27 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
     // With cookies, authenticated pages return full content — skip the reader
     // proxy when we already have photos (no need for external recovery).
     // Still use reader when 0 photos found (flagged IPs may shell even with cookies).
+    // Carousel posts (set=pcb.{postId}) always need the reader proxy — the photo
+    // page shows only one photo but the post contains multiple. Force reader
+    // recovery even when 1 photo was found without truncation/shell.
+    const isCarousel = /set=pcb\.\d{5,30}/.test(fetchUrl);
     const needsReader =
       bestCandidates.length === 0 ||
-      (bestCandidates.length === 1 && (sawTruncated || sawShell || sawTimeout));
+      (bestCandidates.length === 1 && (sawTruncated || sawShell || sawTimeout || isCarousel));
+    // Detect the "+N" overflow indicator from the direct HTML first, then
+    // let the reader proxy update it if it finds a higher count.
+    let extraPhotoCount = detectExtraPhotoCount(bestHtml);
+    console.error(`[FB-RAW-DEBUG] needsReader=${needsReader}, hasCookies=${hasCookies}, bestCandidates=${bestCandidates.length}, isReaderRecoverable=${isReaderRecoverableUrl(fetchUrl)}`);
     if (needsReader && !(hasCookies && bestCandidates.length >= 1)) {
-      if (isReaderRecoverableUrl(inputUrl)) {
+      if (isReaderRecoverableUrl(fetchUrl)) {
+        console.error(`[FB-RAW-DEBUG] Reader proxy: recovering siblings (carousel=${isCarousel}), url=${fetchUrl}`);
         const recovered = new Map<string, PhotoCandidate>();
-        await fetchSiblingsViaReader(inputUrl, null, recovered);
+        const readerResult = await fetchSiblingsViaReader(fetchUrl, null, recovered);
+        const readerExtra = readerResult.extraCount;
+        if (readerResult.sawLoginWall) sawLoginWallFromReader = true;
+        console.error(`[FB-RAW-DEBUG] Reader proxy returned: ${recovered.size} photos recovered, extra=${readerExtra}, loginWall=${readerResult.sawLoginWall}`);
+        if (readerExtra > extraPhotoCount) extraPhotoCount = readerExtra;
+        console.error(`[Facebook] Reader recovered ${recovered.size} photos (extra count: ${readerExtra})`);
         if (recovered.size) {
           for (const c of recovered.values()) {
             const key = cdnPathOf(c.url);
@@ -1453,9 +1585,40 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       }
     }
 
+    // ─── Browser Run fallback (Cloudflare Browser Rendering) ────────────
+    // When the reader proxy hit a login wall and we have few/no candidates,
+    // try loading the page via a real Chromium browser. This uses Cloudflare's
+    // Browser Run service which runs on clean IPs and executes JavaScript —
+    // bypassing the login walls that lightweight fetchers trigger.
+    // Only for photo extraction: the browser fetches the share page HTML and
+    // we extract photo URLs from the rendered DOM (same as reader proxy).
+    const needsBrowser =
+      bestCandidates.length === 0 &&
+      sawLoginWallFromReader &&
+      _env.MYBROWSER;
+    if (needsBrowser && isReaderRecoverableUrl(fetchUrl)) {
+      console.error(`[FB-BROWSER] Reader hit login wall, trying Browser Run for ${fetchUrl}`);
+      const browserResult = await fetchWithBrowser(_env, toWebHost(fetchUrl));
+      if (browserResult?.html) {
+        const browserCandidates = extractPhotosFromHtml(browserResult.html);
+        console.error(`[FB-BROWSER] Browser returned ${browserCandidates.length} photo candidates`);
+        if (browserCandidates.length > bestCandidates.length) {
+          bestCandidates = browserCandidates;
+          // Reset login wall flag — browser succeeded
+          sawLoginWallFromReader = false;
+        }
+      }
+    }
+
     if (bestCandidates.length === 0) {
       if (sawNotFound) {
         throw coded('This photo is private or was deleted.', FB_ERR.NOT_AVAILABLE);
+      }
+      if (sawLoginWallFromReader) {
+        throw coded(
+          'This Facebook post\'s privacy settings are preventing access. Facebook sometimes blocks anonymous access to public posts — try a different public post.',
+          FB_ERR.LOGIN_REQUIRED
+        );
       }
       throw coded('Could not load this Facebook photo.', FB_ERR.NO_MEDIA);
     }
@@ -1473,16 +1636,22 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       }
     }
     if (thumbIds.size) {
-      const full = await fetchSiblingPhotosFull([...thumbIds.keys()], inputUrl);
+      console.error(`[Facebook] Upgrading ${thumbIds.size} thumbnail-only photos via photo.php`);
+      const full = await fetchSiblingPhotosFull([...thumbIds.keys()], fetchUrl);
+      let upgraded = 0;
       for (const c of bestCandidates) {
         const id = photoIdFromUrl(c.alt);
-        const upgraded = id && full.get(id);
-        if (upgraded) {
-          c.url = upgraded.url;
-          c.alt = upgraded.alt;
+        const up = id && full.get(id);
+        if (up) {
+          c.url = up.url;
+          c.alt = up.alt;
+          upgraded++;
         }
       }
+      console.error(`[Facebook] Thumb upgrade: ${upgraded}/${thumbIds.size} succeeded`);
     }
+
+    console.error(`[Facebook] Final result: ${bestCandidates.length} photos, title="${bestCandidates.length > 0 ? '...' : ''}"`);
 
     let title =
       getMetaContent(bestHtml, 'og:title') ||
@@ -1515,28 +1684,148 @@ export async function fetchFacebookPhotoSet(inputUrl: string): Promise<FacebookP
       title,
       cover: photos[0]?.cover ?? '',
       author: { name: authorName, avatar: photos[0]?.cover ?? '' },
+      ...(extraPhotoCount > 0 ? { totalPhotoCount: photos.length + extraPhotoCount } : {}),
     };
   });
 }
 
+/**
+ * Try fetching photo metadata via the Facebook Graph API. Returns the highest
+ * resolution image URL for each photo in the post. Requires an App Access
+ * Token (FB_APP_TOKEN env var) — public page photos work with any token,
+ * individual user photos need user_photos permission. Returns null when:
+ *  - No FB_APP_TOKEN is configured (silent fallback to other layers)
+ *  - The post is private/not found
+ *  - The response contains no images
+ *
+ * Graph API returns ALL image sizes per photo — we pick the largest.
+ * For multi-photo posts (carousel), each photo's fbid is extracted from the
+ * post's `attachments` field.
+ */
+async function fetchPhotosViaGraphApi(
+  postUrl: string
+): Promise<PhotoCandidate[] | null> {
+  const token = envStr(_env, 'FB_APP_TOKEN');
+  if (!token) return null;
+
+  // Extract the post ID from the URL. Graph API needs the numeric post ID,
+  // which we can get from the oembed endpoint or by resolving the URL.
+  // For share/p/{code} links, we need to resolve to the actual post URL first.
+  let resolvedUrl = postUrl;
+  try {
+    resolvedUrl = await resolveFacebookUrl(postUrl);
+  } catch { /* use original */ }
+
+  // Try to extract fbid from various URL patterns
+  const fbid =
+    resolvedUrl.match(/[?&]story_fbid=(\d+)/)?.[1] ||
+    resolvedUrl.match(/\/posts\/([A-Za-z0-9_-]+)/)?.[1] ||
+    resolvedUrl.match(/\/permalink\/([A-Za-z0-9_-]+)/)?.[1] ||
+    resolvedUrl.match(/\/photo\.php\?fbid=(\d+)/)?.[1] ||
+    resolvedUrl.match(/\/photo\/\?fbid=(\d+)/)?.[1] ||
+    resolvedUrl.match(/\/pfbid([A-Za-z0-9_-]+)/)?.[1];
+
+  if (!fbid) return null;
+
+  // Graph API query: get attachments (photos) with all image sizes
+  const fields = 'attachments{media,subattachments{media},type},message';
+  const apiUrl = `https://graph.facebook.com/v21.0/${fbid}?fields=${fields}&access_token=${token}`;
+
+  try {
+    const resp = await fetch(apiUrl, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!resp.ok) return null;
+
+    const json = await resp.json() as any;
+    if (json.error) return null;
+
+    const candidates: PhotoCandidate[] = [];
+    const seen = new Set<string>();
+
+    const collectFromMedia = (media: any) => {
+      if (!media || typeof media !== 'object') return;
+      // images array has all sizes — pick the largest
+      if (Array.isArray(media.images)) {
+        let bestUrl = '';
+        let bestSize = 0;
+        for (const img of media.images) {
+          const size = (img.width || 0) * (img.height || 0);
+          if (size > bestSize && img.source) {
+            bestSize = size;
+            bestUrl = img.source;
+          }
+        }
+        if (bestUrl && !seen.has(bestUrl)) {
+          seen.add(bestUrl);
+          candidates.push({ url: promotePhotoUrl(bestUrl), alt: stripCtpCap(bestUrl) });
+        }
+      }
+      // Fallback: single source URL
+      if (media.source && !seen.has(media.source)) {
+        seen.add(media.source);
+        candidates.push({ url: promotePhotoUrl(media.source), alt: stripCtpCap(media.source) });
+      }
+    };
+
+    // Walk attachments (carousel posts have multiple)
+    const attachments = json.attachments?.data || [];
+    for (const att of attachments) {
+      if (att.media) collectFromMedia(att.media);
+      // Sub-attachments for carousel posts
+      const subAttachments = att.subattachments?.data || [];
+      for (const sub of subAttachments) {
+        if (sub.media) collectFromMedia(sub.media);
+      }
+    }
+
+    return candidates.length > 0 ? candidates : null;
+  } catch {
+    return null;
+  }
+}
+
 const SIBLING_PAGE_TIMEOUT_MS = 6_000;
 
-/** True for URLs the reader proxy can reliably render for unflagged readers:
- *  share photo links (`share/p/{code}`), profile/group post permalinks
- *  (`/{user}/posts/{token}`, `/groups/{gid}/permalink/{token}`) and legacy
- *  `permalink.php?story_fbid={id}` post pages (they redirect to the post
- *  permalink, which carries every carousel sibling) — everything else is
- *  login-walled for its IPs. Called with full `https://…` URLs. */
+/** True for URLs the reader proxy can reliably render for unflagged readers.
+ *  web.facebook.com is the KEY host — it returns full post content through
+ *  the reader proxy even when www./m. are login-walled. Expanded to cover
+ *  photo pages, share links, post permalinks, and photo.php pages.
+ *  Called with full `https://…` URLs. */
 function isReaderRecoverableUrl(u: string): boolean {
   return (
     /\/share\/p\/[A-Za-z0-9_-]{4,20}\/?$/.test(u) ||
     /\/[A-Za-z0-9._-]+\/(?:posts|permalink)\/[A-Za-z0-9_-]{8,80}\/?$/.test(u) ||
     /\/groups\/[A-Za-z0-9._-]+\/(?:posts|permalink)\/[A-Za-z0-9_-]{8,80}\/?$/.test(u) ||
-    /\/permalink\.php\?story_fbid=\d{5,30}$/.test(u)
+    /\/permalink\.php\b/i.test(u) ||
+    /\/photo\.php\?fbid=\d{5,30}/.test(u) ||
+    /\/photo\/\?fbid=\d{5,30}/.test(u) ||
+    /\/photos\/[A-Za-z0-9._-]+\/\d+/i.test(u) ||
+    /\/albums\/\d+/.test(u) ||
+    // Carousel posts: photo.php?fbid=X&set=pcb.{postId}
+    /set=pcb\.\d{5,30}/.test(u)
   );
 }
 
 const READER_FALLBACK_TIMEOUT_MS = 20_000;
+
+/**
+ * Convert any Facebook URL to the `web.facebook.com` host variant. The reader
+ * proxy (r.jina.ai) gets the FULL post content from `web.facebook.com` even
+ * when `www.` / `m.` shells the page — verified live: `www.` returns a 1542B
+ * error shell, `web.` returns the full 18KB+ page with every carousel photo
+ * at s590 (which we strip to full-res via `stripCtpCap`).
+ */
+function toWebHost(url: string): string {
+  try {
+    const u = new URL(url);
+    u.hostname = 'web.facebook.com';
+    return u.toString();
+  } catch {
+    return url.replace(/^https:\/\/[^/]+/, 'https://web.facebook.com');
+  }
+}
 
 /**
  * Fetch the share page through a public reader proxy (r.jina.ai — unflagged
@@ -1544,48 +1833,155 @@ const READER_FALLBACK_TIMEOUT_MS = 20_000;
  * IP-independent, so the URLs download from any IP; `wantIds` limits the set
  * to specific siblings, or `null` accepts every photo in the post. Never
  * throws — flagged/throttled reads just keep the thumbnails.
+ *
+ * KEY FIX: Always tries `web.facebook.com` host first — this host returns
+ * the full post content through the reader proxy even when www./m. hosts
+ * return login walls or error shells. Parses BOTH raw scontent URLs (from
+ * HTML pages) AND markdown image syntax `![...](scontent-url)` (from the
+ * reader's markdown output).
  */
+
+/** Detect the "+N" overflow indicator from Facebook carousel pages. */
+function detectExtraPhotoCount(text: string): number {
+  // HTML: aria-label="+10"
+  const htmlAttr = text.match(/aria-label="\+(\d+)"/);
+  if (htmlAttr) return parseInt(htmlAttr[1], 10);
+  // Markdown: ... +10](https://...)
+  const mdLink = text.match(/\+(\d+)\]\(https?:\/\//);
+  if (mdLink) return parseInt(mdLink[1], 10);
+  // Plain text: "+10" near end of carousel
+  const plain = text.match(/\b\+(\d{1,4})\b/);
+  if (plain) return parseInt(plain[1], 10);
+  return 0;
+}
+
 async function fetchSiblingsViaReader(
   shareUrl: string,
   wantIds: string[] | null,
   found: Map<string, PhotoCandidate>
-): Promise<void> {
-  const attempt = async (): Promise<boolean> => {
+): Promise<{ extraCount: number; sawLoginWall: boolean }> {
+  let maxExtraCount = 0;
+  let sawLoginWall = false;
+  const extractPhotos = (text: string, want: Set<string> | null, sourceUrl: string): boolean => {
+    let foundAny = false;
+    const seen = new Set<string>();
+
+    // Pattern 1: Raw scontent CDN URLs (HTML pages, text/plain output)
+    const rawRe = /https?:\/\/[^()\s"']+scontent[^()\s"']*/g;
+    let rawMatches = 0;
+    for (const m of text.matchAll(rawRe)) {
+      rawMatches++;
+      const raw = m[0];
+      if (seen.has(raw)) continue;
+      seen.add(raw);
+      if (isNonPhotoAssetUrl(raw)) continue;
+      const id = photoIdFromUrl(raw);
+      if (!id || (want && !want.has(id))) continue;
+      const clean = raw.replace(/&amp;/g, '&');
+      const candidate = { url: promotePhotoUrl(clean), alt: stripCtpCap(clean) };
+      if (photoQualityScore(candidate.url) > MIN_FULL_PHOTO_SCORE) {
+        found.set(id, candidate);
+        foundAny = true;
+      }
+    }
+    console.error(`[FB-ALBUM-DEBUG] extractPhotos(${sourceUrl}): ${rawMatches} raw scontent matches, ${found.size} unique photos in map`);
+
+    // Pattern 2: Markdown image syntax ![...](scontent-url) — the reader
+    // proxy returns markdown when fetching web.facebook.com pages. Each
+    // carousel photo is: [![Image N](CDN-URL)](photo-page-link)
+    const mdRe = /!\[[^\]]*\]\((https?:\/\/[^)\s]+scontent[^)\s]*)\)/g;
+    let mdMatches = 0;
+    for (const m of text.matchAll(mdRe)) {
+      mdMatches++;
+      const raw = m[1];
+      if (seen.has(raw)) continue;
+      seen.add(raw);
+      if (isNonPhotoAssetUrl(raw)) continue;
+      const id = photoIdFromUrl(raw);
+      if (!id || (want && !want.has(id))) continue;
+      const clean = raw.replace(/&amp;/g, '&');
+      const candidate = { url: promotePhotoUrl(clean), alt: stripCtpCap(clean) };
+      if (photoQualityScore(candidate.url) > MIN_FULL_PHOTO_SCORE) {
+        found.set(id, candidate);
+        foundAny = true;
+      }
+    }
+    console.error(`[FB-ALBUM-DEBUG] extractPhotos(${sourceUrl}): ${mdMatches} markdown image matches, ${found.size} total photos in map`);
+
+    return foundAny;
+  };
+
+  let anyAttemptRan = false;
+  const attempt = async (url: string): Promise<boolean> => {
+    anyAttemptRan = true;
     try {
-      const resp = await fetch(`https://r.jina.ai/${shareUrl}`, {
+      console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: fetching https://r.jina.ai/${url}`);
+      const resp = await fetch(`https://r.jina.ai/${url}`, {
         headers: { Accept: 'text/plain' },
         signal: AbortSignal.timeout(READER_FALLBACK_TIMEOUT_MS),
       });
-      if (!resp.ok) return false;
-      const text = await resp.text();
-      const want = wantIds ? new Set(wantIds.filter((id) => !found.has(id))) : null;
-      if (wantIds && want && !want.size) return true;
-      const seen = new Set<string>();
-      const re = /https?:\/\/[^()\s"']+scontent[^()\s"']*/g;
-      for (const m of text.matchAll(re)) {
-        const raw = m[0];
-        if (seen.has(raw)) continue;
-        seen.add(raw);
-        if (isNonPhotoAssetUrl(raw)) continue;
-        const id = photoIdFromUrl(raw);
-        if (!id || (want && !want.has(id))) continue;
-        const clean = raw.replace(/&amp;/g, '&');
-        const candidate = { url: promotePhotoUrl(clean), alt: stripCtpCap(clean) };
-        if (photoQualityScore(candidate.url) > MIN_FULL_PHOTO_SCORE) {
-          found.set(id, candidate);
-        }
+      console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: status=${resp.status} for ${url}`);
+      if (!resp.ok) {
+        // Non-200 from reader proxy (rate-limit, block, etc.) — treat as
+        // inaccessible, same as a login wall, so the caller surfaces an
+        // honest message instead of a generic "could not load".
+        console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: non-ok ${resp.status} from ${url} — marking as blocked`);
+        sawLoginWall = true;
+        return false;
       }
-      return true;
-    } catch {
+      const text = await resp.text();
+      console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: got ${text.length} chars from ${url}`);
+      console.log(`[FB-RAW-DEBUG] SIBLINGS READER TEXT (${text.length} chars) from ${url}:`);
+      console.log(text.substring(0, 3000));
+      console.log(`[FB-RAW-DEBUG] END RAW (showing ${Math.min(text.length, 3000)} of ${text.length})`);
+
+      // Facebook login wall: the reader proxy got a login page instead of the post.
+      // This is Facebook's anti-scraping behavior — not a code bug. Skip this
+      // response and try the next host variant; if all fail, the caller keeps
+      // whatever thumbnails were already recovered.
+      if (detectLoginWall(text)) {
+        console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: LOGIN WALL detected from ${url} — skipping (Facebook anti-scraping block)`);
+        sawLoginWall = true;
+        return false;
+      }
+
+      const extra = detectExtraPhotoCount(text);
+      if (extra > maxExtraCount) maxExtraCount = extra;
+      const want = wantIds ? new Set(wantIds.filter((id) => !found.has(id))) : null;
+      console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: wantIds=${wantIds?.length ?? 'null'}, remaining want=${want?.size ?? 'null'}, found already=${found.size}`);
+      if (wantIds && want && !want.size) return true;
+      return extractPhotos(text, want, url);
+    } catch (e: any) {
+      console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader failed for ${url}: ${e?.message ?? e}`);
+      // Network error / timeout / Workers fetch failure — also treat as
+      // inaccessible so the caller shows an honest message.
+      sawLoginWall = true;
       return false;
     }
   };
+
+  // KEY FIX: Always try web.facebook.com first — it returns the full post
+  // even when www./m. hosts are login-walled or shelled.
+  const webUrl = toWebHost(shareUrl);
+  if (await attempt(webUrl)) return { extraCount: maxExtraCount, sawLoginWall };
+
+  // Fallback: try the original URL (may work for some post types).
+  if (await attempt(shareUrl)) return { extraCount: maxExtraCount, sawLoginWall };
+
   // Reader proxies rate-limit aggressively — one quick retry before giving up
   // (the caller keeps the thumbnails when this fails).
-  if (!(await attempt())) {
-    await new Promise((resolve) => setTimeout(resolve, 1_000));
-    await attempt();
+  await new Promise((resolve) => setTimeout(resolve, 1_000));
+  if (await attempt(webUrl)) return { extraCount: maxExtraCount, sawLoginWall };
+  await attempt(shareUrl);
+  // If every reader proxy attempt ran but none returned photos or a login wall,
+  // the proxy itself is likely blocked/rate-limited on this IP (common for
+  // Cloudflare Workers datacenter IPs). Mark as blocked so the caller surfaces
+  // an honest error instead of a generic "could not load".
+  if (anyAttemptRan && found.size === 0 && !sawLoginWall) {
+    console.error(`[FB-ALBUM-DEBUG] fetchSiblingsViaReader: all attempts ran but returned 0 photos and no login wall — treating reader as blocked`);
+    sawLoginWall = true;
   }
+  return { extraCount: maxExtraCount, sawLoginWall };
 }
 
 /**
@@ -1634,13 +2030,14 @@ async function fetchSiblingPhotosFull(
 
   if (remaining.length && shareUrl && isReaderRecoverableUrl(shareUrl)) {
     await fetchSiblingsViaReader(shareUrl, remaining, found);
+    // Login wall detection is handled at the caller level (fetchFacebookPhotoSet)
   }
   return found;
 }
 
 /** First photo of a photo post — kept for the single-photo download path. */
-export async function fetchFacebookPhoto(inputUrl: string): Promise<FacebookPhoto> {
-  const set = await fetchFacebookPhotoSet(inputUrl);
+export async function fetchFacebookPhoto(inputUrl: string, albumId?: string | null): Promise<FacebookPhoto> {
+  const set = await fetchFacebookPhotoSet(inputUrl, albumId);
   const first = set.photos[0];
   return {
     title: first?.title || set.title,

@@ -17,7 +17,7 @@ const faqData = [
   {
     id: 'story-iphone',
     q: 'How do I save an Instagram story to my iPhone (Safari)?',
-    a: 'Open Instagram on your iPhone, tap Share → Copy Link on the story, then open Safari and paste the link into TikSaveHub. Once downloaded, tap the download icon in Safari\u2019s address bar and select \u201cSave Video\u201d or \u201cSave Image\u201d to store it in your Photos app.',
+    a: 'Open Instagram on your iPhone, tap Share → Copy Link on the story, then open Safari and paste the link into TikSaveHub. Once downloaded, tap the download icon in Safari’s address bar and select “Save Video” or “Save Image” to store it in your Photos app.',
   },
   {
     id: 'story-android',
@@ -32,7 +32,7 @@ const faqData = [
   {
     id: 'story-hd',
     q: 'Can I download Instagram stories in HD 1080p?',
-    a: 'Yes, TikSaveHub automatically fetches stories in the highest resolution available on Instagram\u2019s servers, up to full HD 1080p, with zero added compression.',
+    a: 'Yes, TikSaveHub automatically fetches stories in the highest resolution available on Instagram’s servers, up to full HD 1080p, with zero added compression.',
   },
   {
     id: 'story-multiple',
@@ -62,12 +62,27 @@ const faqData = [
   {
     id: 'story-watermark-format',
     q: 'Will TikSaveHub add a watermark to the downloaded story, and what file formats will I get?',
-    a: 'No watermarks are added to your downloads. Photo stories are saved as original high-resolution JPG files, and video stories are saved as clean MP4 files.',
+    a: 'No watermarks are added to your downloads. TikSaveHub is an Instagram video watermark remover — every Story download is clean. Photo stories are saved as original high-resolution JPG files, and video stories are saved as clean MP4 files.',
   },
   {
     id: 'story-expiry',
     q: 'Can I save Instagram stories after they expire (24 hours)?',
-    a: 'Standard Instagram stories expire and disappear after 24 hours. However, if the user saved those stories into their profile \u201cHighlights\u201d, you can paste the profile link into TikSaveHub and download them anytime.',
+    a: 'Standard Instagram stories expire and disappear after 24 hours. However, if the user saved those stories into their profile “Highlights”, you can paste the profile link into TikSaveHub and download them anytime.',
+  },
+  {
+    id: 'story-view-anonymous',
+    q: 'Can I view Instagram stories anonymously without being seen?',
+    a: 'Yes. TikSaveHub lets you view and download public Instagram stories 100% anonymously. Your username never appears on the story viewer list, and the poster receives no notification that you viewed or saved their story.',
+  },
+  {
+    id: 'story-highlights',
+    q: 'Can I download Instagram Highlights instead of stories?',
+    a: 'Yes. TikSaveHub supports Instagram Highlights downloads. Paste the profile link into TikSaveHub and browse all saved Highlights — these are permanent and don\'t expire like regular 24-hour stories.',
+  },
+  {
+    id: 'story-reels-video',
+    q: 'Can I also download Instagram Reels and video posts?',
+    a: 'Yes. TikSaveHub supports Instagram Reels, video posts, Stories, and IGTV. Use our <a href="/instagram-reels-downloader-without-watermark">Instagram Reels video downloader</a> for Reels or our <a href="/instagram-video-downloader-without-watermark">Instagram video downloader</a> for regular posts — all free, no watermark.',
   },
 ];
 
@@ -86,16 +101,15 @@ const faqJsonLd = JSON.stringify({
 ---
 
 <Layout
-  title="Instagram Story Downloader Without Watermark — TikSaveHub"
-  description="Save Instagram Stories before they expire in 24 hours — free, fast, no sign-up, and no watermark. The best online Instagram story saver."
-  keywords="instagram story downloader, story downloader without watermark, instagram story downloader no watermark, save instagram stories, download ig stories, instagram story saver, download instagram stories online"
+  title="Instagram Story Video Downloader Without Watermark | TikSaveHub"
+  description="Download Instagram Story video without watermark before they expire. Free story saver — save as HD MP4 or JPG on iPhone, Android. Anonymous, no login needed."
+  keywords="instagram story video, instagram story downloader, story downloader without watermark, instagram story downloader no watermark, save instagram stories, download ig stories, instagram story saver, instagram video watermark remover, instagram reels video"
   canonical="/instagram-story-downloader-without-watermark"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="instagram"
   jsonLd={faqJsonLd}
   appName="TikSaveHub — Instagram Story Downloader"
-  appRating={{ value: '4.9', count: '12450' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -113,15 +127,13 @@ const faqJsonLd = JSON.stringify({
     <div class="dl-hero-inner container-page">
       <!-- Breadcrumb -->
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
-        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1" />
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
-            <span itemprop="name">Instagram Story Downloader</span>
-            <meta itemprop="position" content="2" />
-          </li>
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Instagram Story Downloader</span>
+                  </li>
         </ol>
       </nav>
 
@@ -133,15 +145,15 @@ const faqJsonLd = JSON.stringify({
       </div>
 
       <h1 id="dl-hero-headline" class="dl-hero-headline">
-        Instagram Story Downloader Without Watermark
+        Instagram Story Video Downloader Without Watermark
       </h1>
 
       <p class="dl-hero-subline headline-gradient">
-        Save any Story before it disappears — free and instant.
+        Free Instagram Story video downloader — no watermark.
       </p>
 
       <p class="dl-hero-sub text-body-lg">
-        Save any Instagram Story in original quality — free, fast, no sign-up, and no watermark.
+        Free Instagram Story video downloader — save any Story in original quality, no watermark.
         Just paste the story link and save it before it expires.
       </p>
 
@@ -180,26 +192,7 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- Stats -->
-  <StatsSection stats={[
-    {
-      value: '10M+',
-      label: 'Stories Saved',
-      sub: 'Download Instagram stories instantly',
-      icon: 'download',
-    },
-    {
-      value: '150+',
-      label: 'Countries Using Our Story Downloader',
-      sub: 'Save IG stories from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.9',
-      label: 'Fast & Free Instagram Story Download',
-      sub: 'No watermark, no login required',
-      icon: 'star',
-    },
-  ]} />
+  <StatsSection platform="Instagram" />
 
   <!-- SEO Content Section — 600+ words -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
@@ -208,27 +201,27 @@ const faqJsonLd = JSON.stringify({
         <div class="seo-content-main">
           <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
           <h2 id="seo-about-headline" class="section-headline">
-            Save Instagram Stories in original quality before they expire.
+            Free Instagram Story video downloader — no watermark.
           </h2>
 
           <div class="seo-article">
             <p>
-              TikSaveHub lets you save any Instagram Story directly to your device in original quality. Instagram Stories only last 24 hours before they vanish automatically, so our tool helps you keep your favorites forever. Whether it's a behind-the-scenes clip from your favorite creator, an announcement you want to reference later, or a fun photo you'd like to share on other platforms, TikSaveHub gives you a clean, watermark-free file in seconds. No app installation, no browser extension, no account creation. Just paste the story link and download.
+              TikSaveHub is a free Instagram Story video downloader that lets you save any Instagram Story directly to your device in original quality — completely without watermark. Instagram Stories only last 24 hours before they vanish automatically, so our tool helps you keep your favorites forever. Whether it's a behind-the-scenes clip from your favorite creator, an announcement you want to reference later, or a fun photo you'd like to share on other platforms, TikSaveHub gives you a clean, watermark-free file in seconds. No app installation, no browser extension, no account creation. Just paste the story link and download. TikSaveHub is also an Instagram video watermark remover for Stories — every download is clean and professional.
             </p>
 
             <h3 class="text-highlight">Why save Instagram Stories?</h3>
             <p>
-              Instagram Stories are temporary by design — they disappear after 24 hours unless the creator adds them to highlights. If you miss the chance to save a story, it's gone for good. TikSaveHub lets you download the story video or photo right away, so you can keep important content, revisit memorable moments, or store them offline without worrying about the 24-hour limit.
+              Instagram Story videos are temporary by design — they disappear after 24 hours unless the creator adds them to highlights. If you miss the chance to save a story, it's gone for good. TikSaveHub lets you download the story video or photo right away, so you can keep important content, revisit memorable moments, or store them offline without worrying about the 24-hour limit. As a free Instagram Story video downloader, every download is completely free — no caps, no sign-up.
             </p>
 
             <h3 class="text-highlight">How the Instagram story saver works</h3>
             <p>
-              Using TikSaveHub is incredibly simple. First, open the Instagram app or website and find the Story you want to save. Copy its link (stories appear in URLs like instagram.com/stories/USERNAME/ID/). Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers will process the content in under three seconds. You'll then see a preview with options to download the story video or photo. Click your preferred option, and the file saves directly to your device.
+              Using TikSaveHub as your free Instagram Story video downloader is incredibly simple. First, open the Instagram app or website and find the Story you want to save. Copy its link (stories appear in URLs like instagram.com/stories/USERNAME/ID/). Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers will process the content in under three seconds. You'll then see a preview with options to download the story video or photo. Click your preferred option, and the file saves directly to your device.
             </p>
 
             <h3 class="text-highlight">Download Instagram Stories online — works on any device</h3>
             <p>
-              One of the biggest advantages of using TikSaveHub is that it works everywhere. Whether you're on an iPhone, an Android phone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Instagram Stories. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor.
+              One of the biggest advantages of using TikSaveHub is that it works everywhere. Whether you're on an iPhone, an Android phone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Instagram Stories. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor. This free Instagram Story video downloader works the same across all devices.
             </p>
 
             <h3 class="text-highlight">Original quality — every single time</h3>
@@ -238,7 +231,7 @@ const faqJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Safe, private, and completely free</h3>
             <p>
-              We take your privacy seriously. TikSaveHub doesn't require you to create an account, enter an email address, or provide any personal information. We don't store your download history, and we don't track your browsing behavior. The entire download process happens server-side, so there's nothing stored on your device except the final story file. And unlike many other Instagram saving tools that charge fees or limit downloads, TikSaveHub is 100% free with no daily caps. You can download as many Stories as you want, every single day.
+              We take your privacy seriously. TikSaveHub doesn't require you to create an account, enter an email address, or provide any personal information. We don't store your download history, and we don't track your browsing behavior. The entire download process happens server-side, so there's nothing stored on your device except the final story file. And unlike many other Instagram saving tools that charge fees or limit downloads, TikSaveHub is a free Instagram Story video downloader with no daily caps. You can download as many Stories as you want, every single day — every Story without watermark.
             </p>
 
             <h3 class="text-highlight">Supports Instagram story link formats</h3>
@@ -247,7 +240,7 @@ const faqJsonLd = JSON.stringify({
             </p>
 
             <p>
-              Looking for more Instagram tools? Use our <a href="/instagram-video-downloader-without-watermark">Instagram video downloader</a> for regular video posts, our <a href="/instagram-reels-downloader-without-watermark">Instagram Reels downloader</a> to save Reels without watermark, or our <a href="/instagram-audio-downloader">Instagram audio downloader</a> to extract sound as MP3.
+              Looking for more Instagram tools? Use our <a href="/instagram-video-downloader-without-watermark">Instagram video downloader</a> for regular video posts, our <a href="/instagram-reels-downloader-without-watermark">Instagram Reels downloader</a> to save Reels without watermark, or our <a href="/instagram-audio-downloader">Instagram audio downloader</a> to extract sound as MP3. TikSaveHub is your free Instagram Story video downloader — no watermark, no limits.
             </p>
 
             <p>
@@ -260,11 +253,21 @@ const faqJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
-              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader Without Watermark</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#faq">FAQ</a></li>
-              <li><a href="/blog">Blog</a></li>
+              <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
+              <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
+              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
+              <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
+              <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
+              <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
+              <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
+              <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
+              <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
+              <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
+              <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
             </ul>
           </div>
 

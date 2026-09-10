@@ -23,7 +23,7 @@ const faqData = [
   {
     id: 'photo-hd',
     q: 'Can I download Facebook pictures in HD or full resolution?',
-    a: 'Yes! As an advanced Facebook picture downloader HD, TikSaveHub extracts the highest resolution image available on Facebook\u2019s servers. If the original picture was uploaded in high quality, you will get that exact full-resolution file.',
+    a: 'Yes! As an advanced Facebook picture downloader HD, TikSaveHub extracts the highest resolution image available on Facebook’s servers. If the original picture was uploaded in high quality, you will get that exact full-resolution file.',
   },
   {
     id: 'photo-gallery',
@@ -33,12 +33,12 @@ const faqData = [
   {
     id: 'photo-iphone',
     q: 'How do I save Facebook photos on iPhone Safari?',
-    a: 'To save FB photos on iPhone, open TikSaveHub in Safari, paste the photo URL, and tap download. Once the image loads, simply long-press the picture and select \u201cSave Image\u201d to instantly store it in your iPhone\u2019s camera roll.',
+    a: 'To save FB photos on iPhone, open TikSaveHub in Safari, paste the photo URL, and tap download. Once the image loads, simply long-press the picture and select “Save Image” to instantly store it in your iPhone’s camera roll.',
   },
   {
     id: 'photo-android',
     q: 'How can I download Facebook photos to Android Gallery?',
-    a: 'To download Facebook photos directly to your Android Gallery, open Chrome, paste the image link into TikSaveHub, and tap download. The high-quality JPG or PNG file will instantly appear in your phone\u2019s Gallery or Photos app.',
+    a: 'To download Facebook photos directly to your Android Gallery, open Chrome, paste the image link into TikSaveHub, and tap download. The high-quality JPG or PNG file will instantly appear in your phone’s Gallery or Photos app.',
   },
   {
     id: 'photo-profile',
@@ -58,7 +58,7 @@ const faqData = [
   {
     id: 'photo-private',
     q: 'Can I download private Facebook photos?',
-    a: 'No, TikSaveHub cannot download private Facebook photos. To respect user privacy and Facebook\u2019s security policies, our tool only processes and extracts photos that are set to public.',
+    a: 'No, TikSaveHub cannot download private Facebook photos. To respect user privacy and Facebook’s security policies, our tool only processes and extracts photos that are set to public.',
   },
   {
     id: 'photo-anonymous',
@@ -74,6 +74,21 @@ const faqData = [
     id: 'photo-no-limit',
     q: 'Does TikSaveHub have a daily limit for Facebook photo downloads?',
     a: 'No! TikSaveHub is completely free and features zero daily download limits. You can download as many high-quality Facebook photos, profile pictures, and cover photos as you want without any restrictions.',
+  },
+  {
+    id: 'photo-carousel',
+    q: 'Can I download all photos from a Facebook carousel post?',
+    a: 'Yes. When you paste a Facebook carousel post link, TikSaveHub extracts each photo individually. You can download all images from the carousel in their original high resolution.',
+  },
+  {
+    id: 'photo-group',
+    q: 'Can I download photos from a Facebook Group?',
+    a: 'Yes, if the Group is public and the photo is publicly visible. Copy the photo link from the Group and paste it into TikSaveHub. Private or closed Group photos cannot be accessed.',
+  },
+  {
+    id: 'photo-multiple',
+    q: 'Why do I only get 1 photo when the album has multiple photos?',
+    a: 'When you paste a "Share" link, we can only reliably fetch the first photo due to Facebook\'s access restrictions. For additional photos, open each photo individually in your browser, copy the direct URL from the address bar, and paste it here one at a time.',
   },
 ];
 
@@ -93,7 +108,7 @@ const faqJsonLd = JSON.stringify({
 
 <Layout
   title="Facebook Photo Downloader — Save Full-Resolution Photos Free | TikSaveHub"
-  description="Download Facebook photos in full resolution free — no sign-up, no watermark. Save any public fb photo on iPhone, Android or PC in one click with TikSaveHub."
+  description="Download Facebook photos in full HD resolution. Free FB photo downloader — save profile pictures, cover photos & album images. No login needed."
   keywords="download facebook photos full resolution free, facebook photo downloader online, save facebook photo link, facebook photo saver, download fb photos hd, facebook picture downloader, save facebook profile photos, facebook photo download link"
   canonical="/facebook-photo-downloader"
   ogImage="/og-downloader.png"
@@ -101,7 +116,6 @@ const faqJsonLd = JSON.stringify({
   platform="facebook"
   jsonLd={faqJsonLd}
   appName="TikSaveHub — Facebook Photo Downloader"
-  appRating={{ value: '4.8', count: '8740' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -125,40 +139,35 @@ const faqJsonLd = JSON.stringify({
     shareTitle="Facebook Photo Downloader — Full Resolution Free"
     shareDescription="Download Facebook photos in full resolution. Free, fast, no sign-up. JPG or PNG."
   >
-    <FacebookDownloadForm mode="photo" />
+    <FacebookDownloadForm mode="photo" lang="en" />
   </FbHeroSection>
 
   <!-- Stats -->
   <StatsSection stats={[
-    {
-      value: '2M+',
-      label: 'Facebook Photos Downloaded',
-      sub: 'Save FB photos in full resolution',
-      icon: 'download',
-    },
-    {
-      value: '150+',
-      label: 'Countries Using Our FB Photo Saver',
-      sub: 'Download Facebook photos from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.8',
-      label: 'Free Full-Resolution Photo Downloads',
-      sub: 'No watermark, no login required',
-      icon: 'star',
-    },
+    { value: '100% Free', label: 'Download Facebook photos instantly without watermark', icon: 'download' },
+    { value: 'No Sign-Up', label: 'Works on any device, from anywhere in the world', icon: 'globe' },
+    { value: 'HD Quality', label: 'Original resolution, no watermark, no login required', icon: 'star' },
   ]} />
 
   <!-- SEO Content Section — 600+ words -->
   <FbSeoArticle
     headline="Download Facebook photos in full resolution — free and watermark-free."
     quickLinks={[
-      { label: 'Facebook Photo Downloader', href: '#download-tool' },
-      { label: 'How It Works', href: '#how-it-works' },
-      { label: 'Features', href: '#features' },
-      { label: 'FAQ', href: '#faq' },
+      { label: 'TikTok Video Downloader', href: '/tiktok-video-downloader-without-watermark' },
+      { label: 'TikTok to MP3', href: '/tiktok-to-mp3' },
+      { label: 'Instagram Reels Downloader', href: '/instagram-reels-downloader-without-watermark' },
+      { label: 'Instagram Video Downloader', href: '/instagram-video-downloader-without-watermark' },
+      { label: 'Instagram Story Downloader', href: '/instagram-story-downloader-without-watermark' },
+      { label: 'Instagram Audio Downloader', href: '/instagram-audio-downloader' },
       { label: 'Facebook Video Downloader', href: '/facebook-video-downloader' },
+      { label: 'Facebook Reels Downloader', href: '/facebook-reels-downloader' },
+      { label: 'Facebook Story Downloader', href: '/facebook-story-downloader' },
+      { label: 'Facebook to MP3', href: '/facebook-to-mp3' },
+      { label: 'Facebook Photo Downloader', href: '#download-tool' },
+      { label: 'Snapchat Downloader', href: '/snapchat-downloader' },
+      { label: 'Snapchat Story Downloader', href: '/snapchat-story-downloader' },
+      { label: 'Snapchat to MP3', href: '/snapchat-to-mp3' },
+      { label: 'X/Twitter Video Downloader', href: '/x-video-downloader' },
     ]}
     supportedLinks={['facebook.com/photo.php?fbid=…', 'facebook.com/{profile}/photos/…', 'Photo permalinks from the Share menu']}
   >

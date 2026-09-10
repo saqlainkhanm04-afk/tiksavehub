@@ -1,0 +1,122 @@
+---
+// Facebook Story Downloader — SEO-optimized landing page (Español)
+// URL: /facebook-story-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbSeoArticle from '../../components/FbSeoArticle.astro';
+import FbStepsSection from '../../components/FbStepsSection.astro';
+import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbFaqSection from '../../components/FbFaqSection.astro';
+import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbInternalLinks from '../../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+
+const faqData = [
+  { id: 'story-hd', q: '¿Cómo descargar historias de Facebook en HD?', a: 'Copia el enlace de la historia pública de Facebook, pégalo en TikSaveHub y haz clic en descargar. Si la historia está disponible, se guardará como MP4 en la calidad original.' },
+  { id: 'story-24h', q: '¿Las historias de Facebook desaparecen después de 24 horas?', a: 'Sí, las historias de Facebook desaparecen después de 24 horas. Sin embargo, si copias el enlace antes de que desaparezca, TikSaveHub puede descargarla.' },
+  { id: 'story-private', q: '¿Puedo descargar historias privadas de Facebook?', a: 'No, TikSaveHub solo puede descargar historias públicas de Facebook. Las historias de cuentas privadas no son accesibles.' },
+  { id: 'story-no-login', q: '¿Necesito iniciar sesión en Facebook para descargar historias?', a: 'No se requiere inicio de sesión. Solo necesitas el enlace público de la historia para descargarla con TikSaveHub.' },
+  { id: 'story-iphone', q: '¿Cómo guardar historias de Facebook en iPhone?', a: 'Abre Safari en tu iPhone, pega el enlace de la historia en TikSaveHub y toca descargar. El MP4 se guardará en tu app de Archivos.' },
+  { id: 'story-android', q: '¿Cómo guardar historias de Facebook en Android?', a: 'Abre Chrome en Android, pega el enlace de la historia en TikSaveHub y toca descargar. El video se guardará en tu carpeta de Descargas.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Descargador de Historias Facebook Gratis | TikSaveHub"
+  description="Descarga historias de Facebook antes de que desaparezcan en 24 horas. Gratis, rápido y anónimo. Guarda stories de FB en HD sin iniciar sesión."
+  keywords="descargador de historias de facebook, descargar stories de facebook, guardar historias de facebook, facebook story downloader, descargar facebook stories gratis, facebook story saver, guardar stories de fb"
+  canonical="/facebook-story-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Descargador de Historias de Facebook"
+  lang="es"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Descargador de Historias de Facebook", "item": "https://tiksavehub.com/facebook-story-downloader" } ] })} />
+
+  <FbHeroSection
+    crumb="Descargador de Historias de Facebook"
+    badge="Gratis · HD · Anónimo"
+    title="Descargador de Historias de Facebook — Antes de que Desaparezcan"
+    subline="Guarda historias de Facebook en HD antes de que desaparezcan. Gratis y anónimo."
+    sub="Las historias de Facebook desaparecen después de 24 horas. Descárgalas antes de que se vayan — gratis, rápido y sin iniciar sesión. Pega cualquier enlace de historia de Facebook y guarda el video MP4."
+    trust={['100% Gratis', 'Anónimo', 'HD', 'Sin Registro', 'Funciona en Todos los Dispositivos']}
+    shareUrl="/facebook-story-downloader"
+    shareTitle="Descargador de Historias de Facebook — Gratis y Anónimo"
+    shareDescription="Descarga historias de Facebook antes de que desaparezcan. Gratis, rápido y anónimo."
+  >
+    <FacebookDownloadForm mode="story" />
+  </FbHeroSection>
+
+  <StatsSection stats={[ { value: '100% Gratis', label: 'Descarga videos de Facebook al instante sin marca de agua', icon: 'download' }, { value: 'Sin Registro', label: 'Funciona en cualquier dispositivo, desde cualquier lugar', icon: 'globe' }, { value: 'Calidad HD', label: 'Resolución original, sin marca de agua, sin inicio de sesión', icon: 'star' } ]} />
+
+  <FbSeoArticle
+    headline="Descarga historias de Facebook antes de que desaparezcan."
+    quickLinks={[
+      { label: 'Descargador de Videos TikTok', href: '/es/tiktok-video-downloader-without-watermark' },
+      { label: 'TikTok a MP3', href: '/es/tiktok-to-mp3' },
+      { label: 'Descargador de Reels Instagram', href: '/es/instagram-reels-downloader-without-watermark' },
+      { label: 'Descargador de Videos Instagram', href: '/es/instagram-video-downloader-without-watermark' },
+      { label: 'Descargador de Historias Instagram', href: '/es/instagram-story-downloader-without-watermark' },
+      { label: 'Descargador de Audio Instagram', href: '/es/instagram-audio-downloader' },
+      { label: 'Descargador de Videos Facebook', href: '/es/facebook-video-downloader' },
+      { label: 'Descargador de Reels Facebook', href: '/es/facebook-reels-downloader' },
+      { label: 'Descargador de Historias Facebook', href: '#download-tool' },
+      { label: 'Facebook a MP3', href: '/es/facebook-to-mp3' },
+      { label: 'Descargador de Fotos Facebook', href: '/es/facebook-photo-downloader' },
+      { label: 'Descargador de Snapchat', href: '/es/snapchat-downloader' },
+      { label: 'Descargador de Historias Snapchat', href: '/es/snapchat-story-downloader' },
+      { label: 'Snapchat a MP3', href: '/es/snapchat-to-mp3' },
+      { label: 'Descargador de Videos X/Twitter', href: '/es/x-video-downloader' },
+    ]}
+    supportedLinks={['facebook.com/stories/…', 'fb.watch/…', 'facebook.com/share/…']}
+  >
+    <p>TikSaveHub es la forma más fácil de <strong>descargar historias de Facebook antes de que desaparezcan</strong>. Las historias de Facebook solo duran 24 horas y luego se eliminan automáticamente. Con nuestro descargador gratuito, puedes guardar cualquier historia pública de Facebook como un archivo MP4 en alta calidad — sin marca de agua, sin registro y completamente anónimo.</p>
+    <h3 class="text-highlight">Cómo descargar una historia de Facebook</h3>
+    <p>Simplemente copia el enlace de la historia de Facebook que quieres guardar, pégalo en el campo de entrada de TikSaveHub y haz clic en Descargar. Si la historia sigue disponible, se descargará como un video MP4 en la calidad original.</p>
+    <h3 class="text-highlight">¿Por qué guardar historias de Facebook?</h3>
+    <p>Las historias son contenido temporal que desaparece en 24 horas. Puede que quieras guardar una historia de un amigo, un momento especial o contenido interesante antes de que se pierda para siempre. TikSaveHub te permite hacer exactamente eso — de forma rápida, gratuita y anónima.</p>
+    <h3 class="text-highlight">Privacidad y seguridad</h3>
+    <p>No pedimos tu cuenta de Facebook, no almacenamos tus descargas y no rastreamos tu actividad. Todo el proceso es completamente anónimo y seguro.</p>
+  </FbSeoArticle>
+
+  <FbStepsSection
+    eyebrow="Guía Paso a Paso"
+    headline="Cómo descargar una historia de Facebook."
+    sub="Tres pasos simples — sin habilidades técnicas."
+    steps={[ { num: '01', icon: 'copy', title: 'Copia el enlace de la historia', body: 'Abre Facebook, encuentra la historia que quieres guardar, toca Compartir y selecciona Copiar Enlace.' }, { num: '02', icon: 'paste', title: 'Pégalo en TikSaveHub', body: 'Vuelve aquí y pega el enlace en el campo de entrada. Detectamos la historia y obtenemos sus detalles.' }, { num: '03', icon: 'download', title: 'Descarga la historia', body: 'Haz clic en Descargar y guarda el archivo MP4 de la historia en tu dispositivo.' } ]} />
+
+  <FbFeaturesSection
+    eyebrow="Características"
+    headline="Por qué elegir TikSaveHub para historias de Facebook."
+    features={[ { icon: 'shield', accent: 'develop', title: 'Sin Marca de Agua', body: 'Descarga historias exactamente como se publicaron — calidad original, sin marca de agua.' }, { icon: 'zap', accent: 'preview', title: 'Antes de que Desaparezcan', body: 'Guarda historias temporales de Facebook antes de que se eliminen después de 24 horas.' }, { icon: 'music', accent: 'ship', title: 'Ultrarrápido', body: 'Descarga historias en segundos — pega, haz clic y es tuyo.' }, { icon: 'globe', accent: 'develop', title: 'Anónimo', body: 'Descarga historias sin que el propietario se entere. Completamente privado.' }, { icon: 'device', accent: 'preview', title: 'Funciona en Todos los Dispositivos', body: 'iPhone, Android, PC, Mac — funciona en cualquier navegador.' }, { icon: 'list', accent: 'ship', title: 'Gratis y Sin Límites', body: 'Descarga tantas historias como quieras, sin límites diarios ni costos.' } ]} />
+
+  <FbFaqSection eyebrow="Preguntas Frecuentes" headline="Preguntas sobre descarga de historias de Facebook." prefix="story" faqs={faqData} />
+
+  <FbCtaBand headline="Guarda esa historia antes de que se vaya." sub="Gratis, rápido y anónimo — pega un enlace de historia y guárdala en HD." ctaHref="#download-tool" ctaLabel="Descargar Historia Ahora" />
+
+  <FbInternalLinks
+    headline="Más herramientas gratuitas de Facebook"
+    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Descargador de Videos de Facebook', desc: 'Descarga videos completos de Facebook en HD.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Descargador de Facebook Reels', desc: 'Guarda Facebook Reels sin marca de agua.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Convertidor de Facebook a MP3', desc: 'Extrae audio MP3 de cualquier video de Facebook.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Descargador de Fotos de Facebook', desc: 'Guarda fotos de Facebook en resolución completa.' } ]}
+  />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Más Herramientas</h2>
+      <div class="related-tools-grid">
+            <a href="/es/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/es/tiktok-to-mp3" class="related-tool-link">TikTok a MP3</a>
+            <a href="/es/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/es/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

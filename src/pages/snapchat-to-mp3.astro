@@ -49,6 +49,16 @@ const faqData = [
     q: 'Is it legal to convert Snapchat videos to MP3?',
     a: 'Downloading content for personal use is generally acceptable, but respect copyright laws. Do not distribute or commercially use copyrighted audio. TikSaveHub is for personal use only — please respect content creators\' rights.',
   },
+  {
+    id: 'sc-mp3-spotlight',
+    q: 'Can I extract audio from Snapchat Spotlight videos?',
+    a: 'Yes. Paste any public Snapchat Spotlight link into TikSaveHub, select the Audio tab, and download the extracted sound as an MP3 file. Works with trending sounds, music, and voiceovers.',
+  },
+  {
+    id: 'sc-mp3-no-video',
+    q: 'Can I get just the audio without downloading the video?',
+    a: 'Yes. TikSaveHub\'s Audio tab extracts only the sound from Snapchat videos — no video file is downloaded. You get a clean MP3 containing just the audio track.',
+  },
 ];
 
 const combinedJsonLd = JSON.stringify({
@@ -101,7 +111,7 @@ const combinedJsonLd = JSON.stringify({
 
 <Layout
   title="Snapchat to MP3 — Extract Audio from Snapchat Videos Free | TikSaveHub"
-  description="Convert Snapchat videos to MP3 audio — free, fast, high-quality 128kbps. Extract audio from Spotlight, stories, and public snaps on any device. No app needed."
+  description="Convert Snapchat videos to MP3 online. Free Snap audio extractor — save Spotlight music & soundtracks as MP3. No login, no app needed. Works on all devices."
   keywords="snapchat to mp3, snapchat audio downloader, convert snapchat to mp3, extract snapchat audio, snapchat video to mp3, download snapchat audio, snapchat sound extractor, save snapchat music"
   canonical="/snapchat-to-mp3"
   ogImage="/og-downloader.png"
@@ -109,7 +119,6 @@ const combinedJsonLd = JSON.stringify({
   platform="snapchat"
   jsonLd={combinedJsonLd}
   appName="TikSaveHub — Snapchat to MP3"
-  appRating={{ value: '4.8', count: '4260' }}
 >
   <!-- JSON-LD -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -126,15 +135,13 @@ const combinedJsonLd = JSON.stringify({
     <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
     <div class="dl-hero-inner container-page">
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
-        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1" />
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
-            <span itemprop="name">Snapchat to MP3</span>
-            <meta itemprop="position" content="2" />
-          </li>
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Snapchat to MP3</span>
+                  </li>
         </ol>
       </nav>
 
@@ -192,11 +199,7 @@ const combinedJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <StatsSection stats={[
-    { value: '500K+', label: 'Snapchat Audios Extracted', sub: 'Convert Snapchat to MP3 instantly', icon: 'download' },
-    { value: '120+', label: 'Countries Supported', sub: 'Extract audio from anywhere', icon: 'globe' },
-    { value: '4.8', label: 'Fast & Free MP3 Conversion', sub: 'No login required', icon: 'star' },
-  ]} />
+  <StatsSection platform="Snapchat" />
 
   <!-- SEO Content -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
@@ -243,11 +246,21 @@ const combinedJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
-              <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
-              <li><a href="/snapchat-downloader">Snapchat Video Downloader</a></li>
+              <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
+              <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
+              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
+              <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
+              <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
+              <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
+              <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
+              <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
               <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#faq">FAQ</a></li>
+              <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
+              <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
             </ul>
           </div>
 

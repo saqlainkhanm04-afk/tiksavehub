@@ -1,0 +1,181 @@
+---
+// Instagram Video Downloader — SEO-optimized landing page (Español)
+// URL: /instagram-video-downloader-without-watermark
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import InstagramDownloadForm from '../../components/InstagramDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  { id: 'faq-hd-1080p', q: '¿Cómo puedo descargar un video de Instagram en HD 1080p gratis?', a: 'Pega la URL del video de Instagram en TikSaveHub y descarga el MP4 de mayor calidad que encuentre — a menudo hasta 1080p Full HD si el original se subió así. Este proceso es completamente gratuito.' },
+  { id: 'faq-carousel', q: '¿Puedo guardar un video de carrusel de Instagram en línea?', a: 'Sí. Copia el enlace de una publicación pública de carrusel de Instagram y pégalo en TikSaveHub. Detectará cada foto o video del carrusel y te permitirá descargarlos individualmente, preservando su calidad original.' },
+  { id: 'faq-iphone-safari', q: '¿Funciona un descargador de videos de Instagram en iPhone Safari?', a: 'Sí. TikSaveHub funciona en el navegador Safari en iPhone (iOS 13+). Simplemente pega el enlace del video de Instagram en TikSaveHub en Safari y toca Descargar. El archivo se guardará en Descargas de Safari (app Archivos) sin necesidad de aplicaciones adicionales.' },
+  { id: 'faq-android-gallery', q: '¿Cómo guardar un video de Instagram en la galería de Android?', a: 'Copia el enlace de Instagram y abre TikSaveHub en Chrome (u otro navegador de Android), luego descarga el video. Chrome lo guardará en tu carpeta de Descargas y la mayoría de las aplicaciones de galería mostrarán automáticamente los nuevos videos.' },
+  { id: 'faq-no-watermark', q: '¿Puedo descargar un video de Instagram sin marca de agua?', a: 'Sí. TikSaveHub proporciona el archivo de video original de Instagram tal como está, por lo que no se agrega ninguna marca de agua adicional.' },
+  { id: 'faq-original-audio', q: '¿Puedo descargar videos o Reels de Instagram con su audio original?', a: 'Sí. TikSaveHub preserva la pista de audio original en el archivo descargado. Si la publicación de Instagram incluye música o voz en off, el MP4 contendrá ese sonido en calidad completa.' },
+  { id: 'faq-private', q: '¿Puedo descargar videos de una cuenta privada de Instagram?', a: 'No. TikSaveHub solo funciona con contenido público. No puede evadir la configuración de privacidad de Instagram.' },
+  { id: 'faq-no-account', q: '¿Necesito una cuenta de Instagram o contraseña para usar el descargador?', a: 'No. TikSaveHub solo requiere un enlace de publicación pública. No necesitas iniciar sesión ni proporcionar credenciales de Instagram.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Descargador de Videos Instagram Gratis HD | TikSaveHub"
+  description="Descarga videos de Instagram y publicaciones en calidad HD gratis, sin marca de agua y sin registro. Guarda videos de IG en iPhone, Android y PC."
+  keywords="descargador de videos de instagram, descargar videos de instagram hd, guardar videos de instagram, instagram video downloader, descargar videos de ig, instagram downloader gratis, guardar videos de instagram sin marca de agua"
+  canonical="/instagram-video-downloader-without-watermark"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="instagram"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Descargador de Videos de Instagram"
+  lang="es"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Descargador de Videos de Instagram", "item": "https://tiksavehub.com/instagram-video-downloader-without-watermark" } ] })} />
+
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a href="/"><span>Inicio</span></a><meta itemprop="position" content="1" /></li>
+          <li aria-current="page"><span>Descargador de Videos de Instagram</span><meta itemprop="position" content="2" /></li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> Gratis · Calidad HD · Sin Marca de Agua</span></div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">Descargador de Videos de Instagram — Gratis y HD</h1>
+
+      <p class="dl-hero-sub text-body-lg">Descarga videos de Instagram y publicaciones en calidad HD sin marca de agua. Gratis, rápido y funciona en todos los dispositivos.</p>
+
+      <div class="dl-hero-form" id="download-tool">
+        <InstagramDownloadForm />
+      </div>
+
+      <div class="dl-hero-trust">
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% Gratis</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sin Marca de Agua</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Calidad HD</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sin Registro</span>
+      </div>
+    </div>
+  </section>
+
+  <StatsSection stats={[ { value: '100% Gratis', label: 'Descarga Reels de Instagram al instante sin marca de agua', icon: 'download' }, { value: 'Sin Registro', label: 'Funciona en cualquier dispositivo, desde cualquier lugar', icon: 'globe' }, { value: 'Calidad HD', label: 'Resolución original, sin marca de agua, sin inicio de sesión', icon: 'star' } ]} />
+
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">Sobre TikSaveHub</span>
+          <h2 id="seo-about-headline" class="section-headline">Descargador de Videos de Instagram en HD</h2>
+
+          <p>TikSaveHub es el descargador de videos de Instagram más rápido y fácil de usar. Ya sea un Reel trending, un video de carrusel o una publicación de video, nuestro descargador te permite guardar cualquier video público de Instagram en alta calidad — sin marca de agua, sin registro y completamente gratis.</p>
+
+          <h3 class="text-highlight">Cómo descargar videos de Instagram</h3>
+          <p>Simplemente copia el enlace del video de Instagram, pégalo en TikSaveHub y haz clic en Descargar. Nuestros servidores obtienen el video en la máxima calidad disponible y te permiten guardarlo como un archivo MP4 en tu dispositivo.</p>
+
+          <h3 class="text-highlight">Calidad HD hasta 1080p</h3>
+          <p>Descarga videos de Instagram en la máxima resolución disponible — hasta 1080p Full HD si el original se subió en esa calidad. Obtienes el video tal como fue publicado, sin compresión adicional ni marca de agua.</p>
+
+          <h3 class="text-highlight">Funciona en todos los dispositivos</h3>
+          <p>TikSaveHub funciona en iPhone, Android, PC y Mac. No necesitas instalar ninguna aplicación — simplemente abre tu navegador, pega el enlace y descarga. Funciona en Safari, Chrome, Firefox y cualquier navegador moderno.</p>
+
+          <h3 class="text-highlight">Privacidad y seguridad</h3>
+          <p>No pedimos tu cuenta de Instagram, no almacenamos tus descargas y no rastreamos tu actividad. Todo el proceso es completamente anónimo y seguro. Tus credenciales de Instagram nunca son necesarias ni solicitadas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dl-how-section" aria-labelledby="dl-how-headline">
+    <div class="dl-how-inner container-page">
+      <span class="section-eyebrow text-caption-mono">Cómo Funciona</span>
+      <h2 id="dl-how-headline" class="section-headline">Cómo descargar videos de Instagram</h2>
+      <div class="dl-steps">
+        <div class="dl-step"><span class="dl-step-num">1</span><h3 class="dl-step-title">Copia el enlace del video</h3><p class="dl-step-desc">Abre Instagram, encuentra el video que quieres guardar, toca Compartir y selecciona Copiar Enlace.</p></div>
+        <div class="dl-step"><span class="dl-step-num">2</span><h3 class="dl-step-title">Pégalo en TikSaveHub</h3><p class="dl-step-desc">Vuelve aquí y pega el enlace en el campo de entrada. Detectamos el video y obtenemos sus detalles.</p></div>
+        <div class="dl-step"><span class="dl-step-num">3</span><h3 class="dl-step-title">Descarga en HD</h3><p class="dl-step-desc">Haz clic en Descargar y guarda el archivo MP4 en tu dispositivo. Sin marca de agua, sin registro.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <span class="section-eyebrow text-caption-mono">Preguntas Frecuentes</span>
+      <h2 id="dl-faq-headline" class="section-headline">Preguntas sobre descarga de videos de Instagram</h2>
+      <div class="dl-faq-grid">
+        {faqData.map((faq) => (
+          <details class="dl-faq-item">
+            <summary class="dl-faq-q">{faq.q}</summary>
+            <p class="dl-faq-a">{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <SocialShare url="/instagram-video-downloader-without-watermark" title="Descargador de Videos de Instagram — Gratis y HD" description="Descarga videos de Instagram en calidad HD sin marca de agua. Gratis y rápido." />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Más Herramientas</h2>
+      <div class="related-tools-grid">
+            <a href="/es/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/es/tiktok-to-mp3" class="related-tool-link">TikTok a MP3</a>
+            <a href="/es/facebook-video-downloader" class="related-tool-link">Facebook Video Downloader</a>
+            <a href="/es/facebook-reels-downloader" class="related-tool-link">Facebook Reels Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
+  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
+  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
+  .dl-breadcrumb { width: 100%; }
+  .breadcrumb-list { display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--color-mute); }
+  .breadcrumb-list a { color: var(--color-mute); text-decoration: none; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .dl-badge-row { display: flex; justify-content: center; }
+  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
+  .dark .dl-badge { background: rgba(192, 132, 252, 0.15); border-color: rgba(192, 132, 252, 0.3); color: #c084fc; }
+  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
+  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
+  .dl-hero-form { width: 100%; max-width: 640px; }
+  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); margin-top: var(--spacing-md); }
+  .dl-how-section, .dl-faq-section, .seo-content-section { padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-how-inner, .dl-faq-inner, .seo-content-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
+  .dl-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-xl); width: 100%; }
+  .dl-step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--spacing-md); }
+  .dl-step-num { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #007cf0); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .dl-step-title { font-size: 18px; font-weight: 650; color: var(--color-ink); margin: 0; }
+  .dl-step-desc { font-size: 15px; color: var(--color-mute); line-height: 1.6; margin: 0; max-width: 280px; }
+  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
+  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
+  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
+  .dl-faq-q::-webkit-details-marker { display: none; }
+  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
+  .seo-content-grid { max-width: 800px; }
+  .seo-content-main { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+  .seo-content-main p { font-size: 16px; line-height: 1.7; color: var(--color-body); margin: 0; }
+  .text-highlight { font-size: 18px; font-weight: 650; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm); }
+  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
+  .dark .section-eyebrow { color: #c084fc; }
+  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
+  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; letter-spacing: -1.2px; } .dl-steps { grid-template-columns: 1fr; } .section-headline { font-size: 24px; } }
+
+  .related-tools-section { padding: var(--spacing-2xl) 0; }
+  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
+  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
+  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
+  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+</style>

@@ -6,9 +6,21 @@
 // promotes the Audio tile to first position with a Recommended badge.
 interface Props {
   mode?: 'video' | 'reels' | 'story' | 'mp3' | 'photo';
+  lang?: string;
 }
 
-const { mode = 'video' } = Astro.props;
+const { mode = 'video', lang = 'en' } = Astro.props;
+
+const photoTips: Record<string, string> = {
+  en: '<strong>Tip:</strong> For albums with multiple photos, paste the direct link of each photo individually. To get this: open the photo in your browser, then copy the URL from the address bar (not the "Share" button link) — then paste that here.',
+  es: '<strong>Consejo:</strong> Para álbumes con varias fotos, pega el enlace directo de cada foto individualmente. Para obtenerlo: abre la foto en tu navegador, luego copia la URL de la barra de direcciones (no el enlace del botón "Compartir") — y pégalo aquí.',
+  ja: '<strong>ヒント:</strong> 複数の写真が含まれるアルバムの場合、各写真の直接リンクを個別に貼り付けてください。取得方法: ブラウザで写真を開き、アドレスバーからURLをコピーします（「共有」ボタンのリンクではありません）— そこに貼り付けます。',
+  fr: '<strong>Astuce :</strong> Pour les albums avec plusieurs photos, collez le lien direct de chaque photo individuellement. Pour l\'obtenir : ouvrez la photo dans votre navigateur, puis copiez l\'URL de la barre d\'adresse (pas le lien du bouton "Partager") — puis collez-la ici.',
+  de: '<strong>Tipp:</strong> Bei Alben mit mehreren Fotos füge den direkten Link jedes Fotos einzeln ein. So erhältst du ihn: Öffne das Foto in deinem Browser und kopiere die URL aus der Adresszeile (nicht den Link der "Teilen"-Schaltfläche) — und füge ihn hier ein.',
+  pt: '<strong>Dica:</strong> Para álbuns com várias fotos, cole o link direto de cada foto individualmente. Para obtê-la: abra a foto no navegador e copie a URL da barra de endereço (não o link do botão "Compartilhar") — e cole aqui.',
+  ko: '<strong>팁:</strong> 여러 장의 사진이 있는 앨범의 경우 각 사진의 직접 링크를 개별적으로 붙여넣으세요. 얻는 방법: 브라우저에서 사진을 열고 주소 표시줄에서 URL을 복사합니다 ("공유" 버튼 링크가 아님) — 그런 다음 여기에 붙여넣으세요.',
+  it: '<strong>Suggerimento:</strong> Per gli album con più foto, incolla il link diretto di ogni foto singolarmente. Per ottenerlo: apri la foto nel browser e copia l\'URL dalla barra degli indirizzi (non il link del pulsante "Condivisione") — poi incollalo qui.',
+};
 
 const tabLinks = [
   {
@@ -178,6 +190,10 @@ const copy = {
 <p class="hero-notice" role="note">
       Notice: For personal use only. We do not host any media files on our servers. Please respect content creators' rights.
     </p>
+
+    {mode === 'photo' && (
+      <p class="hero-tip" role="note" set:html={photoTips[lang] || photoTips.en} />
+    )}
 
     <p class="fetch-note" id="fetch-note" role="status" aria-live="polite" hidden>
       <span class="fetch-note-dot" aria-hidden="true"></span>
@@ -436,6 +452,32 @@ const copy = {
     margin: var(--spacing-md) 0 0 0;
     line-height: 1.5;
     letter-spacing: -0.1px;
+  }
+
+  .hero-tip {
+    font-size: var(--text-caption);
+    color: var(--color-text);
+    text-align: center;
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.5;
+    letter-spacing: -0.1px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: var(--radius-md, 10px);
+    background: rgba(59, 130, 246, 0.05);
+  }
+
+  .hero-tip strong {
+    color: #2563eb;
+  }
+
+  html.dark .hero-tip {
+    border-color: rgba(96, 165, 250, 0.25);
+    background: rgba(96, 165, 250, 0.08);
+  }
+
+  html.dark .hero-tip strong {
+    color: #60a5fa;
   }
 
   .fetch-note {
@@ -898,6 +940,13 @@ const copy = {
     margin: 0;
   }
 
+  .photo-count-extra {
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    margin: 4px 0 0;
+    line-height: 1.4;
+  }
+
   html.dark .result-thumb-fallback {
     background:
       radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--color-grad-develop-start) 18%, transparent), transparent 70%),
@@ -1347,20 +1396,32 @@ const copy = {
   const dlIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   const musicIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
 
+  import { attachSimProgress } from '../lib/download-progress';
+
   const MODE = (document.getElementById('download-form') as HTMLElement | null)?.dataset.mode || 'video';
   const isMp3Mode = MODE === 'mp3';
   const isPhotoMode = MODE === 'photo';
   const isStoryMode = MODE === 'story';
 
   // --- Cloudflare Turnstile for cobalt API auth ---
-  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAEl-ZmiorHhgs7jw';
   let turnstileToken: string | null = null;
   let turnstileReady = false;
+  let turnstileWidgetId: string | null = null;
+
+  function cleanupTurnstile() {
+    if (turnstileWidgetId !== null && typeof (window as any).turnstile !== 'undefined') {
+      try { (window as any).turnstile.remove(turnstileWidgetId); } catch {}
+      turnstileWidgetId = null;
+    }
+  }
+
   function initTurnstile() {
     if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
     const c = document.getElementById('cf-turnstile-container');
     if (!c) return;
-    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+    cleanupTurnstile();
+    turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
       callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
       'error-callback': () => { turnstileToken = null; turnstileReady = false; },
       'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
@@ -1372,8 +1433,9 @@ const copy = {
       if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
       const c = document.getElementById('cf-turnstile-container');
       if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      cleanupTurnstile();
       c.innerHTML = '';
-      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
         callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
         'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
         'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
@@ -1533,6 +1595,7 @@ const copy = {
         Array.isArray(data.photos) && data.photos.length ? data.photos : data.photoUrl ? [data] : [];
       const photoHref: string = (photos[0] && (photos[0].photoUrl || photos[0].cover)) || '';
       const count = photos.length;
+      const totalCount: number = data.totalPhotoCount || count;
 
       const PREVIEW_PHOTOS = 5;
       const gridHtml =
@@ -1556,6 +1619,9 @@ const copy = {
         count > 1
           ? '<span class="dl-tile-badge">' + count + ' Photos · ZIP</span>'
           : '<span class="dl-tile-badge">Full Resolution</span>';
+      const moreOnFb = totalCount > count
+        ? `<p class="photo-count-extra">This post has ${totalCount} photos. Showing ${count} available for download. The remaining ${totalCount - count} photos require Facebook login to access.</p>`
+        : '';
 
       resultMount.innerHTML = `
         <div class="result-card animate-fade-in-up" role="region" aria-label="Download result">
@@ -1589,6 +1655,7 @@ const copy = {
               <div class="result-meta">
                 <p class="result-title">${videoTitle}</p>
                 ${count > 1 ? `<p class="photo-count">${count} photos found in this post</p>` : ''}
+                ${moreOnFb}
               </div>
               <div class="result-actions">
                 <button class="dl-tile dl-tile-fb dl-tile-prime" id="btn-dl-photo" type="button" aria-label="Download Facebook photos">
@@ -1704,6 +1771,9 @@ const copy = {
         bar.style.width = '0%';
       }
 
+      // Simulated progress — smooth 0→85% while server prepares the stream
+      const sim = attachSimProgress(bar, labelEl, 'Processing…', { ceiling: 85, intervalMs: 250 });
+
       const xhr = new XMLHttpRequest();
       const idxParam = typeof idx === 'number' && idx >= 0 ? `&idx=${idx}` : '';
       getTurnstileToken().then((token) => {
@@ -1718,13 +1788,12 @@ const copy = {
       xhr.onprogress = function (e) {
         if (e.lengthComputable && bar && labelEl) {
           const pct = Math.round((e.loaded / e.total) * 100);
-          bar.style.transition = 'none';
-          bar.style.width = pct + '%';
-          labelEl.textContent = 'Processing… ' + pct + '%';
+          sim.stop(pct);
         }
       };
 
       xhr.onload = function () {
+        sim.stop(xhr.status === 200 ? 100 : undefined);
         if (xhr.status === 200) {
           const blob = xhr.response;
           const blobUrl = URL.createObjectURL(blob);
@@ -1752,11 +1821,25 @@ const copy = {
       };
 
       xhr.onerror = function () {
+        sim.stop();
         btn.classList.add('dl-tile-error');
         setTimeout(() => btn.classList.remove('dl-tile-error'), 2000);
         btn.classList.remove('dl-tile-processing');
         btn.disabled = false;
         if (labelEl) labelEl.textContent = origLabel;
+        if (bar) bar.style.width = '0%';
+      };
+
+      xhr.ontimeout = function () {
+        sim.stop();
+        btn.classList.add('dl-tile-error');
+        if (labelEl) labelEl.textContent = 'Timed out — try again';
+        setTimeout(() => {
+          btn.classList.remove('dl-tile-error');
+          if (labelEl) labelEl.textContent = origLabel;
+        }, 2000);
+        btn.classList.remove('dl-tile-processing');
+        btn.disabled = false;
         if (bar) bar.style.width = '0%';
       };
 

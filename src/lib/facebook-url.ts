@@ -15,6 +15,7 @@ export interface FacebookUrlParseResult {
   linkType: FacebookLinkType | null;
   videoId: string | null;
   photoId: string | null;
+  albumId: string | null;
   shortCode: string | null;
   sanitizedUrl: string;
   error: string | null;
@@ -66,6 +67,8 @@ const PHOTO_PROFILE_BASE_RE = /^\/([A-Za-z0-9._-]+)\/photos\/?$/;
 const PHOTO_PROFILE_ITEM_RE = /^\/([A-Za-z0-9._-]+)\/photos\/(.+)$/;
 const PHOTO_VIEW_FULL_RE = /^\/photo\/view_full_size\/?$/;
 const ALBUM_PAGE_RE = /^\/([A-Za-z0-9._-]+)\/albums\/(\d+)(?:\/[^/]+)?\/?$/;
+// Direct album link without user prefix — facebook.com/albums/{albumId}
+const ALBUM_DIRECT_RE = /^\/albums\/(\d+)(?:\/[^/]+)?\/?$/;
 const STORY_PATH_RE = /^\/(stories)\/(\d{5,20})(?:\/([A-Za-z0-9_=%\-]{4,96}))?\/?$/;
 const STORIES_PHP_PROFILE_RE = /^\/stories\.php\/?$/;
 const SHARE_REEL_RE = /^\/share\/r\/([A-Za-z0-9_-]{4,20})\/?$/;
@@ -79,6 +82,7 @@ function invalid(error: string): FacebookUrlParseResult {
     linkType: null,
     videoId: null,
     photoId: null,
+    albumId: null,
     shortCode: null,
     sanitizedUrl: '',
     error,
@@ -162,6 +166,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'short',
       videoId: null,
       photoId: null,
+      albumId: null,
       shortCode: code,
       sanitizedUrl: `https://fb.watch/${code}/`,
       error: null,
@@ -186,6 +191,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'reel',
       videoId: id,
       photoId: null,
+      albumId: null,
       shortCode: null,
       sanitizedUrl: `https://www.facebook.com/reel/${id}/`,
       error: null,
@@ -204,6 +210,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'reel',
       videoId: null,
       photoId: null,
+      albumId: null,
       shortCode: code,
       sanitizedUrl: `https://www.facebook.com/share/r/${code}/`,
       error: null,
@@ -219,6 +226,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'profile_video',
       videoId: null,
       photoId: null,
+      albumId: null,
       shortCode: code,
       sanitizedUrl: `https://www.facebook.com/share/v/${code}/`,
       error: null,
@@ -239,6 +247,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'photo',
       videoId: null,
       photoId: code,
+      albumId: null,
       shortCode: null,
       sanitizedUrl: `https://${host}/share/p/${code}/`,
       error: null,
@@ -264,6 +273,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'photo',
       videoId: null,
       photoId: token,
+      albumId: null,
       shortCode: null,
       sanitizedUrl: `https://${host}${pathname}/`,
       error: null,
@@ -285,6 +295,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'story',
       videoId: storyId || storyToken || userId,
       photoId: null,
+      albumId: null,
       shortCode: null,
       sanitizedUrl: storyId
         ? `https://www.facebook.com/story.php?story_fbid=${storyId}&id=${userId}`
@@ -303,6 +314,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         linkType: 'story',
         videoId: profileId,
         photoId: null,
+        albumId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/stories/${profileId}/`,
         error: null,
@@ -321,6 +333,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'profile_video',
       videoId: id,
       photoId: null,
+      albumId: null,
       shortCode: null,
       sanitizedUrl: `https://www.facebook.com/${profileMatch[1]}/videos/${id}/`,
       error: null,
@@ -337,6 +350,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         linkType: 'watch',
         videoId: v,
         photoId: null,
+        albumId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/watch/?v=${v}`,
         error: null,
@@ -355,6 +369,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         linkType: 'watch_live',
         videoId: v,
         photoId: null,
+        albumId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/watch/live/?v=${v}`,
         error: null,
@@ -366,6 +381,27 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
   // Legacy video pages — video.php / permalink.php / story.php
   if (VIDEO_PAGE_PATH_RE.test(pathname)) {
     const isStoryPhp = pathname === '/story.php' || pathname === '/permalink.php';
+
+    // permalink.php?story_fbid=pfbid... — new Facebook obfuscated post ID.
+    // story_fbid = pfbid (unique post token), id = profile/page numeric ID.
+    // This is a POST permalink (may contain photos/album), route as photo.
+    const storyFbid = parsed.searchParams.get('story_fbid') || '';
+    if (/^pfbid/i.test(storyFbid)) {
+      const profileId = parsed.searchParams.get('id') || '';
+      console.error(`[FB-ALBUM-DEBUG] parseFacebookUrl: permalink.php pfbid detected: story_fbid=${storyFbid}, id=${profileId}`);
+      return {
+        isValid: true,
+        isVideo: false,
+        linkType: 'photo',
+        videoId: null,
+        photoId: storyFbid,
+        albumId: null,
+        shortCode: null,
+        sanitizedUrl: `https://www.facebook.com/permalink.php/?story_fbid=${storyFbid}&id=${profileId}`,
+        error: null,
+      };
+    }
+
     const id =
       parsed.searchParams.get('v') ||
       (isStoryPhp ? parsed.searchParams.get('story_fbid') : null) ||
@@ -385,6 +421,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
           linkType: 'story',
           videoId: storyId,
           photoId: null,
+          albumId: null,
           shortCode: null,
           sanitizedUrl: `https://www.facebook.com/story.php?story_fbid=${storyId}&id=${userId}`,
           error: null,
@@ -396,6 +433,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         linkType: 'video_page',
         videoId: id,
         photoId: null,
+        albumId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/video.php?v=${id}`,
         error: null,
@@ -408,11 +446,16 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
   // facebook.com/photo.php?fbid=…, /photo/?fbid=…, /{user}/photos/{id},
   // /{user}/photos/a.{album}/{id} and /photo/view_full_size/?id=…
   //
-  // `set=pcb.{postId}` marks a photo inside a multi-photo carousel POST — the
-  // post page (permalink.php?story_fbid={postId} → /{user}/posts/{postId}/)
-  // carries EVERY sibling photo in its `"image":{"uri":…}` JSON, while the
-  // single photo page only shows the viewed photo. Fetching the post permalink
-  // is how downloaders recover the whole carousel from a photo-viewer link.
+  // `set=pcb.{postId}` marks a photo inside a multi-photo carousel POST.
+  // `set=a.{albumId}` marks a photo inside a photo ALBUM — the album page
+  // (/{user}/albums/{albumId}) lists every photo in the album. When this
+  // parameter is present, we store the albumId so the extractor can fetch
+  // the full album instead of just the single viewed photo.
+  //
+  // The sanitized URL is always `photo.php?fbid={id}` — it works from any IP.
+  // The extraction pipeline recovers carousel siblings via the reader proxy
+  // and per-photo photo.php fetches (the old permalink.php rewrite 404s on
+  // flagged IPs).
   if (PHOTO_PAGE_PATH_RE.test(pathname)) {
     const id =
       parsed.searchParams.get('fbid') ||
@@ -421,16 +464,22 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       parsed.searchParams.get('id');
     if (id && /^\d{5,30}$/.test(id)) {
       const set = parsed.searchParams.get('set') || '';
-      const pcbPostId = set.match(/^pcb\.(\d{5,30})$/)?.[1] || '';
-      const sanitizedUrl = pcbPostId
-        ? `https://${host}/permalink.php?story_fbid=${pcbPostId}`
-        : `https://www.facebook.com/photo.php?fbid=${id}`;
+      // set=a.{albumId} → photo inside a photo ALBUM (fetch full album)
+      // set=pcb.{postId} → photo inside a multi-photo CAROUSEL POST (fetch all siblings)
+      // set=p.{setId} → profile photo set (fetch all in set)
+      const albumMatch = set.match(/^a\.(\d{5,30})$/);
+      const pcbMatch = set.match(/^pcb\.(\d{5,30})$/);
+      // Preserve pcb. prefix so fetchFacebookPhotoSet can distinguish carousel
+      // posts (reader proxy path) from real albums (album fetch path).
+      const albumId = pcbMatch ? `pcb.${pcbMatch[1]}` : (albumMatch?.[1] || null);
+      const sanitizedUrl = `https://www.facebook.com/photo.php?fbid=${id}`;
       return {
         isValid: true,
         isVideo: false,
         linkType: 'photo',
         videoId: null,
         photoId: id,
+        albumId,
         shortCode: null,
         sanitizedUrl,
         error: null,
@@ -442,6 +491,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       linkType: 'photo',
       videoId: null,
       photoId: null,
+      albumId: null,
       shortCode: null,
       sanitizedUrl: parsed.toString(),
       error: 'Could not find the photo ID in that Facebook link.',
@@ -473,6 +523,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         linkType: 'photo',
         videoId: null,
         photoId: id,
+        albumId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${id}`,
         error: null,
@@ -480,9 +531,12 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
     }
   }
 
-  // Album pages with a ?media={photoId} query — facebook.com/{user}/albums/{id}/?media={photoId}
+  // Album pages — facebook.com/{user}/albums/{albumId} with optional
+  // ?media={photoId} to view a specific photo. Without ?media=, treat
+  // the entire album as downloadable content.
   const albumPageMatch = pathname.match(ALBUM_PAGE_RE);
   if (albumPageMatch) {
+    const albumNumericId = albumPageMatch[2];
     const mediaId = parsed.searchParams.get('media');
     if (mediaId && /^\d{5,30}$/.test(mediaId)) {
       return {
@@ -491,11 +545,55 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         linkType: 'photo',
         videoId: null,
         photoId: mediaId,
+        albumId: albumNumericId,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${mediaId}`,
         error: null,
       };
     }
+    // Album page without ?media= — treat as album download
+    return {
+      isValid: true,
+      isVideo: false,
+      linkType: 'photo',
+      videoId: null,
+      photoId: null,
+      albumId: albumNumericId,
+      shortCode: null,
+      sanitizedUrl: `https://www.facebook.com/albums/${albumNumericId}`,
+      error: null,
+    };
+  }
+
+  // Direct album link without user prefix — facebook.com/albums/{albumId}
+  const albumDirectMatch = pathname.match(ALBUM_DIRECT_RE);
+  if (albumDirectMatch) {
+    const albumNumericId = albumDirectMatch[1];
+    const mediaId = parsed.searchParams.get('media');
+    if (mediaId && /^\d{5,30}$/.test(mediaId)) {
+      return {
+        isValid: true,
+        isVideo: false,
+        linkType: 'photo',
+        videoId: null,
+        photoId: mediaId,
+        albumId: albumNumericId,
+        shortCode: null,
+        sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${mediaId}`,
+        error: null,
+      };
+    }
+    return {
+      isValid: true,
+      isVideo: false,
+      linkType: 'photo',
+      videoId: null,
+      photoId: null,
+      albumId: albumNumericId,
+      shortCode: null,
+      sanitizedUrl: `https://www.facebook.com/albums/${albumNumericId}`,
+      error: null,
+    };
   }
 
   // Photo viewer page — facebook.com/photo/view_full_size/?id={id}
@@ -508,6 +606,7 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
         linkType: 'photo',
         videoId: null,
         photoId: id,
+        albumId: null,
         shortCode: null,
         sanitizedUrl: `https://www.facebook.com/photo.php?fbid=${id}`,
         error: null,

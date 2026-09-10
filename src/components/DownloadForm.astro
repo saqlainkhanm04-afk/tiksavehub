@@ -368,6 +368,8 @@
 </style>
 
 <script>
+  import { attachSimProgress } from '../lib/download-progress';
+
   const form = document.getElementById('tiktok-form') as HTMLFormElement;
   const urlInput = document.getElementById('tiktok-url') as HTMLInputElement;
   const downloadBtn = document.getElementById('download-btn') as HTMLButtonElement;
@@ -377,15 +379,24 @@
   const errorText = document.getElementById('error-text') as HTMLElement;
   const resultMount = document.getElementById('result-mount') as HTMLElement;
 
-  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAEl-ZmiorHhgs7jw';
   let turnstileToken: string | null = null;
   let turnstileReady = false;
+  let turnstileWidgetId: string | null = null;
+
+  function cleanupTurnstile() {
+    if (turnstileWidgetId !== null && typeof (window as any).turnstile !== 'undefined') {
+      try { (window as any).turnstile.remove(turnstileWidgetId); } catch {}
+      turnstileWidgetId = null;
+    }
+  }
 
   function initTurnstile() {
     if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
     const c = document.getElementById('cf-turnstile-container');
     if (!c) return;
-    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+    cleanupTurnstile();
+    turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
       callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
       'error-callback': () => { turnstileToken = null; turnstileReady = false; },
       'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
@@ -398,7 +409,9 @@
       if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
       const c = document.getElementById('cf-turnstile-container');
       if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
-      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      cleanupTurnstile();
+      c.innerHTML = '';
+      turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
         callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
         'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
         'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
@@ -502,30 +515,24 @@
       const fetchNote = document.getElementById('fetch-note');
       if (fetchNote) fetchNote.hidden = false;
 
+      // Simulated progress — smooth 0→85% while server prepares the stream
+      const sim = attachSimProgress(bar, labelEl, 'Processing…', { ceiling: 85, intervalMs: 250 });
+
       const xhr = new XMLHttpRequest();
       xhr.open('GET', `/api/download?url=${encodeURIComponent(origUrl)}&dl=${type}`);
       xhr.responseType = 'blob';
       xhr.timeout = 120_000;
 
-      // Headers arrive only after the server has prepared the stream,
-      // which for uncached videos includes the metadata fetch. Show an
-      // honest status instead of a stuck 0%.
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED && labelEl) {
-          labelEl.textContent = 'Processing… 0%';
-        }
-      };
-
       xhr.onprogress = function (e) {
         if (e.lengthComputable && bar && labelEl) {
           const pct = Math.round((e.loaded / e.total) * 100);
-          bar.style.transition = 'none';
-          bar.style.width = pct + '%';
-          labelEl.textContent = 'Processing… ' + pct + '%';
+          // Real progress arrived — stop simulation, use real value
+          sim.stop(pct);
         }
       };
 
       xhr.onload = function () {
+        sim.stop(xhr.status === 200 ? 100 : undefined);
         if (xhr.status === 200) {
           const blob = xhr.response;
           const blobUrl = URL.createObjectURL(blob);
@@ -551,11 +558,27 @@
       };
 
       xhr.onerror = function () {
+        sim.stop();
         btn.classList.add('dl-tile-error');
         setTimeout(() => btn.classList.remove('dl-tile-error'), 2000);
         btn.classList.remove('dl-tile-processing');
         btn.disabled = false;
         if (labelEl) labelEl.textContent = origLabel;
+        if (bar) bar.style.width = '0%';
+        const fetchNoteErr = document.getElementById('fetch-note');
+        if (fetchNoteErr) fetchNoteErr.hidden = true;
+      };
+
+      xhr.ontimeout = function () {
+        sim.stop();
+        btn.classList.add('dl-tile-error');
+        if (labelEl) labelEl.textContent = 'Timed out — try again';
+        setTimeout(() => {
+          btn.classList.remove('dl-tile-error');
+          if (labelEl) labelEl.textContent = origLabel;
+        }, 2000);
+        btn.classList.remove('dl-tile-processing');
+        btn.disabled = false;
         if (bar) bar.style.width = '0%';
         const fetchNoteErr = document.getElementById('fetch-note');
         if (fetchNoteErr) fetchNoteErr.hidden = true;

@@ -1,0 +1,127 @@
+---
+export const prerender = true;
+import Layout from '../../layouts/Layout.astro';
+
+const lastUpdated = '2025-01-01';
+---
+
+<Layout
+  title="DMCA — TikSaveHub"
+  description="Politica DMCA di TikSaveHub. Procedura per la segnalazione di violazioni del copyright nello strumento per il download di video TikTok."
+  keywords="dmca, politica copyright, tiksavehub dmca, segnalazione violazione copyright"
+  canonical="/dmca"
+  ogImage="/og-dmca.png"
+  lang="it"
+  skipSoftwareApp
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner container-page">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>DMCA</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">Legale</span>
+        <h1 id="legal-headline" class="legal-title">DMCA</h1>
+        <p class="legal-meta">Ultimo aggiornamento: {lastUpdated} &middot; Vigore: {lastUpdated}</p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+          <section class="legal-clause">
+            <h2 class="legal-h2">1. Panoramica</h2>
+            <p>TikSaveHub ("Il nostro Servizio") rispetta il Digital Millennium Copyright Act del 1998 (DMCA) e le leggi sul copyright internazionali. Questa politica descrive la procedura di gestione delle richieste di rimozione inviate dai titolari dei diritti d'autore o dai loro rappresentanti autorizzati.</p>
+            <p>Il nostro Servizio fornisce uno strumento per scaricare video TikTok. Il Servizio non determina se i contenuti scaricati violino il copyright e non memorizza i contenuti scaricati sui propri server.</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">2. Procedura di Richiesta di Rimozione</h2>
+            <p>Un titolare del diritto d'autore o un suo rappresentante autorizzato che ritiene che una funzionalità del nostro Servizio stia violando il proprio diritto d'autore deve fornire una notifica scritta contenente le seguenti informazioni:</p>
+            <ul class="legal-list">
+              <li>Identificazione dell'opera protetta dal diritto d'autore che si ritiene sia stata violata.</li>
+              <li>Posizione del materiale contestato (URL, se applicabile).</li>
+              <li>Informazioni di contatto (nome, indirizzo, telefono, email).</li>
+              <li>Dichiarazione di buona fede e di punibilità con falsa testimonianza.</li>
+              <li>Firma del titolare del diritto d'autore o del suo rappresentante autorizzato.</li>
+            </ul>
+            <p>Le notifiche complete devono essere inviate via email a: <a href="mailto:support@tiksavehub.com">support@tiksavehub.com</a></p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">3. Contro-notifica</h2>
+            <p>Se ritieni che il materiale rimosso non sia in violazione o che sia stato autorizzato dal titolare del diritto d'autore, puoi inviare una contro-notifica. La contro-notifica deve contenere:</p>
+            <ul class="legal-list">
+              <li>Identificazione del materiale rimosso.</li>
+              <li>Dichiarazione firmata sulla rimozione per errore.</li>
+              <li>Motivazioni per cui ritieni che il materiale sia stato rimosso per errore.</li>
+              <li>Informazioni di contatto (nome, indirizzo, telefono, email).</li>
+              <li>Consenso alla giurisdizione competente e firma.</li>
+            </ul>
+            <p>Le contro-notifiche devono essere inviate via email a: <a href="mailto:support@tiksavehub.com">support@tiksavehub.com</a></p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">4. Utenti Recidivi</h2>
+            <p>Il nostro Servizio si riserva il diritto di terminare l'accesso degli utenti che violano ripetutamente i diritti d'autore, quando lo riteniamo opportuno.</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">5. Limitazione di Responsabilità</h2>
+            <p>Il nostro Servizio fornisce uno strumento per scaricare contenuti ospitati su piattaforme di terze parti (TikTok, ecc.). I contenuti sono ospitati sui server di tali terze parti e non vengono memorizzati sui nostri server. L'uso dei contenuti scaricati è a tuo rischio e il nostro Servizio non è responsabile per l'uso che ne fai.</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">6. Contatti</h2>
+            <p>Per domande sulle violazioni del copyright o sulle richieste di rimozione, contattaci a:</p>
+            <p class="legal-contact">
+              <strong>Email:</strong> <a href="mailto:support@tiksavehub.com">support@tiksavehub.com</a>
+            </p>
+          </section>
+        </div>
+      </div>
+
+      <div class="legal-back">
+        <a href="/" class="btn-primary-sm">&larr; Torna a TikSaveHub</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .legal-inner { display: flex; flex-direction: column; gap: var(--spacing-2xl); max-width: 760px; margin-inline: auto; }
+  .legal-breadcrumb { margin-bottom: 0; }
+  .breadcrumb-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: var(--text-body-sm); color: var(--color-mute); }
+  .breadcrumb-list li + li::before { content: '/'; margin-right: 6px; color: var(--color-hairline-strong); }
+  .breadcrumb-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .legal-header { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .section-eyebrow { color: var(--color-mute); }
+  .legal-title { font-size: var(--text-display-xl); font-weight: 600; line-height: 1.05; letter-spacing: -2.5px; color: var(--color-ink); margin: 0; }
+  .legal-meta { font-size: var(--text-body-sm); color: var(--color-mute); margin: 0; }
+  .legal-card { background-color: var(--color-canvas); border-radius: var(--radius-lg); padding: var(--spacing-3xl); box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .legal-content { display: flex; flex-direction: column; gap: var(--spacing-2xl); }
+  .legal-clause { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .legal-h2 { font-size: var(--text-display-md); font-weight: 600; letter-spacing: -1.28px; color: var(--color-ink); margin: 0; line-height: 1.25; }
+  .legal-content p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; letter-spacing: -0.1px; }
+  .legal-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .legal-list li { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; padding-left: 20px; position: relative; letter-spacing: -0.1px; }
+  .legal-list li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan)); }
+  .legal-content a { color: var(--color-link); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s ease; }
+  .legal-content a:hover { color: var(--color-link-deep); }
+  .legal-contact { background-color: var(--color-canvas-soft); border-radius: var(--radius-md); padding: var(--spacing-lg); font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; }
+  .legal-contact strong { font-weight: 600; color: var(--color-ink); }
+  .legal-back { display: flex; justify-content: center; }
+  .btn-primary-sm { display: inline-flex; align-items: center; gap: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-lg); border-radius: var(--radius-full); background-color: var(--color-ink); color: var(--color-on-primary); font-size: var(--text-body-sm); font-weight: 500; text-decoration: none; transition: opacity 0.2s ease, transform 0.2s ease; border: none; cursor: pointer; line-height: 2.2; letter-spacing: -0.1px; }
+  .btn-primary-sm:hover { opacity: 0.85; transform: translateY(-1px); }
+  .dark .legal-card { box-shadow: inset 0 0 0 1px #ffffff0a, 0px 1px 1px #00000010, 0px 4px 8px #00000020; }
+  .dark .legal-contact { background-color: var(--color-canvas-soft-2); }
+  @media (max-width: 600px) { .legal-section { padding: var(--spacing-4xl) var(--spacing-md); } .legal-title { font-size: 32px; letter-spacing: -1.5px; } .legal-card { padding: var(--spacing-lg); } .legal-h2 { font-size: var(--text-display-sm); } .breadcrumb-list { font-size: var(--text-caption); } }
+</style>

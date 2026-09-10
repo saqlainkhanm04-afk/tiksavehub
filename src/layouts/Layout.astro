@@ -3,6 +3,9 @@ import NavBar from '../components/NavBar.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
+import { getLangFromUrl, getAlternateLangLinks } from '../i18n/utils';
+import { languages, localeCodes } from '../i18n/ui';
+
 interface Props {
   title?: string;
   description?: string;
@@ -14,8 +17,8 @@ interface Props {
   platform?: 'tiktok' | 'instagram' | 'facebook' | 'x' | 'snapchat';
   jsonLd?: string;
   appName?: string;
-  appRating?: { value: string; count: string };
   skipSoftwareApp?: boolean;
+  lang?: string;
 }
 
 const {
@@ -29,15 +32,28 @@ const {
   platform = 'tiktok',
   jsonLd,
   appName = 'TikSaveHub',
-  appRating,
   skipSoftwareApp = false,
+  lang: propLang,
 } = Astro.props;
 
-const siteURL = Astro.site ?? 'https://tiksavehub.com';
+const detectedLang = propLang || getLangFromUrl(Astro.url);
+const currentLang = detectedLang in languages ? detectedLang : 'en';
+const ogLocale = localeCodes[currentLang] || 'en';
 
-// Canonical uses the page pathname (strips query params) and normalizes
-// trailing slashes so the slug and sitemap URLs always match (no duplicates).
-const canonicalPath = canonical ?? Astro.url.pathname;
+const siteURL = String(Astro.site ?? 'https://tiksavehub.com').replace(/\/+$/, '');
+
+// Detect locale prefix from the current URL (e.g. "/de/tiktok..." → "de").
+const urlSegments = Astro.url.pathname.split('/');
+const detectedLocale = urlSegments[1] && urlSegments[1] in languages ? urlSegments[1] : '';
+
+// Canonical: pages pass a root-relative path (e.g. canonical="/" or
+// canonical="/tiktok-video-downloader-without-watermark").  For locale pages
+// we must prepend the locale so the canonical is SELF-REFERENCING, not
+// pointing at the English version.
+const rawCanonical = canonical ?? Astro.url.pathname;
+const canonicalPath = detectedLocale
+  ? `/${detectedLocale}${rawCanonical === '/' ? '/' : rawCanonical}`
+  : rawCanonical;
 const normalizedCanonicalPath =
   canonicalPath === '/' ? '/' : canonicalPath.replace(/\/+$/, '');
 const canonicalURL = new URL(normalizedCanonicalPath, siteURL);
@@ -53,7 +69,7 @@ const softwareAppSchema: Record<string, unknown> = {
   description,
   applicationCategory: 'MultimediaApplication',
   operatingSystem: 'All',
-  inLanguage: 'en',
+  inLanguage: currentLang,
   offers: {
     '@type': 'Offer',
     price: '0',
@@ -71,15 +87,6 @@ const softwareAppSchema: Record<string, unknown> = {
     url: siteURL.toString(),
   },
 };
-
-if (appRating) {
-  softwareAppSchema.aggregateRating = {
-    '@type': 'AggregateRating',
-    ratingValue: appRating.value,
-    ratingCount: appRating.count,
-    bestRating: '5',
-  };
-}
 
 const graph: Record<string, unknown>[] = [];
 if (!noindex && !skipSoftwareApp) {
@@ -106,16 +113,8 @@ const structuredData =
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={currentLang}>
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T1HSMNWEX2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-T1HSMNWEX2');
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
@@ -124,6 +123,20 @@ const structuredData =
     <link rel="canonical" href={canonicalURL} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="application/rss+xml" title="TikSaveHub Blog" href="/rss.xml" />
+
+    {(() => {
+      // Strip the locale prefix from the pathname so alternates are built from
+      // the base path (e.g. "/de/blog" → "/blog", then each locale gets its
+      // own prefixed version: /ja/blog, /es/blog, /blog for English).
+      const baseHreflangPath = detectedLocale
+        ? '/' + Astro.url.pathname.split('/').slice(2).join('/').replace(/\/+$/, '') || '/'
+        : Astro.url.pathname;
+      const altLinks = getAlternateLangLinks(baseHreflangPath, siteURL);
+      return altLinks.map(({ lang: altLang, href }) => (
+        <link rel="alternate" hreflang={altLang} href={href} />
+      ));
+    })()}
+    <link rel="alternate" hreflang="x-default" href={`${siteURL}${rawCanonical === '/' ? '/' : rawCanonical.replace(/\/+$/, '')}`} />
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
@@ -138,7 +151,7 @@ const structuredData =
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={title} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={ogLocale} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -152,8 +165,9 @@ const structuredData =
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Preconnect to analytics -->
+    <!-- Preconnect to analytics + LCP resource hints -->
     <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://challenges.cloudflare.com" />
 
     <!-- Favicon & PWA -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -165,8 +179,8 @@ const structuredData =
     <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)" />
 
-    <!-- Anti-FOUC: apply dark class before first paint -->
-    <script is:inline>
+    <!-- Anti-FOUC: apply dark class before first paint (non-blocking) -->
+    <script is:inline defer>
       (function() {
         var saved = localStorage.getItem('theme');
         if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -175,17 +189,18 @@ const structuredData =
       })();
     </script>
 
-    <!-- Google Analytics -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-15RCTH6L8J"></script>
-    <script is:inline>
+    <!-- Google Analytics (single consolidated tag — both measurement IDs, non-blocking) -->
+    <script is:inline defer src="https://www.googletagmanager.com/gtag/js?id=G-T1HSMNWEX2"></script>
+    <script is:inline defer>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+      gtag('config', 'G-T1HSMNWEX2');
       gtag('config', 'G-15RCTH6L8J');
     </script>
 
-    <!-- Monetag Ad Hooks (dispatches paste/download/result events for ad triggers) -->
-    <script is:inline>
+    <!-- Monetag Ad Hooks (non-blocking — dispatches paste/download/result events for ad triggers) -->
+    <script is:inline defer>
       (function(){
         var EVENTS={PASTE:'tiksavehub:paste',DOWNLOAD:'tiksavehub:download',RESULT:'tiksavehub:result'};
         document.addEventListener('click',function(e){
@@ -211,7 +226,7 @@ const structuredData =
       })();
     </script>
 
-    {structuredData && <script is:inline type="application/ld+json" set:html={structuredData}></script>}
+    {structuredData && <script is:inline defer type="application/ld+json" set:html={structuredData}></script>}
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

@@ -1,0 +1,114 @@
+---
+// Instagram Reels Downloader — SEO-optimized landing page (Italian)
+// URL: /instagram-reels-downloader-without-watermark
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import InstagramDownloadForm from '../../components/InstagramDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  { id: 'reels-how', q: 'Come scaricare i Reels di Instagram?', a: 'Incolla il link del Reels di Instagram su TikSaveHub e clicca Scarica.' },
+  { id: 'reels-watermark', q: 'Posso scaricare senza filigrana?', a: 'S—, TikSaveHub supporta il download di Reels Instagram senza filigrana.' },
+  { id: 'reels-free', q: 'Il download — gratuito?', a: 'S—, TikSaveHub — al 100% gratuito.' },
+  { id: 'reels-private', q: 'Posso scaricare Reels privati?', a: 'No, supportiamo solo i Reels pubblici.' },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') },
+  })),
+});
+---
+
+<Layout
+  title="Scarica Instagram Reels Senza Filigrana | TikSaveHub"
+  description="Scarica Instagram Reels senza filigrana in qualità HD. Gratis, veloce e senza login. Salva Reels come MP4 su iPhone, Android e PC."
+  keywords="instagram reels downloader, scaricare reels instagram, reels senza filigrana"
+  canonical="/instagram-reels-downloader-without-watermark"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="instagram"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Instagram Reels Downloader"
+  lang="it"
+>
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> Gratis — Senza filigrana — HD</span></div>
+      <h1 id="dl-hero-headline" class="dl-hero-headline">Instagram Reels Downloader</h1>
+      <p class="dl-hero-sub text-body-lg">Scarica Reels Instagram senza filigrana in qualit— HD. Gratis e veloce.</p>
+      <div class="dl-hero-form" id="download-tool"><InstagramDownloadForm mode="reels" /></div>
+      <div class="dl-hero-trust">
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% Gratis</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Senza filigrana</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Qualit— HD</span>
+      </div>
+    </div>
+  </section>
+
+  <StatsSection stats={[ { value: '100% Gratuito', label: 'Scarica Instagram Reels istantaneamente senza filigrana', icon: 'download' }, { value: 'Senza Registrazione', label: 'Funziona su qualsiasi dispositivo, da qualsiasi luogo', icon: 'globe' }, { value: 'Qualità HD', label: 'Risoluzione originale, senza filigrana, senza login', icon: 'star' } ]} />
+
+  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <span class="section-eyebrow text-caption-mono">Domande Frequenti</span>
+      <h2 id="dl-faq-headline" class="section-headline">Domande sull'Instagram Reels Downloader</h2>
+      <div class="dl-faq-grid">
+        {faqData.map((faq) => (
+          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <SocialShare url="/instagram-reels-downloader-without-watermark" title="Instagram Reels Downloader — Senza Filigrana HD" description="Scarica Reels Instagram senza filigrana in qualit— HD." />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Altri Strumenti</h2>
+      <div class="related-tools-grid">
+            <a href="/it/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/it/tiktok-to-mp3" class="related-tool-link">TikTok a MP3</a>
+            <a href="/it/facebook-video-downloader" class="related-tool-link">Facebook Video Downloader</a>
+            <a href="/it/facebook-reels-downloader" class="related-tool-link">Facebook Reels Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
+  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
+  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
+  .dl-badge-row { display: flex; justify-content: center; }
+  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
+  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
+  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
+  .dl-hero-form { width: 100%; max-width: 640px; }
+  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
+  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
+  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
+  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
+  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
+  .dl-faq-q::-webkit-details-marker { display: none; }
+  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
+  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
+  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
+  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+
+  .related-tools-section { padding: var(--spacing-2xl) 0; }
+  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
+  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
+  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
+  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+</style>

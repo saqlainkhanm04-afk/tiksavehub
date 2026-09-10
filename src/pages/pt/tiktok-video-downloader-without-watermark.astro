@@ -1,0 +1,1622 @@
+---
+// TikTok Video Downloader — SEO-optimized landing page (Portuguese)
+// URL: /pt/tiktok-video-downloader-without-watermark
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import DownloadForm from '../../components/DownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  {
+    id: 'dl-ww',
+    q: 'Como posso baixar vídeos do TikTok sem marca d\'água no TikSaveHub?',
+    a: 'O TikSaveHub permite salvar vídeos do TikTok sem nenhuma marca d\'água, buscando o arquivo de vídeo original. A ferramenta remove o logotipo e a sobreposição de nome de usuário do TikTok, oferecendo um vídeo MP4 limpo sem marca. Basta copiar o link do vídeo do TikTok e colá-lo no downloader do TikSaveHub. O TikSaveHub recupera o vídeo sem marca d\'água diretamente dos servidores do TikTok, para que o vídeo baixado pareça exatamente como o criador o enviou, sem sobreposição ou perda de qualidade.',
+  },
+  {
+    id: 'dl-hd',
+    q: 'Posso salvar vídeos do TikTok em qualidade HD 1080p usando o TikSaveHub?',
+    a: 'Sim — o TikSaveHub oferece a qualidade mais alta disponível. Se o vídeo original do TikTok tiver uma transmissão em 1080p HD, o TikSaveHub baixará essa versão completa em HD. Os vídeos do TikTok frequentemente vêm em várias resoluções e o TikSaveHub seleciona automaticamente a melhor. Quando uma transmissão HD existir, o downloader a captura. Se o vídeo tiver apenas uma transmissão de qualidade inferior, você receberá essa versão clara e original, ainda sem marca d\'água. Em todos os casos, o resultado é um arquivo MP4 limpo na mesma qualidade do vídeo original.',
+  },
+  {
+    id: 'dl-iphone',
+    q: 'Posso usar o TikSaveHub para baixar vídeos do TikTok no meu iPhone (Safari)?',
+    a: 'Sim, o TikSaveHub funciona em navegadores móveis como Safari ou Chrome no iPhone. Depois de atualizar para o iOS 13 ou posterior, abra o Safari, acesse o TikSaveHub, cole o link do TikTok e salve o vídeo. Basta tocar no botão Compartilhar no TikTok, copiar o link e colá-lo no campo de entrada do TikSaveHub no seu navegador. O vídeo será baixado diretamente no Safari. (Nota: iPhones com iOS 12 ou anterior podem enfrentar restrições de download da Apple, então certifique-se de que seu dispositivo esteja atualizado.)',
+  },
+  {
+    id: 'dl-devices',
+    q: 'Posso usar o TikSaveHub no Android e PC para baixar vídeos do TikTok?',
+    a: 'Com certeza. O TikSaveHub é baseado no navegador, então funciona em todos os dispositivos Android e em desktops/laptops (Windows, Mac, Linux). Basta colar o link do TikTok no seu navegador e ele baixa o vídeo. Seja você em um telefone Android ou PC/Mac, abra o TikSaveHub no Chrome, Firefox, Edge ou qualquer navegador moderno. Copie a URL do vídeo do TikTok do aplicativo ou da web, cole-a no TikSaveHub e clique em baixar. Nenhum aplicativo separado é necessário e o vídeo será salvo no seu dispositivo em alta qualidade.',
+  },
+  {
+    id: 'dl-links',
+    q: 'Quais formatos de link do TikTok o TikSaveHub suporta (por exemplo, vm.tiktok.com ou vt.tiktok.com)?',
+    a: 'O TikSaveHub suporta todos os formatos de link do TikTok. Você pode usar URLs completas (tiktok.com/…) ou URLs curtas (vm.tiktok.com/… e vt.tiktok.com/…). Todas são resolvidas automaticamente pelo downloader. Não importa como você obteve o link — o TikSaveHub o reconhece. Quando você cola um link do TikTok no site, a ferramenta detecta automaticamente o formato (seja um link padrão ou um link móvel curto) e busca o vídeo correto.',
+  },
+  {
+    id: 'dl-free',
+    q: 'O TikSaveHub é gratuito para usar e preciso me cadastrar ou instalar algum software?',
+    a: 'Sim. O TikSaveHub é 100% gratuito sem taxas ocultas ou assinaturas. Você não precisa se cadastrar ou baixar nenhum aplicativo ou extensão — basta usar o link no seu navegador. Todo o processamento acontece online, então basta colar a URL do TikTok e obter o download imediatamente. O TikSaveHub também não armazena seus downloads ou rastreia seu uso, garantindo sua privacidade.',
+  },
+  {
+    id: 'dl-account',
+    q: 'Preciso de uma conta do TikTok para baixar vídeos no TikSaveHub?',
+    a: 'Nenhuma conta do TikTok é necessária. O TikSaveHub requer apenas um link público de vídeo. Se o vídeo estiver acessível no TikTok, você pode baixá-lo sem fazer login. Basta copiar o link de qualquer vídeo público do TikTok (via Compartilhar → Copiar Link) e colá-lo no TikSaveHub. A ferramenta buscará e baixará o vídeo. Se o conteúdo for privado ou restrito, o TikSaveHub não conseguirá acessá-lo.',
+  },
+  {
+    id: 'dl-legal',
+    q: 'É legal baixar vídeos do TikTok sem marca d\'água?',
+    a: 'Baixar vídeos do TikTok para uso pessoal (como visualização offline) geralmente é permitido, mas compartilhar ou monetizar o conteúdo de outra pessoa sem permissão pode violar direitos autorais. O TikSaveHub destina-se a conveniência pessoal e aprendizado. Recomendamos sempre usar vídeos baixados de forma ética — crédite o criador original se você republicar ou editar seu trabalho e não use o conteúdo comercialmente sem permissão.',
+  },
+  {
+    id: 'dl-remove',
+    q: 'Como o TikSaveHub remove a marca d\'água do TikTok?',
+    a: 'O TikSaveHub acessa o stream de vídeo original armazenado nos servidores do TikTok. Como o TikTok só adiciona a marca d\'água ao salvar localmente, a ferramenta pode buscar o vídeo original intacto, entregando-o sem nenhum logotipo ou sobreposição. Em outras palavras, o TikTok mantém uma versão limpa de cada vídeo para streaming. O TikSaveHub encontra e baixa esse arquivo original, para que o vídeo salvo pareça exatamente como foi carregado.',
+  },
+  {
+    id: 'dl-private',
+    q: 'O TikSaveHub pode baixar vídeos de contas privadas do TikTok?',
+    a: 'Não. O TikSaveHub só funciona com vídeos públicos do TikTok. Ele não pode acessar ou baixar conteúdo de perfis privados. Se um vídeo estiver definido como privado ou exigir permissões especiais no TikTok, o TikSaveHub não poderá recuperá-lo.',
+  },
+  {
+    id: 'dl-format',
+    q: 'Qual formato de arquivo e qualidade terão meus vídeos do TikTok baixados?',
+    a: 'Os downloads do TikSaveHub são salvos como arquivos MP4. A qualidade do vídeo é a mais alta disponível (até 1080p HD) que o TikSaveHub oferece. O TikSaveHub captura a codificação original, então se o criador enviou um vídeo em 1080p, você receberá essa resolução. Nenhuma compressão adicional é aplicada. Você também pode escolher uma opção de definição padrão se necessário, mas de qualquer forma o resultado é um vídeo MP4 limpo sem marca d\'água.',
+  },
+  {
+    id: 'dl-limits',
+    q: 'Existem limites para quantos vídeos do TikTok posso baixar?',
+    a: 'Não. O TikSaveHub não impõe limites de download ou cotas diárias. Você pode colar e salvar quantos vídeos do TikTok quiser, gratuitamente. Cada download é processado em segundos no seu navegador, então você pode usar a ferramenta quantas vezes quiser. Isso torna o TikSaveHub ideal para usuários intensivos — não há cotas ou taxas.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'Como Baixar Vídeos do TikTok Sem Marca d\'Água',
+  description: 'Guia passo a passo para baixar vídeos do TikTok em qualidade HD sem marca d\'água usando o TikSaveHub.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Copie o link do vídeo do TikTok',
+      text: 'Abra o aplicativo do TikTok, encontre o vídeo que deseja salvar, toque em Compartilhar e selecione Copiar Link.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Cole o link no TikSaveHub',
+      text: 'Acesse o TikSaveHub.com e cole o link copiado do TikTok no campo de download.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Clique em Baixar',
+      text: 'Clique no botão Baixar e aguarde alguns segundos enquanto o vídeo é processado.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Salve o vídeo em HD',
+      text: 'Escolha a opção MP4 em HD (sem marca d\'água) e salve o arquivo de vídeo no seu dispositivo.',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
+---
+
+<Layout
+  title="Downloader de Vídeos do TikTok Sem Marca d'Água (HD) — TikSaveHub"
+  description="Baixe vídeos do TikTok em HD sem marca d'água — grátis, rápido, sem cadastro. O melhor salvador de vídeos do TikTok online."
+  keywords="baixar videos tiktok sem marca d'agua, downloader de videos tiktok sem marca d'agua, downloader de videos tiktok, downloader de videos tiktok gratis, downloader de videos tiktok online, baixar videos tiktok, salvar videos tiktok"
+  canonical="/tiktok-video-downloader-without-watermark"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  jsonLd={combinedJsonLd}
+  appName="TikSaveHub — Downloader de Vídeos do TikTok"
+  lang="pt"
+>
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
+      { "@type": "ListItem", "position": 2, "name": "TikTok Video Downloader", "item": "https://tiksavehub.com/tiktok-video-downloader-without-watermark" }
+    ]
+  })} />
+
+  <!-- Hero Section -->
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Downloader de Vídeos do TikTok</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Grátis · Sem Marca d'Água · Qualidade HD
+        </span>
+      </div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        Downloader de Vídeos do TikTok Sem Marca d'Água
+      </h1>
+
+      <p class="dl-hero-subline headline-gradient">
+        Salve vídeos em HD — grátis e instantâneo.
+      </p>
+
+      <p class="dl-hero-sub text-body-lg">
+        Salve qualquer vídeo do TikTok em qualidade HD — grátis, rápido, sem cadastro e sem sobreposição de nome de usuário.
+        Basta colar um link e salvar instantaneamente.
+      </p>
+
+      <div class="dl-hero-form-wrap">
+        <DownloadForm />
+      </div>
+
+      <div class="dl-hero-trust">
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        100% Grátis
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Sem Marca d'Água
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Qualidade HD
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Funciona no Celular
+      </span>
+      </div>
+
+      <div class="dl-hero-share">
+        <SocialShare
+          url="/tiktok-video-downloader-without-watermark"
+          title="Downloader de Vídeos do TikTok Sem Marca d'Água (HD) — TikSaveHub"
+          description="Baixe vídeos do TikTok em HD sem marca d'água — grátis, rápido, sem cadastro."
+          image="/og-downloader.png"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsSection />
+
+  <!-- SEO Content Section — 600+ words -->
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">Sobre o TikSaveHub</span>
+          <h2 id="seo-about-headline" class="section-headline">
+            Salve vídeos do TikTok em qualidade HD limpa.
+          </h2>
+
+          <div class="seo-article">
+            <p>
+              O TikSaveHub permite salvar qualquer vídeo do TikTok diretamente no seu dispositivo em alta qualidade. Seja você encontrou um clipe hilário na sua página Para Você, um tutorial que deseja consultar depois ou um vídeo criativo que gostaria de compartilhar no Instagram Reels ou YouTube Shorts, o TikSaveHub oferece um arquivo MP4 otimizado em segundos. Sem instalação de aplicativo, sem extensão de navegador, sem criação de conta. Basta colar o link e baixar.
+            </p>
+
+            <h3 class="text-highlight">Por que remover a marca d'água do TikTok?</h3>
+            <p>
+              Todo vídeo no TikTok vem com uma sobreposição flutuante que exibe o nome de usuário do criador. Embora isso seja ótimo para atribuição, pode ser distraínte quando você quer assistir a um vídeo offline ou compartilhá-lo em outra plataforma. O TikSaveHub oferece um vídeo HD polido que você pode reaproveitar, editar ou simplesmente desfrutar offline.
+            </p>
+
+            <h3 class="text-highlight">Como funciona o salvador de vídeos do TikTok</h3>
+            <p>
+              Usar o TikSaveHub é incrivelmente simples. Primeiro, abra o aplicativo ou site do TikTok e encontre o vídeo que deseja salvar. Toque no botão Compartilhar e selecione "Copiar Link" para obter a URL do vídeo. Em seguida, volte ao TikSaveHub e cole o link no campo de entrada no topo da página. Clique no botão Baixar e nossos servidores processarão o vídeo em menos de três segundos. Você verá uma pré-visualização com opções para baixar a versão HD ou a versão padrão. Clique na sua opção preferida e o arquivo MP4 será salvo diretamente no seu dispositivo.
+            </p>
+
+            <h3 class="text-highlight">Baixe vídeos do TikTok online — funciona em qualquer dispositivo</h3>
+            <p>
+              Uma das maiores vantagens de usar o TikSaveHub é que ele funciona em todos os lugares. Seja você em um iPhone, um telefone Android, um PC Windows, um Mac ou um tablet — se tiver um navegador da web, pode salvar vídeos do TikTok. Não é necessário instalar um aplicativo separado, o que economiza espaço de armazenamento e evita os riscos de segurança que vêm com aplicativos de terceiros. Nossa ferramenta é totalmente responsiva, então a experiência é perfeita seja você em uma tela de 6 polegadas ou em um monitor de 27 polegadas.
+            </p>
+
+            <h3 class="text-highlight">Qualidade HD — toda vez</h3>
+            <p>
+              Quando você usa o TikSaveHub para baixar vídeos do TikTok, sempre recebe a qualidade mais alta disponível. Entregamos o arquivo original que o criador carregou — até 1080p HD — sem adicionar reencoding ou compressão extras. Isso significa que o vídeo mantém a qualidade original, semelhante ao que você vê no TikTok. Seja você salvando um vídeo de viagem cinematográfico ou um esquete de comédia rápida, o resultado continua nítido e claro.
+            </p>
+
+            <h3 class="text-highlight">Seguro, privado e completamente gratuito</h3>
+            <p>
+              Levamos sua privacidade a sério. O TikSaveHub não exige que você crie uma conta, insira um endereço de e-mail ou forneça qualquer informação pessoal. Não armazenamos seu histórico de download e não rastreamos seu comportamento de navegação. Todo o processo de download acontece no servidor, então não há nada armazenado no seu dispositivo além do arquivo de vídeo final. E ao contrário de muitas outras ferramentas de salvamento de vídeos do TikTok que cobram taxas ou limitam downloads, o TikSaveHub é 100% gratuito sem cotas diárias. Você pode baixar quantos vídeos quiser, todos os dias.
+            </p>
+
+            <h3 class="text-highlight">Suporta todos os formatos de link do TikTok</h3>
+            <p>
+              O TikSaveHub suporta todos os tipos de URL de vídeo do TikTok. Seja você copiando um link longo do menu de compartilhamento (tiktok.com/@user/video/...), um link encurtado de compartilhamento (vm.tiktok.com/...) ou um link de compartilhamento móvel (vt.tiktok.com/...), nossa ferramenta reconhece e processa. Essa flexibilidade significa que você pode pegar um link de qualquer lugar — uma mensagem de texto, uma postagem de redes sociais, uma barra de endereço do navegador — e funcionará perfeitamente toda vez.
+            </p>
+
+            <p>
+              Pronto para experimentar? Role para cima e cole seu primeiro link do TikTok no formulário de download. Confiado por usuários em todo o mundo para downloads rápidos e simples. Sem complicações. Apenas seus vídeos, exatamente como você quer.
+            </p>
+          </div>
+        </div>
+
+        <aside class="seo-content-sidebar">
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Links Rápidos</h3>
+            <ul class="seo-sidebar-list">
+              <li><a href="/pt/tiktok-video-downloader-without-watermark">Baixador de Vídeos TikTok</a></li>
+              <li><a href="/pt/tiktok-to-mp3">TikTok para MP3</a></li>
+              <li><a href="/pt/instagram-reels-downloader-without-watermark">Baixador de Reels Instagram</a></li>
+              <li><a href="/pt/instagram-video-downloader-without-watermark">Baixador de Vídeos Instagram</a></li>
+              <li><a href="/pt/instagram-story-downloader-without-watermark">Baixador de Stories Instagram</a></li>
+              <li><a href="/pt/instagram-audio-downloader">Baixador de Áudio Instagram</a></li>
+              <li><a href="/pt/facebook-video-downloader">Baixador de Vídeos Facebook</a></li>
+              <li><a href="/pt/facebook-reels-downloader">Baixador de Reels Facebook</a></li>
+              <li><a href="/pt/facebook-story-downloader">Baixador de Stories Facebook</a></li>
+              <li><a href="/pt/facebook-to-mp3">Facebook para MP3</a></li>
+              <li><a href="/pt/facebook-photo-downloader">Baixador de Fotos Facebook</a></li>
+              <li><a href="/pt/snapchat-downloader">Baixador de Snapchat</a></li>
+              <li><a href="/pt/snapchat-story-downloader">Baixador de Stories Snapchat</a></li>
+              <li><a href="/pt/snapchat-to-mp3">Snapchat para MP3</a></li>
+              <li><a href="/pt/x-video-downloader">Baixador de Vídeos X/Twitter</a></li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Links Suportados</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              <li>tiktok.com/@user/video/...</li>
+              <li>vm.tiktok.com/...</li>
+              <li>vt.tiktok.com/...</li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card seo-sidebar-highlight">
+            <h3 class="seo-sidebar-title">Comece a Baixar</h3>
+            <p class="seo-sidebar-text">Cole um link do TikTok acima e receba seu vídeo em segundos.</p>
+            <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Experimente Agora</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works — Detailed Steps -->
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Guia Passo a Passo</span>
+        <h2 id="dl-steps-headline" class="section-headline">
+          Como baixar vídeos do TikTok.
+        </h2>
+        <p class="section-sub text-body-lg">
+          Três passos simples — sem habilidades técnicas necessárias.
+        </p>
+      </div>
+
+      <div class="dl-steps-grid">
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <h3 class="dl-step-title">Copie o link do vídeo do TikTok</h3>
+          <p class="dl-step-body">
+            Abra o aplicativo ou site do TikTok, encontre o vídeo que deseja baixar, toque no botão Compartilhar e selecione "Copiar Link." Isso funciona para qualquer vídeo público do TikTok — seja da sua página Para Você, do perfil de um criador ou de um link compartilhado.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </div>
+          <h3 class="dl-step-title">Cole o link no TikSaveHub</h3>
+          <p class="dl-step-body">
+            Volte ao TikSaveHub e cole o link copiado no campo de entrada no topo desta página. Nosso sistema detectará automaticamente o vídeo e começará a processá-lo — geralmente em menos de 3 segundos.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">Baixe o vídeo em HD</h3>
+          <p class="dl-step-body">
+            Clique no botão "Baixar HD" para salvar o arquivo MP4 em HD diretamente no seu dispositivo. O vídeo está pronto para assistir offline, compartilhar nas redes sociais ou editar no seu editor de vídeos favorito — tudo na melhor qualidade disponível.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+    <div class="dl-features-inner container-page">
+      <div class="dl-features-header">
+        <span class="section-eyebrow text-caption-mono">Recursos</span>
+        <h2 id="dl-features-headline" class="section-headline">
+          Por que o TikSaveHub se destaca.
+        </h2>
+      </div>
+
+      <div class="dl-features-grid">
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Sem Marca d'Água</h3>
+          <p class="dl-feature-body">
+            Baixe vídeos do TikTok completamente sem a marca d'água do TikTok. Compartilhe em qualquer lugar — Instagram, WhatsApp, YouTube Shorts — sem aquela logo flutuante.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Qualidade HD</h3>
+          <p class="dl-feature-body">
+            Sempre buscamos a qualidade mais alta disponível — até 1080p HD. Sem reencoding, sem compressão. O vídeo que você baixa é exatamente o que o criador enviou.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Ultrarrápido</h3>
+          <p class="dl-feature-body">
+            Nosso processamento no lado do servidor significa que os downloads começam em segundos. Sem espera, sem filas. Cole o link, clique em baixar e o vídeo é seu.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Funciona em Todos os Dispositivos</h3>
+          <p class="dl-feature-body">
+            iPhone, Android, tablet, desktop — se tiver um navegador da web, o TikSaveHub funciona. Sem instalação de aplicativo, sem extensões, sem problemas de compatibilidade.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Sem Conta Necessária</h3>
+          <p class="dl-feature-body">
+            Sem cadastro, sem e-mail, sem senha. Basta colar o link e baixar. Sua privacidade importa — não armazenamos nenhum dado pessoal.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Downloads Ilimitados</h3>
+          <p class="dl-feature-body">
+            Sem limites diários, sem cotas, sem plano premium. Baixe quantos vídeos do TikTok quiser — todos os dias, para sempre. É completamente gratuito.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases — AdSense-friendly content -->
+  <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">Casos de Uso</span>
+        <h2 id="dl-usecases-headline" class="section-headline">
+          Quem usa o TikSaveHub?
+        </h2>
+      </div>
+
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Criadores de Conteúdo</h3>
+          <p class="dl-usecase-body">
+            Baixe seus próprios vídeos do TikTok para fazer backup, editá-los em softwares externos ou reaproveitá-los para YouTube Shorts, Instagram Reels ou outras plataformas. Mantenha seu melhor conteúdo seguro e acessível.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Gerentes de Redes Sociais</h3>
+          <p class="dl-usecase-body">
+            Gerencia contas de marcas? Salve vídeos do TikTok em tendência para inspiração, análise de concorrentes ou calendários de conteúdo. Baixe e organize clipes de referência na sua biblioteca.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Estudantes e Pesquisadores</h3>
+          <p class="dl-usecase-body">
+            Estudando tendências de redes sociais, padrões de conteúdo viral ou cultura digital? Baixe vídeos do TikTok para análises acadêmicas, apresentações e trabalhos de pesquisa — tudo na qualidade original.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Visualizadores Casuais</h3>
+          <p class="dl-usecase-body">
+            Encontrou um vídeo que ama mas não tem tempo para assistir agora? Salve para depois. Baixe vídeos do TikTok para assistir offline durante o commute, viagens ou em qualquer lugar sem acesso à internet.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="dl-faq-headline" class="section-headline">
+          Perguntas frequentes.
+        </h2>
+      </div>
+
+      <div class="dl-faq-list" role="list">
+        {faqData.map((faq) => (
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button
+              class="dl-faq-trigger"
+              id={`${faq.id}-btn`}
+              aria-expanded="false"
+              aria-controls={`${faq.id}-panel`}
+              type="button"
+            >
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div
+              id={`${faq.id}-panel`}
+              class="dl-faq-panel"
+              role="region"
+              aria-labelledby={`${faq.id}-btn`}
+              hidden
+            >
+              <p class="dl-faq-a" set:html={faq.a}></p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+    <div class="dl-cta-inner container-page">
+      <h2 id="dl-cta-headline" class="dl-cta-headline">
+        Pronto para baixar?
+      </h2>
+      <p class="dl-cta-sub">
+        Cole um link do TikTok acima e receba seu vídeo em segundos — sem conta, sem distrações, sem complicações.
+      </p>
+      <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+        Começar a Baixar
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Internal Links Section -->
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+        Explore o TikSaveHub.
+      </h2>
+      <div class="dl-internal-grid">
+        <a href="/" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+          <span class="dl-internal-title">Página Inicial do TikSaveHub</span>
+          <span class="dl-internal-desc">Volte à página principal — baixe mais vídeos do TikTok.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/#features" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </span>
+          <span class="dl-internal-title">Recursos</span>
+          <span class="dl-internal-desc">Sem marca d'água, qualidade HD, downloads rápidos — veja todos os recursos.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/#faq" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </span>
+          <span class="dl-internal-title">FAQ</span>
+          <span class="dl-internal-desc">Tem dúvidas? Encontre respostas sobre nosso downloader do TikTok.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ─── Hero ─── */
+  .dl-hero {
+    position: relative;
+    padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    text-align: center;
+  }
+
+  .dl-hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .dl-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  /* Breadcrumb */
+  .dl-breadcrumb {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .dl-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dl-badge {
+    animation: fadeInUp 0.5s ease 0.1s both;
+  }
+
+  .badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .dl-hero-headline {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 700px;
+    animation: fadeInUp 0.5s ease 0.2s both;
+  }
+
+  .headline-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-grad-develop-start) 0%,
+      var(--color-grad-preview-start) 40%,
+      var(--color-grad-preview-end) 70%,
+      var(--color-grad-ship-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dl-hero-subline {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.25s both;
+  }
+
+  .dl-hero-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.3s both;
+  }
+
+  .dl-hero-form-wrap {
+    width: 100%;
+    max-width: 760px;
+    animation: fadeInUp 0.5s ease 0.4s both;
+  }
+
+  .dl-hero-trust {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.5s ease 0.5s both;
+  }
+
+  .dl-hero-share {
+    animation: fadeInUp 0.5s ease 0.55s both;
+  }
+
+  .trust-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-body);
+    padding: 0 var(--spacing-md);
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trust-chip svg {
+    color: var(--color-cyan-deep);
+  }
+
+  .trust-chip:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+  }
+
+  @media (hover: hover) {
+    .trust-chip:hover {
+      border-color: var(--color-hairline-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-hero {
+      padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+    }
+
+    .dl-hero-headline {
+      font-size: clamp(22px, 5vw, 32px);
+      letter-spacing: -1px;
+    }
+
+    .trust-chip {
+      font-size: var(--text-caption);
+      height: 36px;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: 11px;
+    }
+  }
+
+  /* ─── Content Section ─── */
+  .dl-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .dl-content-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .dl-content-lead {
+    font-size: var(--text-body-lg);
+    color: var(--color-ink);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .dl-content-body {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .dl-content-card-wrap {
+    position: sticky;
+    top: 80px;
+  }
+
+  .dl-content-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-content-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .dl-content-card-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .dl-content-card-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .dl-content-card-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .dl-content-card-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+  }
+
+  @media (max-width: 960px) {
+    .dl-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dl-content-card-wrap {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Steps Section ─── */
+  .dl-steps-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-steps-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-steps-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .dl-step-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-step-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-step-num {
+    color: var(--color-mute);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .dl-step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf010, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-step-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-step-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 960px) {
+    .dl-steps-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-steps-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Features Section ─── */
+  .dl-features-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-features-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-features-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feat-accent-develop {
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+  }
+
+  .feat-accent-preview {
+    background: linear-gradient(135deg, #7928ca15, #ff008020);
+    color: var(--color-grad-preview-start);
+    box-shadow: inset 0 0 0 1px #7928ca25;
+  }
+
+  .feat-accent-ship {
+    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+    color: var(--color-grad-ship-start);
+    box-shadow: inset 0 0 0 1px #ff4d4d25;
+  }
+
+  .dl-feature-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-feature-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 960px) {
+    .dl-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-features-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── Use Cases Section ─── */
+  .dl-usecases-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-usecases-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-usecases-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecase-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-usecase-card:hover {
+    border-color: var(--color-hairline-strong);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-usecase-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .dl-usecase-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .dl-usecases-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-usecases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── FAQ Section ─── */
+  .dl-faq-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .dl-faq-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-faq-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .dl-faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .dl-faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    transition: background-color 0.15s ease;
+  }
+
+  .dl-faq-trigger:hover {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-q {
+    font-size: var(--text-body-md);
+    font-weight: 500;
+    color: var(--color-ink);
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .dl-faq-chevron {
+    flex-shrink: 0;
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .dl-faq-panel {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    animation: fadeInUp 0.25s ease forwards;
+  }
+
+  .dl-faq-a {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  @media (max-width: 600px) {
+    .dl-faq-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-faq-trigger {
+      padding: var(--spacing-md);
+      min-height: 48px;
+    }
+
+    .dl-faq-panel {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+
+    .dl-faq-q {
+      font-size: var(--text-body-sm);
+    }
+  }
+
+  /* ─── CTA Band ─── */
+  .dl-cta-band {
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    text-align: center;
+  }
+
+  .dl-cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .dl-cta-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-on-primary);
+    margin: 0;
+  }
+
+  .dl-cta-sub {
+    font-size: var(--text-body-lg);
+    color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .dl-cta-btn {
+    gap: 8px;
+    background-color: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+  }
+
+  .dl-cta-btn:hover {
+    background-color: var(--color-canvas-soft) !important;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .dl-cta-band {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Shared Section Styles ─── */
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  /* ─── Internal Links Section ─── */
+  .dl-internal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .dl-internal-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-internal-headline {
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .dl-internal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-internal-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    text-decoration: none;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .dl-internal-card:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-internal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf012, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-internal-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.3px;
+  }
+
+  .dl-internal-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .dl-internal-arrow {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    color: var(--color-mute);
+    font-size: 18px;
+    transition: color 0.15s ease, transform 0.25s ease;
+  }
+
+  .dl-internal-card:hover .dl-internal-arrow {
+    color: var(--color-ink);
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 960px) {
+    .dl-internal-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-internal-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── SEO Content Section ─── */
+  .seo-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .seo-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .seo-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .seo-content-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .seo-article {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .seo-article p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .text-highlight {
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .seo-article h3 {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.35;
+  }
+
+  .seo-content-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    position: sticky;
+    top: 80px;
+  }
+
+  .seo-sidebar-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .seo-sidebar-highlight {
+    background: linear-gradient(135deg, #007cf008, #00dfd808);
+    border: 1px solid #007cf020;
+  }
+
+  .seo-sidebar-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .seo-sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .seo-sidebar-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .seo-sidebar-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .seo-sidebar-mono li {
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .seo-sidebar-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  @media (max-width: 960px) {
+    .seo-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .seo-content-sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .seo-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .seo-content-sidebar {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const dlTriggers = document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
+
+  dlTriggers.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      const panelId = btn.getAttribute('aria-controls')!;
+      const panel = document.getElementById(panelId);
+
+      dlTriggers.forEach((otherBtn) => {
+        if (otherBtn !== btn) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          const otherId = otherBtn.getAttribute('aria-controls')!;
+          document.getElementById(otherId)?.setAttribute('hidden', '');
+        }
+      });
+
+      if (isOpen) {
+        btn.setAttribute('aria-expanded', 'false');
+        panel?.setAttribute('hidden', '');
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        panel?.removeAttribute('hidden');
+      }
+    });
+  });
+</script>

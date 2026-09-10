@@ -1,0 +1,888 @@
+---
+// TikSaveHub Korean Homepage — hub page for all tools
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'TikSaveHub',
+  url: 'https://tiksavehub.com',
+  logo: 'https://tiksavehub.com/web-app-manifest-512x512.png',
+  description: 'TikTok, Instagram, Facebook, X(Twitter) 비디오를 HD 화질로 다운로드하세요 — 무료, 빠르고 워터마크 없이.',
+  sameAs: [
+    'https://twitter.com/tiksavehub',
+    'https://www.facebook.com/tiksavehub',
+    'https://www.instagram.com/tiksavehub',
+  ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    email: 'support@tiksavehub.com',
+  },
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'TikSaveHub',
+  url: 'https://tiksavehub.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://tiksavehub.com/tiktok-video-downloader-without-watermark?url={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const base = '/ko';
+
+const tools = [
+  {
+    title: 'TikTok 비디오 다운로더',
+    description: 'TikTok 비디오를 HD 화질로 워터마크 없이 저장하세요. 무료, 빠르고 회원가입 불필요.',
+    href: `${base}/tiktok-video-downloader-without-watermark`,
+    icon: 'tiktok',
+    badge: '인기',
+  },
+  {
+    title: 'TikTok MP3 변환',
+    description: 'TikTok 비디오에서 최대 320kbps 고음질 MP3 파일로 오디오를 추출하세요.',
+    href: `${base}/tiktok-to-mp3`,
+    icon: 'audio',
+    badge: null,
+  },
+  {
+    title: 'Instagram Reels 다운로더',
+    description: 'Instagram Reels를 HD 화질로 워터마크 없이 다운로드하세요. 모든 기기에서 작동.',
+    href: `${base}/instagram-reels-downloader-without-watermark`,
+    icon: 'instagram',
+    badge: '신규',
+  },
+  {
+    title: 'Instagram 비디오 다운로더',
+    description: 'Instagram 비디오와 게시물을 HD 화질로 저장하세요. 앱 설치 불필요.',
+    href: `${base}/instagram-video-downloader-without-watermark`,
+    icon: 'instagram',
+    badge: null,
+  },
+  {
+    title: 'Instagram 스토리 다운로더',
+    description: 'Instagram 스토리가 사라지기 전에 다운로드하세요. 무료 및 익명.',
+    href: `${base}/instagram-story-downloader-without-watermark`,
+    icon: 'instagram',
+    badge: null,
+  },
+  {
+    title: 'Facebook 비디오 다운로더',
+    description: 'Facebook 비디오, Reels, 게시물을 HD 화질로 다운로드하세요.',
+    href: `${base}/facebook-video-downloader`,
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Facebook Reels 다운로더',
+    description: 'Facebook Reels를 HD 화질로 워터마크 없이 저장하세요.',
+    href: `${base}/facebook-reels-downloader`,
+    icon: 'facebook',
+    badge: '신규',
+  },
+  {
+    title: 'Facebook MP3 변환',
+    description: 'Facebook 비디오에서 고음질 MP3 파일로 오디오를 추출하세요.',
+    href: `${base}/facebook-to-mp3`,
+    icon: 'audio',
+    badge: null,
+  },
+  {
+    title: 'Facebook Story Downloader',
+    description: 'Facebook 스토리가 만료되기 전에 다운로드하세요. 무료 및 익명.',
+    href: `${base}/facebook-story-downloader`,
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Facebook Photo Downloader',
+    description: 'Facebook 사진과 앨범을 풀 HD 품질로 다운로드하세요.',
+    href: `${base}/facebook-photo-downloader`,
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Instagram Audio Downloader',
+    description: 'Instagram Reels 및 비디오에서 고품질 MP3를 추출하세요.',
+    href: `${base}/instagram-audio-downloader`,
+    icon: 'audio',
+    badge: null,
+  },
+  {
+    title: 'X(Twitter) 비디오 다운로더',
+    description: 'X(Twitter) 비디오와 GIF를 HD 화질로 다운로드하세요.',
+    href: `${base}/x-video-downloader`,
+    icon: 'x',
+    badge: null,
+  },
+];
+
+const faqData = [
+  { q: 'TikSaveHub는 무료인가요?', a: '네. TikSaveHub는 숨겨진 비용 없이 100% 무료입니다. TikTok, Instagram, Facebook, X에서 무제한으로 비디오를 다운로드할 수 있습니다.' },
+  { q: '앱을 설치해야 하나요?', a: '아니요. TikSaveHub는 브라우저에서 완전히 작동합니다. 앱, 확장 프로그램 또는 소프트웨어 설치가 필요하지 않습니다.' },
+  { q: '비공개 비디오를 다운로드할 수 있나요?', a: '아니요. TikSaveHub는 브라우저에서 볼 수 있는 공개 비디오에만 작동합니다. 비공개 계정 콘텐츠는 접근할 수 없습니다.' },
+  { q: '어떤 기기가 지원되나요?', a: 'TikSaveHub는 모든 최신 기기에서 작동합니다 — 아이폰, 안드로이드, Windows PC, Mac, 태블릿. 모든 브라우저(Safari, Chrome, Firefox, Edge)에서 사용 가능합니다.' },
+  { q: '비디오 다운로드는 합법적인가요?', a: '개인 사용을 위한 비디오 다운로드는 일반적으로 허용됩니다. 저작권을 항상 존중하고 재게시하거나 상업적으로 사용하기 전에 허락을 받으세요.' },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a,
+    },
+  })),
+};
+
+const itemListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'TikSaveHub 비디오 다운로더',
+  description: 'TikTok, Instagram, Facebook, X(Twitter) 비디오를 HD 화질로 무료로 다운로드할 수 있는 온라인 도구.',
+  numberOfItems: tools.length,
+  itemListElement: tools.map((tool, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'SoftwareApplication',
+      name: tool.title,
+      url: `https://tiksavehub.com${tool.href}`,
+      description: tool.description,
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+  })),
+};
+
+const features = [
+  {
+    title: 'HD 화질',
+    description: '가장 높은 해상도로 다운로드 — 최대 1080p.',
+    icon: 'hd',
+  },
+  {
+    title: '워터마크 없음',
+    description: '어떤 플랫폼의 브랜딩이나 오버레이 없이 깔끔하게 다운로드.',
+    icon: 'clean',
+  },
+  {
+    title: '모든 기기 지원',
+    description: '아이폰, 안드로이드, PC, 태블릿 — 어떤 브라우저든 앱 설치 없이 사용 가능.',
+    icon: 'devices',
+  },
+  {
+    title: '100% 무료',
+    description: '숨겨진 비용 없이 무제한 다운로드, 회원가입 불필요.',
+    icon: 'free',
+  },
+];
+---
+
+<Layout
+  title="TikSaveHub — TikTok 비디오를 워터마크 없이 다운로드"
+  description="TikTok 비디오를 HD 품질로 워터마크 없이 다운로드하세요. 무료, 빠르고 회원가입 불필요."
+  keywords="tiktok 다운로더, tiktok 비디오 다운로드, tiktok 워터마크 없이, instagram 다운로더, facebook 다운로더, x 비디오 다운로더, hd 비디오 다운로더, 무료 비디오 다운로드"
+  canonical="/"
+  ogImage="/og-default.png"
+  jsonLd={JSON.stringify([organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd])}
+  appName="TikSaveHub"
+  lang="ko"
+>
+  <!-- Hero -->
+  <section class="home-hero" aria-labelledby="home-headline">
+    <div class="home-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="home-hero-inner container-page">
+      <div class="home-badge-row">
+        <span class="badge-pill home-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          무료 · HD · 워터마크 없음
+        </span>
+      </div>
+
+      <h1 id="home-headline" class="home-headline">
+        다음에서 비디오를 다운로드하세요<br />
+        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+      </h1>
+
+      <p class="home-sub text-body-lg">
+        HD 화질로 워터마크 없이 비디오를 저장하세요. 무료, 빠르며 모든 기기에서 작동 — 앱이나 회원가입 불필요.
+      </p>
+
+      <div class="home-tools-grid">
+        {tools.map((tool) => (
+          <a href={tool.href} class="home-tool-card" aria-label={tool.title}>
+            <div class="home-tool-icon" aria-hidden="true">
+              {tool.icon === 'tiktok' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+              )}
+              {tool.icon === 'instagram' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              )}
+              {tool.icon === 'facebook' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              )}
+              {tool.icon === 'x' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+              )}
+              {tool.icon === 'audio' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              )}
+            </div>
+            <div class="home-tool-info">
+              <h2 class="home-tool-title">{tool.title}</h2>
+              <p class="home-tool-desc">{tool.description}</p>
+            </div>
+            {tool.badge && <span class="home-tool-badge">{tool.badge}</span>}
+          </a>
+        ))}
+      </div>
+
+      <div class="home-trust">
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          100% 무료
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          워터마크 없음
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          HD 화질
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          회원가입 불필요
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="home-features" aria-labelledby="features-headline">
+    <div class="home-features-inner container-page">
+      <span class="section-eyebrow text-caption-mono">TikSaveHub가 특별한 이유</span>
+      <h2 id="features-headline" class="section-headline">속도, 화질, 심플함을 위해 만들어짐</h2>
+      <div class="home-features-grid">
+        {features.map((f) => (
+          <div class="home-feature-card">
+            <div class="home-feature-icon" aria-hidden="true">
+              {f.icon === 'hd' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7v10"/><path d="M6 7v10"/><path d="M10 7v10"/><path d="M14 7v10"/><path d="M18 7v10"/><path d="M22 7v10"/></svg>
+              )}
+              {f.icon === 'clean' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              )}
+              {f.icon === 'devices' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              )}
+              {f.icon === 'free' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              )}
+            </div>
+            <h3 class="home-feature-title">{f.title}</h3>
+            <p class="home-feature-desc">{f.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="home-how" aria-labelledby="how-headline">
+    <div class="home-how-inner container-page">
+      <span class="section-eyebrow text-caption-mono">이용 방법</span>
+      <h2 id="how-headline" class="section-headline">세 단계로 모든 비디오 다운로드</h2>
+      <div class="home-steps">
+        <div class="home-step">
+          <span class="home-step-num">1</span>
+          <h3 class="home-step-title">비디오 링크 복사</h3>
+          <p class="home-step-desc">TikTok, Instagram, Facebook, 또는 X를 엽니다. 저장하고 싶은 비디오를 찾아 링크를 복사하세요.</p>
+        </div>
+        <div class="home-step">
+          <span class="home-step-num">2</span>
+          <h3 class="home-step-title">TikSaveHub에 붙여넣기</h3>
+          <p class="home-step-desc">해당 도구 페이지로 이동하여 다운로드 상자에 비디오 링크를 붙여넣으세요.</p>
+        </div>
+        <div class="home-step">
+          <span class="home-step-num">3</span>
+          <h3 class="home-step-title">HD로 다운로드</h3>
+          <p class="home-step-desc">다운로드를 클릭하면 워터마크 없는 깔끔한 MP4 파일이 기기에 저장됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="home-faq" aria-labelledby="faq-headline">
+    <div class="home-faq-inner container-page">
+      <span class="section-eyebrow text-caption-mono">자주 묻는 질문</span>
+      <h2 id="faq-headline" class="section-headline">자주 묻는 질문</h2>
+      <div class="home-faq-grid">
+        <details class="home-faq-item">
+          <summary class="home-faq-q">TikSaveHub는 무료인가요?</summary>
+          <p class="home-faq-a">네. TikSaveHub는 숨겨진 비용 없이 100% 무료입니다. TikTok, Instagram, Facebook, X에서 무제한으로 비디오를 다운로드할 수 있습니다.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">앱을 설치해야 하나요?</summary>
+          <p class="home-faq-a">아니요. TikSaveHub는 브라우저에서 완전히 작동합니다. 앱, 확장 프로그램 또는 소프트웨어 설치가 필요하지 않습니다.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">비공개 비디오를 다운로드할 수 있나요?</summary>
+          <p class="home-faq-a">아니요. TikSaveHub는 브라우저에서 볼 수 있는 공개 비디오에만 작동합니다. 비공개 계정 콘텐츠는 접근할 수 없습니다.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">어떤 기기가 지원되나요?</summary>
+          <p class="home-faq-a">TikSaveHub는 모든 최신 기기에서 작동합니다 — 아이폰, 안드로이드, Windows PC, Mac, 태블릿. 모든 브라우저(Safari, Chrome, Firefox, Edge)에서 사용 가능합니다.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">비디오 다운로드는 합법적인가요?</summary>
+          <p class="home-faq-a">개인 사용을 위한 비디오 다운로드는 일반적으로 허용됩니다. 저작권을 항상 존중하고 재게시하거나 상업적으로 사용하기 전에 허락을 받으세요.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Teaser -->
+  <section class="home-blog" aria-labelledby="blog-headline">
+    <div class="home-blog-inner container-page">
+      <span class="section-eyebrow text-caption-mono">블로그</span>
+      <h2 id="blog-headline" class="section-headline">가이드, 팁, 튜토리얼</h2>
+      <div class="home-blog-grid">
+        <a href={`${base}/blog/facebook-video-downloader-guide`} class="home-blog-card">
+          <span class="home-blog-tag">Facebook 가이드</span>
+          <h3 class="home-blog-title">Facebook 비디오 다운로더: FB 비디오를 HD로 저장 (2026 가이드)</h3>
+          <p class="home-blog-excerpt">Facebook 비디오, Reels, Watch 클립을 워터마크 없이 HD 1080p로 다운로드하세요. 아이폰, 안드로이드, PC를 위한 단계별 가이드.</p>
+        </a>
+        <a href={`${base}/blog/x-video-downloader-guide`} class="home-blog-card">
+          <span class="home-blog-tag">X & Twitter 가이드</span>
+          <h3 class="home-blog-title">X 비디오 다운로더: Twitter 비디오를 HD로 저장 (2026 가이드)</h3>
+          <p class="home-blog-excerpt">X(Twitter) 비디오, GIF, 오디오를 워터마크 없이 HD 1080p로 다운로드하세요. 무료, 회원가입 불필요.</p>
+        </a>
+        <a href={`${base}/blog/tiktok-video-downloader-without-watermark`} class="home-blog-card">
+          <span class="home-blog-tag">TikTok 가이드</span>
+          <h3 class="home-blog-title">TikTok 비디오 다운로더: 워터마크 없이 (HD & 무료)</h3>
+          <p class="home-blog-excerpt">TikTok 비디오를 HD 화질로 워터마크 없이 다운로드하세요. 빠르고 무료이며 아이폰, 안드로이드, PC에서 작동합니다.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ─── Hero ─── */
+  .home-hero {
+    position: relative;
+    padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .home-hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .home-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .home-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .home-badge {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: rgba(124, 58, 237, 0.25);
+    color: #7c3aed;
+  }
+
+  .dark .home-badge {
+    background: rgba(192, 132, 252, 0.15);
+    border-color: rgba(192, 132, 252, 0.3);
+    color: #c084fc;
+  }
+
+  .home-headline {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-sub {
+    max-width: 600px;
+    text-align: center;
+    margin: 0;
+  }
+
+  /* ─── Tools Grid ─── */
+  .home-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .home-tool-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+  }
+
+  .home-tool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(124, 58, 237, 0.15);
+    border-color: rgba(124, 58, 237, 0.3);
+  }
+
+  .home-tool-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(0, 124, 240, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+  }
+
+  .dark .home-tool-icon {
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), rgba(56, 189, 248, 0.1));
+    color: #c084fc;
+  }
+
+  .home-tool-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .home-tool-title {
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.3px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-tool-desc {
+    font-size: 13px;
+    color: var(--color-mute);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .home-tool-badge {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: #fff;
+    letter-spacing: -0.2px;
+  }
+
+  .home-trust {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+  }
+
+  /* ─── Features ─── */
+  .home-features {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .home-features-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .home-features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .home-feature-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .home-feature-card:hover {
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  .home-feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(0, 124, 240, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+  }
+
+  .dark .home-feature-icon {
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), rgba(56, 189, 248, 0.1));
+    color: #c084fc;
+  }
+
+  .home-feature-title {
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.3px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-feature-desc {
+    font-size: 14px;
+    color: var(--color-mute);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ─── How It Works ─── */
+  .home-how {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    background: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.03), transparent);
+  }
+
+  .home-how-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .home-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+    width: 100%;
+  }
+
+  .home-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--spacing-md);
+  }
+
+  .home-step-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #007cf0);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .home-step-title {
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-step-desc {
+    font-size: 15px;
+    color: var(--color-mute);
+    line-height: 1.6;
+    margin: 0;
+    max-width: 280px;
+  }
+
+  /* ─── FAQ ─── */
+  .home-faq {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .home-faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .home-faq-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .home-faq-item {
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .home-faq-item[open] {
+    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  .home-faq-q {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--color-ink);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .home-faq-q::-webkit-details-marker {
+    display: none;
+  }
+
+  .home-faq-q::after {
+    content: '+';
+    font-size: 20px;
+    color: var(--color-mute);
+    transition: transform 0.2s ease;
+  }
+
+  .home-faq-item[open] .home-faq-q::after {
+    transform: rotate(45deg);
+  }
+
+  .home-faq-a {
+    padding: 0 var(--spacing-xl) var(--spacing-lg);
+    font-size: 15px;
+    color: var(--color-body);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ─── Blog ─── */
+  .home-blog {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    background: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.03), transparent);
+  }
+
+  .home-blog-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .home-blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .home-blog-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .home-blog-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(124, 58, 237, 0.15);
+  }
+
+  .home-blog-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7c3aed;
+    letter-spacing: -0.2px;
+  }
+
+  .home-blog-title {
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.4px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .home-blog-excerpt {
+    font-size: 14px;
+    color: var(--color-mute);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ─── Shared Section Styles ─── */
+  .section-eyebrow {
+    color: #7c3aed;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .dark .section-eyebrow {
+    color: #c084fc;
+  }
+
+  .section-headline {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    color: var(--color-ink);
+    margin: 0;
+    text-align: center;
+  }
+
+  .headline-gradient {
+    background: linear-gradient(135deg, #7c3aed, #007cf0, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    border: 1px solid;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7c3aed;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 960px) {
+    .home-headline {
+      font-size: 38px;
+      letter-spacing: -1.8px;
+    }
+
+    .home-tools-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .home-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .home-blog-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .home-hero {
+      padding: var(--spacing-4xl) var(--spacing-md) var(--spacing-3xl);
+    }
+
+    .home-headline {
+      font-size: 30px;
+      letter-spacing: -1.2px;
+    }
+
+    .home-tools-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .home-features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .home-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .section-headline {
+      font-size: 24px;
+    }
+  }
+</style>

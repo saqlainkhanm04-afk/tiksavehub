@@ -73,6 +73,8 @@ function userMessageFor(err: any, needsLoginHint = false): string {
     return 'This video appears to be private, restricted, or unavailable. It may be in a closed group or shared with limited audience. Please try another public Facebook video link.';
   }
   if (code === FB_ERR.LOGIN_REQUIRED || needsLoginHint) {
+    // Login wall from reader proxy — use the upstream message if descriptive
+    if (msg.length > 40 && code === FB_ERR.LOGIN_REQUIRED) return msg;
     return 'This video requires a Facebook login to view. Please try another public Facebook video link.';
   }
   if (code === FB_ERR.NO_MEDIA) {
@@ -110,8 +112,15 @@ function userMessageFor(err: any, needsLoginHint = false): string {
 
 function photoMessageFor(err: any): string {
   const code = err?.code ?? '';
+  const msg = err?.message ?? '';
   if (code === FB_ERR.NOT_AVAILABLE) {
     return 'This photo is private or was deleted. Please try another public Facebook photo link.';
+  }
+  if (code === FB_ERR.LOGIN_REQUIRED) {
+    // Login wall from reader proxy — Facebook's anti-scraping block, not a code bug.
+    // Use the upstream message if it's descriptive (it explains the limitation).
+    if (msg.length > 40) return msg;
+    return 'This Facebook post\'s privacy settings are preventing access. Facebook sometimes blocks anonymous access to public posts — try a different public post.';
   }
   if (code === FB_ERR.NO_MEDIA) {
     return 'Could not load this Facebook photo. Check the link or try another public photo.';
@@ -153,6 +162,7 @@ export const POST: APIRoute = async (ctx) => {
   }
 
   const rawUrl = typeof body?.url === 'string' ? body.url : '';
+  const nocache = body?.nocache === true;
   if (!rawUrl.trim()) {
     return json({ success: false, error: 'Missing "url" in the request body.' }, 400);
   }
@@ -162,12 +172,14 @@ export const POST: APIRoute = async (ctx) => {
   }
 
   const parsed = parseFacebookUrl(rawUrl);
+  console.error(`[FB-ALBUM-DEBUG] parseFacebookUrl("${rawUrl}") =>`, JSON.stringify(parsed, null, 2));
   if (!parsed.isValid) {
     return json({ success: false, error: parsed.error || 'Invalid Facebook URL.' }, 422);
   }
 
   const id = cacheKeyOf(parsed);
   const toolMode = typeof body?.mode === 'string' ? body.mode : '';
+  console.error(`[FB-ALBUM-DEBUG] POST: toolMode=${toolMode}, cacheKey="${id}", albumId=${parsed.albumId ?? 'null'}, photoId=${parsed.photoId ?? 'null'}, linkType=${parsed.linkType}`);
 
   // Story mode accepts ONLY story links.
   if (toolMode === 'story') {
@@ -193,13 +205,16 @@ export const POST: APIRoute = async (ctx) => {
       );
     }
     try {
-      const cached = id ? await cacheHit('facebook', 'fb', id, 'photo') : null;
+      const cached = (!nocache && id) ? await cacheHit('facebook', 'fb', id, 'photo') : null;
       const cachedData = cached?.data as Record<string, unknown> | undefined;
       if (cachedData && Array.isArray(cachedData.photos) && (cachedData.photos as any[]).length) {
+        console.error(`[FB-ALBUM-DEBUG] Returning cached result (${(cachedData.photos as any[]).length} photos) — pass nocache:true to bypass`);
         return json({ success: true, type: 'facebook-photo', photo: cachedData, fromCache: true }, 200, true);
       }
 
-      const set = await fetchFacebookPhotoSet(parsed.sanitizedUrl);
+      console.error(`[FB-ALBUM-DEBUG] POST calling fetchFacebookPhotoSet("${parsed.sanitizedUrl}", albumId=${parsed.albumId ?? 'null'})`);
+      const set = await fetchFacebookPhotoSet(parsed.sanitizedUrl, parsed.albumId);
+      console.error(`[FB-ALBUM-DEBUG] POST fetchFacebookPhotoSet returned ${set.photos.length} photos, title="${set.title}"`);
 
       const payload = {
         photoUrl: set.photos[0]?.photoUrl || '',
@@ -212,6 +227,9 @@ export const POST: APIRoute = async (ctx) => {
           title: p.title || set.title,
         })),
         photoCount: set.photos.length,
+        ...(set.totalPhotoCount && set.totalPhotoCount > set.photos.length
+          ? { totalPhotoCount: set.totalPhotoCount }
+          : {}),
         author: {
           unique_id: set.author?.name || '',
           nickname: set.author?.name || '',
@@ -381,7 +399,7 @@ export const GET: APIRoute = async (ctx) => {
           }
         }
         if (photoUrls.length < 2) {
-          const set = await fetchFacebookPhotoSet(parsed.sanitizedUrl);
+      const set = await fetchFacebookPhotoSet(parsed.sanitizedUrl, parsed.albumId);
           photoUrls = [];
           for (const p of set.photos) {
             const entry: { url: string; alt?: string } = { url: p.photoUrl };
@@ -445,7 +463,7 @@ export const GET: APIRoute = async (ctx) => {
       const altUrl: string | null = (cachedData?.photos as any[])?.[0]?.altUrl || null;
 
       if (!photoUrl) {
-        const photo = await fetchFacebookPhoto(parsed.sanitizedUrl);
+        const photo = await fetchFacebookPhoto(parsed.sanitizedUrl, parsed.albumId);
         return streamPhoto(photo.photoUrl, photo.altUrl || null);
       }
 

@@ -1,6 +1,8 @@
 import { memoSWR, cacheGet, cacheSet, cacheDelete } from './cache';
 import type { CfEnv } from './env';
 import { envStr } from './env';
+import { runWithFallback } from './api-fallback';
+import { instagramSources } from './platforms/instagram';
 
 let _env: CfEnv = {};
 export function setInstagramEnv(env: CfEnv) { _env = env; }
@@ -401,95 +403,40 @@ async function fetchFromEmbed(shortcode: string): Promise<any> {
   throw lastError || new Error('Embed fallback failed.');
 }
 
+/**
+ * Convert MediaMeta (from platform sources) back to the raw IG object shape
+ * that instagram-download.ts API route expects (video_versions, user, etc.).
+ */
+function mediaMetaToIgRaw(m: import('./platforms/types').MediaMeta): any {
+  const videoVersions = m.hdUrl
+    ? [{ url: m.hdUrl, width: 1080, height: 1920 }]
+    : m.sdUrl
+      ? [{ url: m.sdUrl, width: 720, height: 1280 }]
+      : [];
+  return {
+    video_versions: videoVersions,
+    image_versions2: m.cover ? { candidates: [{ url: m.cover }] } : undefined,
+    display_url: m.cover || '',
+    display_title: m.title || '',
+    video_duration: m.duration || 0,
+    user: m.authorUsername
+      ? { username: m.authorUsername, full_name: m.authorName, profile_pic_url: m.authorAvatar }
+      : undefined,
+    like_count: m.stats.likes ?? 0,
+    comment_count: m.stats.comments ?? 0,
+    play_count: m.stats.views ?? 0,
+    __fallback_source: m.resolvedBy,
+  };
+}
+
 async function fetchShortcodeWithFallbacks(shortcode: string, _type: string = 'video'): Promise<any> {
-  const errors: string[] = [];
+  const sessionCookie = getSessionCookie();
+  const { token: csrfToken, cookies } = await getCsrfToken();
+  const igUrl = `https://www.instagram.com/${_type === 'reels' ? 'reel' : _type === 'story' ? 'stories' : 'p'}/${shortcode}/`;
 
-  // Primary: public GraphQL with fresh CSRF.
-  try {
-    const json = await graphqlRequest(SHORTCODE_DOC_ID, {
-      shortcode,
-      __relay_internal__pv__PolarisAIGMMediaWebLabelEnabledrelayprovider: false,
-    });
-    const items = json?.data?.xdt_api__v1__media__shortcode__web_info?.items;
-    if (items && items.length > 0) return items[0];
-    errors.push('GraphQL returned no items.');
-  } catch (err: any) {
-    errors.push(err?.message || 'GraphQL failed.');
-  }
-
-  // Fallback: lightweight embed page (OG meta) — much harder for Instagram to block.
-  try {
-    return await fetchFromEmbed(shortcode);
-  } catch (err: any) {
-    errors.push(err?.message || 'Embed fallback failed.');
-  }
-
-  // Fallback: legacy __a=1 endpoint.
-  // Instagram now serves HTML for __a=1 on many IPs — the video data is
-  // embedded as JSON blobs inside the page. We extract video_versions and
-  // display_url from the HTML when the JSON parse fails.
-  try {
-    const resp = await fetch(`https://www.instagram.com/p/${shortcode}/?__a=1`, {
-      headers: {
-        'User-Agent': USER_AGENT,
-        Accept: 'application/json, text/html, text/plain, */*',
-      },
-      redirect: 'follow',
-      signal: AbortSignal.timeout(20_000),
-    });
-    if (resp.ok) {
-      const text = await resp.text();
-
-      // Try JSON parse first (old behavior — some IPs still serve JSON).
-      try {
-        const json = JSON.parse(text) as Record<string, any>;
-        const media = json?.graphql?.shortcode_media ?? json?.items?.[0];
-        if (media) return media;
-      } catch {
-        // Not JSON — extract from HTML.
-      }
-
-      // HTML fallback: extract video_versions JSON blob from the page.
-      const vvMatch = text.match(/"video_versions"\s*:\s*(\[[^\]]*\])/);
-      if (vvMatch) {
-        try {
-          const versions = JSON.parse(vvMatch[1].replace(/\\\//g, '/'));
-          if (Array.isArray(versions) && versions.length > 0) {
-            // Sort by width descending (type 103 = highest quality typically).
-            const sorted = [...versions].sort((a: any, b: any) => (b.width || b.type || 0) - (a.width || a.type || 0));
-            const videoUrl = sorted[0]?.url?.replace(/\\\//g, '/');
-            if (videoUrl) {
-              // Extract thumbnail from display_url or image_versions2.
-              const displayMatch = text.match(/"display_url"\s*:\s*"([^"]+)"/);
-              const thumbnail = displayMatch ? displayMatch[1].replace(/\\\//g, '/') : '';
-
-              return {
-                video_versions: sorted.map((v: any) => ({
-                  url: v.url?.replace(/\\\//g, '/'),
-                  width: v.width || 0,
-                  height: v.height || 0,
-                  type: v.type || 0,
-                })),
-                image_versions2: thumbnail ? { candidates: [{ url: thumbnail }] } : undefined,
-                display_url: thumbnail,
-                __a1_html_fallback: true,
-              };
-            }
-          }
-        } catch {
-          // video_versions JSON malformed — skip.
-        }
-      }
-
-      errors.push('__a=1 returned no media.');
-    } else {
-      errors.push(`__a=1 returned ${resp.status}.`);
-    }
-  } catch (err: any) {
-    errors.push(err?.message || '__a=1 failed.');
-  }
-
-  throw new Error(errors[errors.length - 1] || 'Could not load this Instagram content.');
+  const result = await runWithFallback(igUrl, instagramSources(shortcode, _type, csrfToken, cookies, sessionCookie));
+  console.log(`[Instagram] Resolved via ${result.source} in ${result.attemptMs}ms`);
+  return mediaMetaToIgRaw(result.data);
 }
 
 export async function fetchMediaByShortcode(shortcode: string, type: string = 'video'): Promise<any> {
@@ -656,20 +603,27 @@ export function getThumbnailUrl(media: any): string {
 }
 
 export function getAudioUrl(media: any): string | null {
+  // 1. Direct audio_versions array (some IG responses include this).
   const audioVersions = media.audio_versions;
   if (audioVersions && audioVersions.length > 0) {
     const sorted = [...audioVersions].sort((a: any, b: any) => (b.bitrate || 0) - (a.bitrate || 0));
     if (sorted[0]?.url) return sorted[0].url;
   }
-  // Reel media JSON no longer ships a separate audio_versions array, but the
-  // video_dash_manifest still contains the audio-only representation (mimeType
-  // audio/mp4) with a direct signed CDN URL — that is the real audio track.
-  const dash = media.video_dash_manifest;
-  if (typeof dash === 'string' && dash.includes('audio/mp4')) {
-    const blocks = dash.match(/<Representation[^>]*mimeType="audio\/mp4"[^>]*>[\s\S]*?<\/Representation>/gi) || [];
+  // 2. DASH manifest — look for audio-only AdaptationSet (audio/mp4 or audio/mpeg).
+  //    The manifest may be a string or an object with .text / .url.
+  const dash = typeof media.video_dash_manifest === 'string'
+    ? media.video_dash_manifest
+    : media.video_dash_manifest?.text || media.video_dash_manifest?.url || '';
+  if (dash && (dash.includes('audio/mp4') || dash.includes('audio/mpeg'))) {
+    // Match entire AdaptationSet blocks for audio, then pick the best Representation.
+    const adaptBlocks = dash.match(/<AdaptationSet[^>]*mimeType="audio\/(?:mp4|mpeg)"[^>]*>[\s\S]*?<\/AdaptationSet>/gi) || [];
+    const repBlocks = adaptBlocks.length > 0
+      ? adaptBlocks.map((b: string) => b.match(/<Representation[^>]*>[\s\S]*?<\/Representation>/gi) || []).flat()
+      : dash.match(/<Representation[^>]*mimeType="audio\/(?:mp4|mpeg)"[^>]*>[\s\S]*?<\/Representation>/gi) || [];
+
     let best: string | null = null;
     let bestBandwidth = -1;
-    for (const block of blocks) {
+    for (const block of repBlocks) {
       const bw = Number(block.match(/bandwidth="(\d+)"/)?.[1] || 0);
       const base = block.match(/<BaseURL>([^<]*)<\/BaseURL>/)?.[1];
       if (!base) continue;

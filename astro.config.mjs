@@ -35,6 +35,10 @@ const seoPages = [
 const customPages = [
   ...seoPages.map((p) => site + p),
   ...posts.map((p) => `${site}/blog/${p.slug}`),
+  // Localized pages for all languages
+  ...['es', 'ja', 'fr', 'de', 'pt', 'ko', 'it'].flatMap((lang) =>
+    seoPages.map((p) => `${site}/${lang}${p}`)
+  ),
 ];
 
 const isProd = process.argv.includes('build') || process.argv.includes('preview');

@@ -1,0 +1,336 @@
+---
+export const prerender = true;
+import Layout from '../../layouts/Layout.astro';
+
+const lastUpdated = '2025-01-01';
+---
+
+<Layout
+  title="DMCA — TikSaveHub"
+  description="TikSaveHubのDMCA準拠ページ。著作権侵害コンテンツの報告と著作権侵害ポリシーについてご確認ください。"
+  keywords="dmca, 著作権, 著作権侵害, 削除通知, tiksavehub dmca"
+  canonical="/dmca"
+  ogImage="/og-dmca.png"
+  lang="ja"
+  skipSoftwareApp
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>ホーム</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>DMCA</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">法的情報</span>
+        <h1 id="legal-headline" class="legal-title">DMCA準拠</h1>
+        <p class="legal-meta">最終更新日: {lastUpdated} &middot; 発効日: {lastUpdated}</p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">1. 著作権侵害通知</h2>
+            <p>
+              TikSaveHubは他者の知的財産権を尊重し、ユーザーに対しても同様の尊重を求めています。デジタルミレニアム著作権法（DMCA）に従い、当社の指定著作権代理人に提出された著作権侵害の疑いに関する通知に対し、迅速に対応いたします。
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">2. DMCA通知の提出方法</h2>
+            <p>
+              TikSaveHubを通じて利用可能なコンテンツがお客様の著作権を侵害しているとお考えの場合は、以下の情報を含む書面の通知を指定代理人に送信してください：
+            </p>
+            <ul class="legal-list">
+              <li>著作権者またはその代理人による物理的または電子的な署名。</li>
+              <li>侵害されたと主張される著作物の識別。</li>
+              <li>TikSaveHub上の侵害材料のURLまたは場所。</li>
+              <li>お客様の連絡先情報：氏名、住所、電話番号、メールアドレス。</li>
+              <li>争われている利用が著作権者、その代理人、または法律によって許可されていないという誠実な信念を示す声明。</li>
+              <li>偽証罪の下でなされた、通知内の情報が正確であり、お客様が著作権者またはその代理人として行動する権限を有しているという声明。</li>
+            </ul>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">3. DMCA通知の送信</h2>
+            <p>
+              DMCA通知は以下の宛先に送信してください：
+            </p>
+            <p class="legal-contact">
+              <strong>メール:</strong> <a href="mailto:samneil7582@gmail.com">samneil7582@gmail.com</a><br />
+              <strong>件名:</strong> DMCA Notice
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">4. 反通知</h2>
+            <p>
+              お客様が投稿した材料が誤って削除された、またはアクセスが無効にされたとお考えの場合は、反通知を提出することができます。反通知には以下の内容を含める必要があります：
+            </p>
+            <ul class="legal-list">
+              <li>お客様の物理的または電子的な署名。</li>
+              <li>削除された材料の識別と削除前の場所。</li>
+              <li>偽証罪の下でなされた、材料が誤りまたは誤認の結果として削除されたという誠実な信念を示す声明。</li>
+              <li>お客様の氏名、住所、電話番号、メールアドレス。</li>
+              <li>お客様の住所を管轄する連邦地区裁判所、またはTikSaveHubが所在する可能性のあるすべての司法地区の管轄に同意する声明。</li>
+            </ul>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">5. 繰り返しの侵害者</h2>
+            <p>
+              DMCAおよびその他の適用法令に従い、TikSaveHubは繰り返しの侵害者とみなされるユーザーについて、適切な状況でアカウントを終了するポリシーを維持しています。また、他のユーザーの知的財産権を侵害するユーザーのサービスへのアクセスを制限および/またはアカウントを終了する権利も留保します。
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">6. 制限事項</h2>
+            <p>
+              TikSaveHubは動画ダウンローダーツールです。当社はサーバー上で著作権保護コンテンツをホスト、保存、または配信することはありません。ダウンロードされた動画はユーザーのデバイスに直接配信され、当社によって保存されることはありません。ただし、著作権侵害の主張を真—に受け止め、すべての有効なDMCA通知を調査いたします。
+            </p>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Back to home -->
+      <div class="legal-back">
+        <a href="/" class="btn-primary-sm">&larr; TikSaveHubに戻る</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .legal-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .legal-breadcrumb {
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .legal-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .legal-title {
+    font-size: var(--text-display-xl);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .legal-meta {
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  .legal-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3xl);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .legal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+  }
+
+  .legal-clause {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .legal-h2 {
+    font-size: var(--text-display-md);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .legal-content p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .legal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .legal-list li {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.7;
+    padding-left: 20px;
+    position: relative;
+    letter-spacing: -0.1px;
+  }
+
+  .legal-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+  }
+
+  .legal-content a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+
+  .legal-content a:hover {
+    color: var(--color-link-deep);
+  }
+
+  .legal-contact {
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+  }
+
+  .legal-contact strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .legal-back {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    line-height: 2.2;
+    letter-spacing: -0.1px;
+  }
+
+  .btn-primary-sm:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .dark .legal-card {
+    box-shadow:
+      inset 0 0 0 1px #ffffff0a,
+      0px 1px 1px #00000010,
+      0px 4px 8px #00000020;
+  }
+
+  .dark .legal-contact {
+    background-color: var(--color-canvas-soft-2);
+  }
+
+  @media (max-width: 600px) {
+    .legal-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+
+    .legal-title {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+    }
+
+    .legal-card {
+      padding: var(--spacing-lg);
+    }
+
+    .legal-h2 {
+      font-size: var(--text-display-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: var(--text-caption);
+    }
+  }
+</style>

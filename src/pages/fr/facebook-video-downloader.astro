@@ -1,0 +1,1572 @@
+---
+// Facebook Video Downloader — SEO-optimized landing page (FR)
+// URL: /facebook-video-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  {
+    id: 'fb-hd-1080p',
+    q: 'Comment puis-je télécharger une vidéo Facebook en HD 1080p ?',
+    a: 'Pour télécharger une vidéo Facebook en HD 1080p, copiez simplement le lien de la vidéo publique, collez-le dans TikSaveHub et cliquez sur télécharger. Si la publication Facebook originale a une source 1080p, notre outil extractera automatiquement et fournira cette option haute définition.',
+  },
+  {
+    id: 'fb-4k',
+    q: 'Puis-je télécharger des vidéos Facebook en 4K ?',
+    a: 'Oui, vous pouvez télécharger des vidéos 4K, mais seulement si le créateur original a téléchargé la vidéo sur Facebook en résolution 4K. TikSaveHub récupère la qualité maximale disponible directement depuis les serveurs de Facebook.',
+  },
+  {
+    id: 'fb-iphone',
+    q: 'Comment enregistrer une vidéo Facebook dans le roll caméra de mon iPhone ?',
+    a: 'Pour enregistrer une vidéo Facebook dans le roll caméra de votre iPhone, ouvrez TikSaveHub dans le navigateur Safari. Collez votre lien vidéo, téléchargez le fichier MP4, allez dans vos Téléchargements Safari et appuyez sur « Enregistrer la vidéo » pour l\'ajouter à votre application Photos.',
+  },
+  {
+    id: 'fb-android',
+    q: 'Comment puis-je télécharger une vidéo Facebook dans ma galerie Android ?',
+    a: 'Sur n\'importe quel appareil Android, ouvrez Chrome, collez le lien de la vidéo Facebook dans TikSaveHub et appuyez sur télécharger. Le fichier MP4 sera instantanément enregistré dans le dossier Téléchargements de votre navigateur et apparaîtra dans la Galerie de votre appareil.',
+  },
+  {
+    id: 'fb-live',
+    q: 'Puis-je télécharger des vidéos Facebook Live ?',
+    a: 'Oui, mais vous ne pouvez télécharger une vidéo Facebook Live qu\'après que la diffusion en direct est entièrement terminée et que le replay est publié. Les flux en direct actifs et en cours ne peuvent pas être téléchargés.',
+  },
+  {
+    id: 'fb-private',
+    q: 'Puis-je télécharger des vidéos Facebook privées ?',
+    a: 'Non, vous ne pouvez pas télécharger des vidéos Facebook privées. Pour respecter la vie privée des utilisateurs, TikSaveHub ne traite et ne télécharge que les vidéos définies comme « Publiques » et librement accessibles via leur URL.',
+  },
+  {
+    id: 'fb-no-login',
+    q: 'Dois-je me connecter à Facebook pour télécharger une vidéo ?',
+    a: 'Aucune connexion n\'est requise. Vous n\'avez pas besoin de fournir votre nom d\'utilisateur ou mot de passe Facebook. Collez simplement le lien de la vidéo publique dans TikSaveHub, et le téléchargement commencera instantanément.',
+  },
+  {
+    id: 'fb-reels-watch',
+    q: 'Puis-je télécharger des Reels et vidéos Watch Facebook ?',
+    a: 'Absolument ! TikSaveHub prend entièrement en charge le téléchargement des Reels et vidéos Watch Facebook publiques. Collez simplement l\'URL du Reel ou Watch dans notre outil pour enregistrer le MP4 directement sur votre appareil.',
+  },
+  {
+    id: 'fb-link-types',
+    q: 'Quels types de liens vidéo Facebook puis-je utiliser avec le téléchargeur ?',
+    a: 'TikSaveHub prend en charge tous les liens Facebook publics standard, y compris les publications régulières (facebook.com/watch), les Reels Facebook (facebook.com/reel/) et les liens de partage mobile comme fb.watch.',
+  },
+  {
+    id: 'fb-no-watermark',
+    q: 'Puis-je télécharger des vidéos Facebook sans filigrane ?',
+    a: 'Oui, TikSaveHub fournit la vidéo source propre sans ajouter aucun de nos propres filigramnes ou logos. Cependant, si le créateur a manuellement édité un filigrane dans la vidéo avant de la télécharger sur Facebook, celui-ci ne peut pas être supprimé.',
+  },
+  {
+    id: 'fb-whyfail',
+    q: 'Pourquoi ne puis-je pas télécharger une vidéo Facebook ?',
+    a: 'Les téléchargements échouent généralement si la vidéo est définie comme privée, a été supprimée, est restreinte à un certain groupe, ou est encore en cours de diffusion en direct. Assurez-vous de copier un lien directement depuis le bouton « Partager ».',
+  },
+  {
+    id: 'fb-free-unlimited',
+    q: 'Le téléchargeur de vidéos Facebook est-il gratuit et illimité ?',
+    a: 'Oui, TikSaveHub est 100% gratuit sans aucun plafond ni limite de téléchargement quotidien. Vous pouvez télécharger autant de vidéos Facebook publiques que vous le souhaitez sans payer ni vous inscrire.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'Comment télécharger des vidéos Facebook en HD',
+  description: 'Guide étape par étape pour télécharger des vidéos Facebook, Reels et publications en qualité HD avec TikSaveHub.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Copiez le lien de la vidéo Facebook',
+      text: 'Ouvrez la vidéo Facebook que vous souhaitez enregistrer, cliquez sur le bouton Partager et sélectionnez Copier le lien.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Collez le lien dans TikSaveHub',
+      text: 'Visitez TikSaveHub.com et collez le lien Facebook copié dans le champ de saisie de téléchargement.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Cliquez sur Télécharger',
+      text: 'Cliquez sur le bouton Télécharger et attendez quelques secondes pendant que la vidéo est traitée.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Enregistrez la vidéo HD',
+      text: 'Choisissez l\'option MP4 HD et enregistrez le fichier vidéo sur votre appareil.',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
+---
+
+<Layout
+  title="Téléchargeur de Vidéos Facebook HD — Sans Filigrane, Gratuit | TikSaveHub"
+  description="Téléchargez des vidéos et Reels Facebook en HD — gratuit, rapide, sans filigrane, sans inscription. Enregistrez des liens FB Watch, Reels et publications vidéo en MP4 jusqu'à 1080p, ou extrayez l'audio en MP3."
+  keywords="téléchargeur vidéo facebook, téléchargeur vidéo facebook hd, téléchargeur facebook sans filigrane, télécharger vidéos facebook, téléchargeur reels facebook, télécharger reels facebook en hd, enregistreur vidéo fb, télécharger vidéo facebook hd, téléchargeur facebook sans filigrane, enregistrer vidéos facebook, téléchargeur facebook en ligne, téléchargeur reels fb"
+  canonical="/facebook-video-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={combinedJsonLd}
+  lang="fr"
+  appName="TikSaveHub — Téléchargeur de Vidéos Facebook"
+>
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://tiksavehub.com" },
+      { "@type": "ListItem", "position": 2, "name": "Téléchargeur Vidéos Facebook", "item": "https://tiksavehub.com/facebook-video-downloader" }
+    ]
+  })} />
+
+  <!-- Hero Section -->
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Accueil</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Téléchargeur Vidéos Facebook</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Gratuit · Qualité HD · Sans Filigrane
+        </span>
+      </div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        Téléchargeur de Vidéos Facebook — HD, Sans Filigrane
+      </h1>
+
+      <p class="dl-hero-subline headline-gradient">
+        Téléchargez des vidéos et Reels Facebook en qualité HD — gratuit, rapide, sans filigrane.
+      </p>
+
+      <p class="dl-hero-sub text-body-lg">
+        Enregistrez n'importe quelle vidéo ou Reel Facebook public en HD jusqu'à 1080p — gratuit, rapide, sans inscription et sans filigrane.
+        Collez un lien Facebook (Reels, Watch, publications vidéo ou fb.watch) et téléchargez le MP4 en SD ou HD.
+      </p>
+
+      <div class="dl-hero-form-wrap">
+        <FacebookDownloadForm />
+      </div>
+
+      <div class="dl-hero-trust">
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        100% Gratuit
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Sans Filigrane
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        HD jusqu'à 1080p
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Audio MP3
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Fonctionne sur Mobile
+      </span>
+      </div>
+
+      <div class="dl-hero-share">
+        <SocialShare
+          url="/facebook-video-downloader"
+          title="Téléchargeur de Vidéos Facebook HD — Sans Filigrane"
+          description="Téléchargez des vidéos et Reels Facebook en HD. Gratuit, rapide, sans filigrane. MP4 ou MP3."
+          image="/og-downloader.png"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsSection stats={[
+    {
+      value: '100% Gratuit',
+      label: 'Téléchargez des vidéos TikTok instantanément sans filigrane',
+      icon: 'download',
+    },
+    {
+      value: 'Sans Inscription',
+      label: 'Fonctionne sur tous les appareils, du monde entier',
+      icon: 'globe',
+    },
+    {
+      value: 'Qualité HD',
+      label: 'Résolution originale, sans filigrane, sans connexion',
+      icon: 'star',
+    },
+  ]} />
+
+  <!-- SEO Content Section — 600+ words -->
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">À propos de TikSaveHub</span>
+          <h2 id="seo-about-headline" class="section-headline">
+            Enregistrez des vidéos et Reels Facebook en qualité HD propre.
+          </h2>
+
+          <div class="seo-article">
+            <p>
+              TikSaveHub vous permet d'enregistrer n'importe quelle vidéo Facebook publique directement sur votre appareil en haute qualité. Que vous ayez trouvé un Reel dans votre fil d'actualité, un tutoriel que vous souhaitez consulter plus tard, ou une publication vidéo d'un créateur que vous suivez, TikSaveHub vous donne un fichier MP4 optimisé en quelques secondes. Pas d'installation d'application, pas d'extension de navigateur, pas de création de compte. Collez simplement le lien et téléchargez.
+            </p>
+
+            <h3 class="text-highlight">Comment fonctionne le téléchargeur de vidéos Facebook</h3>
+            <p>
+              Utiliser TikSaveHub est incroyablement simple. D'abord, ouvrez Facebook et trouvez la vidéo ou le Reel que vous souhaitez enregistrer. Appuyez sur le bouton Partager et sélectionnez « Copier le lien » pour récupérer l'URL — les Reels, les liens Watch, les publications vidéo et les liens courts fb.watch fonctionnent tous. Ensuite, revenez sur TikSaveHub et collez ce lien dans le champ de saisie en haut de la page. Cliquez sur le bouton Télécharger, et nos serveurs récupèrent les métadonnées de la vidéo en quelques secondes. Vous verrez ensuite un aperçu avec le titre de la vidéo, la miniature et les options de téléchargement en version HD ou SD. Cliquez sur votre option préférée et le fichier sera enregistré directement sur votre appareil.
+            </p>
+
+            <h3 class="text-highlight">Téléchargez des Reels Facebook en HD — sans filigrane</h3>
+            <p>
+              Les Reels sont le format le plus partagé de Facebook, et notre téléchargeur de Reels FB les enregistre à la résolution la plus élevée disponible — jusqu'à 1080p — sans aucune superposition ni filigrane. Collez n'importe quel lien facebook.com/reel/… et appuyez sur « Télécharger Vidéo HD ». La qualité originale est préservée exactement telle que le créateur l'a téléchargée, sans ré-encodage ni compression, pour que vous puissiez regarder hors ligne, republier sur vos propres chaînes, ou conserver votre contenu préféré pour toujours.
+            </p>
+
+            <h3 class="text-highlight">Enregistrez des vidéos Watch Facebook et des publications vidéo</h3>
+            <p>
+              Les liens Watch standards (facebook.com/watch/?v=…) et les publications vidéo (facebook.com/username/videos/…) sont entièrement pris en charge. Qu'il s'agisse d'une vidéo Watch longue, d'une publication de page ou d'un clip d'un groupe, le même flux coller-et-télécharger fonctionne à chaque fois. Nous gérons également les formats hérités comme les liens video.php et les liens mobiles m.facebook.com, et notre enregistreur vidéo FB supprime automatiquement les paramètres de tracking tels que ?mibextid= et ?ref= de vos liens pour que chaque téléchargement soit propre et fiable.
+            </p>
+
+            <h3 class="text-highlight">Extrayez l'audio Facebook en MP3</h3>
+            <p>
+              Au-delà de l'enregistrement de vidéos, le <a href="/facebook-to-mp3">convertisseur Facebook en MP3</a> de TikSaveHub extrait la piste audio de n'importe quelle vidéo ou Reel et la convertit en MP3 haute qualité en un clin d'œil — parfait pour enregistrer une bande-son de Reel, un clip de podcast ou un segment de diffusion en direct pour l'écoute hors ligne.
+            </p>
+
+            <h3 class="text-highlight">Fonctionne sur n'importe quel appareil — Android, iPhone, bureau</h3>
+            <p>
+              L'un des plus grands avantages de l'utilisation de TikSaveHub est qu'il fonctionne partout. Que vous soyez sur un téléphone Android, un iPhone, un PC Windows, un Mac ou une tablette — si vous avez un navigateur web, vous pouvez enregistrer des vidéos Facebook. Il n'est pas nécessaire d'installer une application séparée, ce qui vous permet d'économiser de l'espace de stockage et d'éviter les risques de sécurité liés aux applications tierces. Notre outil est entièrement réactif, donc l'expérience est fluide que vous soyez sur un écran de téléphone de 6 pouces ou un moniteur de bureau de 27 pouces.
+            </p>
+
+            <h3 class="text-highlight">Quelle qualité et quels formats obtenez-vous ?</h3>
+            <p>
+              Chaque téléchargement est un MP4 dans la meilleure résolution disponible — HD jusqu'à 1080p lorsque le créateur l'a téléchargée en HD, avec une option SD lorsque vous souhaitez un fichier plus petit pour un stockage limité. TikSaveHub n'ajoute jamais de filigrane, ne ré-encode jamais et ne réduit jamais la qualité du téléchargement original, donc le fichier que vous enregistrez est exactement la vidéo que le créateur a partagée — propre, nette et prête à être regardée hors ligne. Besoin du son uniquement ? Utilisez le <a href="/facebook-to-mp3">convertisseur Facebook en MP3</a> pour la piste audio.
+            </p>
+
+            <h3 class="text-highlight">Téléchargez des vidéos Facebook sur iPhone, Android ou bureau</h3>
+            <p>
+              TikSaveHub est un téléchargeur de vidéos Facebook entièrement basé sur le web, donc les étapes sont identiques sur chaque appareil. Sur iPhone ou iPad, ouvrez Safari (ou n'importe quel navigateur), collez le lien dans le champ ci-dessus et appuyez sur Télécharger — la vidéo est enregistrée via le gestionnaire de téléchargements de votre navigateur et apparaît dans l'application Fichiers. Sur Android, le MP4 est enregistré directement dans la galerie de votre appareil ou le dossier Téléchargements. Sur un PC Windows ou Mac, il atterrit dans la barre de téléchargements de votre navigateur ou le dossier Téléchargements. Pas d'installation d'application, pas d'extension, pas de connexion — rien à configurer.
+            </p>
+
+            <h3 class="text-highlight">Pouvez-vous enregistrer des replays Facebook Live ?</h3>
+            <p>
+              Un Facebook Live ne peut pas être téléchargé pendant qu'il est encore en cours de diffusion, mais une fois la diffusion terminée et devenue une vidéo publique publiée, vous pouvez enregistrer le replay avec TikSaveHub comme n'importe quelle autre vidéo — collez le lien de la vidéo live (facebook.com/watch/live/… ou la publication vidéo du profil) et téléchargez le MP4 HD ou SD.
+            </p>
+
+            <h3 class="text-highlight">Où vont les vidéos Facebook téléchargées ?</h3>
+            <p>
+              Après avoir appuyé sur un bouton de téléchargement, le fichier MP4 est enregistré directement sur votre appareil. Sur les navigateurs de bureau, le fichier apparaît dans la barre de téléchargements, puis dans votre dossier Téléchargements ; sur Android, il atterrit dans la galerie ou le dossier Téléchargements ; sur iPhone, il est stocké dans l'application Fichiers sous Téléchargements. Vous ne trouvez pas un fichier ? Ouvrez l'historique de téléchargements de votre navigateur et appuyez sur la dernière entrée — le fichier est toujours re-téléchargeable en un clic.
+            </p>
+
+            <h3 class="text-highlight">Sécurisé, privé et entièrement gratuit</h3>
+            <p>
+              Nous prenons votre vie privée au sérieux. TikSaveHub ne vous demande pas de créer un compte, de saisir une adresse e-mail ou de fournir des informations personnelles. Nous ne stockons pas votre historique de téléchargement et nous ne suivons pas votre comportement de navigation. Tout le processus de téléchargement se fait côté serveur, donc rien n'est stocké sur votre appareil sauf le fichier vidéo final. Et contrairement à de nombreux autres outils de sauvegarde de vidéos FB qui facturent des frais ou limitent les téléchargements, TikSaveHub est 100% gratuit sans plafond journalier.
+            </p>
+
+            <p>
+              Vous cherchez plus d'outils ? Vous pouvez également <a href="/tiktok-video-downloader-without-watermark">télécharger des vidéos TikTok sans filigrane</a> ou enregistrer des <a href="/instagram-reels-downloader-without-watermark">Reels Instagram</a> de la même manière.
+            </p>
+
+            <p>
+              Prêt à essayer ? Faites défiler vers le haut et collez votre premier lien Facebook dans le formulaire de téléchargement. Approuvé par des utilisateurs du monde entier pour des téléchargements rapides et simples. Sans tracas. Juste vos vidéos, exactement comme vous les souhaitez.
+            </p>
+          </div>
+        </div>
+
+        <aside class="seo-content-sidebar">
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Liens Rapides</h3>
+            <ul class="seo-sidebar-list">
+              <li><a href="/fr/tiktok-video-downloader-without-watermark">Téléchargeur Vidéos TikTok</a></li>
+              <li><a href="/fr/tiktok-to-mp3">TikTok en MP3</a></li>
+              <li><a href="/fr/instagram-reels-downloader-without-watermark">Téléchargeur Reels Instagram</a></li>
+              <li><a href="/fr/instagram-video-downloader-without-watermark">Téléchargeur Vidéos Instagram</a></li>
+              <li><a href="/fr/instagram-story-downloader-without-watermark">Téléchargeur Stories Instagram</a></li>
+              <li><a href="/fr/instagram-audio-downloader">Téléchargeur Audio Instagram</a></li>
+              <li><a href="/fr/facebook-video-downloader">Téléchargeur Vidéos Facebook</a></li>
+              <li><a href="/fr/facebook-reels-downloader">Téléchargeur Reels Facebook</a></li>
+              <li><a href="/fr/facebook-story-downloader">Téléchargeur Stories Facebook</a></li>
+              <li><a href="/fr/facebook-to-mp3">Facebook en MP3</a></li>
+              <li><a href="/fr/facebook-photo-downloader">Téléchargeur Photos Facebook</a></li>
+              <li><a href="/fr/snapchat-downloader">Téléchargeur Snapchat</a></li>
+              <li><a href="/fr/snapchat-story-downloader">Téléchargeur Stories Snapchat</a></li>
+              <li><a href="/fr/snapchat-to-mp3">Snapchat en MP3</a></li>
+              <li><a href="/fr/x-video-downloader">Téléchargeur Vidéos X/Twitter</a></li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Liens Pris en Charge</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              <li>facebook.com/reel/…</li>
+              <li>facebook.com/watch/?v=…</li>
+              <li>facebook.com/user/videos/…</li>
+              <li>fb.watch/…</li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card seo-sidebar-highlight">
+            <h3 class="seo-sidebar-title">Commencez à Télécharger</h3>
+            <p class="seo-sidebar-text">Collez un lien Facebook ci-dessus et obtenez votre vidéo en quelques secondes.</p>
+            <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Essayer Maintenant</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works — Detailed Steps -->
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Guide Étape par Étape</span>
+        <h2 id="dl-steps-headline" class="section-headline">
+          Comment télécharger des vidéos Facebook.
+        </h2>
+        <p class="section-sub text-body-lg">
+          Trois étapes simples — aucune compétence technique requise.
+        </p>
+      </div>
+
+      <div class="dl-steps-grid">
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <h3 class="dl-step-title">Copiez le lien Facebook</h3>
+          <p class="dl-step-body">
+            Ouvrez l'application Facebook ou le site web, trouvez la vidéo ou le Reel que vous souhaitez télécharger, appuyez sur le bouton Partager et sélectionnez « Copier le lien ». Les Reels, les liens Watch, les publications vidéo et les liens courts fb.watch fonctionnent tous.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </div>
+          <h3 class="dl-step-title">Collez le lien dans TikSaveHub</h3>
+          <p class="dl-step-body">
+            Revenez sur TikSaveHub et collez le lien copié dans le champ de saisie en haut de cette page. Utilisez le bouton Coller pour le récupérer directement depuis votre presse-papiers. Notre système détecte la vidéo et récupère ses détails en quelques secondes.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">Téléchargez en HD ou SD</h3>
+          <p class="dl-step-body">
+            Appuyez sur « Télécharger Vidéo HD » ou « Télécharger Vidéo SD » pour enregistrer le MP4 sur votre appareil. Le fichier est enregistré instantanément — pas d'application ni de compte nécessaire. Besoin du son ? Utilisez notre <a href="/facebook-to-mp3">convertisseur Facebook en MP3</a>.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+    <div class="dl-features-inner container-page">
+      <div class="dl-features-header">
+        <span class="section-eyebrow text-caption-mono">Fonctionnalités</span>
+        <h2 id="dl-features-headline" class="section-headline">
+          Pourquoi TikSaveHub se démarque.
+        </h2>
+      </div>
+
+      <div class="dl-features-grid">
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Qualité HD</h3>
+          <p class="dl-feature-body">
+            Téléchargez des vidéos et Reels Facebook en HD jusqu'à 1080p. Pas de ré-encodage, pas de compression — exactement ce que le créateur a téléchargé.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Extraction Audio MP3</h3>
+          <p class="dl-feature-body">
+            Convertissez n'importe quelle vidéo ou Reel Facebook en audio MP3 en un appui. Enregistrez bandes-son, clips et podcasts pour l'écoute hors ligne.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Ultra Rapide</h3>
+          <p class="dl-feature-body">
+            Notre traitement côté serveur signifie que les téléchargements commencent en quelques secondes. Collez le lien, cliquez sur télécharger, et la vidéo est à vous.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="3"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Tous les Formats de Liens</h3>
+          <p class="dl-feature-body">
+            Reels, liens Watch, publications vidéo, liens m.facebook.com et liens courts fb.watch — chaque format de vidéo Facebook public est pris en charge.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Fonctionne sur Tous les Appareils</h3>
+          <p class="dl-feature-body">
+            iPhone, Android, tablette, bureau — s'il a un navigateur web, TikSaveHub fonctionne. Pas d'installation d'application, pas d'extension, pas de problème de compatibilité.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Téléchargements Illimités</h3>
+          <p class="dl-feature-body">
+            Pas de limites quotidiennes, pas de plafonds, pas de tarif premium. Téléchargez autant de vidéos Facebook que vous le souhaitez — chaque jour, pour toujours. C'est entièrement gratuit.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases — AdSense-friendly content -->
+  <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">Cas d'Utilisation</span>
+        <h2 id="dl-usecases-headline" class="section-headline">
+          Qui utilise TikSaveHub ?
+        </h2>
+      </div>
+
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Créateurs de Contenu</h3>
+          <p class="dl-usecase-body">
+            Téléchargez vos propres vidéos et Reels Facebook pour les sauvegarder, les éditer dans un logiciel externe, ou les réutiliser pour TikTok, YouTube Shorts ou d'autres plateformes. Gardez votre meilleur contenu en sécurité et accessible.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Gestionnaires de Réseaux Sociaux</h3>
+          <p class="dl-usecase-body">
+            Gérez des comptes de marques ? Enregistrez des Reels et vidéos Watch tendances pour l'inspiration, l'analyse concurrentielle ou les calendriers de contenu. Téléchargez et organisez proprement les clips de référence dans votre bibliothèque.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Étudiants et Chercheurs</h3>
+          <p class="dl-usecase-body">
+            Étudiez les tendances des réseaux sociaux, les schémas de contenu viral ou la culture numérique ? Téléchargez des vidéos et Reels Facebook pour l'analyse académique, les présentations et les travaux de recherche — le tout en qualité originale.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Spectateurs Occasionnels</h3>
+          <p class="dl-usecase-body">
+            Vous avez trouvé une vidéo que vous adorez mais pas le temps de la regarder maintenant ? Enregistrez-la pour plus tard. Téléchargez des vidéos Facebook pour les regarder hors ligne pendant votre trajet, en voyage, ou partout sans accès Internet.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="dl-faq-headline" class="section-headline">
+          Questions fréquemment posées.
+        </h2>
+      </div>
+
+      <div class="dl-faq-list" role="list">
+        {faqData.map((faq) => (
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button
+              class="dl-faq-trigger"
+              id={`${faq.id}-btn`}
+              aria-expanded="false"
+              aria-controls={`${faq.id}-panel`}
+              type="button"
+            >
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div
+              id={`${faq.id}-panel`}
+              class="dl-faq-panel"
+              role="region"
+              aria-labelledby={`${faq.id}-btn`}
+              hidden
+            >
+              <p class="dl-faq-a" set:html={faq.a}></p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+    <div class="dl-cta-inner container-page">
+      <h2 id="dl-cta-headline" class="dl-cta-headline">
+        Prêt à télécharger ?
+      </h2>
+      <p class="dl-cta-sub">
+        Collez un lien Facebook ci-dessus et obtenez votre vidéo en quelques secondes — pas de compte, pas de distractions, pas de tracas.
+      </p>
+      <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+        Commencer à Télécharger
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Internal Links Section -->
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+        Explorez TikSaveHub.
+      </h2>
+      <div class="dl-internal-grid">
+        <a href="/tiktok-video-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Vidéos TikTok</span>
+          <span class="dl-internal-desc">Téléchargez des vidéos TikTok sans filigrane en HD.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/tiktok-to-mp3" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </span>
+          <span class="dl-internal-title">TikTok en MP3</span>
+          <span class="dl-internal-desc">Convertissez des vidéos TikTok en audio MP3 instantanément.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/instagram-video-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Vidéos Instagram</span>
+          <span class="dl-internal-desc">Enregistrez des vidéos Instagram sans filigrane en HD.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Reels Instagram</span>
+          <span class="dl-internal-desc">Téléchargez des Reels Instagram sans filigrane.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/facebook-photo-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </span>
+          <span class="dl-internal-title">Téléchargeur Photos Facebook</span>
+          <span class="dl-internal-desc">Enregistrez des photos Facebook publiques en résolution complète, gratuit.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ─── Hero ─── */
+  .dl-hero {
+    position: relative;
+    padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    text-align: center;
+  }
+
+  .dl-hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .dl-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  /* Breadcrumb */
+  .dl-breadcrumb {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .dl-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dl-badge {
+    animation: fadeInUp 0.5s ease 0.1s both;
+  }
+
+  .badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .dl-hero-headline {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 700px;
+    text-wrap: balance;
+    animation: fadeInUp 0.5s ease 0.2s both;
+  }
+
+  .headline-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-grad-develop-start) 0%,
+      var(--color-grad-preview-start) 40%,
+      var(--color-grad-preview-end) 70%,
+      var(--color-grad-ship-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dl-hero-subline {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.25s both;
+  }
+
+  .dl-hero-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.3s both;
+  }
+
+  .dl-hero-form-wrap {
+    width: 100%;
+    max-width: 760px;
+    animation: fadeInUp 0.5s ease 0.4s both;
+  }
+
+  .dl-hero-trust {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.5s ease 0.5s both;
+  }
+
+  .dl-hero-share {
+    animation: fadeInUp 0.5s ease 0.55s both;
+  }
+
+  .trust-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-body);
+    padding: 0 var(--spacing-md);
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trust-chip svg {
+    color: var(--color-cyan-deep);
+  }
+
+  .trust-chip:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+  }
+
+  @media (hover: hover) {
+    .trust-chip:hover {
+      border-color: var(--color-hairline-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-hero {
+      padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+    }
+
+    .dl-hero-headline {
+      font-size: clamp(22px, 5vw, 32px);
+      letter-spacing: -1px;
+    }
+
+    .trust-chip {
+      font-size: var(--text-caption);
+      height: 36px;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: 11px;
+    }
+  }
+
+  /* ─── Steps Section ─── */
+  .dl-steps-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-steps-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4xl);
+  }
+
+  .dl-steps-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .dl-step-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-step-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-step-num {
+    color: var(--color-mute);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .dl-step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf010, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-step-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-step-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 960px) {
+    .dl-steps-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-steps-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Features Section ─── */
+  .dl-features-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-features-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .dl-features-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feat-accent-develop {
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+  }
+
+  .feat-accent-preview {
+    background: linear-gradient(135deg, #7928ca15, #ff008020);
+    color: var(--color-grad-preview-start);
+    box-shadow: inset 0 0 0 1px #7928ca25;
+  }
+
+  .feat-accent-ship {
+    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+    color: var(--color-grad-ship-start);
+    box-shadow: inset 0 0 0 1px #ff4d4d25;
+  }
+
+  .dl-feature-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-feature-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 960px) {
+    .dl-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-features-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── Use Cases Section ─── */
+  .dl-usecases-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-usecases-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .dl-usecases-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecase-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-usecase-card:hover {
+    border-color: var(--color-hairline-strong);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-usecase-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .dl-usecase-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .dl-usecases-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-usecases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── FAQ Section ─── */
+  .dl-faq-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .dl-faq-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-faq-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .dl-faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .dl-faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    transition: background-color 0.15s ease;
+  }
+
+  .dl-faq-trigger:hover {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-trigger:focus-visible {
+    outline: 2px solid var(--color-grad-develop-start);
+    outline-offset: -2px;
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-q {
+    font-size: var(--text-body-md);
+    font-weight: 500;
+    color: var(--color-ink);
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .dl-faq-chevron {
+    flex-shrink: 0;
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .dl-faq-panel {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    animation: fadeInUp 0.25s ease forwards;
+  }
+
+  .dl-faq-a {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  @media (max-width: 600px) {
+    .dl-faq-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-faq-trigger {
+      padding: var(--spacing-md);
+      min-height: 48px;
+    }
+
+    .dl-faq-panel {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+
+    .dl-faq-q {
+      font-size: var(--text-body-sm);
+    }
+  }
+
+  /* ─── CTA Band ─── */
+  .dl-cta-band {
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    text-align: center;
+  }
+
+  .dl-cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .dl-cta-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-on-primary);
+    margin: 0;
+  }
+
+  .dl-cta-sub {
+    font-size: var(--text-body-lg);
+    color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .dl-cta-btn {
+    gap: 8px;
+    background-color: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+  }
+
+  .dl-cta-btn:hover {
+    background-color: var(--color-canvas-soft) !important;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .dl-cta-band {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Shared Section Styles ─── */
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  /* ─── Internal Links Section ─── */
+  .dl-internal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .dl-internal-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-internal-headline {
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .dl-internal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-internal-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    text-decoration: none;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .dl-internal-card:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-internal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf012, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-internal-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.3px;
+  }
+
+  .dl-internal-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .dl-internal-arrow {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    color: var(--color-mute);
+    font-size: 18px;
+    transition: color 0.15s ease, transform 0.25s ease;
+  }
+
+  .dl-internal-card:hover .dl-internal-arrow {
+    color: var(--color-ink);
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 960px) {
+    .dl-internal-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-internal-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── SEO Content Section ─── */
+  .seo-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .seo-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .seo-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .seo-content-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .seo-article {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .seo-article p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .text-highlight {
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .seo-article h3 {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.35;
+  }
+
+  .seo-content-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    position: sticky;
+    top: 80px;
+  }
+
+  .seo-sidebar-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .seo-sidebar-highlight {
+    background: linear-gradient(135deg, #007cf008, #00dfd808);
+    border: 1px solid #007cf020;
+  }
+
+  .seo-sidebar-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .seo-sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .seo-sidebar-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .seo-sidebar-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .seo-sidebar-mono li {
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .seo-sidebar-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  @media (max-width: 960px) {
+    .seo-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .seo-content-sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .seo-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .seo-content-sidebar {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const dlTriggers = document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
+
+  dlTriggers.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      const panelId = btn.getAttribute('aria-controls')!;
+      const panel = document.getElementById(panelId);
+
+      dlTriggers.forEach((otherBtn) => {
+        if (otherBtn !== btn) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          const otherId = otherBtn.getAttribute('aria-controls')!;
+          document.getElementById(otherId)?.setAttribute('hidden', '');
+        }
+      });
+
+      if (isOpen) {
+        btn.setAttribute('aria-expanded', 'false');
+        panel?.setAttribute('hidden', '');
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        panel?.removeAttribute('hidden');
+      }
+    });
+  });
+</script>

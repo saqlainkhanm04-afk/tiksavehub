@@ -1,5 +1,6 @@
 ---
 // Footer component — 3-column footer following DESIGN.md footer spec
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
 interface Props {
   platform?: 'tiktok' | 'instagram' | 'facebook' | 'x' | 'snapchat';
 }
@@ -10,13 +11,21 @@ const isInstagram = platform === 'instagram';
 const isFacebook = platform === 'facebook';
 const isX = platform === 'x';
 const isSnapchat = platform === 'snapchat';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+function localPath(path: string): string {
+  if (lang === 'en') return path;
+  return `/${lang}${path}`;
+}
 ---
 
 <footer id="site-footer" class="site-footer">
   <div class="footer-inner container-page">
     <!-- Brand Column -->
     <div class="footer-brand">
-      <a href="/" class="footer-logo" id="footer-logo" aria-label="TikSaveHub home">
+      <a href={localPath('/')} class="footer-logo" id="footer-logo" aria-label="TikSaveHub home">
         <span class="footer-logo-icon" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="28" height="28" rx="8" class="logo-icon-rect"/>
@@ -28,47 +37,42 @@ const isSnapchat = platform === 'snapchat';
         <span class="footer-logo-text">TikSaveHub</span>
       </a>
       <p class="footer-tagline">
-        {isInstagram
-          ? 'Download Instagram videos, Reels, and Stories without watermarks. Free, fast, and always HD quality.'
-          : isFacebook
-            ? 'Download Facebook videos, Reels, and audio in HD. Free, fast, and no sign-up required.'
-            : isX
-              ? 'Download X (Twitter) videos and GIFs in HD. Free, fast, and no sign-up required.'
-              : isSnapchat
-                ? 'Download Snapchat videos, Spotlight clips, and Stories in HD. Free, fast, and no sign-up required.'
-                : 'Download TikTok videos without watermarks. Free, fast, and always HD quality.'}
+        {t(`footer.tagline.${platform}`)}
       </p>
-      <p class="footer-copy">&copy; {year} TikSaveHub. All rights reserved.</p>
+      <p class="footer-copy">{t('footer.copyright').replace('{year}', String(year))}</p>
     </div>
 
     <!-- Quick Links -->
     <div class="footer-col">
-      <p class="footer-col-label text-caption-mono">Tools</p>
+      <p class="footer-col-label text-caption-mono">{t('footer.tools')}</p>
       <ul class="footer-link-list">
-        <li><a href="/tiktok-video-downloader-without-watermark" class="footer-link" id="footer-link-tiktok">TikTok Downloader</a></li>
-        <li><a href="/tiktok-to-mp3" class="footer-link" id="footer-link-tiktok-mp3">TikTok to MP3</a></li>
-        <li><a href="/instagram-reels-downloader-without-watermark" class="footer-link" id="footer-link-ig-reels">Instagram Reels Downloader</a></li>
-        <li><a href="/instagram-video-downloader-without-watermark" class="footer-link" id="footer-link-ig-video">Instagram Video Downloader</a></li>
-        <li><a href="/instagram-story-downloader-without-watermark" class="footer-link" id="footer-link-ig-story">Instagram Story Downloader</a></li>
-        <li><a href="/facebook-video-downloader" class="footer-link" id="footer-link-fb-video">Facebook Video Downloader</a></li>
-        <li><a href="/facebook-reels-downloader" class="footer-link" id="footer-link-fb-reels">Facebook Reels Downloader</a></li>
-        <li><a href="/facebook-to-mp3" class="footer-link" id="footer-link-fb-mp3">Facebook to MP3</a></li>
-        <li><a href="/x-video-downloader" class="footer-link" id="footer-link-x">X (Twitter) Downloader</a></li>
-        <li><a href="/snapchat-downloader" class="footer-link" id="footer-link-sc">Snapchat Downloader</a></li>
-        <li><a href="/snapchat-story-downloader" class="footer-link" id="footer-link-sc-story">Snapchat Story Downloader</a></li>
-        <li><a href="/snapchat-to-mp3" class="footer-link" id="footer-link-sc-mp3">Snapchat to MP3</a></li>
+        <li><a href={localPath('/tiktok-video-downloader-without-watermark')} class="footer-link" id="footer-link-tiktok">TikTok Downloader</a></li>
+        <li><a href={localPath('/tiktok-to-mp3')} class="footer-link" id="footer-link-tiktok-mp3">TikTok to MP3</a></li>
+        <li><a href={localPath('/instagram-reels-downloader-without-watermark')} class="footer-link" id="footer-link-ig-reels">Instagram Reels Downloader</a></li>
+        <li><a href={localPath('/instagram-video-downloader-without-watermark')} class="footer-link" id="footer-link-ig-video">Instagram Video Downloader</a></li>
+        <li><a href={localPath('/instagram-story-downloader-without-watermark')} class="footer-link" id="footer-link-ig-story">Instagram Story Downloader</a></li>
+        <li><a href={localPath('/facebook-video-downloader')} class="footer-link" id="footer-link-fb-video">Facebook Video Downloader</a></li>
+        <li><a href={localPath('/facebook-reels-downloader')} class="footer-link" id="footer-link-fb-reels">Facebook Reels Downloader</a></li>
+        <li><a href={localPath('/facebook-to-mp3')} class="footer-link" id="footer-link-fb-mp3">Facebook to MP3</a></li>
+        <li><a href={localPath('/x-video-downloader')} class="footer-link" id="footer-link-x">X (Twitter) Downloader</a></li>
+        <li><a href={localPath('/snapchat-downloader')} class="footer-link" id="footer-link-sc">Snapchat Downloader</a></li>
+        <li><a href={localPath('/snapchat-story-downloader')} class="footer-link" id="footer-link-sc-story">Snapchat Story Downloader</a></li>
+        <li><a href={localPath('/snapchat-to-mp3')} class="footer-link" id="footer-link-sc-mp3">Snapchat to MP3</a></li>
       </ul>
     </div>
 
     <!-- Resources -->
     <div class="footer-col">
-      <p class="footer-col-label text-caption-mono">Resources</p>
+      <p class="footer-col-label text-caption-mono">{t('footer.resources')}</p>
       <ul class="footer-link-list">
-        <li><a href="/blog" class="footer-link" id="footer-link-blog">Blog</a></li>
-        <li><a href="/privacy" class="footer-link" id="footer-link-privacy">Privacy Policy</a></li>
-        <li><a href="/terms" class="footer-link" id="footer-link-terms">Terms of Service</a></li>
-        <li><a href="/dmca" class="footer-link" id="footer-link-dmca">DMCA</a></li>
-        <li><a href="/contact" class="footer-link" id="footer-link-contact">Contact Us</a></li>
+        <li><a href={localPath('/blog')} class="footer-link" id="footer-link-blog">{t('nav.blog')}</a></li>
+        <li><a href="#how-it-works" class="footer-link" id="footer-link-how-it-works">{t('nav.how_it_works')}</a></li>
+        <li><a href="#features" class="footer-link" id="footer-link-features">{t('nav.features')}</a></li>
+        <li><a href="#faq" class="footer-link" id="footer-link-faq">{t('nav.faq')}</a></li>
+        <li><a href={localPath('/privacy')} class="footer-link" id="footer-link-privacy">{t('footer.privacy')}</a></li>
+        <li><a href={localPath('/terms')} class="footer-link" id="footer-link-terms">{t('footer.terms')}</a></li>
+        <li><a href={localPath('/dmca')} class="footer-link" id="footer-link-dmca">{t('footer.dmca')}</a></li>
+        <li><a href={localPath('/contact')} class="footer-link" id="footer-link-contact">{t('footer.contact')}</a></li>
       </ul>
     </div>
   </div>
@@ -77,15 +81,7 @@ const isSnapchat = platform === 'snapchat';
   <div class="footer-bottom">
     <div class="container-page footer-bottom-inner">
       <p class="footer-bottom-text">
-        {isInstagram
-          ? 'TikSaveHub is not affiliated with Instagram or Meta Platforms, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'
-          : isFacebook
-            ? 'TikSaveHub is not affiliated with Facebook or Meta Platforms, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from Meta CDNs. Please respect content creators\' rights and copyright regulations.'
-            : isX
-              ? 'TikSaveHub is not affiliated with X Corp. or Twitter, Inc. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from X/Twitter CDNs. Please respect content creators\' rights and copyright regulations.'
-              : isSnapchat
-                ? 'TikSaveHub is not affiliated with Snap Inc. or Snapchat. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from Snapchat CDNs. Please respect content creators\' rights and copyright regulations.'
-                : 'TikSaveHub is not affiliated with TikTok or ByteDance Ltd. All trademarks belong to their respective owners. TikSaveHub is for personal use only. We do not host any copyrighted files or videos on our servers; all content is delivered directly from social media CDNs. Please respect content creators\' rights and copyright regulations.'}
+        {t(`footer.disclaimer.${platform}`)}
       </p>
     </div>
   </div>

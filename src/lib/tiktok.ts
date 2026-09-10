@@ -1,13 +1,10 @@
 import { memo, memoSWR } from './cache';
 import { resolveTikTokShortLink } from './normalize';
-import { cobaltExtractVideo } from './cobalt';
+import { runWithFallback } from './api-fallback';
+import { tiktokSources } from './platforms/tiktok';
 
 const DESKTOP_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
-
-const TIKWM_UA =
-  'Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10';
-const TIKWM_HOSTS = ['https://tikwm.com/api/', 'https://www.tikwm.com/api/'];
 
 const META_TTL_MS = 6 * 60 * 60 * 1000;
 const AUDIO_TTL_MS = 2 * 60 * 60 * 1000;
@@ -114,92 +111,11 @@ async function fetchOembedMeta(pageUrl: string): Promise<{ title: string; author
 }
 
 /**
- * PRIMARY ENGINE: TikWM API — fast, reliable, returns direct CDN URLs.
- * Tries two host variants with a tight timeout each.
- */
-async function tryTikWM(resolvedUrl: string): Promise<TikTokVideoMeta | null> {
-  const run = async (host: string): Promise<TikTokVideoMeta> => {
-    const apiUrl = `${host}?url=${encodeURIComponent(resolvedUrl)}&hd=1`;
-    const resp = await fetch(apiUrl, {
-      headers: { 'User-Agent': TIKWM_UA, 'Accept': 'application/json', 'Referer': 'https://tikwm.com/' },
-      signal: AbortSignal.timeout(3_000),
-    });
-    if (!resp.ok) throw new Error(`TikWM returned ${resp.status}`);
-    const data = await resp.json();
-    if (data.code !== 0 || !data.data) throw new Error(data.msg || 'TikWM failed');
-    const d = data.data;
-    const author = d.author ?? {};
-    const musicSource = d.music_info ?? d.music;
-    return {
-      play: d.play ?? d.hdplay ?? null,
-      hdplay: d.hdplay ?? d.play ?? null,
-      wmplay: d.wmplay ?? null,
-      cover: d.cover ?? null,
-      origin_cover: d.origin_cover ?? d.cover ?? null,
-      title: d.title ?? '',
-      duration: d.duration ?? 0,
-      author: { unique_id: author.unique_id ?? '', nickname: author.nickname ?? '', avatar: author.avatar ?? null },
-      digg_count: d.digg_count ?? 0,
-      comment_count: d.comment_count ?? 0,
-      share_count: d.share_count ?? 0,
-      play_count: d.play_count ?? 0,
-      music: musicSource ? {
-        play: musicSource.play ?? musicSource.play_url ?? null,
-        title: musicSource.title ?? undefined,
-        author: musicSource.author ?? undefined,
-        album: musicSource.album ?? null,
-      } : undefined,
-    };
-  };
-  try {
-    return await run(TIKWM_HOSTS[0]);
-  } catch {
-    try {
-      return await run(TIKWM_HOSTS[1]);
-    } catch {
-      return null;
-    }
-  }
-}
-
-/**
- * FALLBACK ENGINE: Cobalt API — requires turnstile token from client.
- * Uses cobalt's own extraction pipeline.
- */
-async function tryCobalt(resolvedUrl: string, turnstileToken?: string): Promise<TikTokVideoMeta | null> {
-  if (!turnstileToken) return null;
-  try {
-    const cobalt = await cobaltExtractVideo(resolvedUrl, turnstileToken);
-    if (!cobalt?.url) return null;
-    const oembed = await fetchOembedMeta(resolvedUrl);
-    return {
-      play: cobalt.url,
-      hdplay: cobalt.url,
-      wmplay: null,
-      cover: oembed?.cover || null,
-      origin_cover: null,
-      title: oembed?.title || 'TikTok video',
-      duration: 0,
-      author: {
-        unique_id: oembed?.author || '',
-        nickname: oembed?.author || '',
-        avatar: null,
-      },
-      digg_count: 0,
-      comment_count: 0,
-      share_count: 0,
-      play_count: 0,
-    };
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Core resolution pipeline:
+ * Core resolution pipeline — uses the generic fallback runner via
+ * src/lib/platforms/tiktok.ts source definitions.
  *  1. Resolve short links → canonical URL
- *  2. TikWM (primary, fast) + oEmbed metadata (parallel)
- *  3. Cobalt (fallback, needs turnstile token)
+ *  2. Run sources: TikWM → Cobalt → TikTok item-detail
+ *  3. Enrich with oEmbed metadata (title, cover, author)
  */
 async function resolveTikTok(videoUrl: string, turnstileToken?: string): Promise<TikTokVideoMeta> {
   let candidate = videoUrl.trim();
@@ -241,41 +157,47 @@ async function resolveTikTok(videoUrl: string, turnstileToken?: string): Promise
 
   console.log(`[TikTok] Resolving videoId=${videoId} canonical=${canonicalUrl}`);
 
-  // ─── Tier 1: TikWM (primary) + oEmbed metadata in parallel ───
-  const [tikwm, oembed] = await Promise.all([
-    tryTikWM(candidate),
-    fetchOembedMeta(canonicalUrl),
-  ]);
+  // Fetch oEmbed metadata in parallel with the fallback chain
+  const oembedP = fetchOembedMeta(canonicalUrl);
 
-  if (tikwm) {
-    // Enrich with oEmbed metadata if TikWM fields are sparse
-    if (oembed) {
-      if (!tikwm.title && oembed.title) tikwm.title = oembed.title;
-      if (!tikwm.author?.nickname && oembed.author) {
-        tikwm.author.nickname = oembed.author;
-        tikwm.author.unique_id = tikwm.author.unique_id || oembed.author;
-      }
-      if (!tikwm.cover && oembed.cover) tikwm.cover = oembed.cover;
+  // ─── Run API sources via failover runner ───
+  // The platform module sources produce MediaMeta — we adapt to TikTokVideoMeta.
+  const mediaResult = await runWithFallback(candidate, tiktokSources(turnstileToken));
+  const meta: TikTokVideoMeta = {
+    play: mediaResult.data.sdUrl,
+    hdplay: mediaResult.data.hdUrl,
+    wmplay: mediaResult.data.wmUrl,
+    cover: mediaResult.data.cover,
+    origin_cover: mediaResult.data.cover,
+    title: mediaResult.data.title,
+    duration: mediaResult.data.duration,
+    author: {
+      unique_id: mediaResult.data.authorUsername || '',
+      nickname: mediaResult.data.authorName,
+      avatar: mediaResult.data.authorAvatar,
+    },
+    digg_count: mediaResult.data.stats.likes ?? 0,
+    comment_count: mediaResult.data.stats.comments ?? 0,
+    share_count: mediaResult.data.stats.shares ?? 0,
+    play_count: mediaResult.data.stats.views ?? 0,
+    music: mediaResult.data.audioUrl
+      ? { play: mediaResult.data.audioUrl, title: mediaResult.data.title, author: mediaResult.data.authorName }
+      : undefined,
+  };
+  console.log(`[TikTok] Resolved via ${mediaResult.data.resolvedBy} in ${mediaResult.attemptMs}ms`);
+
+  // Enrich with oEmbed metadata if fields are sparse
+  const oembed = await oembedP;
+  if (oembed) {
+    if (!meta.title && oembed.title) meta.title = oembed.title;
+    if (!meta.author?.nickname && oembed.author) {
+      meta.author.nickname = oembed.author;
+      meta.author.unique_id = meta.author.unique_id || oembed.author;
     }
-    console.log(`[TikTok] TikWM SUCCESS: ${tikwm.title.slice(0, 50)}`);
-    return tikwm;
+    if (!meta.cover && oembed.cover) meta.cover = oembed.cover;
   }
 
-  // ─── Tier 2: Cobalt (fallback, requires turnstile token) ───
-  console.log('[TikTok] TikWM failed, trying Cobalt...');
-  const cobalt = await tryCobalt(candidate, turnstileToken);
-  if (cobalt) {
-    // Enrich with oEmbed metadata
-    if (oembed) {
-      if (!cobalt.title || cobalt.title === 'TikTok video') cobalt.title = oembed.title || cobalt.title;
-      if (!cobalt.author?.nickname) cobalt.author.nickname = oembed.author || '';
-      if (!cobalt.cover) cobalt.cover = oembed.cover || null;
-    }
-    console.log(`[TikTok] Cobalt SUCCESS`);
-    return cobalt;
-  }
-
-  throw new Error('All TikTok servers are busy. Please try again.');
+  return meta;
 }
 
 export async function fetchTikTokMetaWithFallback(

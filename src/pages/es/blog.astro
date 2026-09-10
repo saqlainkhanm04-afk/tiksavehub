@@ -1,0 +1,72 @@
+---
+// Blog — SEO-optimized landing page (Español)
+// URL: /blog
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const blogPosts = [
+  { slug: 'facebook-video-downloader-guide', tag: 'Facebook', title: 'Descargador de Videos de Facebook: Guarda Videos de FB en HD (Guía 2026)', excerpt: 'Descarga videos de Facebook, Reels y clips de Watch en HD 1080p sin marca de agua. Paso a paso para iPhone, Android y PC.' },
+  { slug: 'x-video-downloader-guide', tag: 'X & Twitter', title: 'Descargador de Videos de X: Guarda Videos de Twitter en HD (Guía 2026)', excerpt: 'Descarga videos, GIFs y audio de X (Twitter) en HD 1080p sin marca de agua. Gratis, sin registro.' },
+  { slug: 'tiktok-video-downloader-without-watermark', tag: 'TikTok', title: 'Descargador de Videos de TikTok Sin Marca de Agua (HD y Gratis)', excerpt: 'Descarga videos de TikTok sin marca de agua en calidad HD. Rápido, gratis y funciona en iPhone, Android y PC.' },
+];
+---
+
+<Layout
+  title="Blog — Guías, Consejos y Tutoriales | TikSaveHub"
+  description="Guías, consejos y tutoriales sobre cómo descargar videos de TikTok, Instagram, Facebook y X en HD sin marca de agua."
+  keywords="blog tiksavehub, guías de descarga, tutoriales, descargar videos hd"
+  canonical="/blog"
+  ogImage="/og-blog.png"
+  skipSoftwareApp
+  lang="es"
+>
+  <section class="blog-section" aria-labelledby="blog-headline">
+    <div class="blog-inner container-page">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a href="/"><span>Inicio</span></a><meta itemprop="position" content="1" /></li>
+          <li aria-current="page"><span>Blog</span><meta itemprop="position" content="2" /></li>
+        </ol>
+      </nav>
+      <div class="blog-header">
+        <span class="section-eyebrow text-caption-mono">Blog</span>
+        <h1 id="blog-headline" class="blog-title">Guías, Consejos y Tutoriales</h1>
+        <p class="blog-sub">Aprende a descargar videos de TikTok, Instagram, Facebook y X en HD sin marca de agua.</p>
+      </div>
+      <div class="blog-grid">
+        {blogPosts.map((post) => (
+          <a href={`/blog/${post.slug}`} class="blog-card">
+            <span class="blog-tag">{post.tag}</span>
+            <h2 class="blog-card-title">{post.title}</h2>
+            <p class="blog-card-excerpt">{post.excerpt}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <SocialShare url="/blog" title="Blog — Guías y Tutoriales | TikSaveHub" description="Guías y tutoriales sobre cómo descargar videos en HD." />
+</Layout>
+
+<style>
+  .blog-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .blog-inner { display: flex; flex-direction: column; gap: var(--spacing-2xl); max-width: 900px; margin-inline: auto; }
+  .breadcrumb-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: var(--text-body-sm); color: var(--color-mute); }
+  .breadcrumb-list li + li::before { content: '/'; margin-right: 6px; color: var(--color-hairline-strong); }
+  .breadcrumb-list a { color: var(--color-body); text-decoration: none; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .blog-header { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .section-eyebrow { color: var(--color-mute); }
+  .blog-title { font-size: var(--text-display-xl); font-weight: 600; line-height: 1.05; letter-spacing: -2.5px; color: var(--color-ink); margin: 0; }
+  .blog-sub { font-size: var(--text-body-md); color: var(--color-body); margin: 0; }
+  .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--spacing-lg); }
+  .blog-card { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-xl); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .blog-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -8px rgba(124, 58, 237, 0.15); }
+  .blog-tag { font-size: 12px; font-weight: 600; color: #7c3aed; letter-spacing: -0.2px; }
+  .blog-card-title { font-size: 17px; font-weight: 650; letter-spacing: -0.4px; color: var(--color-ink); margin: 0; line-height: 1.3; }
+  .blog-card-excerpt { font-size: 14px; color: var(--color-mute); line-height: 1.5; margin: 0; }
+  .dark .blog-card { box-shadow: inset 0 0 0 1px #ffffff0a; }
+  @media (max-width: 600px) { .blog-section { padding: var(--spacing-4xl) var(--spacing-md); } .blog-title { font-size: 32px; letter-spacing: -1.5px; } .blog-grid { grid-template-columns: 1fr; } }
+</style>

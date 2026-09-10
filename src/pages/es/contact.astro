@@ -1,0 +1,76 @@
+---
+export const prerender = true;
+import Layout from '../../layouts/Layout.astro';
+
+const contactJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [ { '@type': 'ContactPage', name: 'Contáctenos — TikSaveHub', description: 'Ponte en contacto con TikSaveHub para soporte, consultas o comentarios.', url: 'https://tiksavehub.com/contact' }, { '@type': 'Organization', name: 'TikSaveHub', url: 'https://tiksavehub.com', logo: 'https://tiksavehub.com/logo.png', contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: 'support@tiksavehub.com', availableLanguage: 'Spanish' } } ] });
+---
+
+<Layout
+  title="Contáctenos — TikSaveHub"
+  description="Ponte en contacto con TikSaveHub para soporte, consultas o comentarios."
+  keywords="contacto tiksavehub, soporte, ayuda, contacto"
+  canonical="/contact"
+  ogImage="/og-contact.png"
+  jsonLd={contactJsonLd}
+  skipSoftwareApp
+  lang="es"
+>
+  <section class="contact-section" aria-labelledby="contact-headline">
+    <div class="contact-inner container-page">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a href="/"><span>Inicio</span></a><meta itemprop="position" content="1" /></li>
+          <li aria-current="page"><span>Contáctenos</span><meta itemprop="position" content="2" /></li>
+        </ol>
+      </nav>
+      <div class="contact-header">
+        <span class="section-eyebrow text-caption-mono">Soporte</span>
+        <h1 id="contact-headline" class="contact-title">Contáctenos</h1>
+        <p class="contact-sub">¿Tienes preguntas o comentarios? Nos encantaría saber de ti.</p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-methods">
+          <div class="contact-method">
+            <div class="contact-method-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <h2 class="contact-method-title">Correo Electrónico</h2>
+            <p class="contact-method-desc">Envíanos un correo para soporte general, consultas o comentarios.</p>
+            <a href="mailto:support@tiksavehub.com" class="contact-method-link">support@tiksavehub.com</a>
+          </div>
+          <div class="contact-method">
+            <div class="contact-method-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <h2 class="contact-method-title">DMCA y Derechos de Autor</h2>
+            <p class="contact-method-desc">Para avisos de infracción de derechos de autor, contáctanos directamente.</p>
+            <a href="mailto:samneil7582@gmail.com" class="contact-method-link">samneil7582@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="contact-back"><a href="/" class="btn-primary-sm">&larr; Volver a TikSaveHub</a></div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .contact-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .contact-inner { display: flex; flex-direction: column; gap: var(--spacing-2xl); max-width: 760px; margin-inline: auto; }
+  .breadcrumb-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: var(--text-body-sm); color: var(--color-mute); }
+  .breadcrumb-list li + li::before { content: '/'; margin-right: 6px; color: var(--color-hairline-strong); }
+  .breadcrumb-list a { color: var(--color-body); text-decoration: none; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .contact-header { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .section-eyebrow { color: var(--color-mute); }
+  .contact-title { font-size: var(--text-display-xl); font-weight: 600; line-height: 1.05; letter-spacing: -2.5px; color: var(--color-ink); margin: 0; }
+  .contact-sub { font-size: var(--text-body-md); color: var(--color-body); margin: 0; }
+  .contact-card { background-color: var(--color-canvas); border-radius: var(--radius-lg); padding: var(--spacing-3xl); box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .contact-methods { display: flex; flex-direction: column; gap: var(--spacing-2xl); }
+  .contact-method { display: flex; flex-direction: column; gap: var(--spacing-md); padding: var(--spacing-xl); border-radius: var(--radius-md); background: var(--color-canvas-soft); }
+  .contact-method-icon { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(0, 124, 240, 0.1)); display: flex; align-items: center; justify-content: center; color: #7c3aed; }
+  .contact-method-title { font-size: var(--text-display-sm); font-weight: 600; color: var(--color-ink); margin: 0; }
+  .contact-method-desc { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0; }
+  .contact-method-link { color: var(--color-link); text-decoration: underline; font-weight: 500; }
+  .contact-back { display: flex; justify-content: center; }
+  .btn-primary-sm { display: inline-flex; align-items: center; gap: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-lg); border-radius: var(--radius-full); background-color: var(--color-ink); color: var(--color-on-primary); font-size: var(--text-body-sm); font-weight: 500; text-decoration: none; transition: opacity 0.2s ease, transform 0.2s ease; border: none; cursor: pointer; line-height: 2.2; }
+  .btn-primary-sm:hover { opacity: 0.85; transform: translateY(-1px); }
+  .dark .contact-card { box-shadow: inset 0 0 0 1px #ffffff0a, 0px 1px 1px #00000010, 0px 4px 8px #00000020; }
+  .dark .contact-method { background: var(--color-canvas-soft-2); }
+  @media (max-width: 600px) { .contact-section { padding: var(--spacing-4xl) var(--spacing-md); } .contact-title { font-size: 32px; letter-spacing: -1.5px; } .contact-card { padding: var(--spacing-lg); } }
+</style>

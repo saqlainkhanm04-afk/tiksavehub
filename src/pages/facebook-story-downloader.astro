@@ -23,12 +23,12 @@ const faqData = [
   {
     id: 'story-anonymous',
     q: 'Can I save a Facebook Story anonymously without them knowing?',
-    a: 'Yes, you can easily save a Facebook Story anonymously using TikSaveHub. Since you don\u2019t need to log in to our platform to download public stories, the creator will never know you viewed or downloaded their content.',
+    a: 'Yes, you can easily save a Facebook Story anonymously using TikSaveHub. Since you don’t need to log in to our platform to download public stories, the creator will never know you viewed or downloaded their content.',
   },
   {
     id: 'story-notified',
     q: 'Will someone know if I download their Facebook Story?',
-    a: 'No, the creator will not be notified. TikSaveHub fetches the media directly from Facebook\u2019s servers, ensuring your download is completely private and your name never appears on their story viewer list.',
+    a: 'No, the creator will not be notified. TikSaveHub fetches the media directly from Facebook’s servers, ensuring your download is completely private and your name never appears on their story viewer list.',
   },
   {
     id: 'story-hd',
@@ -53,7 +53,7 @@ const faqData = [
   {
     id: 'story-expired',
     q: 'Can I download an expired Facebook Story?',
-    a: 'No, you cannot download expired Facebook Stories. Once a story disappears after 24 hours, its link is no longer active. However, if the user saves the expired story to their \u201cFeatured Highlights\u201d, you can download it from there.',
+    a: 'No, you cannot download expired Facebook Stories. Once a story disappears after 24 hours, its link is no longer active. However, if the user saves the expired story to their “Featured Highlights”, you can download it from there.',
   },
   {
     id: 'story-photo-video',
@@ -72,8 +72,18 @@ const faqData = [
   },
   {
     id: 'story-whyfail',
-    q: 'Why can\u2019t I download a Facebook Story?',
+    q: 'Why can’t I download a Facebook Story?',
     a: 'Downloads typically fail if the story is private, has expired after 24 hours, or the link is copied incorrectly. Make sure you are copying the link from a publicly visible story and try again.',
+  },
+  {
+    id: 'story-someone-know',
+    q: 'Will someone know if I download their Facebook Story?',
+    a: 'No. TikSaveHub fetches stories directly from Facebook\'s servers — the creator receives no notification, and your name never appears on their story viewer list. Your download is completely anonymous.',
+  },
+  {
+    id: 'story-multiple-segments',
+    q: 'Can I download multiple Facebook Story segments at once?',
+    a: 'Yes. When you paste a story link, TikSaveHub processes all available segments. You can download each photo or video segment individually as they appear in the story.',
   },
 ];
 
@@ -93,7 +103,7 @@ const faqJsonLd = JSON.stringify({
 
 <Layout
   title="Facebook Story Downloader — Save FB Stories in HD Online | TikSaveHub"
-  description="Download Facebook stories in HD online for free — no watermark, no sign-up. Save FB story videos to iPhone, Android or PC in seconds before they disappear."
+  description="Download Facebook Stories before they expire. Free FB story saver — save photos & videos as HD MP4/JPG. Anonymous, no login. Works on iPhone & Android."
   keywords="download facebook story video in hd, facebook story downloader 1080p free, save facebook stories to device online, facebook story downloader, download fb stories, save facebook story video, facebook story saver, fb story downloader hd"
   canonical="/facebook-story-downloader"
   ogImage="/og-downloader.png"
@@ -101,7 +111,6 @@ const faqJsonLd = JSON.stringify({
   platform="facebook"
   jsonLd={faqJsonLd}
   appName="TikSaveHub — Facebook Story Downloader"
-  appRating={{ value: '4.8', count: '6125' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -129,36 +138,27 @@ const faqJsonLd = JSON.stringify({
   </FbHeroSection>
 
   <!-- Stats -->
-  <StatsSection stats={[
-    {
-      value: '1M+',
-      label: 'Facebook Stories Downloaded',
-      sub: 'Save FB story videos in HD instantly',
-      icon: 'download',
-    },
-    {
-      value: '150+',
-      label: 'Countries Using Our FB Story Saver',
-      sub: 'Download Facebook stories from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.8',
-      label: 'Fast & Free Story Download',
-      sub: 'No watermark, no login required',
-      icon: 'star',
-    },
-  ]} />
+  <StatsSection platform="Facebook" />
 
   <!-- SEO Content Section — 600+ words -->
   <FbSeoArticle
     headline="Save Facebook stories in HD before they disappear."
     quickLinks={[
-      { label: 'Facebook Story Downloader', href: '#download-tool' },
-      { label: 'How It Works', href: '#how-it-works' },
-      { label: 'Features', href: '#features' },
-      { label: 'FAQ', href: '#faq' },
+      { label: 'TikTok Video Downloader', href: '/tiktok-video-downloader-without-watermark' },
+      { label: 'TikTok to MP3', href: '/tiktok-to-mp3' },
+      { label: 'Instagram Reels Downloader', href: '/instagram-reels-downloader-without-watermark' },
+      { label: 'Instagram Video Downloader', href: '/instagram-video-downloader-without-watermark' },
+      { label: 'Instagram Story Downloader', href: '/instagram-story-downloader-without-watermark' },
+      { label: 'Instagram Audio Downloader', href: '/instagram-audio-downloader' },
       { label: 'Facebook Video Downloader', href: '/facebook-video-downloader' },
+      { label: 'Facebook Reels Downloader', href: '/facebook-reels-downloader' },
+      { label: 'Facebook Story Downloader', href: '#download-tool' },
+      { label: 'Facebook to MP3', href: '/facebook-to-mp3' },
+      { label: 'Facebook Photo Downloader', href: '/facebook-photo-downloader' },
+      { label: 'Snapchat Downloader', href: '/snapchat-downloader' },
+      { label: 'Snapchat Story Downloader', href: '/snapchat-story-downloader' },
+      { label: 'Snapchat to MP3', href: '/snapchat-to-mp3' },
+      { label: 'X/Twitter Video Downloader', href: '/x-video-downloader' },
     ]}
     supportedLinks={['facebook.com/stories/…', 'facebook.com/reel/…', 'facebook.com/watch/?v=…', 'fb.watch/…']}
   >
@@ -265,7 +265,7 @@ const faqJsonLd = JSON.stringify({
         icon: 'music',
         accent: 'preview',
         title: 'MP3 Audio Extraction',
-        body: 'Need only the sound? Extract the story\u2019s soundtrack as a high-quality MP3 with one tap.',
+        body: 'Need only the sound? Extract the story’s soundtrack as a high-quality MP3 with one tap.',
       },
       {
         icon: 'device',

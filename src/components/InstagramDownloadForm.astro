@@ -702,6 +702,8 @@ const meta = typeMeta[type];
 </style>
 
 <script>
+  import { attachSimProgress } from '../lib/download-progress';
+
   const form = document.getElementById('instagram-form') as HTMLFormElement;
   const urlInput = document.getElementById('instagram-url') as HTMLInputElement;
   const downloadBtn = document.getElementById('download-btn') as HTMLButtonElement;
@@ -716,14 +718,24 @@ const meta = typeMeta[type];
   const typeLabel = currentTabType.charAt(0).toUpperCase() + currentTabType.slice(1);
 
   // --- Cloudflare Turnstile for cobalt API auth ---
-  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAEl-ZmiorHhgs7jw';
   let turnstileToken: string | null = null;
   let turnstileReady = false;
+  let turnstileWidgetId: string | null = null;
+
+  function cleanupTurnstile() {
+    if (turnstileWidgetId !== null && typeof (window as any).turnstile !== 'undefined') {
+      try { (window as any).turnstile.remove(turnstileWidgetId); } catch {}
+      turnstileWidgetId = null;
+    }
+  }
+
   function initTurnstile() {
     if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
     const c = document.getElementById('cf-turnstile-container');
     if (!c) return;
-    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+    cleanupTurnstile();
+    turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
       callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
       'error-callback': () => { turnstileToken = null; turnstileReady = false; },
       'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
@@ -735,8 +747,9 @@ const meta = typeMeta[type];
       if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
       const c = document.getElementById('cf-turnstile-container');
       if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      cleanupTurnstile();
       c.innerHTML = '';
-      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
         callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
         'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
         'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
@@ -871,6 +884,9 @@ const meta = typeMeta[type];
       const bar = btn.querySelector('.dl-proc-bar') as HTMLElement;
       if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
 
+      // Simulated progress — smooth 0→85% while server prepares the stream
+      const sim = attachSimProgress(bar, labelEl, 'Processing…', { ceiling: 85, intervalMs: 250 });
+
       const xhr = new XMLHttpRequest();
       getTurnstileToken().then((token) => {
       const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
@@ -881,19 +897,19 @@ const meta = typeMeta[type];
       xhr.onprogress = function (e) {
         if (e.lengthComputable && bar && labelEl) {
           const pct = Math.round((e.loaded / e.total) * 100);
-          bar.style.transition = 'none';
-          bar.style.width = pct + '%';
-          labelEl.textContent = 'Processing… ' + pct + '%';
+          sim.stop(pct);
         }
       };
 
       xhr.onload = function () {
+        sim.stop(xhr.status === 200 ? 100 : undefined);
         if (xhr.status === 200) {
           const blob = xhr.response;
           const blobUrl = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = currentTabType === 'audio' ? 'tiksavehub-audio.m4a' : 'tiksavehub-video.mp4';
+          const isAudio = currentTabType === 'audio';
+          a.download = isAudio ? 'tiksavehub-audio.mp3' : 'tiksavehub-reel.mp4';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -901,6 +917,12 @@ const meta = typeMeta[type];
           btn.classList.add('dl-tile-done');
           setTimeout(() => btn.classList.remove('dl-tile-done'), 1500);
         } else {
+          let errMsg = 'Download failed. Please try again.';
+          try {
+            const errJson = JSON.parse(xhr.responseText);
+            if (errJson.error) errMsg = errJson.error;
+          } catch {}
+          showError(errMsg);
           btn.classList.add('dl-tile-error');
           setTimeout(() => btn.classList.remove('dl-tile-error'), 2000);
         }
@@ -911,11 +933,25 @@ const meta = typeMeta[type];
       };
 
       xhr.onerror = function () {
+        sim.stop();
         btn.classList.add('dl-tile-error');
         setTimeout(() => btn.classList.remove('dl-tile-error'), 2000);
         btn.classList.remove('dl-tile-processing');
         btn.disabled = false;
         if (labelEl) labelEl.textContent = origLabel;
+        if (bar) bar.style.width = '0%';
+      };
+
+      xhr.ontimeout = function () {
+        sim.stop();
+        btn.classList.add('dl-tile-error');
+        if (labelEl) labelEl.textContent = 'Timed out — try again';
+        setTimeout(() => {
+          btn.classList.remove('dl-tile-error');
+          if (labelEl) labelEl.textContent = origLabel;
+        }, 2000);
+        btn.classList.remove('dl-tile-processing');
+        btn.disabled = false;
         if (bar) bar.style.width = '0%';
       };
 

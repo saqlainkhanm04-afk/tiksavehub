@@ -1,0 +1,127 @@
+---
+// Facebook Reels Downloader — SEO-optimized landing page (日本語)
+// URL: /facebook-reels-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbSeoArticle from '../../components/FbSeoArticle.astro';
+import FbStepsSection from '../../components/FbStepsSection.astro';
+import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbFaqSection from '../../components/FbFaqSection.astro';
+import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbInternalLinks from '../../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+
+const faqData = [
+  { id: 'reels-hd1080', q: 'Facebook ReelsをHD 1080pでダウンロードするにはどうすればいいですか？', a: 'Facebook ReelsをHD 1080pでダウンロードするには、公開されているReelのリンクをコピーし、TikSaveHubに貼り付けてダウンロードをクリックします。元のReelが1080pでアップロードされていれば、自動的にフルHDのMP4ファイルが保存されます。' },
+  { id: 'reels-nowm', q: 'Facebook Reelsをウォーターマークなしで保存できますか？', a: 'はい、TikSaveHubはFacebook ReelsをMP4ファイルに追加のウォーターマーク、ロゴ、ブランディングなしでダウンロードします。ただし、アップロード前にビデオにウォーターマークが編集されている場合は削除できません。' },
+  { id: 'reels-iphone', q: 'Facebook Reels DownloaderはiPhone Safariで動作しますか？', a: 'はい、TikSaveHubは追加アプリなしでiPhone Safariでスムーズに動作します。SafariにReelのリンクを貼り付け、ダウンロードをタップするだけでMP4が直接保存されます。' },
+  { id: 'reels-android', q: 'FB ReelsをAndroidギャラリーに保存するにはどうすればいいですか？', a: 'Chromeを開き、公開されているReelのリンクをTikSaveHubに貼り付けてダウンロードをタップすると、MP4ファイルがダウンロードフォルダに保存され、ギャラリーに表示されます。' },
+  { id: 'reels-link-format', q: 'Facebook Reels Downloaderはfacebook.com/reelリンクをサポートしていますか？', a: 'はい、TikSaveHubはすべての標準的なfacebook.com/reel/...リンクを完全にサポートしています。' },
+  { id: 'reels-fbwatch', q: 'fb.watchリンクからFacebook Reelをダウンロードできますか？', a: 'はい、短いfb.watch共有リンクも完全にサポートされています。TikSaveHubは自動的に短いリンクを解決します。' },
+  { id: 'reels-mp3', q: 'Facebook ReelをオンラインでMP3に変換できますか？', a: 'はい、TikSaveHubでFacebook Reelを簡単にMP3に変換できます。' },
+  { id: 'reels-private', q: '非公開のFacebook Reelsをダウンロードできますか？', a: 'いいえ、TikSaveHubは非公開または制限されたFacebook Reelsをダウンロードすることはできません。' },
+  { id: 'reels-no-login', q: 'ReelをダウンロードするためにFacebookにログインする必要がありますか？', a: 'いいえ、ログインは不要です。公開されているFacebook Reelsを匿名でダウンロードできます。' },
+  { id: 'reels-no-limit', q: 'Facebook Reelsのダウンロードに毎日の制限はありますか？', a: 'いいえ、TikSaveHubは100%無料で毎日のダウンロード制限はゼロです。' },
+  { id: 'reels-whyfail', q: 'なぜFacebook Reelをダウンロードできないのですか？', a: 'Reelが非公開に設定されている、削除されている、またはコピーしたURLが不完全な場合、ダウンロードは通常失敗します。' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Facebook Reels Downloader HD 1080p — ウォーターマークなし、無料 | TikSaveHub"
+  description="Facebook ReelsをHD 1080pで無料、ウォーターマークなし、登録不要でダウンロード。iPhone、Android、PCでMP4として保存。"
+  keywords="facebook reels ダウンローダー hd 1080p 無料, facebook reels ダウンローダー ウォーターマークなし, facebook reels iphone ダウンロード, reels ダウンローダー hd, facebook reels 保存"
+  canonical="/facebook-reels-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Facebook Reels Downloader"
+  lang="ja"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Facebook Reels Downloader", "item": "https://tiksavehub.com/facebook-reels-downloader" } ] })} />
+
+  <FbHeroSection
+    crumb="Facebook Reels Downloader"
+    badge="無料 · HD 1080p · ウォーターマークなし"
+    title="Facebook Reels Downloader — HD 1080p、ウォーターマークなし"
+    subline="Facebook ReelsをHD 1080pでダウンロード — 無料、高速、ウォーターマークなし。"
+    sub="公開されているFacebook ReelをフルHD最大1080pで保存 — 無料、高速、登録不要、ウォーターマークなし。facebook.com/reel/...リンクを貼り付けてMP4をダウンロードするか、MP3として音声を抽出できます。"
+    trust={['100%無料', 'ウォーターマークなし', 'HD最大1080p', 'iPhone対応', 'Android対応']}
+    shareUrl="/facebook-reels-downloader"
+    shareTitle="Facebook Reels Downloader HD 1080p — ウォーターマークなし"
+    shareDescription="Facebook ReelsをHD 1080pでダウンロード。無料、高速、ウォーターマークなし。MP4またはMP3。"
+  >
+    <FacebookDownloadForm mode="reels" />
+  </FbHeroSection>
+
+  <StatsSection stats={[ { value: '100% 無料', label: 'TikTok動画をウォーターマークなしで即座にダウンロード', icon: 'download' }, { value: '登録不要', label: 'あらゆるデバイス、世界中どこでも動作します', icon: 'globe' }, { value: 'HD画質', label: '元の解像度、ウォーターマークなし、ログイン不要', icon: 'star' } ]} />
+
+  <FbSeoArticle
+    headline="Facebook ReelsをフルHDでダウンロード — 無料でウォーターマークなし。"
+    quickLinks={[
+      { label: 'TikTok動画ダウンローダー', href: '/ja/tiktok-video-downloader-without-watermark' },
+      { label: 'TikTok to MP3', href: '/ja/tiktok-to-mp3' },
+      { label: 'Instagram Reelsダウンローダー', href: '/ja/instagram-reels-downloader-without-watermark' },
+      { label: 'Instagram動画ダウンローダー', href: '/ja/instagram-video-downloader-without-watermark' },
+      { label: 'Instagramストーリーダウンローダー', href: '/ja/instagram-story-downloader-without-watermark' },
+      { label: 'Instagram音声ダウンローダー', href: '/ja/instagram-audio-downloader' },
+      { label: 'Facebook動画ダウンローダー', href: '/ja/facebook-video-downloader' },
+      { label: 'Facebook Reelsダウンローダー', href: '#download-tool' },
+      { label: 'Facebookストーリーダウンローダー', href: '/ja/facebook-story-downloader' },
+      { label: 'Facebook to MP3', href: '/ja/facebook-to-mp3' },
+      { label: 'Facebook写真ダウンローダー', href: '/ja/facebook-photo-downloader' },
+      { label: 'Snapchatダウンローダー', href: '/ja/snapchat-downloader' },
+      { label: 'Snapchatストーリーダウンローダー', href: '/ja/snapchat-story-downloader' },
+      { label: 'Snapchat to MP3', href: '/ja/snapchat-to-mp3' },
+      { label: 'X/Twitter動画ダウンローダー', href: '/ja/x-video-downloader' },
+    ]}
+    supportedLinks={['facebook.com/reel/…', 'facebook.com/watch/?v=…', 'facebook.com/user/videos/…', 'fb.watch/…']}
+  >
+    <p>TikSaveHubは<strong>Facebook ReelsをHD 1080pで無料でダウンロード</strong>する最速の方法です。ReelsはFacebookで最も共有される短いビデオで、音楽やトレンドに満ちています。料理のチュートリアル、旅行クリップ、クリエイターの最高の作品など、保存する価値があるものがたくさんあります。ウォーターマークなしで、登録も不要です。</p>
+    <h3 class="text-highlight">Facebook ReelをHD 1080pでダウンロードする方法</h3>
+    <p>10秒以内に完了します。Facebookアプリまたはウェブサイトを開き、保存したいReelを見つけて、共有ボタンをタップして「リンクをコピー」します。TikSaveHubに戻って貼り付け、ダウンロードをクリックするだけで完了です。</p>
+    <h3 class="text-highlight">なぜユーザーがTikSaveHubを選ぶのか</h3>
+    <p>ほとんどの「Reels ダウンローダー」はアプリストアにリダイレクトし、毎日の制限を設け、アカウント作成を強制します。TikSaveHubはそれらを一切行いません。どのブラウザでも動作する無料のオンラインFacebook Reels ダウンローダーです。</p>
+    <h3 class="text-highlight">HD 1080p品質 — アップロードされたままの品質</h3>
+    <p>クリエイターが1080pでReelをアップロードすれば、1080pで配信されます。720pのソースしかなければ720pを受け取ります。再エンコード、圧縮、オーバーレイは一切ありません。</p>
+  </FbSeoArticle>
+
+  <FbStepsSection
+    eyebrow="ステップバイステップガイド"
+    headline="Facebook Reelsのダウンロード方法。"
+    sub="3つの簡単なステップ — 技術的なスキルは不要です。"
+    steps={[ { num: '01', icon: 'copy', title: 'Reelsリンクをコピー', body: 'Facebookアプリまたはサイトを開き、保存したいReelを見つけて共有をタップし「リンクをコピー」します。' }, { num: '02', icon: 'paste', title: 'TikSaveHubに貼り付け', body: 'ここに戻ってリンクを貼り付けると、Reelを検出して数秒で詳細を取得します。' }, { num: '03', icon: 'download', title: 'HD 1080pまたはMP3をダウンロード', body: '「HDビデオをダウンロード」で最大1080p、または「SDビデオをダウンロード」で小さいファイルを保存できます。' } ]} />
+
+  <FbFeaturesSection
+    eyebrow="機能"
+    headline="TikSaveHubがReelsに優れている理由。"
+    features={[ { icon: 'shield', accent: 'develop', title: 'ウォーターマークなし', body: 'Reelをクリエイターがアップロードしたままの品質でダウンロード — オーバーレイなし、圧縮なし、ウォーターマークなし。' }, { icon: 'music', accent: 'preview', title: 'MP3音声抽出', body: '任意のReelのサウンドトラックを1タップでMP3に変換。トレンドの音楽やボイスクリップをオフラインで保存。' }, { icon: 'zap', accent: 'ship', title: '超高速', body: 'サーバーサイド処理と並列チャンクストリーミングにより、ダウンロードが数秒で開始されます。' }, { icon: 'list', accent: 'develop', title: 'すべてのリンク形式', body: 'facebook.com/reel/...、Watchリンク、ビデオ投稿、fb.watch短縮リンク — すべての公開Reels URL形式に対応。' }, { icon: 'device', accent: 'preview', title: 'iPhone + Android対応', body: 'すべての画面に最適化。1タップでReelsをファイルアプリ、ギャラリー、ダウンロードフォルダに保存。' }, { icon: 'globe', accent: 'ship', title: '無制限で無料', body: '毎日の上限なし、プレミアムプランなし、アカウント不要。毎日、無期限にFacebook Reelsをダウンロードできます。' } ]} />
+
+  <FbFaqSection eyebrow="よくある質問" headline="Facebook Reelsダウンロードに関する質問。" prefix="reels" faqs={faqData} />
+
+  <FbCtaBand headline="お気に入りのReelは1クリックで保存できます。" sub="無料、高速、ウォーターマークなし — Reelsリンクを貼り付けてHDで保存。" ctaHref="#download-tool" ctaLabel="今すぐReelをダウンロード" />
+
+  <FbInternalLinks
+    headline="その他の無料Facebookおよびソーシャルツール"
+    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'FacebookのフルレングスビデオとWatchリンクをHDでダウンロード。' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Facebookビデオから高品質MP3音声を抽出。' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebookストーリーを24時間で消える前にHDで保存。' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebookの写真をフル解像度で無料保存。' }, { href: '/instagram-video-downloader-without-watermark', icon: 'ig', title: 'Instagram Video Downloader', desc: 'InstagramビデオをHDでダウンロード。' }, { href: '/instagram-reels-downloader-without-watermark', icon: 'igreels', title: 'Instagram Reels Downloader', desc: 'Instagram Reelsをウォーターマークなしで保存。' }, { href: '/tiktok-video-downloader-without-watermark', icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'TikTokビデオをHDでウォーターマークなしでダウンロード。' } ]}
+  />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">その他のツール</h2>
+      <div class="related-tools-grid">
+            <a href="/ja/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/ja/tiktok-to-mp3" class="related-tool-link">TikTok MP3</a>
+            <a href="/ja/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/ja/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

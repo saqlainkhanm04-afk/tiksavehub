@@ -1,0 +1,108 @@
+---
+// Instagram Story Downloader — SEO-optimized landing page (FR)
+// URL: /instagram-story-downloader-without-watermark
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import InstagramDownloadForm from '../../components/InstagramDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  { id: 'story-how', q: 'Comment puis-je télécharger une story Instagram ?', a: 'Copiez le lien de la story Instagram, collez-le sur TikSaveHub et cliquez sur télécharger.' },
+  { id: 'story-24h', q: 'Les stories Instagram disparaissent-elles après 24 heures ?', a: 'Oui, les stories Instagram disparaissent après 24 heures. Copiez le lien et téléchargez-la avant qu\'elle ne disparaisse.' },
+  { id: 'story-private', q: 'Puis-je télécharger des stories de comptes privés ?', a: 'Non, TikSaveHub ne fonctionne qu\'avec les stories publiques.' },
+  { id: 'story-no-login', q: 'Dois-je me connecter à Instagram ?', a: 'Non, aucune connexion n\'est requise. Il vous suffit du lien de la story publique.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Téléchargeur de Stories Instagram — Gratuit & Anonyme | TikSaveHub"
+  description="Téléchargez les stories Instagram avant qu'elles ne disparaissent. Gratuit, rapide et anonyme."
+  keywords="téléchargeur story instagram, instagram story downloader, ig story download, telecharger story instagram"
+  canonical="/instagram-story-downloader-without-watermark"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="instagram"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Instagram Story Downloader"
+  lang="fr"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Instagram Story Downloader", "item": "https://tiksavehub.com/instagram-story-downloader-without-watermark" } ] })} />
+
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> Gratuit · Anonyme · HD</span></div>
+      <h1 id="dl-hero-headline" class="dl-hero-headline">Téléchargeur de Stories Instagram</h1>
+      <p class="dl-hero-sub text-body-lg">Téléchargez les stories Instagram avant qu'elles ne disparaissent. Gratuit et anonyme.</p>
+      <div class="dl-hero-form" id="download-tool"><InstagramDownloadForm /></div>
+      <div class="dl-hero-trust">
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% Gratuit</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Anonyme</span>
+        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sans inscription</span>
+      </div>
+    </div>
+  </section>
+
+  <StatsSection stats={[ { value: '100% Gratuit', label: 'Téléchargez des vidéos TikTok instantanément sans filigrane', icon: 'download' }, { value: 'Sans Inscription', label: 'Fonctionne sur tous les appareils, du monde entier', icon: 'globe' }, { value: 'Qualité HD', label: 'Résolution originale, sans filigrane, sans connexion', icon: 'star' } ]} />
+
+  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <span class="section-eyebrow text-caption-mono">FAQ</span>
+      <h2 id="dl-faq-headline" class="section-headline">Questions sur les stories Instagram</h2>
+      <div class="dl-faq-grid">
+        {faqData.map((faq) => (
+          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <SocialShare url="/instagram-story-downloader-without-watermark" title="Téléchargeur de Stories Instagram — Gratuit & Anonyme" description="Téléchargez les stories Instagram avant qu'elles ne disparaissent. Gratuit et anonyme." />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Plus d'Outils</h2>
+      <div class="related-tools-grid">
+            <a href="/fr/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/fr/tiktok-to-mp3" class="related-tool-link">TikTok en MP3</a>
+            <a href="/fr/facebook-video-downloader" class="related-tool-link">Facebook Video Downloader</a>
+            <a href="/fr/facebook-reels-downloader" class="related-tool-link">Facebook Reels Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
+  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
+  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
+  .dl-badge-row { display: flex; justify-content: center; }
+  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
+  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
+  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
+  .dl-hero-form { width: 100%; max-width: 640px; }
+  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
+  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
+  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
+  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
+  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
+  .dl-faq-q::-webkit-details-marker { display: none; }
+  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
+  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
+  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
+  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+
+  .related-tools-section { padding: var(--spacing-2xl) 0; }
+  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
+  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
+  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
+  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+</style>

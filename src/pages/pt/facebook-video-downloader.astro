@@ -1,0 +1,767 @@
+---
+// Facebook Video Downloader — SEO-optimized landing page (Portuguese)
+// URL: /pt/facebook-video-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  {
+    id: 'fb-hd-1080p',
+    q: 'Como baixar v—deos do Facebook em HD 1080p?',
+    a: 'Para baixar v—deos do Facebook em HD 1080p, copie o link de um v—deo p—blico e cole no TikSaveHub, depois clique em baixar. Se o upload original do Facebook tiver uma fonte 1080p, a ferramenta fornecer— automaticamente essa op——o de alta resolu——o.',
+  },
+  {
+    id: 'fb-4k',
+    q: 'Posso baixar v—deos do Facebook em 4K?',
+    a: 'Sim, voc— pode baixar v—deos em 4K, mas apenas se o criador original enviou o v—deo ao Facebook em resolu——o 4K. O TikSaveHub obt—m a maior qualidade dispon—vel diretamente dos servidores do Facebook.',
+  },
+  {
+    id: 'fb-iphone',
+    q: 'Como salvar v—deos do Facebook na c—mera do iPhone?',
+    a: 'Para salvar v—deos do Facebook na c—mera do iPhone, abra o TikSaveHub no navegador Safari. Cole o link do v—deo, baixe o arquivo MP4 e selecione "Salvar v—deo" nos downloads do Safari para mov—-lo para o app Fotos.',
+  },
+  {
+    id: 'fb-android',
+    q: 'Como baixar v—deos do Facebook na galeria do Android?',
+    a: 'No dispositivo Android, abra o Chrome, cole o link do v—deo do Facebook no TikSaveHub e toque em baixar. O arquivo MP4 ser— salvo instantaneamente na pasta de downloads do navegador e aparecer— na galeria do dispositivo.',
+  },
+  {
+    id: 'fb-live',
+    q: 'Posso baixar v—deos ao vivo do Facebook?',
+    a: 'Sim, voc— pode baixar v—deos ao vivo do Facebook apenas ap—s a transmiss—o ter sido encerrada completamente e o replay ter sido publicado. Transmiss—es ao vivo em andamento n—o podem ser baixadas.',
+  },
+  {
+    id: 'fb-private',
+    q: 'Posso baixar v—deos privados do Facebook?',
+    a: 'N—o, n—o — poss—vel baixar v—deos privados do Facebook. Respeitamos a privacidade dos usu—rios, e o TikSaveHub processa e baixa apenas v—deos definidos como "p—blicos" e acess—veis livremente via URL.',
+  },
+  {
+    id: 'fb-no-login',
+    q: 'Preciso fazer login no Facebook para baixar v—deos?',
+    a: 'N—o — necess—rio login. Voc— n—o precisa fornecer nome de usu—rio ou senha do Facebook. Basta colar um link de v—deo p—blico no TikSaveHub e o download come—ar— instantaneamente.',
+  },
+  {
+    id: 'fb-reels-watch',
+    q: 'Posso baixar Facebook Reels e v—deos do Watch?',
+    a: 'Claro! O TikSaveHub suporta totalmente o download de Facebook Reels e v—deos do Watch p—blicos. Basta colar a URL de um Reel ou Watch na ferramenta para salvar o MP4 diretamente no seu dispositivo.',
+  },
+  {
+    id: 'fb-link-types',
+    q: 'Quais tipos de links do Facebook s—o compat—veis com o downloader?',
+    a: 'O TikSaveHub suporta todos os links padr—o do Facebook. Isso inclui posts regulares (facebook.com/watch), Facebook Reels (facebook.com/reel/), links de compartilhamento m—vel fb.watch e mais.',
+  },
+  {
+    id: 'fb-no-watermark',
+    q: 'Posso baixar v—deos do Facebook sem marca d\'—gua?',
+    a: 'Sim, o TikSaveHub fornece o v—deo fonte limpo sem nenhuma marca d\'—gua ou logotipo adicionado por n—s. No entanto, se o criador editou manualmente uma marca d\'—gua no v—deo antes de envi—-lo ao Facebook, n—o podemos remov—-la.',
+  },
+  {
+    id: 'fb-whyfail',
+    q: 'Por que n—o consigo baixar um v—deo do Facebook?',
+    a: 'O download pode falhar se o v—deo estiver definido como privado, tiver sido exclu—do, estiver restrito a um grupo espec—fico ou ainda estiver em transmiss—o ao vivo. Certifique-se de estar copiando o link p—blico diretamente do bot—o "Compartilhar".',
+  },
+  {
+    id: 'fb-free-unlimited',
+    q: 'O Facebook Video Downloader — gratuito e ilimitado?',
+    a: 'Sim, o TikSaveHub — 100% gratuito sem limite di—rio de downloads ou restri——es. Voc— pode baixar quantos v—deos p—blicos do Facebook quiser, quantas vezes quiser, sem pagar nada.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'Como baixar v—deos do Facebook em HD',
+  description: 'Guia passo a passo para baixar v—deos, Reels e posts do Facebook em HD usando o TikSaveHub.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Copie o link do v—deo do Facebook',
+      text: 'Abra o v—deo do Facebook que deseja salvar, clique no bot—o compartilhar e selecione copiar link.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Cole o link no TikSaveHub',
+      text: 'Acesse TikSaveHub.com e cole o link do Facebook copiado no campo de download.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Clique em baixar',
+      text: 'Clique no bot—o de download e aguarde alguns segundos enquanto o v—deo — processado.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Salve o v—deo em HD',
+      text: 'Selecione a op——o MP4 em HD e salve o arquivo de v—deo no seu dispositivo.',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
+---
+
+<Layout
+  lang="pt"
+  title="Facebook Video Downloader HD — Sem marca d'—gua, download gratuito | TikSaveHub"
+  description="Baixe v—deos e Reels do Facebook em HD — gr—tis, r—pido, sem marca d'—gua, sem cadastro. Links FB Watch, Reels e posts de v—deo para MP4 at— 1080p, ou extraia —udio como MP3."
+  keywords="facebook video downloader, facebook video downloader hd, facebook video downloader sem marca d'—gua, baixar v—deos do facebook, facebook reels downloader, baixar facebook reels em hd, fb video saver, baixar v—deo do facebook hd, facebook video downloader sem marca d'—gua, salvar v—deos do facebook, facebook video downloader online, fb reels downloader"
+  canonical="/facebook-video-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={combinedJsonLd}
+  appName="TikSaveHub — Facebook Video Downloader"
+>
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "In—cio", "item": "https://tiksavehub.com" },
+      { "@type": "ListItem", "position": 2, "name": "Facebook Video Downloader", "item": "https://tiksavehub.com/facebook-video-downloader" }
+    ]
+  })} />
+
+  <!-- Hero Section -->
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/pt"><span>In—cio</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Facebook Video Downloader</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Gr—tis — Qualidade HD — Sem marca d'—gua
+        </span>
+      </div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        Facebook Video Downloader — HD, sem marca d'—gua
+      </h1>
+
+      <p class="dl-hero-subline headline-gradient">
+        Baixe v—deos e Reels do Facebook em HD — gr—tis, r—pido, sem marca d'—gua.
+      </p>
+
+      <p class="dl-hero-sub text-body-lg">
+        Salve qualquer v—deo ou Reel p—blico do Facebook em HD at— 1080p — gr—tis, r—pido, sem cadastro, sem marca d'—gua.
+        Cole links do Facebook (Reels, Watch, posts de v—deo, fb.watch) para baixar MP4 em SD ou HD.
+      </p>
+
+      <div class="dl-hero-form-wrap">
+        <FacebookDownloadForm />
+      </div>
+
+      <div class="dl-hero-trust">
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        100% gr—tis
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Sem marca d'—gua
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        HD at— 1080p
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        —udio MP3
+      </span>
+      <span class="trust-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Funciona no celular
+      </span>
+      </div>
+
+      <div class="dl-hero-share">
+        <SocialShare
+          url="/facebook-video-downloader"
+          title="Facebook Video Downloader HD — Sem marca d'—gua"
+          description="Baixe v—deos e Reels do Facebook em HD. Gr—tis, r—pido, sem marca d'—gua. MP4 ou MP3."
+          image="/og-downloader.png"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsSection stats={[
+    {
+      value: '100% Gratuito',
+      label: 'Baixe vídeos do TikTok instantaneamente sem marca d\'água',
+      icon: 'download',
+    },
+    {
+      value: 'Sem Cadastro',
+      label: 'Funciona em qualquer dispositivo, de qualquer lugar',
+      icon: 'globe',
+    },
+    {
+      value: 'Qualidade HD',
+      label: 'Resolução original, sem marca d\'água, sem login',
+      icon: 'star',
+    },
+  ]} />
+
+  <!-- SEO Content Section -->
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">Sobre o TikSaveHub</span>
+          <h2 id="seo-about-headline" class="section-headline">
+            Salve v—deos e Reels do Facebook em HD limpo.
+          </h2>
+
+          <div class="seo-article">
+            <p>
+              O TikSaveHub — uma ferramenta para salvar v—deos p—blicos do Facebook em alta qualidade diretamente no seu dispositivo. Se voc— encontrou um Reel incr—vel no feed, tem um tutorial para consultar depois ou um post de v—deo de um criador que acompanha, o TikSaveHub entrega um arquivo MP4 otimizado em segundos. N—o — necess—rio instalar aplicativos, extens—es de navegador ou criar contas. Basta colar o link e baixar.
+            </p>
+
+            <h3 class="text-highlight">Como funciona o Facebook Video Downloader</h3>
+            <p>
+              Usar o TikSaveHub — extremamente simples. Primeiro, abra o Facebook e encontre o v—deo ou Reel que deseja salvar. Toque no bot—o compartilhar e selecione "Copiar link" — funciona com Reels, links Watch, posts de v—deo e links curtos fb.watch. Depois, volte ao TikSaveHub e cole o link no campo de entrada no topo da p—gina. Ao clicar em baixar, o servidor obt—m os metadados do v—deo em segundos. Voc— ver— o t—tulo do v—deo, thumbnail e op——es de download em HD ou SD. Clique na op——o desejada e o arquivo ser— salvo diretamente no seu dispositivo.
+            </p>
+
+            <h3 class="text-highlight">Baixe Facebook Reel em HD — sem marca d'—gua</h3>
+            <p>
+              Reels s—o o formato mais compartilhado do Facebook, e o downloader de Reels do FB salva na resolu——o m—xima dispon—vel (at— 1080p). Sem sobreposi——es ou marcas d'—gua. Basta colar um link facebook.com/reel/— e tocar em "Baixar v—deo em HD". A qualidade original — mantida intacta.
+            </p>
+
+            <h3 class="text-highlight">Salve v—deos do Watch e posts de v—deo do Facebook</h3>
+            <p>
+              Links Watch padr—o (facebook.com/watch/?v=—) e posts de v—deo (facebook.com/username/videos/—) s—o totalmente suportados. Seja um v—deo longo do Watch, upload de p—gina ou clipe de grupo, o mesmo fluxo de colar e baixar funciona sempre. Formatos legados como links video.php e links m—veis m.facebook.com tamb—m s—o processados, e o FB Video Saver remove automaticamente par—metros de rastreamento como ?mibextid= e ?ref=.
+            </p>
+
+            <h3 class="text-highlight">Extraia —udio do Facebook como MP3</h3>
+            <p>
+              Al—m de salvar v—deos, o <a href="/facebook-to-mp3">Facebook MP3 Converter</a> do TikSaveHub extrai a trilha de —udio de qualquer v—deo ou Reel e a converte em MP3 de alta qualidade — perfeita para ouvir offline trilhas sonoras de Reels, trechos de podcasts e segmentos de transmiss—es ao vivo.
+            </p>
+
+            <h3 class="text-highlight">Funciona em todos os dispositivos — Android, iPhone, desktop</h3>
+            <p>
+              Uma das maiores vantagens do TikSaveHub — que funciona em qualquer lugar. Android, iPhone, Windows PC, Mac, tablet — se voc— tem um navegador web, pode salvar v—deos do Facebook. N—o h— necessidade de instalar aplicativos separados, economizando espa—o de armazenamento e evitando riscos de aplicativos de terceiros.
+            </p>
+
+            <h3 class="text-highlight">Que qualidade e formato voc— recebe?</h3>
+            <p>
+              Todos os downloads s—o MP4 na maior resolu——o dispon—vel — HD at— 1080p se o criador enviou em HD, com op——o SD tamb—m dispon—vel quando o armazenamento — limitado. O TikSaveHub n—o adiciona marca d'—gua, n—o faz reencoding e n—o degrada a qualidade do upload original. Se voc— s— precisa do —udio, use o <a href="/facebook-to-mp3">Facebook MP3 Converter</a>.
+            </p>
+
+            <h3 class="text-highlight">Baixe v—deos do Facebook no iPhone, Android e desktop</h3>
+            <p>
+              O TikSaveHub — um Facebook Video Downloader totalmente baseado na web, e os passos s—o os mesmos em todos os dispositivos. No iPhone ou iPad, abra o Safari (ou qualquer navegador), cole o link e toque em baixar — o arquivo ser— salvo no navegador e aparecer— no app Arquivos. No Android, o MP4 ser— salvo diretamente na galeria ou pasta de downloads. No PC ou Mac, ser— salvo na barra de downloads ou pasta de downloads do navegador.
+            </p>
+
+            <h3 class="text-highlight">Posso salvar replay de lives do Facebook?</h3>
+            <p>
+              N—o — poss—vel baixar v—deos ao vivo do Facebook durante a transmiss—o, mas depois que a transmiss—o — encerrada e o v—deo se torna p—blico, voc— pode salvar o replay do TikSaveHub como qualquer outro v—deo — cole o link do v—deo ao vivo e baixe em HD ou SD MP4.
+            </p>
+
+            <h3 class="text-highlight">Onde os v—deos do Facebook baixados s—o salvos?</h3>
+            <p>
+              Depois de tocar em baixar, o arquivo MP4 — salvo diretamente no seu dispositivo. No desktop, aparece na barra de downloads e depois na pasta de downloads. No Android, — salvo na galeria ou pasta de downloads. No iPhone, — salvo nos downloads do app Arquivos. Se n—o encontrar o arquivo, abra o hist—rico de downloads do navegador e toque na entrada mais recente — o arquivo sempre pode ser baixado novamente com um clique.
+            </p>
+
+            <h3 class="text-highlight">Seguro, privado e totalmente gratuito</h3>
+            <p>
+              Levo sua privacidade a s—rio. O TikSaveHub n—o requer cria——o de conta, endere—o de e-mail ou informa——es pessoais. N—o armazenamos hist—rico de downloads e n—o rastreamos suas atividades de navega——o. Nada al—m do arquivo de v—deo final — salvo no seu dispositivo. Diferente de outras ferramentas de salvar v—deos do Facebook que cobram ou limitam downloads, o TikSaveHub — 100% gratuito sem limite di—rio.
+            </p>
+
+            <p>
+              Procurando outras ferramentas? <a href="/tiktok-video-downloader-without-watermark">Baixe v—deos do TikTok sem marca d'—gua</a> ou salve <a href="/instagram-reels-downloader-without-watermark">Reels do Instagram</a> da mesma maneira.
+            </p>
+
+            <p>
+              Pronto para experimentar? Role para cima e cole seu primeiro link do Facebook no formul—rio de download. Downloads r—pidos e f—ceis confiados por usu—rios do mundo todo. Sem complica——o, exatamente o v—deo que voc— quer.
+            </p>
+          </div>
+        </div>
+
+        <aside class="seo-content-sidebar">
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Links r—pidos</h3>
+            <ul class="seo-sidebar-list">
+              <li><a href="/pt/tiktok-video-downloader-without-watermark">Baixador de Vídeos TikTok</a></li>
+              <li><a href="/pt/tiktok-to-mp3">TikTok para MP3</a></li>
+              <li><a href="/pt/instagram-reels-downloader-without-watermark">Baixador de Reels Instagram</a></li>
+              <li><a href="/pt/instagram-video-downloader-without-watermark">Baixador de Vídeos Instagram</a></li>
+              <li><a href="/pt/instagram-story-downloader-without-watermark">Baixador de Stories Instagram</a></li>
+              <li><a href="/pt/instagram-audio-downloader">Baixador de Áudio Instagram</a></li>
+              <li><a href="/pt/facebook-video-downloader">Baixador de Vídeos Facebook</a></li>
+              <li><a href="/pt/facebook-reels-downloader">Baixador de Reels Facebook</a></li>
+              <li><a href="/pt/facebook-story-downloader">Baixador de Stories Facebook</a></li>
+              <li><a href="/pt/facebook-to-mp3">Facebook para MP3</a></li>
+              <li><a href="/pt/facebook-photo-downloader">Baixador de Fotos Facebook</a></li>
+              <li><a href="/pt/snapchat-downloader">Baixador de Snapchat</a></li>
+              <li><a href="/pt/snapchat-story-downloader">Baixador de Stories Snapchat</a></li>
+              <li><a href="/pt/snapchat-to-mp3">Snapchat para MP3</a></li>
+              <li><a href="/pt/x-video-downloader">Baixador de Vídeos X/Twitter</a></li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">Links suportados</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              <li>facebook.com/reel/—</li>
+              <li>facebook.com/watch/?v=—</li>
+              <li>facebook.com/user/videos/—</li>
+              <li>fb.watch/—</li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card seo-sidebar-highlight">
+            <h3 class="seo-sidebar-title">Comece a baixar</h3>
+            <p class="seo-sidebar-text">Cole um link do Facebook acima e obtenha o v—deo em segundos.</p>
+            <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Experimentar agora</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works — Detailed Steps -->
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Guia passo a passo</span>
+        <h2 id="dl-steps-headline" class="section-headline">
+          Como baixar v—deos do Facebook.
+        </h2>
+        <p class="section-sub text-body-lg">
+          3 passos simples — sem habilidades t—cnicas.
+        </p>
+      </div>
+
+      <div class="dl-steps-grid">
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <h3 class="dl-step-title">Copie o link do Facebook</h3>
+          <p class="dl-step-body">
+            Abra o aplicativo ou site do Facebook, encontre o v—deo ou Reel que deseja baixar, toque no bot—o compartilhar e selecione "Copiar link". Funciona com Reels, links Watch, posts de v—deo e links curtos fb.watch.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </div>
+          <h3 class="dl-step-title">Cole no TikSaveHub</h3>
+          <p class="dl-step-body">
+            Volte ao TikSaveHub e cole o link copiado no campo de entrada no topo da p—gina. Voc— pode usar o bot—o colar para obter diretamente da —rea de transfer—ncia. O sistema detectar— o v—deo e obter— os detalhes em segundos.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">Baixe em HD ou SD</h3>
+          <p class="dl-step-body">
+            Toque em "Baixar v—deo em HD" ou "Baixar v—deo em SD" para salvar o MP4 no seu dispositivo. O arquivo — salvo instantaneamente — sem apps ou contas necess—rias. Se voc— s— precisa do —udio, use o <a href="/facebook-to-mp3">Facebook MP3 Converter</a>.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+    <div class="dl-features-inner container-page">
+      <div class="dl-features-header">
+        <span class="section-eyebrow text-caption-mono">Recursos</span>
+        <h2 id="dl-features-headline" class="section-headline">
+          Por que o TikSaveHub — escolhido.
+        </h2>
+      </div>
+
+      <div class="dl-features-grid">
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Qualidade HD</h3>
+          <p class="dl-feature-body">
+            Baixe v—deos e Reels do Facebook em at— 1080p HD. Sem reencoding ou compacta——o — exatamente o que o criador enviou.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Extra——o de —udio MP3</h3>
+          <p class="dl-feature-body">
+            Converta qualquer v—deo ou Reel do Facebook para —udio MP3 com um toque. Salve trilhas sonoras, clipes e podcasts para ouvir offline.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Ultra r—pido</h3>
+          <p class="dl-feature-body">
+            Com processamento no servidor, os downloads come—am em segundos. Basta colar o link e clicar em baixar.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="3"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Todos os formatos de link</h3>
+          <p class="dl-feature-body">
+            Reels, links Watch, posts de v—deo, links m—veis m.facebook.com, links curtos fb.watch — todos os formatos p—blicos de v—deos do Facebook s—o suportados.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Funciona em todos os dispositivos</h3>
+          <p class="dl-feature-body">
+            iPhone, Android, tablet, desktop — se voc— tem um navegador web, o TikSaveHub funciona. Sem instala——o de apps, extens—es ou problemas de compatibilidade.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">Downloads ilimitados</h3>
+          <p class="dl-feature-body">
+            Sem limite di—rio, sem tope, sem plano premium. Baixe quantos v—deos do Facebook quiser — todos os dias, para sempre. Totalmente gr—tis.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">Casos de uso</span>
+        <h2 id="dl-usecases-headline" class="section-headline">
+          Quem usa o TikSaveHub?
+        </h2>
+      </div>
+
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Criadores de conte—do</h3>
+          <p class="dl-usecase-body">
+            Baixe seus pr—prios v—deos e Reels do Facebook para backup, edite com software externo ou reutilize no TikTok, YouTube Shorts e outras plataformas. Mantenha seu melhor conte—do acess—vel e seguro.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Gerentes de redes sociais</h3>
+          <p class="dl-usecase-body">
+            Gerencia contas de marcas? Salve Reels e v—deos em tend—ncias para inspira——o, an—lise competitiva e calend—rio de conte—do. Organize seus clipes de refer—ncia baixados na sua biblioteca.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Estudantes e pesquisadores</h3>
+          <p class="dl-usecase-body">
+            Pesquisando tend—ncias de redes sociais, padr—es de conte—do viral e cultura digital? Baixe v—deos e Reels do Facebook para an—lises acad—micas, apresenta——es e papers de pesquisa — todos na qualidade original.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title"> espectadores casuais</h3>
+          <p class="dl-usecase-body">
+            Encontrou um v—deo incr—vel mas n—o tem tempo para assistir agora? Salve para depois. Baixe v—deos do Facebook para assistir offline durante deslocamentos, viagens e em locais sem internet.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">Perguntas frequentes</span>
+        <h2 id="dl-faq-headline" class="section-headline">
+          Perguntas frequentes.
+        </h2>
+      </div>
+
+      <div class="dl-faq-list" role="list">
+        {faqData.map((faq) => (
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button
+              class="dl-faq-trigger"
+              id={`${faq.id}-btn`}
+              aria-expanded="false"
+              aria-controls={`${faq.id}-panel`}
+              type="button"
+            >
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div
+              id={`${faq.id}-panel`}
+              class="dl-faq-panel"
+              role="region"
+              aria-labelledby={`${faq.id}-btn`}
+              hidden
+            >
+              <p class="dl-faq-a" set:html={faq.a}></p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+    <div class="dl-cta-inner container-page">
+      <h2 id="dl-cta-headline" class="dl-cta-headline">
+        Pronto para come—ar a baixar?
+      </h2>
+      <p class="dl-cta-sub">
+        Cole um link do Facebook acima e obtenha o v—deo em segundos — sem conta, sem distra——es, sem complica——es.
+      </p>
+      <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+        Iniciar download
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Internal Links Section -->
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+        Explore o TikSaveHub.
+      </h2>
+      <div class="dl-internal-grid">
+        <a href="/tiktok-video-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </span>
+          <span class="dl-internal-title">TikTok Video Downloader</span>
+          <span class="dl-internal-desc">Baixe v—deos do TikTok em HD sem marca d'—gua.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">?</span>
+        </a>
+        <a href="/tiktok-to-mp3" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </span>
+          <span class="dl-internal-title">TikTok MP3</span>
+          <span class="dl-internal-desc">Converta v—deos do TikTok para —udio MP3 instantaneamente.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">?</span>
+        </a>
+        <a href="/instagram-video-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </span>
+          <span class="dl-internal-title">Instagram Video Downloader</span>
+          <span class="dl-internal-desc">Salve v—deos do Instagram em HD sem marca d'—gua.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">?</span>
+        </a>
+        <a href="/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </span>
+          <span class="dl-internal-title">Instagram Reels Downloader</span>
+          <span class="dl-internal-desc">Baixe Instagram Reels sem marca d'—gua.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">?</span>
+        </a>
+        <a href="/facebook-photo-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </span>
+          <span class="dl-internal-title">Facebook Photo Downloader</span>
+          <span class="dl-internal-desc">Salve fotos p—blicas do Facebook em resolu——o total, gr—tis.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">?</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* --- Hero --- */
+  .dl-hero { position: relative; padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl); overflow: hidden; background-color: var(--color-canvas); text-align: center; }
+  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.85; }
+  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-lg); }
+  .dl-breadcrumb { margin-bottom: var(--spacing-sm); }
+  .breadcrumb-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: var(--text-body-sm); color: var(--color-mute); }
+  .breadcrumb-list li + li::before { content: '/'; margin-right: 6px; color: var(--color-hairline-strong); }
+  .breadcrumb-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .dl-badge-row { display: flex; justify-content: center; }
+  .dl-badge { animation: fadeInUp 0.5s ease 0.1s both; }
+  .badge-dot { display: inline-block; width: 6px; height: 6px; background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan)); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
+  .dl-hero-headline { font-size: clamp(36px, 6vw, 56px); font-weight: 600; line-height: 1.05; letter-spacing: -2.5px; color: var(--color-ink); margin: 0; max-width: 700px; text-wrap: balance; animation: fadeInUp 0.5s ease 0.2s both; }
+  .headline-gradient { background: linear-gradient(135deg, var(--color-grad-develop-start) 0%, var(--color-grad-preview-start) 40%, var(--color-grad-preview-end) 70%, var(--color-grad-ship-end) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .dl-hero-subline { font-size: clamp(20px, 3vw, 28px); font-weight: 600; line-height: 1.2; letter-spacing: -0.5px; margin: 0; max-width: 560px; animation: fadeInUp 0.5s ease 0.25s both; }
+  .dl-hero-sub { color: var(--color-body); margin: 0; max-width: 560px; animation: fadeInUp 0.5s ease 0.3s both; }
+  .dl-hero-form-wrap { width: 100%; max-width: 760px; animation: fadeInUp 0.5s ease 0.4s both; }
+  .dl-hero-trust { display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap; justify-content: center; animation: fadeInUp 0.5s ease 0.5s both; }
+  .dl-hero-share { animation: fadeInUp 0.5s ease 0.55s both; }
+  .trust-chip { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-body-sm); font-weight: 500; color: var(--color-body); padding: 0 var(--spacing-md); height: 36px; border-radius: var(--radius-full); border: 1px solid var(--color-hairline); background-color: var(--color-canvas); transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+  .trust-chip svg { color: var(--color-cyan-deep); }
+  .trust-chip:hover { border-color: var(--color-hairline-strong); transform: translateY(-2px); box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12); }
+  @media (hover: hover) { .trust-chip:hover { border-color: var(--color-hairline-strong); transform: translateY(-2px); box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12); } }
+  @media (max-width: 600px) { .dl-hero { padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl); } .dl-hero-headline { font-size: clamp(22px, 5vw, 32px); letter-spacing: -1px; } .trust-chip { font-size: var(--text-caption); height: 36px; padding: 0 var(--spacing-sm); } .breadcrumb-list { font-size: 11px; } }
+
+  .dl-steps-section { background-color: var(--color-canvas); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-steps-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4xl); }
+  .dl-steps-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
+  .dl-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg); width: 100%; }
+  .dl-step-card { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-xl); border-radius: var(--radius-lg); border: 1px solid var(--color-hairline); background-color: var(--color-canvas); transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .dl-step-card:hover { transform: translateY(-4px); box-shadow: inset 0 0 0 1px #00000014, 0px 2px 2px #0000000a, 0px 8px 16px -4px #0000001a; }
+  .dl-step-num { color: var(--color-mute); font-size: 11px; letter-spacing: 0.1em; }
+  .dl-step-icon { width: 48px; height: 48px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #007cf010, #00dfd818); color: var(--color-grad-develop-start); box-shadow: inset 0 0 0 1px #007cf020; }
+  .dl-step-title { font-size: var(--text-display-sm); font-weight: 600; letter-spacing: -0.6px; color: var(--color-ink); margin: 0; }
+  .dl-step-body { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.65; margin: 0; }
+  @media (max-width: 960px) { .dl-steps-grid { grid-template-columns: 1fr; max-width: 480px; } }
+  @media (max-width: 600px) { .dl-steps-section { padding: var(--spacing-3xl) var(--spacing-md); } }
+
+  .dl-features-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-features-inner { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
+  .dl-features-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
+  .dl-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); }
+  .dl-feature-card { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-lg); border-radius: var(--radius-md); background-color: var(--color-canvas); box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .dl-feature-card:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 1px #00000014, 0px 2px 2px #0000000a, 0px 8px 16px -4px #0000001a; }
+  .dl-feature-icon { width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
+  .feat-accent-develop { background: linear-gradient(135deg, #007cf015, #00dfd820); color: var(--color-grad-develop-start); box-shadow: inset 0 0 0 1px #007cf025; }
+  .feat-accent-preview { background: linear-gradient(135deg, #7928ca15, #ff008020); color: var(--color-grad-preview-start); box-shadow: inset 0 0 0 1px #7928ca25; }
+  .feat-accent-ship { background: linear-gradient(135deg, #ff4d4d15, #f9cb2820); color: var(--color-grad-ship-start); box-shadow: inset 0 0 0 1px #ff4d4d25; }
+  .dl-feature-title { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: 0; }
+  .dl-feature-body { font-size: var(--text-body-sm); color: var(--color-body); margin: 0; line-height: 1.6; }
+  @media (max-width: 960px) { .dl-features-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .dl-features-section { padding: var(--spacing-3xl) var(--spacing-md); } .dl-features-grid { grid-template-columns: 1fr; } }
+
+  .dl-usecases-section { background-color: var(--color-canvas); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-usecases-inner { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
+  .dl-usecases-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
+  .dl-usecases-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); }
+  .dl-usecase-card { padding: var(--spacing-xl); border-radius: var(--radius-lg); border: 1px solid var(--color-hairline); background-color: var(--color-canvas); transition: border-color 0.25s ease, box-shadow 0.25s ease; }
+  .dl-usecase-card:hover { border-color: var(--color-hairline-strong); box-shadow: inset 0 0 0 1px #00000008, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .dl-usecase-title { font-size: var(--text-display-sm); font-weight: 600; letter-spacing: -0.6px; color: var(--color-ink); margin: 0 0 var(--spacing-sm) 0; }
+  .dl-usecase-body { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.65; margin: 0; }
+  @media (max-width: 600px) { .dl-usecases-section { padding: var(--spacing-3xl) var(--spacing-md); } .dl-usecases-grid { grid-template-columns: 1fr; } }
+
+  .dl-faq-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4xl); max-width: 760px; margin-inline: auto; }
+  .dl-faq-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); width: 100%; }
+  .dl-faq-list { width: 100%; display: flex; flex-direction: column; border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; background-color: var(--color-canvas); box-shadow: inset 0 0 0 1px #00000008, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .dl-faq-item { border-bottom: 1px solid var(--color-hairline); }
+  .dl-faq-item:last-child { border-bottom: none; }
+  .dl-faq-trigger { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-md); width: 100%; padding: var(--spacing-lg); cursor: pointer; background: none; border: none; text-align: left; font-family: inherit; transition: background-color 0.15s ease; }
+  .dl-faq-trigger:hover { background-color: var(--color-canvas-soft); }
+  .dl-faq-trigger:focus-visible { outline: 2px solid var(--color-grad-develop-start); outline-offset: -2px; }
+  .dl-faq-trigger[aria-expanded="true"] { background-color: var(--color-canvas-soft); }
+  .dl-faq-q { font-size: var(--text-body-md); font-weight: 500; color: var(--color-ink); line-height: 1.4; letter-spacing: -0.3px; flex: 1; }
+  .dl-faq-chevron { flex-shrink: 0; color: var(--color-mute); display: flex; align-items: center; transition: transform 0.25s ease; }
+  .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron { transform: rotate(180deg); }
+  .dl-faq-panel { padding: 0 var(--spacing-lg) var(--spacing-lg); animation: fadeInUp 0.25s ease forwards; }
+  .dl-faq-a { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.65; margin: 0; letter-spacing: -0.1px; }
+  @media (max-width: 600px) { .dl-faq-section { padding: var(--spacing-3xl) var(--spacing-md); } .dl-faq-trigger { padding: var(--spacing-md); min-height: 48px; } .dl-faq-panel { padding: 0 var(--spacing-md) var(--spacing-md); } .dl-faq-q { font-size: var(--text-body-sm); } }
+
+  .dl-cta-band { background-color: var(--color-ink); color: var(--color-on-primary); padding: var(--spacing-5xl) var(--spacing-lg); text-align: center; }
+  .dl-cta-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-lg); }
+  .dl-cta-headline { font-size: var(--text-display-lg); font-weight: 600; letter-spacing: -1.28px; color: var(--color-on-primary); margin: 0; }
+  .dl-cta-sub { font-size: var(--text-body-lg); color: color-mix(in srgb, var(--color-on-primary), transparent 40%); margin: 0; max-width: 480px; }
+  .dl-cta-btn { gap: 8px; background-color: var(--color-canvas) !important; color: var(--color-ink) !important; }
+  .dl-cta-btn:hover { background-color: var(--color-canvas-soft) !important; transform: translateY(-2px); }
+  @media (max-width: 600px) { .dl-cta-band { padding: var(--spacing-3xl) var(--spacing-md); } }
+
+  .section-eyebrow { color: var(--color-mute); }
+  .section-headline { font-size: var(--text-display-lg); font-weight: 600; line-height: 1.25; letter-spacing: -1.28px; color: var(--color-ink); margin: 0; max-width: 540px; }
+  .section-sub { color: var(--color-body); margin: 0; max-width: 480px; }
+
+  .dl-internal-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); border-top: 1px solid var(--color-hairline); }
+  .dl-internal-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
+  .dl-internal-headline { text-align: center; max-width: 400px; }
+  .dl-internal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); width: 100%; }
+  .dl-internal-card { display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-hairline); background-color: var(--color-canvas); text-decoration: none; transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; position: relative; }
+  .dl-internal-card:hover { border-color: var(--color-hairline-strong); transform: translateY(-3px); box-shadow: inset 0 0 0 1px #00000008, 0px 2px 2px #0000000a, 0px 8px 16px -4px #0000001a; }
+  .dl-internal-icon { width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #007cf012, #00dfd818); color: var(--color-grad-develop-start); box-shadow: inset 0 0 0 1px #007cf020; }
+  .dl-internal-title { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); letter-spacing: -0.3px; }
+  .dl-internal-desc { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.5; margin: 0; }
+  .dl-internal-arrow { position: absolute; top: var(--spacing-lg); right: var(--spacing-lg); color: var(--color-mute); font-size: 18px; transition: color 0.15s ease, transform 0.25s ease; }
+  .dl-internal-card:hover .dl-internal-arrow { color: var(--color-ink); transform: translateX(4px); }
+  @media (max-width: 960px) { .dl-internal-grid { grid-template-columns: 1fr; max-width: 480px; } }
+  @media (max-width: 600px) { .dl-internal-section { padding: var(--spacing-3xl) var(--spacing-md); } }
+
+  .seo-content-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .seo-content-inner { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
+  .seo-content-grid { display: grid; grid-template-columns: 1fr 320px; gap: var(--spacing-3xl); align-items: start; }
+  .seo-content-main { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .seo-article { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+  .seo-article p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; letter-spacing: -0.1px; }
+  .text-highlight { background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; letter-spacing: -0.3px; }
+  .seo-article h3 { font-size: var(--text-display-sm); font-weight: 600; letter-spacing: -0.6px; color: var(--color-ink); margin: var(--spacing-sm) 0 0 0; line-height: 1.35; }
+  .seo-content-sidebar { display: flex; flex-direction: column; gap: var(--spacing-md); position: sticky; top: 80px; }
+  .seo-sidebar-card { background-color: var(--color-canvas); border-radius: var(--radius-lg); padding: var(--spacing-xl); box-shadow: inset 0 0 0 1px #00000008, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .seo-sidebar-title { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: 0 0 var(--spacing-md) 0; }
+  .seo-sidebar-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .seo-sidebar-list li { font-size: var(--text-body-sm); color: var(--color-body); }
+  .seo-sidebar-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
+  .seo-sidebar-list a:hover { color: var(--color-ink); }
+  .seo-sidebar-mono { font-family: var(--font-mono); font-size: var(--text-caption); color: var(--color-mute); }
+  .seo-sidebar-highlight { background: linear-gradient(135deg, rgba(0, 124, 240, 0.04), rgba(121, 40, 202, 0.04)); border: 1px solid rgba(0, 124, 240, 0.14); }
+  .seo-sidebar-text { font-size: var(--text-body-sm); color: var(--color-body); margin: 0 0 var(--spacing-md) 0; }
+  .seo-sidebar-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: var(--text-body-sm); font-weight: 600; color: #ffffff; background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-grad-preview-start)); border-radius: var(--radius-full); text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .seo-sidebar-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(0, 124, 240, 0.5); }
+  @media (max-width: 960px) { .seo-content-grid { grid-template-columns: 1fr; } .seo-content-sidebar { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); } }
+  @media (max-width: 600px) { .seo-content-section { padding: var(--spacing-3xl) var(--spacing-md); } .seo-content-sidebar { grid-template-columns: 1fr; } }
+</style>

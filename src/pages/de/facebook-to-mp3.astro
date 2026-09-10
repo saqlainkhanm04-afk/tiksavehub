@@ -1,0 +1,90 @@
+---
+// Facebook to MP3 — SEO-optimized landing page (Deutsch)
+// URL: /facebook-to-mp3
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbStepsSection from '../../components/FbStepsSection.astro';
+import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbFaqSection from '../../components/FbFaqSection.astro';
+import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbInternalLinks from '../../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+
+const faqData = [
+  { id: 'mp3-how', q: 'Wie kann ich Facebook-Videos in MP3 umwandeln?', a: 'Kopiere den Link des Facebook-Videos, füge ihn bei TikSaveHub ein und wähle die MP3-Option. Klicke auf Herunterladen und du erhältst eine hochwertige MP3-Datei.' },
+  { id: 'mp3-quality', q: 'Welche MP3-Qualität liefert der Konverter?', a: 'Das Audio wird in maximaler Qualität bis zu 320 kbps extrahiert. Du erhältst eine saubere, hochwertige MP3-Datei.' },
+  { id: 'mp3-reels', q: 'Kann ich den Sound eines Facebook Reels als MP3 speichern?', a: 'Ja, jeden beliebigen Facebook Reel kannst du in MP3 umwandeln.' },
+  { id: 'mp3-free', q: 'Ist die Facebook-zu-MP3-Umwandlung wirklich kostenlos?', a: 'Ja, TikSaveHub ist 100% kostenlos.' },
+  { id: 'mp3-no-login', q: 'Muss ich mich bei Facebook anmelden?', a: 'Nein, keine Anmeldung erforderlich. Du brauchst nur den Link eines öffentlichen Videos.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Facebook Zu MP3 Konverter | Kostenlos Audio Extrahieren | TikSaveHub"
+  description="Audio aus Facebook-Videos und Reels als MP3 extrahieren — bis zu 320 kbps. Kostenlos, schnell, ohne Anmeldung auf jedem Gerät."
+  keywords="facebook mp3 umwandeln, facebook to mp3, facebook audio download, facebook mp3 konverter"
+  canonical="/facebook-to-mp3"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Facebook to MP3"
+  lang="de"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Facebook to MP3", "item": "https://tiksavehub.com/facebook-to-mp3" } ] })} />
+
+  <FbHeroSection
+    crumb="Facebook to MP3"
+    badge="Kostenlos · Hochwertig · Bis zu 320 kbps"
+    title="Facebook zu MP3 — Audio aus FB-Videos extrahieren"
+    subline="Facebook-Videos in hochwertiges MP3 umwandeln. Kostenlos und schnell."
+    sub="Extrahiere das Audio aus Facebook-Videos, Reels und Watch als hochwertiges MP3 bis 320 kbps. Kostenlos, schnell, ohne Anmeldung. Füge den Link ein und lade sofort Audio herunter."
+    trust={['100% Kostenlos', 'Bis zu 320 kbps', 'Kein Konto nötig', 'Superschnell', 'Funktioniert auf jedem Gerät']}
+    shareUrl="/facebook-to-mp3"
+    shareTitle="Facebook zu MP3 — Audio aus FB-Videos extrahieren"
+    shareDescription="Facebook-Videos in hochwertiges MP3 umwandeln. Kostenlos und schnell."
+  >
+    <FacebookDownloadForm mode="mp3" />
+  </FbHeroSection>
+
+  <StatsSection stats={[ { value: '100% Kostenlos', label: 'Facebook-Videos sofort ohne Wasserzeichen herunterladen', icon: 'download' }, { value: 'Kein Konto', label: 'Funktioniert auf jedem Gerät, überall auf der Welt', icon: 'globe' }, { value: 'HD-Qualität', label: 'Originalauflösung, kein Wasserzeichen, kein Login nötig', icon: 'star' } ]} />
+
+  <FbStepsSection
+    eyebrow="Schritt-für-Schritt-Anleitung"
+    headline="So wandelst du Facebook in MP3 um."
+    sub="Drei einfache Schritte."
+    steps={[ { num: '01', icon: 'copy', title: 'Video-Link kopieren', body: 'Öffne Facebook, finde das Video, aus dem du Audio extrahieren möchtest, tippe auf Freigabe und wähle „Link kopieren".' }, { num: '02', icon: 'paste', title: 'Bei TikSaveHub einfügen', body: 'Kehre hierher zurück, füge den Link ein und wähle die MP3-Option.' }, { num: '03', icon: 'download', title: 'MP3 herunterladen', body: 'Klicke auf Herunterladen und du erhältst sofort eine hochwertige MP3-Datei.' } ]} />
+
+  <FbFeaturesSection
+    eyebrow="Funktionen"
+    headline="Warum TikSaveHub für Facebook-zu-MP3 die richtige Wahl ist."
+    features={[ { icon: 'music', accent: 'develop', title: 'Hochwertig bis 320 kbps', body: 'Extrahiere Audio in maximaler Qualität — bis zu 320 kbps, ohne Verlust.' }, { icon: 'zap', accent: 'preview', title: 'Superschnelle Umwandlung', body: 'Serverseitige Verarbeitung — MP3 in Sekunden.' }, { icon: 'shield', accent: 'ship', title: 'Kein Wasserzeichen', body: 'Sauberes Audio — ohne Wasserzeichen, Logos oder Werbung.' }, { icon: 'list', accent: 'develop', title: 'Alle Formate unterstützt', body: 'Watch-Videos, Reels, Beiträge, fb.watch-Links — alles wird unterstützt.' }, { icon: 'device', accent: 'preview', title: 'Funktioniert auf jedem Gerät', body: 'iPhone, Android, PC, Mac — funktioniert in jedem Browser.' }, { icon: 'globe', accent: 'ship', title: 'Kostenlos und unbegrenzt', body: 'Keine täglichen Grenzen, keine Kosten. So viele Umwandlungen wie du möchtest.' } ]} />
+
+  <FbFaqSection eyebrow="FAQ" headline="Fragen zu Facebook-zu-MP3." prefix="mp3" faqs={faqData} />
+
+  <FbCtaBand headline="Extrahiere Audio aus deinem Lieblings-Facebook-Video." sub="Kostenlos, schnell, hochwertig — füge den Link ein und erhalte MP3." ctaHref="#download-tool" ctaLabel="Jetzt in MP3 umwandeln" />
+
+  <FbInternalLinks
+    headline="Weitere kostenlose Facebook-Tools"
+    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos in HD herunter.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Speichere Facebook Reels ohne Wasserzeichen.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Speichere Facebook-Stories, bevor sie verschwinden.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Foto Downloader', desc: 'Speichere Facebook-Fotos in voller Auflösung.' } ]}
+  />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Weitere Tools</h2>
+      <div class="related-tools-grid">
+            <a href="/de/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/de/tiktok-to-mp3" class="related-tool-link">TikTok zu MP3</a>
+            <a href="/de/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/de/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

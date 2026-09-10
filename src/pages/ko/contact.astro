@@ -1,0 +1,114 @@
+---
+export const prerender = true;
+import Layout from '../../layouts/Layout.astro';
+
+const contactJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ContactPage',
+      name: '문의 — TikSaveHub',
+      description: 'TikSaveHub에 문의. 지원, 질문, 피드백은 여기에서.',
+      url: 'https://tiksavehub.com/contact',
+    },
+    {
+      '@type': 'Organization',
+      name: 'TikSaveHub',
+      url: 'https://tiksavehub.com',
+      logo: 'https://tiksavehub.com/logo.png',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: 'support@tiksavehub.com',
+        availableLanguage: 'Korean',
+      },
+    },
+  ],
+});
+---
+
+<Layout
+  title="문의 — TikSaveHub"
+  description="TikSaveHub에 문의. TikTok 동영상 다운로더 관련 지원, 질문, 피드백은 여기에서."
+  keywords="tiksavehub 문의, tiksavehub 지원, 문의, tiktok 다운로더 도움말"
+  canonical="/contact"
+  ogImage="/og-contact.png"
+  lang="ko"
+  skipSoftwareApp
+  jsonLd={contactJsonLd}
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner container-page">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>홈</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>문의</span>
+                  </li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">지원</span>
+        <h1 id="legal-headline" class="legal-title">문의</h1>
+        <p class="legal-meta">편하게 문의해 주세요.</p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+          <section class="legal-clause">
+            <h2 class="legal-h2">문의 방법</h2>
+            <p>질문, 제안 또는 지원이 필요하시면 편하게 문의해 주세요. 가능한 빨리 답변드리겠습니다.</p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">연락처 정보</h2>
+            <p class="legal-contact">
+              <strong>이메일:</strong> <a href="mailto:support@tiksavehub.com">support@tiksavehub.com</a>
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">응답 시간</h2>
+            <p>모든 문의에 24~48시간 이내에 답변하는 것을 목표로 합니다. 더 빠른 지원을 위해 문제나 질문의 세부사항을 명확하게 작성해 주세요.</p>
+          </section>
+        </div>
+      </div>
+
+      <div class="legal-back">
+        <a href="/" class="btn-primary-sm">&larr; TikSaveHub로 돌아가기</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .legal-inner { display: flex; flex-direction: column; gap: var(--spacing-2xl); max-width: 760px; margin-inline: auto; }
+  .legal-breadcrumb { margin-bottom: 0; }
+  .breadcrumb-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; font-size: var(--text-body-sm); color: var(--color-mute); }
+  .breadcrumb-list li + li::before { content: '/'; margin-right: 6px; color: var(--color-hairline-strong); }
+  .breadcrumb-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
+  .breadcrumb-list a:hover { color: var(--color-ink); }
+  .legal-header { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .section-eyebrow { color: var(--color-mute); }
+  .legal-title { font-size: var(--text-display-xl); font-weight: 600; line-height: 1.05; letter-spacing: -2.5px; color: var(--color-ink); margin: 0; }
+  .legal-meta { font-size: var(--text-body-sm); color: var(--color-mute); margin: 0; }
+  .legal-card { background-color: var(--color-canvas); border-radius: var(--radius-lg); padding: var(--spacing-3xl); box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a; }
+  .legal-content { display: flex; flex-direction: column; gap: var(--spacing-2xl); }
+  .legal-clause { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .legal-h2 { font-size: var(--text-display-md); font-weight: 600; letter-spacing: -1.28px; color: var(--color-ink); margin: 0; line-height: 1.25; }
+  .legal-content p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; letter-spacing: -0.1px; }
+  .legal-contact { background-color: var(--color-canvas-soft); border-radius: var(--radius-md); padding: var(--spacing-lg); font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; }
+  .legal-contact strong { font-weight: 600; color: var(--color-ink); }
+  .legal-content a { color: var(--color-link); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s ease; }
+  .legal-content a:hover { color: var(--color-link-deep); }
+  .legal-back { display: flex; justify-content: center; }
+  .btn-primary-sm { display: inline-flex; align-items: center; gap: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-lg); border-radius: var(--radius-full); background-color: var(--color-ink); color: var(--color-on-primary); font-size: var(--text-body-sm); font-weight: 500; text-decoration: none; transition: opacity 0.2s ease, transform 0.2s ease; border: none; cursor: pointer; line-height: 2.2; letter-spacing: -0.1px; }
+  .btn-primary-sm:hover { opacity: 0.85; transform: translateY(-1px); }
+  .dark .legal-card { box-shadow: inset 0 0 0 1px #ffffff0a, 0px 1px 1px #00000010, 0px 4px 8px #00000020; }
+  .dark .legal-contact { background-color: var(--color-canvas-soft-2); }
+  @media (max-width: 600px) { .legal-section { padding: var(--spacing-4xl) var(--spacing-md); } .legal-title { font-size: 32px; letter-spacing: -1.5px; } .legal-card { padding: var(--spacing-lg); } .legal-h2 { font-size: var(--text-display-sm); } .breadcrumb-list { font-size: var(--text-caption); } }
+</style>

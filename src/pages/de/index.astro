@@ -1,0 +1,887 @@
+---
+// TikSaveHub Homepage — hub page for all tools (German)
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'TikSaveHub',
+  url: 'https://tiksavehub.com',
+  logo: 'https://tiksavehub.com/web-app-manifest-512x512.png',
+  description: 'TikTok-, Instagram-, Facebook- und X (Twitter)-Videos in HD-Qualität herunterladen — kostenlos, schnell, ohne Wasserzeichen.',
+  sameAs: [
+    'https://twitter.com/tiksavehub',
+    'https://www.facebook.com/tiksavehub',
+    'https://www.instagram.com/tiksavehub',
+  ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    email: 'support@tiksavehub.com',
+  },
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'TikSaveHub',
+  url: 'https://tiksavehub.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://tiksavehub.com/tiktok-video-downloader-without-watermark?url={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const base = '/de';
+
+const tools = [
+  {
+    title: 'TikTok Video Downloader',
+    description: 'TikTok-Videos ohne Wasserzeichen in HD-Qualität speichern. Kostenlos, schnell, ohne Anmeldung.',
+    href: `${base}/tiktok-video-downloader-without-watermark`,
+    icon: 'tiktok',
+    badge: 'Beliebt',
+  },
+  {
+    title: 'TikTok zu MP3',
+    description: 'Audio aus TikTok-Videos als hochwertige MP3-Dateien bis 320kbps extrahieren.',
+    href: `${base}/tiktok-to-mp3`,
+    icon: 'audio',
+    badge: null,
+  },
+  {
+    title: 'Instagram Reels Downloader',
+    description: 'Instagram Reels ohne Wasserzeichen in HD herunterladen. Funktioniert auf allen Geräten.',
+    href: `${base}/instagram-reels-downloader-without-watermark`,
+    icon: 'instagram',
+    badge: 'Neu',
+  },
+  {
+    title: 'Instagram Video Downloader',
+    description: 'Instagram-Videos und Beiträge in HD-Qualität speichern. Keine App erforderlich.',
+    href: `${base}/instagram-video-downloader-without-watermark`,
+    icon: 'instagram',
+    badge: null,
+  },
+  {
+    title: 'Instagram Story Downloader',
+    description: 'Instagram Stories herunterladen, bevor sie ablaufen. Kostenlos und anonym.',
+    href: `${base}/instagram-story-downloader-without-watermark`,
+    icon: 'instagram',
+    badge: null,
+  },
+  {
+    title: 'Facebook Video Downloader',
+    description: 'Facebook-Videos, Reels und Beiträge in HD-Qualität herunterladen.',
+    href: `${base}/facebook-video-downloader`,
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Facebook Reels Downloader',
+    description: 'Facebook Reels ohne Wasserzeichen in HD-Qualität speichern.',
+    href: `${base}/facebook-reels-downloader`,
+    icon: 'facebook',
+    badge: 'Neu',
+  },
+  {
+    title: 'Facebook zu MP3',
+    description: 'Audio aus Facebook-Videos als hochwertige MP3-Dateien extrahieren.',
+    href: `${base}/facebook-to-mp3`,
+    icon: 'audio',
+    badge: null,
+  },
+  {
+    title: 'Facebook Story Downloader',
+    description: 'Lade Facebook Stories herunter, bevor sie ablaufen. Kostenlos und anonym.',
+    href: `${base}/facebook-story-downloader`,
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Facebook Foto Downloader',
+    description: 'Lade Facebook Fotos und Alben in voller HD-Qualität herunter.',
+    href: `${base}/facebook-photo-downloader`,
+    icon: 'facebook',
+    badge: null,
+  },
+  {
+    title: 'Instagram Audio Downloader',
+    description: 'Extrahiere Audio von Instagram Reels und Videos als hochwertige MP3.',
+    href: `${base}/instagram-audio-downloader`,
+    icon: 'audio',
+    badge: null,
+  },
+  {
+    title: 'X (Twitter) Video Downloader',
+    description: 'Videos und GIFs von X (Twitter) in HD-Qualität herunterladen.',
+    href: `${base}/x-video-downloader`,
+    icon: 'x',
+    badge: null,
+  },
+];
+
+const faqData = [
+  { q: 'Ist TikSaveHub kostenlos?', a: 'Ja. TikSaveHub ist zu 100% kostenlos und hat keine versteckten Gebühren. Sie können unbegrenzt Videos von TikTok, Instagram, Facebook und X herunterladen, ohne etwas zu bezahlen.' },
+  { q: 'Muss ich eine App installieren?', a: 'Nein. TikSaveHub funktioniert vollständig in Ihrem Browser. Keine App, keine Erweiterung und keine Softwareinstallation erforderlich.' },
+  { q: 'Kann ich private Videos herunterladen?', a: 'Nein. TikSaveHub funktioniert nur mit öffentlichen Videos, die Sie in einem Browser ansehen können. Auf Inhalte privater Konten kann nicht zugegriffen werden.' },
+  { q: 'Welche Geräte werden unterstützt?', a: 'TikSaveHub funktioniert auf allen modernen Geräten — iPhone, Android, Windows PC, Mac und Tablets. Jeder Browser (Safari, Chrome, Firefox, Edge) funktioniert.' },
+  { q: 'Ist das Herunterladen von Videos legal?', a: 'Das Herunterladen von Videos zur persönlichen Nutzung ist in der Regel erlaubt. Respektieren Sie immer Urheberrechte und holen Sie sich eine Genehmigung, bevor Sie Inhalte erneut veröffentlichen oder kommerziell nutzen.' },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a,
+    },
+  })),
+};
+
+const itemListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'TikSaveHub Video Downloader',
+  description: 'Kostenlose Online-Tools zum Herunterladen von Videos von TikTok, Instagram, Facebook und X (Twitter) in HD-Qualität.',
+  numberOfItems: tools.length,
+  itemListElement: tools.map((tool, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'SoftwareApplication',
+      name: tool.title,
+      url: `https://tiksavehub.com${tool.href}`,
+      description: tool.description,
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'All',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+  })),
+};
+
+const features = [
+  {
+    title: 'HD-Qualität',
+    description: 'Immer in der höchsten verfügbaren Auflösung herunterladen — bis zu 1080p.',
+    icon: 'hd',
+  },
+  {
+    title: 'Kein Wasserzeichen',
+    description: 'Saubere Downloads ohne Branding oder Überlagerung von jeder Plattform.',
+    icon: 'clean',
+  },
+  {
+    title: 'Funktioniert überall',
+    description: 'Auf iPhone, Android, PC oder Tablet verwenden — jeder Browser, keine App nötig.',
+    icon: 'devices',
+  },
+  {
+    title: '100% Kostenlos',
+    description: 'Unbegrenzte Downloads ohne versteckte Gebühren, keine Anmeldung erforderlich.',
+    icon: 'free',
+  },
+];
+---
+
+<Layout
+  title="TikSaveHub — TikTok Videos Ohne Wasserzeichen Herunterladen"
+  description="Laden Sie TikTok-Videos in HD-Qualität ohne Wasserzeichen herunter. Kostenlos, schnell und ohne Anmeldung."
+  keywords="tiktok downloader, tiktok video herunterladen, instagram downloader, facebook downloader, x video downloader, videos ohne wasserzeichen herunterladen, hd video downloader, kostenloser video downloader"
+  canonical="/"
+  ogImage="/og-default.png"
+  jsonLd={JSON.stringify([organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd])}
+  appName="TikSaveHub"
+>
+  <!-- Hero -->
+  <section class="home-hero" aria-labelledby="home-headline">
+    <div class="home-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="home-hero-inner container-page">
+      <div class="home-badge-row">
+        <span class="badge-pill home-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Kostenlos · HD · Kein Wasserzeichen
+        </span>
+      </div>
+
+      <h1 id="home-headline" class="home-headline">
+        Videos Herunterladen Von<br />
+        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+      </h1>
+
+      <p class="home-sub text-body-lg">
+        Speichern Sie Videos in HD-Qualität ohne Wasserzeichen. Kostenlos, schnell und auf jedem Gerät — keine App oder Anmeldung nötig.
+      </p>
+
+      <div class="home-tools-grid">
+        {tools.map((tool) => (
+          <a href={tool.href} class="home-tool-card" aria-label={tool.title}>
+            <div class="home-tool-icon" aria-hidden="true">
+              {tool.icon === 'tiktok' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+              )}
+              {tool.icon === 'instagram' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              )}
+              {tool.icon === 'facebook' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              )}
+              {tool.icon === 'x' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+              )}
+              {tool.icon === 'audio' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              )}
+            </div>
+            <div class="home-tool-info">
+              <h2 class="home-tool-title">{tool.title}</h2>
+              <p class="home-tool-desc">{tool.description}</p>
+            </div>
+            {tool.badge && <span class="home-tool-badge">{tool.badge}</span>}
+          </a>
+        ))}
+      </div>
+
+      <div class="home-trust">
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          100% Kostenlos
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Kein Wasserzeichen
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          HD-Qualität
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Keine Anmeldung
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="home-features" aria-labelledby="features-headline">
+    <div class="home-features-inner container-page">
+      <span class="section-eyebrow text-caption-mono">Warum TikSaveHub</span>
+      <h2 id="features-headline" class="section-headline">Gebaut für Geschwindigkeit, Qualität und Einfachheit</h2>
+      <div class="home-features-grid">
+        {features.map((f) => (
+          <div class="home-feature-card">
+            <div class="home-feature-icon" aria-hidden="true">
+              {f.icon === 'hd' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7v10"/><path d="M6 7v10"/><path d="M10 7v10"/><path d="M14 7v10"/><path d="M18 7v10"/><path d="M22 7v10"/></svg>
+              )}
+              {f.icon === 'clean' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              )}
+              {f.icon === 'devices' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              )}
+              {f.icon === 'free' && (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              )}
+            </div>
+            <h3 class="home-feature-title">{f.title}</h3>
+            <p class="home-feature-desc">{f.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="home-how" aria-labelledby="how-headline">
+    <div class="home-how-inner container-page">
+      <span class="section-eyebrow text-caption-mono">So funktioniert es</span>
+      <h2 id="how-headline" class="section-headline">Drei Schritte zum Download jedes Videos</h2>
+      <div class="home-steps">
+        <div class="home-step">
+          <span class="home-step-num">1</span>
+          <h3 class="home-step-title">Videolink Kopieren</h3>
+          <p class="home-step-desc">Öffnen Sie TikTok, Instagram, Facebook oder X. Finden Sie das Video, das Sie speichern möchten, und kopieren Sie den Link.</p>
+        </div>
+        <div class="home-step">
+          <span class="home-step-num">2</span>
+          <h3 class="home-step-title">Auf TikSaveHub Einfügen</h3>
+          <p class="home-step-desc">Gehen Sie zur richtigen Tool-Seite und fügen Sie den Videolink in das Download-Feld ein.</p>
+        </div>
+        <div class="home-step">
+          <span class="home-step-num">3</span>
+          <h3 class="home-step-title">In HD Herunterladen</h3>
+          <p class="home-step-desc">Klicken Sie auf Herunterladen und speichern Sie die saubere, wasserzeichenfreie MP4-Datei auf Ihrem Gerät.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="home-faq" aria-labelledby="faq-headline">
+    <div class="home-faq-inner container-page">
+      <span class="section-eyebrow text-caption-mono">Häufig gestellte Fragen</span>
+      <h2 id="faq-headline" class="section-headline">Häufig gestellte Fragen</h2>
+      <div class="home-faq-grid">
+        <details class="home-faq-item">
+          <summary class="home-faq-q">Ist TikSaveHub kostenlos?</summary>
+          <p class="home-faq-a">Ja. TikSaveHub ist zu 100% kostenlos und hat keine versteckten Gebühren. Sie können unbegrenzt Videos von TikTok, Instagram, Facebook und X herunterladen, ohne etwas zu bezahlen.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">Muss ich eine App installieren?</summary>
+          <p class="home-faq-a">Nein. TikSaveHub funktioniert vollständig in Ihrem Browser. Keine App, keine Erweiterung und keine Softwareinstallation erforderlich.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">Kann ich private Videos herunterladen?</summary>
+          <p class="home-faq-a">Nein. TikSaveHub funktioniert nur mit öffentlichen Videos, die Sie in einem Browser ansehen können. Auf Inhalte privater Konten kann nicht zugegriffen werden.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">Welche Geräte werden unterstützt?</summary>
+          <p class="home-faq-a">TikSaveHub funktioniert auf allen modernen Geräten — iPhone, Android, Windows PC, Mac und Tablets. Jeder Browser (Safari, Chrome, Firefox, Edge) funktioniert.</p>
+        </details>
+        <details class="home-faq-item">
+          <summary class="home-faq-q">Ist das Herunterladen von Videos legal?</summary>
+          <p class="home-faq-a">Das Herunterladen von Videos zur persönlichen Nutzung ist in der Regel erlaubt. Respektieren Sie immer Urheberrechte und holen Sie sich eine Genehmigung, bevor Sie Inhalte erneut veröffentlichen oder kommerziell nutzen.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Teaser -->
+  <section class="home-blog" aria-labelledby="blog-headline">
+    <div class="home-blog-inner container-page">
+      <span class="section-eyebrow text-caption-mono">Aus dem Blog</span>
+      <h2 id="blog-headline" class="section-headline">Anleitungen, Tipps und Tutorials</h2>
+      <div class="home-blog-grid">
+        <a href={`${base}/blog/facebook-video-downloader-guide`} class="home-blog-card">
+          <span class="home-blog-tag">Facebook-Anleitungen</span>
+          <h3 class="home-blog-title">Facebook Video Downloader: FB-Videos in HD Speichern (Ratgeber 2026)</h3>
+          <p class="home-blog-excerpt">Facebook-Videos, Reels und Watch-Clips in HD 1080p ohne Wasserzeichen herunterladen. Schritt-für-Schritt für iPhone, Android und PC.</p>
+        </a>
+        <a href={`${base}/blog/x-video-downloader-guide`} class="home-blog-card">
+          <span class="home-blog-tag">X & Twitter-Anleitungen</span>
+          <h3 class="home-blog-title">X Video Downloader: Twitter-Videos in HD Speichern (Ratgeber 2026)</h3>
+          <p class="home-blog-excerpt">X (Twitter)-Videos, GIFs und Audio in HD 1080p ohne Wasserzeichen herunterladen. Kostenlos, ohne Anmeldung.</p>
+        </a>
+        <a href={`${base}/blog/tiktok-video-downloader-without-watermark`} class="home-blog-card">
+          <span class="home-blog-tag">TikTok-Anleitungen</span>
+          <h3 class="home-blog-title">TikTok Video Downloader Ohne Wasserzeichen (HD & Kostenlos)</h3>
+          <p class="home-blog-excerpt">TikTok-Videos ohne Wasserzeichen in HD-Qualität herunterladen. Schnell, kostenlos und funktioniert auf iPhone, Android und PC.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ─── Hero ─── */
+  .home-hero {
+    position: relative;
+    padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .home-hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .home-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .home-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .home-badge {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: rgba(124, 58, 237, 0.25);
+    color: #7c3aed;
+  }
+
+  .dark .home-badge {
+    background: rgba(192, 132, 252, 0.15);
+    border-color: rgba(192, 132, 252, 0.3);
+    color: #c084fc;
+  }
+
+  .home-headline {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-sub {
+    max-width: 600px;
+    text-align: center;
+    margin: 0;
+  }
+
+  /* ─── Tools Grid ─── */
+  .home-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .home-tool-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+  }
+
+  .home-tool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(124, 58, 237, 0.15);
+    border-color: rgba(124, 58, 237, 0.3);
+  }
+
+  .home-tool-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(0, 124, 240, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+  }
+
+  .dark .home-tool-icon {
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), rgba(56, 189, 248, 0.1));
+    color: #c084fc;
+  }
+
+  .home-tool-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .home-tool-title {
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.3px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-tool-desc {
+    font-size: 13px;
+    color: var(--color-mute);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .home-tool-badge {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: #fff;
+    letter-spacing: -0.2px;
+  }
+
+  .home-trust {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+  }
+
+  /* ─── Features ─── */
+  .home-features {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .home-features-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .home-features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .home-feature-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .home-feature-card:hover {
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  .home-feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(0, 124, 240, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+  }
+
+  .dark .home-feature-icon {
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), rgba(56, 189, 248, 0.1));
+    color: #c084fc;
+  }
+
+  .home-feature-title {
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.3px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-feature-desc {
+    font-size: 14px;
+    color: var(--color-mute);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ─── How It Works ─── */
+  .home-how {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    background: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.03), transparent);
+  }
+
+  .home-how-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .home-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+    width: 100%;
+  }
+
+  .home-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--spacing-md);
+  }
+
+  .home-step-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #007cf0);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .home-step-title {
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .home-step-desc {
+    font-size: 15px;
+    color: var(--color-mute);
+    line-height: 1.6;
+    margin: 0;
+    max-width: 280px;
+  }
+
+  /* ─── FAQ ─── */
+  .home-faq {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .home-faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .home-faq-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .home-faq-item {
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .home-faq-item[open] {
+    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  .home-faq-q {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--color-ink);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .home-faq-q::-webkit-details-marker {
+    display: none;
+  }
+
+  .home-faq-q::after {
+    content: '+';
+    font-size: 20px;
+    color: var(--color-mute);
+    transition: transform 0.2s ease;
+  }
+
+  .home-faq-item[open] .home-faq-q::after {
+    transform: rotate(45deg);
+  }
+
+  .home-faq-a {
+    padding: 0 var(--spacing-xl) var(--spacing-lg);
+    font-size: 15px;
+    color: var(--color-body);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ─── Blog ─── */
+  .home-blog {
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    background: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.03), transparent);
+  }
+
+  .home-blog-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .home-blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .home-blog-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .home-blog-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(124, 58, 237, 0.15);
+  }
+
+  .home-blog-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: #7c3aed;
+    letter-spacing: -0.2px;
+  }
+
+  .home-blog-title {
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.4px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .home-blog-excerpt {
+    font-size: 14px;
+    color: var(--color-mute);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ─── Shared Section Styles ─── */
+  .section-eyebrow {
+    color: #7c3aed;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .dark .section-eyebrow {
+    color: #c084fc;
+  }
+
+  .section-headline {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    color: var(--color-ink);
+    margin: 0;
+    text-align: center;
+  }
+
+  .headline-gradient {
+    background: linear-gradient(135deg, #7c3aed, #007cf0, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    border: 1px solid;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7c3aed;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 960px) {
+    .home-headline {
+      font-size: 38px;
+      letter-spacing: -1.8px;
+    }
+
+    .home-tools-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .home-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .home-blog-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .home-hero {
+      padding: var(--spacing-4xl) var(--spacing-md) var(--spacing-3xl);
+    }
+
+    .home-headline {
+      font-size: 30px;
+      letter-spacing: -1.2px;
+    }
+
+    .home-tools-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .home-features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .home-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .section-headline {
+      font-size: 24px;
+    }
+  }
+</style>

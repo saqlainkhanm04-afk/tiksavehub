@@ -212,20 +212,45 @@ export const GET: APIRoute = async (ctx) => {
       if (realAudio) {
         downloadUrl = realAudio;
         audioExt = /\.mp3(?:\?|$)/i.test(realAudio) ? 'mp3' : 'm4a';
+        console.log('[IG Audio] extracted native DASH audio track');
       } else if (parsed.shortcode) {
         const igUrl = `https://www.instagram.com/${parsed.type === 'reels' ? 'reel' : parsed.type}/${parsed.shortcode}/`;
+        console.log('[IG Audio] trying cobalt for:', igUrl);
         const audio = await cobaltExtractAudio(igUrl, turnstileToken);
         if (audio?.url) {
-          downloadUrl = audio.url;
-          audioExt = 'mp3';
+          // Verify the cobalt tunnel actually returns data (some free
+          // instances return empty files). Quick HEAD check.
+          try {
+            const probe = await fetch(audio.url, { method: 'HEAD', signal: AbortSignal.timeout(5_000) });
+            const cl = Number(probe.headers.get('content-length') || 0);
+            if (cl > 1024) {
+              downloadUrl = audio.url;
+              audioExt = audio.ext || 'mp3';
+              console.log('[IG Audio] cobalt extraction succeeded');
+            } else {
+              console.warn('[IG Audio] cobalt URL returned tiny file:', cl, 'bytes');
+            }
+          } catch {
+            // HEAD not supported — try it anyway
+            downloadUrl = audio.url;
+            audioExt = audio.ext || 'mp3';
+            console.log('[IG Audio] cobalt extraction succeeded (HEAD failed, using anyway)');
+          }
+        } else {
+          console.warn('[IG Audio] cobalt returned no URL');
         }
       }
 
+      // No fallback to video URL — return a clear error instead of serving
+      // a video file when the user explicitly asked for audio only.
       if (!downloadUrl) {
-        // No real audio track detectable — fall back to the video source,
-        // but keep the honest video container (never a mislabeled audio file).
-        contentType = 'video';
-        downloadUrl = getBestVideoUrl(media);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Audio extraction is temporarily unavailable for this Reel. Please try a different Reel, or use the Reels/Video downloader to save the full video.',
+          }),
+          { status: 503, headers: { 'Content-Type': 'application/json' } }
+        );
       }
     } else if (imageOnlyStory) {
       contentType = 'image';

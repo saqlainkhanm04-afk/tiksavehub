@@ -13,7 +13,7 @@
  */
 
 const DEFAULT_API = 'https://api.cobalt.tools';
-const COBALT_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+const COBALT_SITEKEY = '0x4AAAAAAEl-ZmiorHhgs7jw';
 
 function cobaltApiBase(): string {
   try {
@@ -71,7 +71,9 @@ function cobaltHeaders(bearerToken?: string): Record<string, string> {
   if (apiKey) {
     h['Authorization'] = `Api-Key ${apiKey}`;
   } else if (bearerToken) {
-    h['Authorization'] = bearerToken; // already includes "Bearer ..."
+    h['Authorization'] = bearerToken.startsWith('Bearer ')
+      ? bearerToken
+      : `Bearer ${bearerToken}`;
   }
   return h;
 }
@@ -114,52 +116,97 @@ export async function cobaltExtractAudio(
   sourceUrl: string,
   turnstileToken?: string,
 ): Promise<CobaltAudioResult | null> {
+  // Try main cobalt instance first (needs API key or turnstile token).
   const apiKey = cobaltApiKey();
-
-  // If no API key, we need a turnstile token to get a Bearer token
   let bearerToken: string | undefined;
-  if (!apiKey) {
-    if (!turnstileToken) return null;
+  if (!apiKey && turnstileToken) {
     const token = await cobaltGetBearerToken(turnstileToken);
-    if (!token) return null;
-    bearerToken = token;
+    if (token) bearerToken = token;
   }
 
-  try {
-    const resp = await fetch(`${cobaltApiBase()}/`, {
-      method: 'POST',
-      headers: cobaltHeaders(bearerToken),
-      body: JSON.stringify({
-        url: sourceUrl,
-        downloadMode: 'audio',
-        audioFormat: 'mp3',
-      }),
-      signal: AbortSignal.timeout(30_000),
-    });
+  if (apiKey || bearerToken) {
+    try {
+      const resp = await fetch(`${cobaltApiBase()}/`, {
+        method: 'POST',
+        headers: cobaltHeaders(bearerToken),
+        body: JSON.stringify({
+          url: sourceUrl,
+          downloadMode: 'audio',
+          audioFormat: 'mp3',
+        }),
+        signal: AbortSignal.timeout(30_000),
+      });
 
-    if (!resp.ok) {
-      const errText = await resp.text().catch(() => '');
-      console.error(`[cobalt] audio request failed: ${resp.status} ${errText}`);
-      return null;
+      if (resp.ok) {
+        const data = await resp.json() as CobaltResponse;
+        if (data.status !== 'error') {
+          const url = extractCobaltUrl(data);
+          if (url) return { url, ext: 'mp3' };
+        }
+      }
+    } catch {
+      // fall through to free instance
     }
-
-    const data = await resp.json() as CobaltResponse;
-    if (data.status === 'error') {
-      console.error(`[cobalt] audio error: ${data.error?.code ?? 'unknown'}`);
-      return null;
-    }
-
-    const url = extractCobaltUrl(data);
-    if (!url) {
-      console.error(`[cobalt] audio: no downloadable URL in response (status=${data.status})`);
-      return null;
-    }
-
-    return { url, ext: 'mp3' };
-  } catch (err: any) {
-    console.error(`[cobalt] audio exception: ${err?.message ?? err}`);
-    return null;
   }
+
+  // Fallback: community cobalt instances. These rotate frequently — some
+  // require turnstile, some are intermittently down. Try each with one
+  // retry + exponential backoff; log failures for debugging.
+  const FREE_INSTANCES = [
+    'https://cobaltapi.cjs.nz',
+    'https://cobaltapi.squair.xyz',
+    'https://cobaltapi.kittycat.boo',
+    'https://cobalt-api.lain.wtf',
+    'https://cobalt-api.kwiatekmiki.com',
+    'https://api.cobalt.best',
+    'https://cobalt-api.hyper.lol',
+  ];
+
+  for (const base of FREE_INSTANCES) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const resp = await fetch(`${base}/`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: sourceUrl,
+            downloadMode: 'audio',
+            audioFormat: 'mp3',
+            audioBitrate: '320',
+          }),
+          signal: AbortSignal.timeout(20_000),
+        });
+
+        if (!resp.ok) {
+          console.warn(`[cobalt] ${base} returned ${resp.status} (attempt ${attempt + 1})`);
+          if (attempt === 0) await new Promise((r) => setTimeout(r, 1_500));
+          continue;
+        }
+
+        const data = await resp.json() as CobaltResponse;
+        if (data.status === 'error') {
+          console.warn(`[cobalt] ${base} error: ${data.error?.code ?? 'unknown'} (attempt ${attempt + 1})`);
+          if (attempt === 0) await new Promise((r) => setTimeout(r, 1_500));
+          continue;
+        }
+
+        const url = extractCobaltUrl(data);
+        if (url) {
+          console.log(`[cobalt] audio extracted via ${base}`);
+          return { url, ext: 'mp3' };
+        }
+      } catch (err: any) {
+        console.warn(`[cobalt] ${base} failed: ${err?.message ?? err} (attempt ${attempt + 1})`);
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 1_500));
+      }
+    }
+  }
+
+  console.error('[cobalt] all instances failed for audio extraction');
+  return null;
 }
 
 /**
@@ -172,50 +219,107 @@ export async function cobaltExtractVideo(
   turnstileToken?: string,
 ): Promise<{ url: string } | null> {
   const apiKey = cobaltApiKey();
+  console.log(`[Cobalt] ▶ Video extraction for: ${sourceUrl} (hasApiKey=${!!apiKey} hasTurnstile=${!!turnstileToken})`);
 
   let bearerToken: string | undefined;
-  if (!apiKey) {
-    if (!turnstileToken) return null;
+  if (!apiKey && turnstileToken) {
+    console.log(`[Cobalt]   Exchanging turnstile for bearer token...`);
     const token = await cobaltGetBearerToken(turnstileToken);
-    if (!token) return null;
-    bearerToken = token;
+    if (token) {
+      bearerToken = token;
+      console.log(`[Cobalt]   Got bearer token: ${token.substring(0, 30)}...`);
+    }
   }
 
-  try {
-    const resp = await fetch(`${cobaltApiBase()}/`, {
-      method: 'POST',
-      headers: cobaltHeaders(bearerToken),
-      body: JSON.stringify({
-        url: sourceUrl,
-        downloadMode: 'auto',
-        videoQuality: '1080',
-      }),
-      signal: AbortSignal.timeout(30_000),
-    });
+  // Try main cobalt instance first (needs API key or turnstile token).
+  if (apiKey || bearerToken) {
+    const fetchUrl = `${cobaltApiBase()}/`;
+    console.log(`[Cobalt] → POST ${fetchUrl}`);
+    try {
+      const resp = await fetch(fetchUrl, {
+        method: 'POST',
+        headers: cobaltHeaders(bearerToken),
+        body: JSON.stringify({
+          url: sourceUrl,
+          downloadMode: 'auto',
+          videoQuality: '1080',
+        }),
+        signal: AbortSignal.timeout(20_000),
+      });
 
-    if (!resp.ok) {
-      const errText = await resp.text().catch(() => '');
-      console.error(`[cobalt] video request failed: ${resp.status} ${errText}`);
-      return null;
+      const bodyText = await resp.text().catch(() => '<unreadable>');
+      console.log(`[Cobalt] ← status=${resp.status} body(2000)=${bodyText.substring(0, 2000)}`);
+
+      if (resp.ok) {
+        const data = JSON.parse(bodyText) as CobaltResponse;
+        if (data.status !== 'error') {
+          const url = extractCobaltUrl(data);
+          if (url) {
+            console.log(`[Cobalt] ✓ Success via main instance — url=${url.substring(0, 100)}...`);
+            return { url };
+          }
+        }
+      }
+    } catch (err: any) {
+      console.log(`[Cobalt] ✗ Main instance failed: ${err?.message ?? err}`);
     }
-
-    const data = await resp.json() as CobaltResponse;
-    if (data.status === 'error') {
-      console.error(`[cobalt] video error: ${data.error?.code ?? 'unknown'}`);
-      return null;
-    }
-
-    const url = extractCobaltUrl(data);
-    if (!url) {
-      console.error(`[cobalt] video: no downloadable URL in response (status=${data.status})`);
-      return null;
-    }
-
-    return { url };
-  } catch (err: any) {
-    console.error(`[cobalt] video exception: ${err?.message ?? err}`);
-    return null;
   }
+
+  // Fallback: community cobalt instances (no auth required)
+  const FREE_INSTANCES = [
+    'https://cobaltapi.cjs.nz',
+    'https://cobaltapi.squair.xyz',
+    'https://cobaltapi.kittycat.boo',
+    'https://cobalt-api.lain.wtf',
+    'https://cobalt-api.kwiatekmiki.com',
+    'https://api.cobalt.best',
+    'https://cobalt-api.hyper.lol',
+  ];
+
+  for (const base of FREE_INSTANCES) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const resp = await fetch(`${base}/`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: sourceUrl,
+            downloadMode: 'auto',
+            videoQuality: '1080',
+          }),
+          signal: AbortSignal.timeout(15_000),
+        });
+
+        if (!resp.ok) {
+          console.warn(`[Cobalt] ${base} returned ${resp.status} (attempt ${attempt + 1})`);
+          if (attempt === 0) await new Promise((r) => setTimeout(r, 1_000));
+          continue;
+        }
+
+        const data = await resp.json() as CobaltResponse;
+        if (data.status === 'error') {
+          console.warn(`[Cobalt] ${base} error: ${data.error?.code ?? 'unknown'} (attempt ${attempt + 1})`);
+          if (attempt === 0) await new Promise((r) => setTimeout(r, 1_000));
+          continue;
+        }
+
+        const url = extractCobaltUrl(data);
+        if (url) {
+          console.log(`[Cobalt] ✓ Video extracted via community instance ${base}`);
+          return { url };
+        }
+      } catch (err: any) {
+        console.warn(`[Cobalt] ${base} failed: ${err?.message ?? err} (attempt ${attempt + 1})`);
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 1_000));
+      }
+    }
+  }
+
+  console.error('[Cobalt] all instances failed for video extraction');
+  return null;
 }
 
 /** Export the sitekey so client-side components can use it. */

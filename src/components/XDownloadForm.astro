@@ -931,6 +931,8 @@ const copy = {
 </style>
 
 <script>
+  import { attachSimProgress, showLoadingCard as showLoadingCard_ } from '../lib/download-progress';
+
   const form = document.getElementById('x-form') as HTMLFormElement;
   const urlInput = document.getElementById('x-url') as HTMLInputElement;
   const clearBtn = document.getElementById('x-clear') as HTMLButtonElement;
@@ -945,14 +947,24 @@ const copy = {
     /^(https?:\/\/)?(www\.|mobile\.|m\.|)?(twitter\.com|x\.com)\//i;
 
   // --- Cloudflare Turnstile for cobalt API auth ---
-  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAAhUvTuTxLs2HYH4';
+  const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAEl-ZmiorHhgs7jw';
   let turnstileToken: string | null = null;
   let turnstileReady = false;
+  let turnstileWidgetId: string | null = null;
+
+  function cleanupTurnstile() {
+    if (turnstileWidgetId !== null && typeof (window as any).turnstile !== 'undefined') {
+      try { (window as any).turnstile.remove(turnstileWidgetId); } catch {}
+      turnstileWidgetId = null;
+    }
+  }
+
   function initTurnstile() {
     if (typeof (window as any).turnstile === 'undefined') { setTimeout(initTurnstile, 500); return; }
     const c = document.getElementById('cf-turnstile-container');
     if (!c) return;
-    (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+    cleanupTurnstile();
+    turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
       callback: (t: string) => { turnstileToken = t; turnstileReady = true; },
       'error-callback': () => { turnstileToken = null; turnstileReady = false; },
       'expired-callback': () => { turnstileToken = null; turnstileReady = false; },
@@ -964,8 +976,9 @@ const copy = {
       if (turnstileToken && turnstileReady) { resolve(turnstileToken); return; }
       const c = document.getElementById('cf-turnstile-container');
       if (!c || typeof (window as any).turnstile === 'undefined') { resolve(null); return; }
+      cleanupTurnstile();
       c.innerHTML = '';
-      (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
+      turnstileWidgetId = (window as any).turnstile.render(c, { sitekey: COBALT_TURNSTILE_SITEKEY, appearance: 'interaction-only',
         callback: (t: string) => { turnstileToken = t; turnstileReady = true; resolve(t); },
         'error-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
         'expired-callback': () => { turnstileToken = null; turnstileReady = false; resolve(null); },
@@ -984,34 +997,17 @@ const copy = {
   }
 
   function showLoadingCard() {
-    resultMount.innerHTML = `
-      <div class="x-loading-card animate-fade-in-up" role="status" aria-live="polite">
-        <div class="x-loading-icon">
-          <div class="x-loading-ring"></div>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </div>
-        <div class="x-loading-text">
-          <span class="x-loading-title">Fetching your video…</span>
-          <span class="x-loading-sub" id="x-loading-sub">Connecting to X</span>
-        </div>
-        <div class="x-loading-dots"><span></span><span></span><span></span></div>
-      </div>
-    `;
-    const sub = document.getElementById('x-loading-sub');
     const phases = ['Connecting to X', 'Extracting video data', 'Preparing download links'];
-    let pi = 0;
-    const phaseTimer = setInterval(() => {
-      pi = Math.min(pi + 1, phases.length - 1);
-      if (sub) sub.textContent = phases[pi];
-    }, 2500);
-    (window as any).__xPhaseTimer = phaseTimer;
+    (window as any).__xLoadingCard = showLoadingCard_(resultMount, {
+      title: 'Fetching your video…',
+      phases,
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    });
   }
 
   function clearLoadingCard() {
-    if ((window as any).__xPhaseTimer) {
-      clearInterval((window as any).__xPhaseTimer);
-      delete (window as any).__xPhaseTimer;
-    }
+    const card = (window as any).__xLoadingCard;
+    if (card) { card.destroy(); delete (window as any).__xLoadingCard; }
   }
 
   function showError(msg: string) {
@@ -1197,6 +1193,9 @@ const copy = {
     if (labelEl) labelEl.textContent = 'Processing… 0%';
     if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
 
+    // Simulated progress — smooth 0→85% while server prepares the stream
+    const sim = attachSimProgress(bar, labelEl, 'Processing…', { ceiling: 85, intervalMs: 250 });
+
     const xhr = new XMLHttpRequest();
     getTurnstileToken().then((token) => {
     const tokenParam = token ? '&turnstileToken=' + encodeURIComponent(token) : '';
@@ -1207,13 +1206,12 @@ const copy = {
     xhr.onprogress = function (e) {
       if (e.lengthComputable && bar && labelEl) {
         const pct = Math.round((e.loaded / e.total) * 100);
-        bar.style.transition = 'none';
-        bar.style.width = pct + '%';
-        labelEl.textContent = 'Processing… ' + pct + '%';
+        sim.stop(pct);
       }
     };
 
     xhr.onload = function () {
+      sim.stop(xhr.status === 200 ? 100 : undefined);
       if (xhr.status === 200) {
         const blob = xhr.response;
         const blobUrl = URL.createObjectURL(blob);
@@ -1241,6 +1239,7 @@ const copy = {
     };
 
     xhr.onerror = function () {
+      sim.stop();
       btn.classList.add('x-dl-tile-error');
       if (labelEl) labelEl.textContent = 'Download failed — try again';
       setTimeout(() => {
@@ -1253,8 +1252,9 @@ const copy = {
     };
 
     xhr.ontimeout = function () {
+      sim.stop();
       btn.classList.add('x-dl-tile-error');
-      if (labelEl) labelEl.textContent = 'Download timed out — try again';
+      if (labelEl) labelEl.textContent = 'Timed out — try again';
       setTimeout(() => {
         btn.classList.remove('x-dl-tile-error');
         if (labelEl) labelEl.innerHTML = origLabel;

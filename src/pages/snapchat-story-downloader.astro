@@ -49,6 +49,26 @@ const faqData = [
     q: 'Is the Snapchat story downloader free?',
     a: 'Yes, TikSaveHub is 100% free with no daily download limits — download as many Snapchat stories as you want without paying or registering. There are no caps, no premium tier, and no hidden fees.',
   },
+  {
+    id: 'sc-story-someone-know',
+    q: 'Will someone know if I download their Snapchat Story?',
+    a: 'No. TikSaveHub downloads stories directly from Snapchat\'s CDN. The original poster receives no notification, and your identity is never revealed. Your download is completely anonymous.',
+  },
+  {
+    id: 'sc-story-format',
+    q: 'What format are Snapchat story downloads?',
+    a: 'TikSaveHub saves Snapchat stories as MP4 files (H.264 video + AAC audio) — the same format Snapchat uses. Quality depends on what the user uploaded, typically 720p to 1080p HD.',
+  },
+  {
+    id: 'sc-story-install-app',
+    q: 'Do I need to install an app or browser extension to download Snapchat stories?',
+    a: 'No. TikSaveHub is a free online Snapchat story downloader that works entirely in your browser — no app, no extension, no software to install. Just paste the story.snapchat.com link, click Download, and save the MP4. Works on iPhone, Android, PC, and Mac.',
+  },
+  {
+    id: 'sc-story-best-free',
+    q: 'What is the best free Snapchat story downloader?',
+    a: 'TikSaveHub is one of the best free Snapchat story downloaders. It saves stories before they expire in HD quality with no sign-up, no watermarks, and no download limits. Works directly in your browser on any device — completely free.',
+  },
 ];
 
 const combinedJsonLd = JSON.stringify({
@@ -67,8 +87,8 @@ const combinedJsonLd = JSON.stringify({
     },
     {
       '@type': 'HowTo',
-      name: 'How to Download Snapchat Stories',
-      description: 'Step-by-step guide to download Snapchat stories in HD quality using TikSaveHub before they expire.',
+      name: 'How to Download Snapchat Stories Online',
+      description: 'Step-by-step guide to download Snapchat stories in HD quality using TikSaveHub — free, before they expire.',
       totalTime: 'PT1M',
       step: [
         {
@@ -100,16 +120,15 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
-  title="Snapchat Story Downloader — Save Stories Before They Expire | TikSaveHub"
-  description="Download Snapchat stories before they disappear — free, fast, HD quality, no sign-up. Save Snapchat stories as MP4 on iPhone, Android, or desktop. Works with story.snapchat.com links."
-  keywords="snapchat story downloader, download snapchat stories, save snapchat stories, snapchat story download online, story.snapchat.com downloader, save snapchat story hd, snapchat story saver, download snapchat story before expires, save story from snapchat"
+  title="Snapchat Story Video Downloader — Free Save Before Expires | TikSaveHub"
+  description="Download Snapchat stories before they expire. Free Snapchat story downloader — save story videos as MP4 in HD. No login, no app, works on iPhone, Android, PC."
+  keywords="snapchat story downloader, snapchat story video downloader, download snapchat stories, save snapchat stories, snapchat story download online, free snapchat story downloader, story.snapchat.com downloader, save snapchat story hd, snapchat story saver, download snapchat story before expires, save story from snapchat, free video downloader, video downloader without watermark, snapchat story without watermark, hd story download, hd story downloader"
   canonical="/snapchat-story-downloader"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="snapchat"
   jsonLd={combinedJsonLd}
   appName="TikSaveHub — Snapchat Story Downloader"
-  appRating={{ value: '4.8', count: '4260' }}
 >
   <!-- JSON-LD -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -126,15 +145,13 @@ const combinedJsonLd = JSON.stringify({
     <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
     <div class="dl-hero-inner container-page">
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
-        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1" />
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
-            <span itemprop="name">Snapchat Story Downloader</span>
-            <meta itemprop="position" content="2" />
-          </li>
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Snapchat Story Downloader</span>
+                  </li>
         </ol>
       </nav>
 
@@ -146,7 +163,7 @@ const combinedJsonLd = JSON.stringify({
       </div>
 
       <h1 id="dl-hero-headline" class="dl-hero-headline">
-        Snapchat Story Downloader — Save Before They Disappear
+        Snapchat Story Video Downloader — Free, HD, Before They Expire
       </h1>
 
       <p class="dl-hero-subline headline-gradient">
@@ -184,7 +201,7 @@ const combinedJsonLd = JSON.stringify({
       <div class="dl-hero-share">
         <SocialShare
           url="/snapchat-story-downloader"
-          title="Snapchat Story Downloader — Save Before They Disappear"
+          title="Snapchat Story Video Downloader — Free, HD, Before They Expire"
           description="Download Snapchat stories in HD. Free, fast, before they expire."
           image="/og-downloader.png"
         />
@@ -192,11 +209,7 @@ const combinedJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <StatsSection stats={[
-    { value: '1M+', label: 'Snapchat Stories Saved', sub: 'Download stories before they expire', icon: 'download' },
-    { value: '120+', label: 'Countries Supported', sub: 'Save Snapchat content from anywhere', icon: 'globe' },
-    { value: '4.8', label: 'Fast & Free Story Downloads', sub: 'No login required', icon: 'star' },
-  ]} />
+  <StatsSection platform="Snapchat" />
 
   <!-- SEO Content -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
@@ -205,32 +218,32 @@ const combinedJsonLd = JSON.stringify({
         <div class="seo-content-main">
           <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
           <h2 id="seo-about-headline" class="section-headline">
-            Save Snapchat stories before they disappear.
+            Free Snapchat story downloader — save before they disappear.
           </h2>
 
           <div class="seo-article">
             <p>
-              Snapchat stories are designed to vanish after 24 hours — but with TikSaveHub, you can save them permanently. Whether it's a friend's story you want to revisit, a creator's content you want to keep, or a memorable moment you don't want to lose, TikSaveHub lets you download Snapchat stories as HD MP4 files in seconds. No app installation, no browser extension, no account creation needed.
+              Snapchat stories are designed to vanish after 24 hours — but with TikSaveHub, you can save them permanently as a free video downloader. Whether it's a friend's story you want to revisit, a creator's content you want to keep, or a memorable moment you don't want to lose, TikSaveHub lets you download Snapchat stories as HD MP4 files in seconds. This free Snapchat story downloader requires no app installation, no browser extension, and no account creation — just paste the link and save.
             </p>
 
-            <h3 class="text-highlight">How the Snapchat story downloader works</h3>
+            <h3 class="text-highlight">How the Snapchat story downloader works online</h3>
             <p>
-              Using TikSaveHub to save Snapchat stories is simple. First, open Snapchat and find the story you want to download. Tap the share button or copy the story URL (it will look like story.snapchat.com/s/username/…). Next, come back to TikSaveHub and paste that link into the Story tab input field. Click the Download button, and our servers fetch the story video in seconds. You'll then see a preview with the video and options to download the HD version. Click download and the file saves directly to your device.
+              Using TikSaveHub to save Snapchat stories is simple. First, open Snapchat and find the story you want to download. Tap the share button or copy the story URL (it will look like story.snapchat.com/s/username/…). Next, come back to TikSaveHub and paste that link into the Story tab input field. Click the Download button, and our servers fetch the story video in seconds. You'll then see a preview with the video and options to download the HD version — completely free. Click download and the file saves directly to your device.
             </p>
 
             <h3 class="text-highlight">Why save Snapchat stories?</h3>
             <p>
-              Snapchat stories are ephemeral by design — they disappear after 24 hours and there's no built-in way to save them. But some stories are worth keeping: a friend's travel updates, a creator's tutorial, a funny moment, or a important announcement. TikSaveHub lets you preserve these moments before they're gone forever. The downloaded MP4 is saved permanently on your device, so you can watch it offline, share it with friends, or keep it as a memory.
+              Snapchat stories are ephemeral by design — they disappear after 24 hours and there's no built-in way to save them. But some stories are worth keeping: a friend's travel updates, a creator's tutorial, a funny moment, or an important announcement. TikSaveHub is a free video downloader that lets you preserve these moments before they're gone forever. The downloaded MP4 is saved permanently on your device in HD quality — without watermark — so you can watch it offline, share it with friends, or keep it as a memory.
             </p>
 
-            <h3 class="text-highlight">Works on any device</h3>
+            <h3 class="text-highlight">Works on any device — free, online, no app</h3>
             <p>
-              Whether you're on an Android phone, an iPhone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Snapchat stories. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor.
+              Whether you're on an Android phone, an iPhone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Snapchat stories. This free online story downloader requires no app installation, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor.
             </p>
 
             <h3 class="text-highlight">Safe, private, and completely free</h3>
             <p>
-              We take your privacy seriously. TikSaveHub does not require you to create an account, enter an email address, or provide any personal information. We do not store your download history, and we do not track your browsing behavior. The entire download process happens server-side, so there is nothing stored on your device except the final video file. And unlike many other tools, TikSaveHub is 100% free with no daily caps.
+              We take your privacy seriously. TikSaveHub does not require you to create an account, enter an email address, or provide any personal information. We do not store your download history, and we do not track your browsing behavior. The entire download process happens server-side, so there is nothing stored on your device except the final video file. And unlike many other tools, TikSaveHub is a free video downloader with no daily caps — completely free, forever.
             </p>
 
             <p>
@@ -243,11 +256,21 @@ const combinedJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
+              <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
+              <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
+              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
+              <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
+              <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
+              <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
+              <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
+              <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
               <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
-              <li><a href="/snapchat-downloader">Snapchat Video Downloader</a></li>
               <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#faq">FAQ</a></li>
+              <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
             </ul>
           </div>
 
@@ -337,7 +360,7 @@ const combinedJsonLd = JSON.stringify({
   <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
     <div class="dl-cta-inner container-page">
       <h2 id="dl-cta-headline" class="dl-cta-headline">Don't let stories disappear.</h2>
-      <p class="dl-cta-sub">Paste a Snapchat story link above and save it permanently — no account, no hassle.</p>
+      <p class="dl-cta-sub">Paste a Snapchat story link above and save it permanently — free, no account, no hassle.</p>
       <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
         Save Story Now
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>

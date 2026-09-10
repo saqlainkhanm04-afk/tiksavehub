@@ -22,7 +22,7 @@ const faqData = [
   {
     id: 'audio-no-video',
     q: 'Can I download Instagram audio without video?',
-    a: 'Yes, that\u2019s exactly what TikSaveHub does. You paste a video or Reel link and we return only the audio as an MP3 file — no video file is downloaded, saving storage space on your device.',
+    a: 'Yes, that’s exactly what TikSaveHub does. You paste a video or Reel link and we return only the audio as an MP3 file — no video file is downloaded, saving storage space on your device.',
   },
   {
     id: 'audio-original',
@@ -32,12 +32,12 @@ const faqData = [
   {
     id: 'audio-story',
     q: 'Can I download Instagram Story audio as MP3?',
-    a: 'Yes, if the Story is public. Copy the Story\u2019s share link, paste it into TikSaveHub, and the audio from the Story clip is extracted as an MP3. Remember Stories expire after 24 hours, so grab the link while it\u2019s still live.',
+    a: 'Yes, if the Story is public. Copy the Story’s share link, paste it into TikSaveHub, and the audio from the Story clip is extracted as an MP3. Remember Stories expire after 24 hours, so grab the link while it’s still live.',
   },
   {
     id: 'audio-320',
     q: 'Can I download Instagram audio in 320kbps quality?',
-    a: 'TikSaveHub gives you the highest bitrate the original actually contains. Instagram compresses its audio (typically around 128–256 kbps), so a true 320kbps file only exists on some uploads — we don\u2019t fake a higher bitrate by upsampling; you get a clean MP3 at the maximum quality available from the source.',
+    a: 'TikSaveHub gives you the highest bitrate the original actually contains. Instagram compresses its audio (typically around 128–256 kbps), so a true 320kbps file only exists on some uploads — we don’t fake a higher bitrate by upsampling; you get a clean MP3 at the maximum quality available from the source.',
   },
   {
     id: 'audio-iphone',
@@ -62,12 +62,17 @@ const faqData = [
   {
     id: 'audio-private',
     q: 'Can I download audio from a private Instagram account?',
-    a: 'No. TikSaveHub only works with public content. We don\u2019t attempt to bypass privacy settings, so audio from private accounts can\u2019t be extracted.',
+    a: 'No. TikSaveHub only works with public content. We don’t attempt to bypass privacy settings, so audio from private accounts can’t be extracted.',
   },
   {
     id: 'audio-whyfail',
     q: 'Why is my Instagram audio download not working?',
     a: 'Usually one of three reasons: the post is private, the video has no audio track, or the creator removed or region-restricted it. Double-check that the link opens publicly in your browser, and try another public Reel or video.',
+  },
+  {
+    id: 'audio-trending-songs',
+    q: 'Can I download trending Instagram Reels songs as MP3?',
+    a: 'Yes. If a Reel uses a trending song, TikSaveHub extracts that exact audio track and saves it as an MP3. Perfect for saving trending sounds, viral audio clips, or background music from Instagram Reels.',
   },
 ];
 
@@ -87,7 +92,7 @@ const faqJsonLd = JSON.stringify({
 
 <Layout
   title="Instagram Audio Downloader (MP3 & Music) — TikSaveHub"
-  description="Extract and download MP3 audio from any Instagram Reel or video — free, fast, no sign-up. The best online Instagram audio extractor."
+  description="Download Instagram audio as MP3 from Reels, videos & Stories. Free IG audio extractor — save music, voiceovers & soundtracks. No login, no app needed."
   keywords="instagram audio downloader, instagram to mp3, download instagram audio, extract instagram music, ig reels mp3 downloader, instagram audio extractor, instagram reels audio downloader"
   canonical="/instagram-audio-downloader"
   ogImage="/og-downloader.png"
@@ -95,7 +100,6 @@ const faqJsonLd = JSON.stringify({
   platform="instagram"
   jsonLd={faqJsonLd}
   appName="TikSaveHub — Instagram Audio Downloader"
-  appRating={{ value: '4.9', count: '12450' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -113,15 +117,13 @@ const faqJsonLd = JSON.stringify({
     <div class="dl-hero-inner container-page">
       <!-- Breadcrumb -->
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
-        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1" />
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
-            <span itemprop="name">Instagram Audio Downloader</span>
-            <meta itemprop="position" content="2" />
-          </li>
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+                  </li>
+          <li aria-current="page">
+            <span>Instagram Audio Downloader</span>
+                  </li>
         </ol>
       </nav>
 
@@ -180,26 +182,7 @@ const faqJsonLd = JSON.stringify({
   </section>
 
   <!-- Stats -->
-  <StatsSection stats={[
-    {
-      value: '10M+',
-      label: 'Audio Tracks Extracted',
-      sub: 'Extract MP3 from Instagram reels & posts',
-      icon: 'download',
-    },
-    {
-      value: '150+',
-      label: 'Countries Using Our Audio Extractor',
-      sub: 'Extract Instagram audio from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.9',
-      label: 'Fast & Free Instagram MP3 Extraction',
-      sub: 'High-quality audio, no login required',
-      icon: 'star',
-    },
-  ]} />
+  <StatsSection platform="Instagram" />
 
   <!-- SEO Content Section — 600+ words -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
@@ -260,11 +243,21 @@ const faqJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
-              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader Without Watermark</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#faq">FAQ</a></li>
-              <li><a href="/blog">Blog</a></li>
+              <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
+              <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
+              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
+              <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
+              <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
+              <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
+              <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
+              <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
+              <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
+              <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
+              <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
             </ul>
           </div>
 

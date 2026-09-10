@@ -1,0 +1,266 @@
+---
+import { languages } from '../i18n/ui';
+import { getLangFromUrl, getLocalizedPath } from '../i18n/utils';
+
+interface Props {
+  uid?: string;
+}
+
+const { uid = 'lang' } = Astro.props;
+const currentLang = getLangFromUrl(Astro.url);
+const currentPath = Astro.url.pathname.replace(/^\/(en|es|ja|fr|de|pt|ko|it)(\/|$)/, '/') || '/';
+---
+
+<div class="lang-picker" id={`${uid}-picker`}>
+  <button class="lang-picker-btn" id={`${uid}-btn`} aria-label="Select language" aria-expanded="false" aria-haspopup="listbox">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    <span class="lang-picker-label">{languages[currentLang]}</span>
+    <svg class="lang-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  </button>
+  <div class="lang-picker-backdrop" id={`${uid}-backdrop`}></div>
+  <ul class="lang-picker-list" id={`${uid}-list`} role="listbox" aria-label="Available languages">
+    <li class="lang-picker-header">
+      <span>Select Language</span>
+      <button class="lang-picker-close" id={`${uid}-close`} aria-label="Close language menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </li>
+    {Object.entries(languages).map(([lang, label]) => (
+      <li role="option" aria-selected={lang === currentLang}>
+        <a href={getLocalizedPath(currentPath, lang as any)} class={`lang-picker-option ${lang === currentLang ? 'lang-active' : ''}`}>
+          {label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .lang-picker {
+    position: relative;
+  }
+
+  .lang-picker-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    background: var(--color-canvas);
+    color: var(--color-body);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .lang-picker-btn:hover {
+    background-color: var(--color-canvas-soft-2);
+    border-color: var(--color-mute);
+  }
+
+  .lang-chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .lang-picker[aria-expanded="true"] .lang-chevron {
+    transform: rotate(180deg);
+  }
+
+  .lang-picker-backdrop {
+    display: none;
+  }
+
+  .lang-picker-list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 140px;
+    padding: 4px;
+    margin: 0;
+    list-style: none;
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.12);
+    z-index: 200;
+  }
+
+  .lang-picker[aria-expanded="true"] .lang-picker-list {
+    display: block;
+  }
+
+  .lang-picker-header {
+    display: none;
+  }
+
+  .lang-picker-close {
+    display: none;
+  }
+
+  .lang-picker-option {
+    display: block;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--color-body);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.12s ease, color 0.12s ease;
+  }
+
+  .lang-picker-option:hover {
+    background-color: var(--color-canvas-soft-2);
+    color: var(--color-ink);
+  }
+
+  .lang-active {
+    font-weight: 600;
+    color: #7c3aed;
+    background-color: rgba(124, 58, 237, 0.08);
+  }
+
+  :global(html.dark) .lang-active {
+    color: #c084fc;
+    background-color: rgba(192, 132, 252, 0.12);
+  }
+
+  @media (max-width: 600px) {
+    .lang-picker-btn {
+      padding: 0;
+      border: none;
+      background: none;
+      min-width: 36px;
+      min-height: 36px;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+    }
+
+    .lang-picker-btn:hover {
+      background-color: var(--color-canvas-soft-2);
+      border-color: transparent;
+    }
+
+    .lang-picker-label,
+    .lang-chevron {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initPicker(uid: string) {
+    const picker = document.getElementById(`${uid}-picker`);
+    const btn = document.getElementById(`${uid}-btn`);
+    const backdrop = document.getElementById(`${uid}-backdrop`);
+    const closeBtn = document.getElementById(`${uid}-close`);
+    const list = document.getElementById(`${uid}-list`);
+
+    if (!picker || !btn || !list) return;
+
+    const isMobile = () => window.innerWidth <= 600;
+    let savedListParent: HTMLElement | null = null;
+    let savedBackdropParent: HTMLElement | null = null;
+    let savedListNext: HTMLElement | null = null;
+    let savedBackdropNext: HTMLElement | null = null;
+
+    function applyMobileStyles() {
+      if (backdrop) {
+        backdrop.style.position = 'fixed';
+        backdrop.style.inset = '0';
+        backdrop.style.background = 'rgba(0,0,0,0.4)';
+        backdrop.style.zIndex = '9998';
+        backdrop.style.display = 'block';
+        (backdrop.style as any).webkitTapHighlightColor = 'transparent';
+      }
+      if (list) {
+        list.style.position = 'fixed';
+        list.style.top = 'auto';
+        list.style.bottom = '0';
+        list.style.left = '0';
+        list.style.right = '0';
+        list.style.width = '100%';
+        list.style.maxHeight = '70vh';
+        list.style.overflowY = 'auto';
+        list.style.zIndex = '9999';
+        list.style.background = 'var(--color-canvas)';
+        list.style.border = '1px solid var(--color-hairline)';
+        list.style.borderRadius = '12px 12px 0 0';
+        list.style.boxShadow = '0 -8px 32px -4px rgba(0,0,0,0.2)';
+        list.style.padding = '0';
+        list.style.margin = '0';
+        list.style.listStyle = 'none';
+        list.style.display = 'block';
+      }
+    }
+
+    function clearMobileStyles() {
+      if (backdrop) backdrop.style.cssText = 'display:none';
+      if (list) list.style.cssText = 'display:none';
+    }
+
+    function openPicker() {
+      if (isMobile() && backdrop && list) {
+        savedListParent = list.parentElement;
+        savedBackdropParent = backdrop.parentElement;
+        savedListNext = list.nextElementSibling as HTMLElement;
+        savedBackdropNext = backdrop.nextElementSibling as HTMLElement;
+        applyMobileStyles();
+        document.body.appendChild(backdrop);
+        document.body.appendChild(list);
+      }
+      picker!.setAttribute('aria-expanded', 'true');
+    }
+
+    function closePicker() {
+      picker!.setAttribute('aria-expanded', 'false');
+      if (savedListParent && savedBackdropParent) {
+        clearMobileStyles();
+        if (savedBackdropNext) {
+          savedBackdropParent.insertBefore(backdrop!, savedBackdropNext);
+        } else {
+          savedBackdropParent.appendChild(backdrop!);
+        }
+        if (savedListNext) {
+          savedListParent.insertBefore(list!, savedListNext);
+        } else {
+          savedListParent.appendChild(list!);
+        }
+        savedListParent = null;
+        savedBackdropParent = null;
+        savedListNext = null;
+        savedBackdropNext = null;
+      }
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const expanded = picker!.getAttribute('aria-expanded') === 'true';
+      if (expanded) {
+        closePicker();
+      } else {
+        openPicker();
+      }
+    });
+
+    backdrop?.addEventListener('click', closePicker);
+    closeBtn?.addEventListener('click', closePicker);
+
+    document.addEventListener('click', (e) => {
+      if (!picker!.contains(e.target as Node)) {
+        closePicker();
+      }
+    });
+  }
+
+  initPicker('lang');
+  initPicker('lang-mob');
+</script>

@@ -1,0 +1,124 @@
+---
+// Facebook Video Downloader — SEO-optimized landing page (Italian)
+// URL: /facebook-video-downloader
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbSeoArticle from '../../components/FbSeoArticle.astro';
+import FbStepsSection from '../../components/FbStepsSection.astro';
+import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbFaqSection from '../../components/FbFaqSection.astro';
+import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbInternalLinks from '../../components/FbInternalLinks.astro';
+import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
+import StatsSection from '../../components/StatsSection.astro';
+import SocialShare from '../../components/SocialShare.astro';
+
+const faqData = [
+  { id: 'fb-hd-1080p', q: 'Come scaricare un video Facebook in HD 1080p?', a: 'Per scaricare un video Facebook in HD 1080p, copia il link pubblico del video, incollalo su TikSaveHub e clicca Download. Se il caricamento originale su Facebook ha una fonte a 1080p, lo strumento estrarr— automaticamente quella opzione ad alta definizione.' },
+  { id: 'fb-4k', q: 'Posso scaricare video Facebook in 4K?', a: 'S—, puoi scaricare video in 4K, ma solo se il creatore originale ha caricato il video su Facebook in risoluzione 4K. TikSaveHub recupera la massima qualit— disponibile direttamente dai server di Facebook.' },
+  { id: 'fb-iphone', q: 'Come salvare un video Facebook sul rullino photo dell\'iPhone?', a: 'Per salvare un video Facebook sul rullino photo dell\'iPhone, apri TikSaveHub nel browser Safari. Incolla il link del video, scarica il file MP4, vai ai Download di Safari e tocca "Salva Video" per spostarlo nell\'app Foto.' },
+  { id: 'fb-android', q: 'Come scaricare un video Facebook nella galleria Android?', a: 'Su qualsiasi dispositivo Android, apri Chrome, incolla il link del video Facebook su TikSaveHub e tocca Download. Il file MP4 verr— salvato istantaneamente nella cartella Download del browser e apparir— nella Galleria del dispositivo.' },
+  { id: 'fb-live', q: 'Posso scaricare video Facebook Live?', a: 'S—, ma puoi scaricare un video Facebook Live solo dopo che la trasmissione live — completamente terminata e la replay — pubblicata. I flussi live attivi e in corso non possono essere scaricati.' },
+  { id: 'fb-private', q: 'Posso scaricare video Facebook privati?', a: 'No, non puoi scaricare video Facebook privati. Per rispettare la privacy degli utenti, TikSaveHub elabora e scarica solo i video impostati su "Pubblico" e accessibili liberamente tramite il loro URL.' },
+  { id: 'fb-no-login', q: 'Devo accedere a Facebook per scaricare un video?', a: 'Non — richiesto alcun accesso. Non hai bisogno di fornire il nome utente o la password di Facebook. Basta incollare il link pubblico del video su TikSaveHub e il download inizier— istantaneamente.' },
+  { id: 'fb-reels-watch', q: 'Posso scaricare Facebook Reels e video Watch?', a: 'Certamente! TikSaveHub supporta completamente il download di Facebook Reels e video Watch pubblici. Basta incollare l\'URL del Reel o Watch nel nostro strumento per salvare l\'MP4 direttamente sul tuo dispositivo.' },
+  { id: 'fb-link-types', q: 'Quali link di video Facebook posso usare con lo scaricatore?', a: 'TikSaveHub supporta tutti i link pubblici standard di Facebook, inclusi i post regolari (facebook.com/watch), Facebook Reels (facebook.com/reel/) e i link di condivisione mobile come fb.watch.' },
+  { id: 'fb-no-watermark', q: 'Posso scaricare video Facebook senza filigrana?', a: 'S—, TikSaveHub fornisce il video sorgente pulito senza aggiungere filigrane o loghi nostri. Tuttavia, se il creatore ha modificato manualmente una filigrana nel video prima di caricarlo su Facebook, quella non pu— essere rimossa.' },
+  { id: 'fb-whyfail', q: 'Perch— non riesco a scaricare un video Facebook?', a: 'Il download di solito fallisce se il video — impostato come privato, — stato eliminato, — limitato a un determinato gruppo o — ancora in trasmissione live. Assicurati di copiare un link pubblico direttamente dal pulsante "Condividi".' },
+  { id: 'fb-free-unlimited', q: 'Lo scaricatore di video Facebook — gratuito e illimitato?', a: 'S—, TikSaveHub — al 100% gratuito senza alcun limite giornaliero sui download. Puoi scaricare quanti video Facebook pubblici vuoi senza pagare o registrarti.' },
+];
+
+const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+---
+
+<Layout
+  title="Scarica Video Facebook HD | Gratis Senza Filigrana | TikSaveHub"
+  description="Scarica video Facebook in HD senza filigrana. Gratis e veloce, senza registrazione. Supporta MP4 e MP3 su iPhone, Android e PC."
+  keywords="facebook video downloader, facebook video downloader hd, facebook video downloader senza filigrana, scaricare video facebook, facebook reels downloader, scaricare facebook reels in hd, fb video saver"
+  canonical="/facebook-video-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="facebook"
+  jsonLd={faqJsonLd}
+  appName="TikSaveHub — Facebook Video Downloader"
+  lang="it"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" }, { "@type": "ListItem", "position": 2, "name": "Facebook Video Downloader", "item": "https://tiksavehub.com/facebook-video-downloader" } ] })} />
+
+  <FbHeroSection
+    crumb="Facebook Video Downloader"
+    badge="Gratis — HD — Senza filigrana"
+    title="Facebook Video Downloader — HD, senza filigrana"
+    subline="Scarica video e Reels da Facebook in HD — gratis, veloce e senza filigrana."
+    sub="Salva qualsiasi video o Reel Facebook pubblico in HD fino a 1080p — gratis, veloce e senza registrazione. Incolla un link Facebook (Reels, Watch, post video, fb.watch) per scaricare l'MP4 in SD o HD."
+    trust={['100% gratuito', 'Senza filigrana', 'HD fino a 1080p', 'MP3 audio', 'Funziona su mobile']}
+    shareUrl="/facebook-video-downloader"
+    shareTitle="Facebook Video Downloader HD — Gratis, senza filigrana"
+    shareDescription="Scarica video e Reels da Facebook in HD. Gratis, veloce, senza filigrana. MP4 o MP3."
+  >
+    <FacebookDownloadForm mode="video" />
+  </FbHeroSection>
+
+  <StatsSection stats={[ { value: '100% Gratuito', label: 'Scarica video Facebook istantaneamente senza filigrana', icon: 'download' }, { value: 'Senza Registrazione', label: 'Funziona su qualsiasi dispositivo, da qualsiasi luogo', icon: 'globe' }, { value: 'Qualità HD', label: 'Risoluzione originale, senza filigrana, senza login', icon: 'star' } ]} />
+
+  <FbSeoArticle
+    headline="Salva video e Reels Facebook in HD pulita."
+    quickLinks={[ { label: 'Facebook Video Downloader', href: '#download-tool' }, { label: 'Come funziona', href: '#how-it-works' }, { label: 'Funzionalit—', href: '#features' }, { label: 'FAQ', href: '#faq' }, { label: 'Facebook Video Downloader', href: '/facebook-video-downloader' } ]}
+    supportedLinks={['facebook.com/reel/—', 'facebook.com/watch/?v=—', 'facebook.com/user/videos/—', 'fb.watch/—']}
+  >
+    <p>TikSaveHub — uno strumento che salva i video Facebook pubblici ad alta qualit— direttamente sul tuo dispositivo. Che tu trovi un Reel nel feed, un tutorial da guardare dopo o un video di un creatore che segui, TikSaveHub fornisce un file MP4 ottimizzato in pochi secondi. Niente installazione di app, estensioni del browser o creazione di account — basta incollare il link e scaricare.</p>
+    <h3 class="text-highlight">Come funziona lo scaricatore di video Facebook</h3>
+    <p>L\'uso di TikSaveHub — estremamente semplice. Prima, apri Facebook e trova il video o il Reel che vuoi salvare. Tocca il pulsante Condividi e seleziona "Copia link" — funziona con Reels, link Watch, post video e link brevi fb.watch. Poi torna su TikSaveHub e incolla il link nel campo di inserimento in alto. Clicca il pulsante Download e il server recuperer— i metadati del video in pochi secondi. Vedrai il titolo del video, la miniature e le opzioni di download in HD o SD. Clicca l\'opzione desiderata e il file verr— salvato direttamente sul tuo dispositivo.</p>
+    <h3 class="text-highlight">Scarica Facebook Reel in HD — senza filigrana</h3>
+    <p>I Reels sono il formato pi— condiviso su Facebook, e lo scaricatore di FB Reels li salva nella massima risoluzione disponibile (fino a 1080p). Niente overlay o filigrane — basta incollare il link facebook.com/reel/— e toccare "Scarica video HD". La qualit— originale viene mantenuta cos— come il creatore l\'ha caricata.</p>
+    <h3 class="text-highlight">Salva video Watch e post video Facebook</h3>
+    <p>Sia i link Watch standard (facebook.com/watch/?v=—) che i post video (facebook.com/username/videos/—) sono completamente supportati. Che si tratti di video Watch lunghi, caricamenti di pagine o clip di gruppi, lo stesso flusso di incolla-e-scarica funziona ogni volta. Anche i formati legacy come i link video.php e i link m.facebook.com vengono elaborati, e lo scaricatore FB rimuove automaticamente i parametri di tracciamento come ?mibextid= o ?ref=.</p>
+    <h3 class="text-highlight">Estrai l\'audio Facebook come MP3</h3>
+    <p>Oltre al salvataggio di video, il <a href="/facebook-to-mp3">convertitore MP3 Facebook</a> di TikSaveHub estrae la traccia audio da qualsiasi video o Reel e la converte in MP3 ad alta qualit— — perfetto per l\'ascolto offline di colonne sonore Reel, clip podcast e segmenti di streaming live.</p>
+    <h3 class="text-highlight">Funziona su tutti i dispositivi — Android, iPhone, desktop</h3>
+    <p>Uno dei maggiori vantaggi di TikSaveHub — che funziona ovunque. Android, iPhone, Windows PC, Mac, tablet — se hai un browser web puoi salvare i video Facebook. Non — necessario installare altre app, risparmiando spazio di archiviazione e evitando i rischi delle applicazioni di terze parti.</p>
+    <h3 class="text-highlight">Che qualit— e formato ottieni?</h3>
+    <p>Tutti i download sono MP4 alla massima risoluzione disponibile — HD fino a 1080p se il creatore ha caricato in HD, con un\'opzione SD disponibile quando lo spazio di archiviazione — limitato. TikSaveHub non aggiunge filigrane, non effettua la ri-codifica e non degrada la qualit— dell\'originale. Se hai bisogno solo dell\'audio, usa il <a href="/facebook-to-mp3">convertitore MP3 Facebook</a>.</p>
+    <h3 class="text-highlight">Scarica video Facebook su iPhone, Android e desktop</h3>
+    <p>TikSaveHub — uno scaricatore di video Facebook completamente basato sul web e i passaggi sono gli stessi su tutti i dispositivi. Su iPhone o iPad, apri Safari (o qualsiasi browser), incolla il link e tocca Download — il file verr— salvato nell\'app File. Su Android, l\'MP4 viene salvato direttamente nella galleria o nella cartella Download. Su Windows PC o Mac, il file apparir— nella barra dei download del browser o nella cartella Download.</p>
+    <h3 class="text-highlight">Puoi salvare le replay di Facebook Live?</h3>
+    <p>Non puoi ancora scaricare Facebook Live mentre — in corso, ma dopo che la trasmissione — terminata e il video — diventato pubblico, puoi salvare la replay con TikSaveHub come qualsiasi altro video — incolla il link del video live e scarica l\'MP4 in HD o SD.</p>
+    <h3 class="text-highlight">Dove vanno i video Facebook scaricati?</h3>
+    <p>Dopo aver toccato il pulsante Download, l\'MP4 viene salvato direttamente sul tuo dispositivo. Su desktop apparir— nella barra dei download del browser e poi nella cartella Download. Su Android verr— salvato nella galleria o nella cartella Download. Su iPhone andr— nella cartella Download dell\'app File. Se non trovi il file, apri la cronologia dei download del browser e tocca l\'ultimo inserimento — il file — sempre disponibile per un re-download con un solo clic.</p>
+    <h3 class="text-highlight">Sicuro, privato e completamente gratuito</h3>
+    <p>La privacy — importante. TikSaveHub non richiede creazione di account, inserimento di email o fornitura di informazioni personali. Non salviamo la cronologia dei download e non tracciamo la navigazione. Niente viene salvato sul tuo dispositivo tranne il file video finale. A differenza di altri strumenti di salvataggio FB che addebitano costi o limitano i download, TikSaveHub — gratuito al 100% senza limiti giornalieri.</p>
+  </FbSeoArticle>
+
+  <FbStepsSection
+    eyebrow="Guida passo dopo passo"
+    headline="Come scaricare video Facebook."
+    sub="3 semplici passaggi — nessuna competenza tecnica richiesta."
+    steps={[ { num: '01', icon: 'copy', title: 'Copia il link Facebook', body: 'Apri l\'app o il sito Facebook, trova il video o il Reel che vuoi salvare, tocca Condividi e seleziona "Copia link". Funziona con Reels, link Watch, post video e link brevi fb.watch.' }, { num: '02', icon: 'paste', title: 'Incolla su TikSaveHub', body: 'Torna qui e incolla il link copiato nel campo di inserimento. Usa il pulsante Incolla per prendere direttamente dagli appunti. Il sistema rilever— il video e recuperer— i dettagli in pochi secondi.' }, { num: '03', icon: 'download', title: 'Scarica in HD o SD', body: 'Tocca "Scarica video HD" o "Scarica video SD" per salvare l\'MP4 sul tuo dispositivo. Il file viene salvato istantaneamente — nessuna app o account richiesto. Per l\'audio usa il <a href="/facebook-to-mp3">convertitore MP3 Facebook</a>.' } ]} />
+
+  <FbFeaturesSection
+    eyebrow="Funzionalit—"
+    headline="Perch— TikSaveHub viene scelto."
+    features={[ { icon: 'shield', accent: 'develop', title: 'Qualit— HD', body: 'Scarica video e Reels Facebook in HD fino a 1080p. Nessuna ri-codifica o compressione — esattamente quello che il creatore ha caricato.' }, { icon: 'music', accent: 'preview', title: 'Estrazione audio MP3', body: 'Converti qualsiasi video o Reel Facebook in audio MP3 con un solo tocco. Salva colonne sonore, clip e podcast per l\'ascolto offline.' }, { icon: 'zap', accent: 'ship', title: 'Veloce come la luce', body: 'Elaborazione lato server — i download iniziano in pochi secondi. Basta incollare il link e cliccare Download.' }, { icon: 'list', accent: 'develop', title: 'Tutti i formati di link', body: 'Reels, link Watch, post video, link m.facebook.com, link brevi fb.watch — tutti i formati di video Facebook pubblici sono supportati.' }, { icon: 'device', accent: 'preview', title: 'Funziona su tutti i dispositivi', body: 'iPhone, Android, tablet, desktop — TikSaveHub funziona con un browser web. Nessuna installazione di app, estensioni o problemi di compatibilit—.' }, { icon: 'globe', accent: 'ship', title: 'Download illimitati', body: 'Nessun limite giornaliero, nessun tetto, nessun piano premium. Scarica quanti video Facebook vuoi — ogni giorno, per sempre. Completamente gratuito.' } ]} />
+
+  <FbFaqSection eyebrow="Domande frequenti" headline="Domande frequenti." prefix="fb" faqs={faqData} />
+
+  <FbCtaBand headline="Pronto a iniziare?" sub="Incolla un link Facebook qui sopra e ottieni il video in pochi secondi — nessun account, nessuna distrazione, nessuna fatica." ctaHref="#download-tool" ctaLabel="Inizia il download" />
+
+  <SocialShare url="/facebook-video-downloader" title="Facebook Video Downloader HD — Gratis, senza filigrana" description="Scarica video e Reels da Facebook in HD. Gratis, veloce, senza filigrana. MP4 o MP3." />
+
+  <!-- Related Tools -->
+  <section class="related-tools-section">
+    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
+      <h2 class="related-tools-headline">Altri Strumenti</h2>
+      <div class="related-tools-grid">
+            <a href="/it/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
+            <a href="/it/tiktok-to-mp3" class="related-tool-link">TikTok a MP3</a>
+            <a href="/it/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
+            <a href="/it/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>

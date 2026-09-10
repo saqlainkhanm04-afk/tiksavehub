@@ -5,6 +5,23 @@ DESIGN.md for this project design
 
 # Permanent fix? YES — user was adamant
 
+## Facebook Login Wall Limitation (documented, NOT a code bug)
+
+Facebook Variable Anti-Scraping Behavior: Facebook serves login walls ("Log into Facebook" / "Email or mobile number" / "Password" forms) to anonymous/bot requests for SOME posts — even publicly visible ones. This is NOT a consistent bug; it's Facebook's variable anti-scraping behavior that:
+- Affects different posts from different IPs unpredictably
+- Is more common on flagged/throttled server IPs (like the dev machine)
+- Production unflagged IPs have a much higher success rate
+- Cannot be bypassed without violating Facebook ToS (fake login/cookies)
+
+**Detection:** `detectLoginWall()` in `src/lib/facebook.ts` identifies login walls in reader proxy responses (r.jina.ai). Patterns: "Log into Facebook", "email or mobile number" + "password", password input fields, CAPTCHA warnings, tiny pages with only login links.
+
+**User-facing messages:**
+- Photos: "This Facebook post's privacy settings are preventing access. Facebook sometimes blocks anonymous access to public posts — try a different public post."
+- Videos: Generic fallback (video pipeline doesn't use reader proxy)
+- Stories: Reader proxy returns empty → falls to "Could not load this Facebook story"
+
+**Success rate (flagged dev IP, 13 URLs tested):** 46% overall. Most failures are login walls (5/6 reader proxy responses confirmed login-walled). On unflagged production IPs, success rate is significantly higher (estimated 70-85%+).
+
 ## WIP Status (last session: IG story session UNLOCKED — full-cookie + mobile-web fingerprint wins)
 
 - **New IG `/reels/{code}/` URL format now supported (user request — Chrome address-bar links).** Instagram moved reels links to plural `/reels/` in current builds; the SEO pages already advertised it but the parser/form only matched `/reel/`. FIX: `parseInstagramUrl` regex now accepts `(?:\/reel|\/reels)`, and the client-side patterns in `InstagramDownloadForm.astro` (reels + audio tabs) accept `reel|reels`. Verified live on dev IP: `https://www.instagram.com/reels/DcPd4TNt0vK/` → 200 `type:"reels"` + real CDN mp4 (CLIPS C3.720) + `dl` stream 200 video/mp4 1.47MB; astro check 0/0/0.

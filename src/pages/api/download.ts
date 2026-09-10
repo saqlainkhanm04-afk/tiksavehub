@@ -184,29 +184,49 @@ export const GET: APIRoute = async (ctx) => {
     const msg = err?.message ?? String(err);
     console.error('[TikSaveHub API] Error:', msg);
 
-    const isTimeout = err?.name === 'TimeoutError' || err?.name === 'AbortError';
-    const isBusy =
-      msg.includes('All TikTok servers are busy') ||
-      msg.includes('Upstream API returned') ||
-      msg.includes('Upstream returned') ||
-      msg.includes('yt-dlp') ||
-      msg.includes('fetch failed') ||
-      msg.includes('Failed to resolve') ||
-      msg.includes('getaddrinfo') ||
-      msg.includes('Name or service not known') ||
-      msg.includes('ENOTFOUND') ||
-      msg.includes('ECONNRESET');
-    const isInvalid = msg.includes('invalid or expired') || msg.includes('Url parsing is failed');
-    const isRestricted =
-      isInvalid || msg.includes('no downloadable media') || msg.includes('returned no media');
+    // Log the full source chain for debugging
+    if (msg.includes('All') && msg.includes('API sources failed')) {
+      console.error('[TikSaveHub API] ALL SOURCES FAILED:', msg);
+    }
 
-    const errorMsg = isTimeout
-      ? 'The server took too long to respond. Please try again in a moment.'
-      : isRestricted
-        ? 'This content may be unavailable or restricted. Please try another public link.'
-        : isBusy
-          ? 'This content could not be fetched right now. Please try again in a few seconds or use another link.'
-          : 'Failed to fetch video. Please check the link and try again.';
+    const isTimeout = err?.name === 'TimeoutError' || err?.name === 'AbortError';
+
+    // Detect if ALL sources failed (api-fallback throws this pattern)
+    const allFailedMatch = msg.match(/All \d+ API sources failed/);
+    const allSourcesFailed = !!allFailedMatch;
+
+    // Classify the dominant failure across all sources
+    const hasRateLimit = /429|rate.?limit|too many/i.test(msg);
+    const hasTimeout = /timeout|timed? ?out|abort/i.test(msg);
+    const hasNetwork = /fetch failed|ECONNRESET|ENOTFOUND|getaddrinfo|network/i.test(msg);
+    const hasBlocked = /403|blocked|forbidden|captcha|challenge/i.test(msg);
+    const hasInvalid = /invalid|expired|not found|404|parse.*fail|no.*video.*id/i.test(msg);
+    const noTurnstile = /no turnstile/i.test(msg);
+
+    // Check if TikWM specifically failed (quota/rate limit)
+    const tikwmFailed = /TikWM/i.test(msg);
+    const tikwmQuota = /429|rate.?limit|too many|quota/i.test(msg) && tikwmFailed;
+
+    let errorMsg: string;
+    if (tikwmQuota) {
+      errorMsg = 'This service is temporarily at high demand. Please try again in a few hours, or try a different video link.';
+    } else if (isTimeout || hasTimeout) {
+      errorMsg = 'The server took too long to respond. Please try again in a moment.';
+    } else if (noTurnstile) {
+      errorMsg = 'This content could not be fetched right now. Please try again in a few seconds or use another link.';
+    } else if (hasRateLimit) {
+      errorMsg = 'All extraction services are busy right now. Please try again in 30 seconds.';
+    } else if (hasBlocked) {
+      errorMsg = 'This content may be restricted. Please try another public link.';
+    } else if (hasInvalid) {
+      errorMsg = 'This link may be invalid or the content has been removed. Please try another link.';
+    } else if (hasNetwork) {
+      errorMsg = 'A network error occurred. Please check your connection and try again.';
+    } else if (allSourcesFailed) {
+      errorMsg = 'This content could not be fetched right now. All extraction services failed — please try again in a few seconds or use another link.';
+    } else {
+      errorMsg = 'Failed to fetch video. Please check the link and try again.';
+    }
 
     return new Response(
       JSON.stringify({ success: false, error: errorMsg }),

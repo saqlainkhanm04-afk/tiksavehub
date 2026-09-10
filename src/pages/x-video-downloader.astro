@@ -10,64 +10,84 @@ import SocialShare from '../components/SocialShare.astro';
 
 const faqData = [
   {
-    id: 'x-download-free',
-    q: 'How to download X video online for free?',
-    a: 'To download an X video online for free, copy the tweet URL, paste it into TikSaveHub, and click Download \u2014 no sign-up required. TikSaveHub\u2019s X video downloader extracts the original MP4 file directly from Twitter\u2019s CDN in HD up to 1080p. Works on any device with a web browser \u2014 no app installation needed.',
+    id: 'x-download-howto',
+    q: 'How to download video from X (Twitter)?',
+    a: 'To download a video from X (Twitter), copy the tweet URL, paste it into TikSaveHub, and click Download — no sign-up required. Our X video downloader extracts the original MP4 file directly from Twitter’s CDN in HD up to 1080p. Works on any device with a web browser, including iPhone, Android, PC, and Mac — no app installation needed.',
   },
   {
-    id: 'x-iphone-camera-roll',
-    q: 'Can I save Twitter videos to my iPhone camera roll?',
-    a: 'Yes, you can save Twitter videos to your iPhone camera roll using Safari \u2014 paste the X link into TikSaveHub, tap Download HD, then tap \u201cSave Video\u201d from your Safari Downloads. On iPhone, open Safari and navigate to TikSaveHub. Paste the tweet link, download the MP4, then go to Safari \u2192 Downloads \u2192 tap the file \u2192 tap \u201cSave Video\u201d to move it to your Photos app. No computer needed.',
+    id: 'x-no-watermark',
+    q: 'Can I download Twitter videos without watermark?',
+    a: 'Yes, TikSaveHub delivers every Twitter video without watermark — you get the original clean MP4 file exactly as the creator uploaded it. Paste any x.com or twitter.com link, tap Download HD, and the video saves without any overlay or branding. No watermark is ever added during the download process.',
   },
   {
-    id: 'x-android-no-watermark',
-    q: 'How do I download Twitter videos on Android without watermark?',
-    a: 'Download Twitter videos on Android without watermark by pasting the X/Twitter link into TikSaveHub and tapping the HD download button \u2014 the MP4 saves directly to your gallery. TikSaveHub delivers the original clean MP4 file without adding any watermark. The video saves to your browser\u2019s Downloads folder and appears in your device Gallery automatically.',
+    id: 'x-iphone-save',
+    q: 'How to save Twitter videos on iPhone?',
+    a: 'To save a Twitter video on iPhone, open Safari, paste the X link into TikSaveHub, tap Download HD, then tap “Save Video” from your Safari Downloads. The MP4 moves to your Photos app automatically. No computer needed — the entire process happens on your iPhone through Safari’s built-in download manager.',
   },
   {
-    id: 'x-gif-downloader',
-    q: 'What is the best Twitter GIF downloader?',
-    a: 'TikSaveHub is the best Twitter GIF downloader \u2014 it converts X/Twitter GIFs to high-quality MP4 files with one click. X/Twitter actually stores GIFs as MP4 video files. TikSaveHub detects the animated GIF format and downloads it as a standard MP4 that plays on any device. Paste any tweet link containing a GIF and download it instantly.',
+    id: 'x-android-download',
+    q: 'How to download X videos on Android?',
+    a: 'Download X videos on Android by pasting the tweet link into TikSaveHub and tapping the HD download button — the MP4 saves directly to your device’s Gallery or Downloads folder. TikSaveHub works in Chrome, Samsung Internet, or any Android browser. No app installation is required.',
   },
   {
-    id: 'x-thread-video',
-    q: 'How to download video from X thread?',
-    a: 'To download a video from an X thread, copy the specific tweet URL that contains the video and paste it into TikSaveHub \u2014 each video downloads individually from its own tweet. Threads contain multiple tweets, each with its own URL. Open the specific tweet with the video, copy its link from the address bar or share button, and TikSaveHub will extract that video.',
+    id: 'x-legal',
+    q: 'Is it legal to download Twitter videos?',
+    a: 'Downloading public Twitter videos for personal use is generally permitted, but you should always respect copyright. If you plan to share or repurpose someone else’s content, check the creator’s rights and obtain permission first. TikSaveHub is a free Twitter downloader intended for personal, non-commercial offline viewing.',
   },
   {
-    id: 'x-to-mp3',
-    q: 'Can I convert X video to MP3 audio?',
-    a: 'Yes, TikSaveHub is an X video to MP3 converter \u2014 paste any tweet video link and click \u201cDownload Audio (MP3)\u201d to extract the sound as a high-quality MP3 file. Perfect for saving podcast clips, music shared on X, voice recordings, or any audio from tweet videos. The MP3 is extracted at 128kbps for a balance of quality and file size.',
+    id: 'x-best-free',
+    q: 'What is the best free X video downloader?',
+    a: 'TikSaveHub is widely regarded as the best free X video downloader — it offers HD up to 1080p, MP3 audio extraction, GIF support, no watermark, no sign-up, and no download limits. Unlike other tools that cap quality or charge hidden fees, TikSaveHub delivers the original MP4 directly from X/Twitter’s CDN at no cost.',
   },
   {
-    id: 'x-download-fails',
-    q: 'Why can\u2019t I download a video from X (Twitter)?',
-    a: 'Downloads fail when the tweet is private, deleted, geo-restricted, or the link is malformed \u2014 ensure you\u2019re copying a public tweet URL from the share button. Common issues include: using a shortened t.co link that hasn\u2019t resolved, the tweet author set their account to protected/private, or the video was removed. TikSaveHub only processes public tweets.',
+    id: 'x-gif-download',
+    q: 'Can I download Twitter GIFs?',
+    a: 'Yes, TikSaveHub supports Twitter GIF download. X/Twitter actually stores GIFs as MP4 video files, so TikSaveHub detects the animated format and downloads it as a standard MP4 that plays on any device. Paste any tweet link containing a GIF and download it instantly — no watermark, no quality loss.',
   },
   {
-    id: 'x-free-unlimited',
-    q: 'Is TikSaveHub\u2019s X video downloader free and unlimited?',
-    a: 'Yes, TikSaveHub is 100% free with no daily download limits \u2014 download as many X/Twitter videos as you want without paying or registering. There are no caps, no premium tier, and no hidden fees. Every download is free whether you\u2019re saving one video or a hundred. No account creation, no email required.',
-  },
-  {
-    id: 'x-hd-1080p',
-    q: 'Can I download X videos in HD 1080p quality?',
-    a: 'Yes, TikSaveHub downloads X videos in HD up to 1080p \u2014 the tool automatically detects the highest quality source available from the original tweet. If the creator uploaded the video in 1080p, TikSaveHub serves that exact file. For lower-resolution uploads, you\u2019ll get the best available quality.',
+    id: 'x-mp4-download',
+    q: 'How to download X videos as MP4?',
+    a: 'Every download from TikSaveHub is an MP4 file in the best available resolution — HD up to 1080p when the creator uploaded it in HD, with an SD option for smaller files. Paste any X video link, choose HD or SD, and the MP4 saves directly to your device. No re-encoding, no watermark, no quality loss.',
   },
   {
     id: 'x-pc-mac',
-    q: 'How to download Twitter video on PC or Mac?',
-    a: 'To download a Twitter video on PC or Mac, open TikSaveHub in your browser, paste the X video link, and click Download \u2014 the MP4 saves to your Downloads folder. Works on Windows, macOS, Linux, and ChromeOS. Use Chrome, Firefox, Safari, or Edge. The downloaded file appears in your browser\u2019s download bar and your system\u2019s Downloads folder.',
+    q: 'Does TikSaveHub work on PC and Mac for X?',
+    a: 'Yes, TikSaveHub works perfectly on both PC and Mac. Open your browser — Chrome, Firefox, Safari, or Edge — paste the X video link, and click Download. The MP4 saves to your browser’s Downloads folder. Works on Windows, macOS, Linux, and ChromeOS with no app or extension required.',
   },
   {
-    id: 'x-tco-links',
-    q: 'Does TikSaveHub support t.co short links from X/Twitter?',
-    a: 'Yes, TikSaveHub automatically resolves t.co shortened links to the original tweet and extracts the video \u2014 just paste the t.co link and download. When you copy a shared link from X\u2019s share button, it often gives you a t.co shortened URL. TikSaveHub follows the redirect internally, finds the original tweet, and extracts the video.',
+    id: 'x-download-limits',
+    q: 'Are there limits on X video downloads?',
+    a: 'No, TikSaveHub has no daily download limits. You can save as many X/Twitter videos as you want, every day, for free. There are no caps, no premium tier, and no hidden fees. The only restriction is that the tweet must be public — private or protected tweets cannot be accessed.',
   },
   {
-    id: 'x-vs-competitors',
-    q: 'What makes TikSaveHub better than other X video downloaders?',
-    a: 'TikSaveHub stands out with HD 1080p quality, MP3 audio extraction, GIF support, no watermarks, no sign-up, and a clean ad-free experience \u2014 all competitors charge fees or show intrusive ads. Unlike tools that cap quality at 720p, require registration, or bombard you with pop-ups, TikSaveHub delivers the original MP4 directly from X/Twitter\u2019s CDN.',
+    id: 'x-with-sound',
+    q: 'How to download Twitter videos with sound?',
+    a: 'Every TikSaveHub download includes the original audio — the MP4 file contains both video and sound exactly as the creator uploaded it. If you only need the audio track, use the MP3 extraction feature to convert any X video to a high-quality MP3 file. Perfect for saving music, voice clips, or podcast segments from tweets.',
+  },
+  {
+    id: 'x-thread-videos',
+    q: 'Can I download videos from X threads?',
+    a: 'Yes, you can download videos from X threads using TikSaveHub. Copy the specific tweet URL that contains the video and paste it — each video downloads individually from its own tweet. Threads contain multiple tweets, each with its own URL, so open the specific tweet with the video and copy its link from the address bar or share button.',
+  },
+  {
+    id: 'x-gif-to-mp4',
+    q: 'Are Twitter GIFs actually MP4 videos?',
+    a: 'Yes. X/Twitter stores GIFs as short, muted, looping MP4 video files — not actual GIF format. TikSaveHub detects these and downloads them as standard MP4 files that play on any device. Just paste the tweet link containing the GIF.',
+  },
+  {
+    id: 'x-4k-download',
+    q: 'Can I download X videos in 4K quality?',
+    a: 'TikSaveHub downloads whatever quality X/Twitter has stored for that post. Most videos are available in HD up to 1080p, but some creators upload in higher resolution. We always fetch the highest available quality without re-encoding.',
+  },
+  {
+    id: 'x-clip-download',
+    q: 'Can I download X/Twitter Spaces video clips?',
+    a: 'TikSaveHub supports video posts from X/Twitter, including clips attached to tweets. However, X Spaces audio broadcasts (audio-only) are a separate system and cannot be downloaded through this tool.',
+  },
+  {
+    id: 'x-extension',
+    q: 'Do I need a browser extension?',
+    a: 'No. TikSaveHub works directly in your browser — no Chrome extension, Firefox add-on, or any software to install. Just open your browser, paste the X/Twitter link, and download the MP4. This keeps your device clean and avoids the security risks that come with third-party extensions.',
   },
 ];
 
@@ -87,8 +107,8 @@ const combinedJsonLd = JSON.stringify({
     },
     {
       '@type': 'HowTo',
-      name: 'How to Download X (Twitter) Videos',
-      description: 'Step-by-step guide to download X/Twitter videos in HD quality using TikSaveHub \u2014 free, no sign-up required.',
+      name: 'How to Download X Twitter Videos Without Watermark',
+      description: 'Step-by-step guide to download X/Twitter videos in HD quality without watermark using TikSaveHub — free, no sign-up required.',
       totalTime: 'PT1M',
       step: [
         {
@@ -120,16 +140,15 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
-  title="X/Twitter Video Downloader HD — No Watermark, Free Download | TikSaveHub"
-  description="Download X (Twitter) videos in HD — free, fast, no watermark, no sign-up. Save X videos as MP4 up to 1080p, or extract audio as MP3."
-  keywords="x video downloader, twitter video downloader, download x videos, twitter video saver, x video downloader hd, download twitter video, x downloader without watermark, save x videos, twitter video download online"
+  title="X Twitter Downloader — Free Video Downloader Twitter | TikSaveHub"
+  description="Download X/Twitter videos without watermark in HD 1080p. Free video downloader for Twitter — save tweets, GIFs as MP4 on iPhone, Android, PC. No login needed."
+  keywords="twitter downloader video, x twitter downloader, twitter downloader, video downloader twitter, x download, x video downloader, twitter video downloader, download x video, save twitter video, free twitter downloader, x hd download, no watermark, twitter gif download, online x video download, x gif downloader"
   canonical="/x-video-downloader"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="x"
   jsonLd={combinedJsonLd}
   appName="TikSaveHub — X/Twitter Video Downloader"
-  appRating={{ value: '4.8', count: '9840' }}
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -147,14 +166,12 @@ const combinedJsonLd = JSON.stringify({
     <div class="dl-hero-inner container-page">
       <!-- Breadcrumb -->
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
-        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1" />
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
           </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
-            <span itemprop="name">X/Twitter Video Downloader</span>
-            <meta itemprop="position" content="2" />
+          <li aria-current="page">
+            <span>X/Twitter Video Downloader</span>
           </li>
         </ol>
       </nav>
@@ -167,7 +184,7 @@ const combinedJsonLd = JSON.stringify({
       </div>
 
       <h1 id="dl-hero-headline" class="dl-hero-headline">
-        X/Twitter Video Downloader — HD, No Watermark
+        X Twitter Video Downloader — HD, No Watermark
       </h1>
 
       <p class="dl-hero-subline headline-gradient">
@@ -218,26 +235,7 @@ const combinedJsonLd = JSON.stringify({
   </section>
 
   <!-- Stats -->
-  <StatsSection stats={[
-    {
-      value: '8M+',
-      label: 'X/Twitter Videos Downloaded',
-      sub: 'Download X videos & GIFs instantly',
-      icon: 'download',
-    },
-    {
-      value: '150+',
-      label: 'Countries Using Our X Video Saver',
-      sub: 'Download X content from anywhere',
-      icon: 'globe',
-    },
-    {
-      value: '4.8',
-      label: 'Fast & Free X Video Download',
-      sub: 'No watermark, no login required',
-      icon: 'star',
-    },
-  ]} />
+  <StatsSection platform="X" />
 
   <!-- SEO Content Section — 600+ words -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
@@ -246,12 +244,12 @@ const combinedJsonLd = JSON.stringify({
         <div class="seo-content-main">
           <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
           <h2 id="seo-about-headline" class="section-headline">
-            Save X/Twitter videos and GIFs in clean HD quality.
+            Save X/Twitter videos and GIFs in clean HD quality — the free Twitter video downloader.
           </h2>
 
           <div class="seo-article">
             <p>
-              TikSaveHub lets you save any public X (Twitter) video directly to your device in high quality. Whether you found a viral clip in your feed, a breaking-news video you want to archive, or a creative post from a creator you follow, TikSaveHub gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. Just paste the link and download.
+              TikSaveHub lets you save any public X (Twitter) video directly to your device in high quality. Whether you found a viral clip in your feed, a breaking-news video you want to archive, or a creative post from a creator you follow, this video downloader for Twitter gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. Just paste the link and download.
             </p>
 
             <h3 class="text-highlight">How the X/Twitter video downloader works</h3>
@@ -261,12 +259,12 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Download X/Twitter videos in HD — no watermark</h3>
             <p>
-              TikSaveHub fetches X videos at the highest available resolution — up to 1080p — without any overlay or watermark. Paste any x.com/status/\u2026 or twitter.com/status/\u2026 link and tap "Download HD Video". The original quality is preserved exactly as the creator uploaded it, with no re-encoding or compression, so you can watch offline, repost on your own channels, or keep your favorite content forever.
+              TikSaveHub is the X Twitter video downloader without watermark that you’ve been looking for. It fetches X videos at the highest available resolution — up to 1080p — without any overlay or branding. Paste any x.com/status/… or twitter.com/status/… link and tap “Download HD Video”. The original quality is preserved exactly as the creator uploaded it, with no re-encoding or compression, so you can watch offline, repost on your own channels, or keep your favorite content forever.
             </p>
 
             <h3 class="text-highlight">Save video tweets, threads, and GIFs</h3>
             <p>
-              Standard video tweets (x.com/status/\u2026/video/1), multi-video threads, and animated GIFs are fully supported. Whether it is a standalone video tweet, a clip embedded in a long thread, or an animated GIF from a popular account, the same paste-and-download flow works every time. We also handle t.co shortened links and mobile x.com links, and our X video saver automatically strips tracking parameters from your links so every download is clean and reliable.
+              Standard video tweets (x.com/status/…/video/1), multi-video threads, and animated GIFs are fully supported. Whether it is a standalone video tweet, a clip embedded in a long thread, or an animated GIF from a popular account, the same paste-and-download flow works every time. TikSaveHub also functions as an X GIF downloader — X/Twitter stores GIFs as short MP4 video files, so TikSaveHub detects and downloads them as standard MP4s that play on any device. We also handle t.co shortened links and mobile x.com links, and our X video saver automatically strips tracking parameters from your links so every download is clean and reliable.
             </p>
 
             <h3 class="text-highlight">Extract X/Twitter audio as MP3</h3>
@@ -308,7 +306,10 @@ const combinedJsonLd = JSON.stringify({
             </p>
 
             <p>
-              Ready to try it? Scroll up and paste your first X/Twitter link into the download form. Trusted by users worldwide for fast and simple downloads. No hassle. Just your videos, exactly the way you want them.
+              Ready to try it? Scroll up and paste your first X/Twitter link into the download form. Trusted by users worldwide as the go-to X Twitter video downloader without watermark. No hassle. Just your videos, exactly the way you want them.
+            </p>
+            <p>
+              Want to learn more? Read our <a href="/blog/x-video-downloader-guide">X video downloader guide</a> for tips on downloading videos and GIFs from X (Twitter) in the best quality.
             </p>
           </div>
         </div>
@@ -317,21 +318,31 @@ const combinedJsonLd = JSON.stringify({
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Quick Links</h3>
             <ul class="seo-sidebar-list">
+              <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
+              <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
+              <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+              <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
+              <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
+              <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
+              <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
+              <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
+              <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
+              <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
+              <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
+              <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
+              <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
+              <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
               <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#faq">FAQ</a></li>
-              <li><a href="/blog">Blog</a></li>
             </ul>
           </div>
 
           <div class="seo-sidebar-card">
             <h3 class="seo-sidebar-title">Supported Links</h3>
             <ul class="seo-sidebar-list seo-sidebar-mono">
-              <li>x.com/status/\u2026</li>
-              <li>twitter.com/status/\u2026</li>
-              <li>t.co/\u2026</li>
-              <li>mobile.x.com/status/\u2026</li>
+              <li>x.com/status/…</li>
+              <li>twitter.com/status/…</li>
+              <li>t.co/…</li>
+              <li>mobile.x.com/status/…</li>
             </ul>
           </div>
 

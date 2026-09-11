@@ -116,17 +116,27 @@ export async function cobaltExtractAudio(
   sourceUrl: string,
   turnstileToken?: string,
 ): Promise<CobaltAudioResult | null> {
+  console.log(`[cobalt-audio] ▶ cobaltExtractAudio called: url=${sourceUrl} hasApiKey=${!!cobaltApiKey()} hasTurnstile=${!!turnstileToken}`);
+
   // Try main cobalt instance first (needs API key or turnstile token).
   const apiKey = cobaltApiKey();
   let bearerToken: string | undefined;
   if (!apiKey && turnstileToken) {
+    console.log('[cobalt-audio] Exchanging turnstile for bearer token...');
     const token = await cobaltGetBearerToken(turnstileToken);
-    if (token) bearerToken = token;
+    if (token) {
+      bearerToken = token;
+      console.log('[cobalt-audio] Got bearer token:', token.substring(0, 30) + '...');
+    } else {
+      console.warn('[cobalt-audio] Turnstile exchange FAILED');
+    }
   }
 
   if (apiKey || bearerToken) {
+    const fetchUrl = `${cobaltApiBase()}/`;
+    console.log(`[cobalt-audio] → POST ${fetchUrl} (main instance)`);
     try {
-      const resp = await fetch(`${cobaltApiBase()}/`, {
+      const resp = await fetch(fetchUrl, {
         method: 'POST',
         headers: cobaltHeaders(bearerToken),
         body: JSON.stringify({
@@ -137,16 +147,29 @@ export async function cobaltExtractAudio(
         signal: AbortSignal.timeout(30_000),
       });
 
+      const bodyText = await resp.text().catch(() => '<unreadable>');
+      console.log(`[cobalt-audio] ← status=${resp.status} body(2000)=${bodyText.substring(0, 2000)}`);
+
       if (resp.ok) {
-        const data = await resp.json() as CobaltResponse;
+        const data = JSON.parse(bodyText) as CobaltResponse;
         if (data.status !== 'error') {
           const url = extractCobaltUrl(data);
-          if (url) return { url, ext: 'mp3' };
+          if (url) {
+            console.log(`[cobalt-audio] ✓ Main instance SUCCESS — url=${url.substring(0, 100)}...`);
+            return { url, ext: 'mp3' };
+          }
+          console.warn('[cobalt-audio] Main instance returned no URL. status:', data.status, 'picker:', JSON.stringify(data.picker).substring(0, 300));
+        } else {
+          console.warn('[cobalt-audio] Main instance error status:', data.error?.code ?? 'unknown');
         }
+      } else {
+        console.warn(`[cobalt-audio] Main instance HTTP ${resp.status}`);
       }
-    } catch {
-      // fall through to free instance
+    } catch (err: any) {
+      console.log(`[cobalt-audio] ✗ Main instance failed: ${err?.message ?? err}`);
     }
+  } else {
+    console.warn('[cobalt-audio] No API key AND no bearer token — skipping main instance');
   }
 
   // Fallback: community cobalt instances. These rotate frequently — some
@@ -162,9 +185,11 @@ export async function cobaltExtractAudio(
     'https://cobalt-api.hyper.lol',
   ];
 
+  console.log(`[cobalt-audio] Trying ${FREE_INSTANCES.length} free community instances...`);
   for (const base of FREE_INSTANCES) {
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
+        console.log(`[cobalt-audio] → POST ${base}/ (attempt ${attempt + 1})`);
         const resp = await fetch(`${base}/`, {
           method: 'POST',
           headers: {
@@ -180,32 +205,35 @@ export async function cobaltExtractAudio(
           signal: AbortSignal.timeout(20_000),
         });
 
+        const bodyText = await resp.text().catch(() => '<unreadable>');
+        console.log(`[cobalt-audio] ← ${base} status=${resp.status} body(1000)=${bodyText.substring(0, 1000)}`);
+
         if (!resp.ok) {
-          console.warn(`[cobalt] ${base} returned ${resp.status} (attempt ${attempt + 1})`);
           if (attempt === 0) await new Promise((r) => setTimeout(r, 1_500));
           continue;
         }
 
-        const data = await resp.json() as CobaltResponse;
+        const data = JSON.parse(bodyText) as CobaltResponse;
         if (data.status === 'error') {
-          console.warn(`[cobalt] ${base} error: ${data.error?.code ?? 'unknown'} (attempt ${attempt + 1})`);
+          console.warn(`[cobalt-audio] ${base} error: ${data.error?.code ?? 'unknown'}`);
           if (attempt === 0) await new Promise((r) => setTimeout(r, 1_500));
           continue;
         }
 
         const url = extractCobaltUrl(data);
         if (url) {
-          console.log(`[cobalt] audio extracted via ${base}`);
+          console.log(`[cobalt-audio] ✓ audio extracted via ${base} — url=${url.substring(0, 120)}...`);
           return { url, ext: 'mp3' };
         }
+        console.warn(`[cobalt-audio] ${base} returned no URL (status=${data.status})`);
       } catch (err: any) {
-        console.warn(`[cobalt] ${base} failed: ${err?.message ?? err} (attempt ${attempt + 1})`);
+        console.warn(`[cobalt-audio] ${base} failed: ${err?.message ?? err} (attempt ${attempt + 1})`);
         if (attempt === 0) await new Promise((r) => setTimeout(r, 1_500));
       }
     }
   }
 
-  console.error('[cobalt] all instances failed for audio extraction');
+  console.error('[cobalt-audio] ALL instances failed for audio extraction');
   return null;
 }
 

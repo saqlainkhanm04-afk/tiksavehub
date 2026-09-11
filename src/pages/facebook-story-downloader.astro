@@ -1,5 +1,5 @@
 ---
-// Facebook Story Downloader — SEO-optimized landing page
+// Facebook Story Downloader. SEO-optimized landing page
 // URL: /facebook-story-downloader
 export const prerender = true;
 
@@ -15,306 +15,306 @@ import FacebookDownloadForm from '../components/FacebookDownloadForm.astro';
 import StatsSection from '../components/StatsSection.astro';
 
 const faqData = [
-  {
-    id: 'story-free',
-    q: 'How can I download a Facebook Story online for free?',
-    a: 'To download a Facebook Story online for free, simply copy the public Story link, paste it into TikSaveHub, and hit download. Our tool instantly processes the link and saves the high-quality photo or video directly to your device.',
-  },
-  {
-    id: 'story-anonymous',
-    q: 'Can I save a Facebook Story anonymously without them knowing?',
-    a: 'Yes, you can easily save a Facebook Story anonymously using TikSaveHub. Since you don’t need to log in to our platform to download public stories, the creator will never know you viewed or downloaded their content.',
-  },
-  {
-    id: 'story-notified',
-    q: 'Will someone know if I download their Facebook Story?',
-    a: 'No, the creator will not be notified. TikSaveHub fetches the media directly from Facebook’s servers, ensuring your download is completely private and your name never appears on their story viewer list.',
-  },
-  {
-    id: 'story-hd',
-    q: 'Can I download Facebook Stories in HD or 1080p?',
-    a: 'Yes, TikSaveHub downloads Facebook Stories in the highest resolution available, up to HD 1080p. If the creator uploaded a high-definition story, you will get that exact pristine quality in your download.',
-  },
-  {
-    id: 'story-iphone',
-    q: 'Does the Facebook Story downloader work on iPhone Safari?',
-    a: 'Yes, TikSaveHub is fully optimized as a Facebook Story downloader for iPhone Safari. Just paste the story link, tap download, and save the MP4 video or JPG image straight to your Photos or Files app.',
-  },
-  {
-    id: 'story-android',
-    q: 'How do I save an FB Story to my Android Gallery?',
-    a: 'To save an FB Story to your Android Gallery, open Chrome, paste the public Story URL into TikSaveHub, and tap download. The file will automatically save to your Downloads folder and appear directly in your Gallery.',
-  },
-  {
-    id: 'story-private',
-    q: 'Can I download Facebook Stories from private accounts?',
-    a: 'No, TikSaveHub cannot download Facebook Stories from private accounts. To respect user privacy, our tool only accesses and downloads stories that are set to public.',
-  },
-  {
-    id: 'story-expired',
-    q: 'Can I download an expired Facebook Story?',
-    a: 'No, you cannot download expired Facebook Stories. Once a story disappears after 24 hours, its link is no longer active. However, if the user saves the expired story to their “Featured Highlights”, you can download it from there.',
-  },
-  {
-    id: 'story-photo-video',
-    q: 'Can I download both Facebook Story photos and videos?',
-    a: 'Yes, TikSaveHub supports both formats. Photo stories are instantly downloaded as high-quality JPG or PNG images, while video stories are saved as crisp MP4 files.',
-  },
-  {
-    id: 'story-no-login',
-    q: 'Do I need to log in to Facebook to download a Story?',
-    a: 'No login is required. You can download public Facebook Stories completely anonymously without ever entering your Facebook username, password, or account details on our site.',
-  },
-  {
-    id: 'story-no-limit',
-    q: 'Does TikSaveHub have a daily limit for Facebook Story downloads?',
-    a: 'No! TikSaveHub is completely free and comes with zero daily download caps. You can save as many public Facebook Stories as you want without any restrictions or hidden fees.',
-  },
-  {
-    id: 'story-whyfail',
-    q: 'Why can’t I download a Facebook Story?',
-    a: 'Downloads typically fail if the story is private, has expired after 24 hours, or the link is copied incorrectly. Make sure you are copying the link from a publicly visible story and try again.',
-  },
-  {
-    id: 'story-someone-know',
-    q: 'Will someone know if I download their Facebook Story?',
-    a: 'No. TikSaveHub fetches stories directly from Facebook\'s servers — the creator receives no notification, and your name never appears on their story viewer list. Your download is completely anonymous.',
-  },
-  {
-    id: 'story-multiple-segments',
-    q: 'Can I download multiple Facebook Story segments at once?',
-    a: 'Yes. When you paste a story link, TikSaveHub processes all available segments. You can download each photo or video segment individually as they appear in the story.',
-  },
+ {
+ id: 'story-free',
+ q: 'How can I download a Facebook Story online for free?',
+ a: 'To download a Facebook Story online for free, simply copy the public Story link, paste it into TikSaveHub, and hit download. Our tool instantly processes the link and saves the high-quality photo or video directly to your device.',
+ },
+ {
+ id: 'story-anonymous',
+ q: 'Can I save a Facebook Story anonymously without them knowing?',
+ a: 'Yes, you can easily save a Facebook Story anonymously using TikSaveHub. Since you don’t need to log in to our platform to download public stories, the creator will never know you viewed or downloaded their content.',
+ },
+ {
+ id: 'story-notified',
+ q: 'Will someone know if I download their Facebook Story?',
+ a: 'No, the creator will not be notified. TikSaveHub fetches the media directly from Facebook’s servers, ensuring your download is completely private and your name never appears on their story viewer list.',
+ },
+ {
+ id: 'story-hd',
+ q: 'Can I download Facebook Stories in HD or 1080p?',
+ a: 'Yes, TikSaveHub downloads Facebook Stories in the highest resolution available, up to HD 1080p. If the creator uploaded a high-definition story, you will get that exact pristine quality in your download.',
+ },
+ {
+ id: 'story-iphone',
+ q: 'Does the Facebook Story downloader work on iPhone Safari?',
+ a: 'Yes, TikSaveHub is fully optimized as a Facebook Story downloader for iPhone Safari. Just paste the story link, tap download, and save the MP4 video or JPG image straight to your Photos or Files app.',
+ },
+ {
+ id: 'story-android',
+ q: 'How do I save an FB Story to my Android Gallery?',
+ a: 'To save an FB Story to your Android Gallery, open Chrome, paste the public Story URL into TikSaveHub, and tap download. The file will automatically save to your Downloads folder and appear directly in your Gallery.',
+ },
+ {
+ id: 'story-private',
+ q: 'Can I download Facebook Stories from private accounts?',
+ a: 'No, TikSaveHub cannot download Facebook Stories from private accounts. To respect user privacy, our tool only accesses and downloads stories that are set to public.',
+ },
+ {
+ id: 'story-expired',
+ q: 'Can I download an expired Facebook Story?',
+ a: 'No, you cannot download expired Facebook Stories. Once a story disappears after 24 hours, its link is no longer active. However, if the user saves the expired story to their “Featured Highlights”, you can download it from there.',
+ },
+ {
+ id: 'story-photo-video',
+ q: 'Can I download both Facebook Story photos and videos?',
+ a: 'Yes, TikSaveHub supports both formats. Photo stories are instantly downloaded as high-quality JPG or PNG images, while video stories are saved as crisp MP4 files.',
+ },
+ {
+ id: 'story-no-login',
+ q: 'Do I need to log in to Facebook to download a Story?',
+ a: 'No login is required. You can download public Facebook Stories completely anonymously without ever entering your Facebook username, password, or account details on our site.',
+ },
+ {
+ id: 'story-no-limit',
+ q: 'Does TikSaveHub have a daily limit for Facebook Story downloads?',
+ a: 'No! TikSaveHub is completely free and comes with zero daily download caps. You can save as many public Facebook Stories as you want without any restrictions or hidden fees.',
+ },
+ {
+ id: 'story-whyfail',
+ q: 'Why can’t I download a Facebook Story?',
+ a: 'Downloads typically fail if the story is private, has expired after 24 hours, or the link is copied incorrectly. Make sure you are copying the link from a publicly visible story and try again.',
+ },
+ {
+ id: 'story-someone-know',
+ q: 'Will someone know if I download their Facebook Story?',
+ a: 'No. TikSaveHub fetches stories directly from Facebook\'s servers, the creator receives no notification, and your name never appears on their story viewer list. Your download is completely anonymous.',
+ },
+ {
+ id: 'story-multiple-segments',
+ q: 'Can I download multiple Facebook Story segments at once?',
+ a: 'Yes. When you paste a story link, TikSaveHub processes all available segments. You can download each photo or video segment individually as they appear in the story.',
+ },
 ];
 
 const faqJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.a.replace(/<[^>]*>/g, ''),
-    },
-  })),
+ '@context': 'https://schema.org',
+ '@type': 'FAQPage',
+ mainEntity: faqData.map((faq) => ({
+ '@type': 'Question',
+ name: faq.q,
+ acceptedAnswer: {
+ '@type': 'Answer',
+ text: faq.a.replace(/<[^>]*>/g, ''),
+ },
+ })),
 });
 ---
 
 <Layout
-  title="Facebook Story Downloader — Save FB Stories in HD Online | TikSaveHub"
-  description="Download Facebook Stories before they expire. Free FB story saver — save photos & videos as HD MP4/JPG. Anonymous, no login. Works on iPhone & Android."
-  keywords="download facebook story video in hd, facebook story downloader 1080p free, save facebook stories to device online, facebook story downloader, download fb stories, save facebook story video, facebook story saver, fb story downloader hd"
-  canonical="/facebook-story-downloader"
-  ogImage="/og-downloader.png"
-  ogType="website"
-  platform="facebook"
-  jsonLd={faqJsonLd}
-  appName="TikSaveHub — Facebook Story Downloader"
+ title="Facebook Story Downloader. Save FB Stories in HD Online | TikSaveHub"
+ description="Download Facebook Stories before they expire. Free FB story saver. save photos & videos as HD MP4/JPG. Anonymous, no login. Works on iPhone & Android."
+ keywords="download facebook story video in hd, facebook story downloader 1080p free, save facebook stories to device online, facebook story downloader, download fb stories, save facebook story video, facebook story saver, fb story downloader hd"
+ canonical="/facebook-story-downloader"
+ ogImage="/og-downloader.png"
+ ogType="website"
+ platform="facebook"
+ jsonLd={faqJsonLd}
+ appName="TikSaveHub. Facebook Story Downloader"
 >
-  <!-- JSON-LD Structured Data -->
-  <script is:inline type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
-      { "@type": "ListItem", "position": 2, "name": "Facebook Story Downloader", "item": "https://tiksavehub.com/facebook-story-downloader" }
-    ]
-  })} />
+ <!-- JSON-LD Structured Data -->
+ <script is:inline type="application/ld+json" set:html={JSON.stringify({
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+ { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
+ { "@type": "ListItem", "position": 2, "name": "Facebook Story Downloader", "item": "https://tiksavehub.com/facebook-story-downloader" }
+ ]
+ })} />
 
-  <!-- Hero Section -->
-  <FbHeroSection
-    crumb="Facebook Story Downloader"
-    badge="Free · HD · No Watermark"
-    title="Facebook Story Downloader — Save FB Stories in HD Online"
-    subline="Download Facebook stories in HD — free, fast, before they disappear."
-    sub="Save any public Facebook story in HD online — free, fast, no sign-up, and no watermark. Paste a story link and download the video to your device in seconds."
-    trust={['100% Free', 'HD Quality', 'No Watermark', 'Works on iPhone', 'Works on Android']}
-    shareUrl="/facebook-story-downloader"
-    shareTitle="Facebook Story Downloader — Save FB Stories in HD Online"
-    shareDescription="Download Facebook stories in HD online. Free, fast, no watermark. Save stories before they disappear."
-  >
-    <FacebookDownloadForm mode="story" />
-  </FbHeroSection>
+ <!-- Hero Section -->
+ <FbHeroSection
+ crumb="Facebook Story Downloader"
+ badge="Free · HD · No Watermark"
+ title="Facebook Story Downloader. Save FB Stories in HD Online"
+ subline="Download Facebook stories in HD, free, fast, before they disappear."
+ sub="Save any public Facebook story in HD online, free, fast, no sign-up, and no watermark. Paste a story link and download the video to your device in seconds."
+ trust={['100% Free', 'HD Quality', 'No Watermark', 'Works on iPhone', 'Works on Android']}
+ shareUrl="/facebook-story-downloader"
+ shareTitle="Facebook Story Downloader. Save FB Stories in HD Online"
+ shareDescription="Download Facebook stories in HD online. Free, fast, no watermark. Save stories before they disappear."
+ >
+ <FacebookDownloadForm mode="story" />
+ </FbHeroSection>
 
-  <!-- Stats -->
-  <StatsSection platform="Facebook" />
+ <!-- Stats -->
+ <StatsSection platform="Facebook" />
 
-  <!-- SEO Content Section — 600+ words -->
-  <FbSeoArticle
-    headline="Save Facebook stories in HD before they disappear."
-    quickLinks={[
-      { label: 'TikTok Video Downloader', href: '/tiktok-video-downloader-without-watermark' },
-      { label: 'TikTok to MP3', href: '/tiktok-to-mp3' },
-      { label: 'Instagram Reels Downloader', href: '/instagram-reels-downloader-without-watermark' },
-      { label: 'Instagram Video Downloader', href: '/instagram-video-downloader-without-watermark' },
-      { label: 'Instagram Story Downloader', href: '/instagram-story-downloader-without-watermark' },
-      { label: 'Instagram Audio Downloader', href: '/instagram-audio-downloader' },
-      { label: 'Facebook Video Downloader', href: '/facebook-video-downloader' },
-      { label: 'Facebook Reels Downloader', href: '/facebook-reels-downloader' },
-      { label: 'Facebook Story Downloader', href: '#download-tool' },
-      { label: 'Facebook to MP3', href: '/facebook-to-mp3' },
-      { label: 'Facebook Photo Downloader', href: '/facebook-photo-downloader' },
-      { label: 'Snapchat Downloader', href: '/snapchat-downloader' },
-      { label: 'Snapchat Story Downloader', href: '/snapchat-story-downloader' },
-      { label: 'Snapchat to MP3', href: '/snapchat-to-mp3' },
-      { label: 'X/Twitter Video Downloader', href: '/x-video-downloader' },
-    ]}
-    supportedLinks={['facebook.com/stories/…', 'facebook.com/reel/…', 'facebook.com/watch/?v=…', 'fb.watch/…']}
-  >
-    <p>
-      Facebook stories disappear after 24 hours — but they don't have to be gone forever. TikSaveHub lets you
-      <strong>download Facebook story videos in HD</strong> in seconds, free and without a watermark. Food tutorials
-      from your favorite chefs, travel vlogs from creators you follow, announcements from brands you care about, or
-      your own story that you want to keep — paste the link, tap Download, and the story is stored safely on your
-      device, ready to watch offline any time.
-    </p>
+ <!-- SEO Content Section. 600+ words -->
+ <FbSeoArticle
+ headline="Save Facebook stories in HD before they disappear."
+ quickLinks={[
+ { label: 'TikTok Video Downloader', href: '/tiktok-video-downloader-without-watermark' },
+ { label: 'TikTok to MP3', href: '/tiktok-to-mp3' },
+ { label: 'Instagram Reels Downloader', href: '/instagram-reels-downloader-without-watermark' },
+ { label: 'Instagram Video Downloader', href: '/instagram-video-downloader-without-watermark' },
+ { label: 'Instagram Story Downloader', href: '/instagram-story-downloader-without-watermark' },
+ { label: 'Instagram Audio Downloader', href: '/instagram-audio-downloader' },
+ { label: 'Facebook Video Downloader', href: '/facebook-video-downloader' },
+ { label: 'Facebook Reels Downloader', href: '/facebook-reels-downloader' },
+ { label: 'Facebook Story Downloader', href: '#download-tool' },
+ { label: 'Facebook to MP3', href: '/facebook-to-mp3' },
+ { label: 'Facebook Photo Downloader', href: '/facebook-photo-downloader' },
+ { label: 'Snapchat Downloader', href: '/snapchat-downloader' },
+ { label: 'Snapchat Story Downloader', href: '/snapchat-story-downloader' },
+ { label: 'Snapchat to MP3', href: '/snapchat-to-mp3' },
+ { label: 'X/Twitter Video Downloader', href: '/x-video-downloader' },
+ ]}
+ supportedLinks={['facebook.com/stories/…', 'facebook.com/reel/…', 'facebook.com/watch/?v=…', 'fb.watch/…']}
+ >
+ <p>
+ Facebook stories disappear after 24 hours, but they don't have to be gone forever. TikSaveHub lets you
+ <strong>download Facebook story videos in HD</strong> in seconds, free and without a watermark. Food tutorials
+ from your favorite chefs, travel vlogs from creators you follow, announcements from brands you care about, or
+ your own story that you want to keep. paste the link, tap Download, and the story is stored safely on your
+ device, ready to watch offline any time.
+ </p>
 
-    <h3 class="text-highlight">How to save a Facebook story in HD</h3>
-    <p>
-      When you see a story you want to keep, open it and tap the share menu (the three dots or arrow) to copy its
-      link. Then come back to TikSaveHub and paste the link into the box at the top of this page. Our servers fetch
-      the story's media in seconds, and you get the HD or SD video with one tap. Because stories
-      expire after a day, paste the link as soon as you see it; the download itself takes only moments.
-    </p>
+ <h3 class="text-highlight">How to save a Facebook story in HD</h3>
+ <p>
+ When you see a story you want to keep, open it and tap the share menu (the three dots or arrow) to copy its
+ link. Then come back to TikSaveHub and paste the link into the box at the top of this page. Our servers fetch
+ the story's media in seconds, and you get the HD or SD video with one tap. Because stories
+ expire after a day, paste the link as soon as you see it; the download itself takes only moments.
+ </p>
 
-    <h3 class="text-highlight">HD 1080p quality, no watermark, every time</h3>
-    <p>
-      Our <strong>Facebook story downloader</strong> delivers the best resolution the story was uploaded in — up to
-      1080p when available. We never re-encode, never compress, and never add an overlay, so the file you save is a
-      faithful copy of the original. Prefer a smaller file? The SD option trims the size without ruining quality, and
-      both options stay watermark-free.
-    </p>
+ <h3 class="text-highlight">HD 1080p quality, no watermark, every time</h3>
+ <p>
+ Our <strong>Facebook story downloader</strong> delivers the best resolution the story was uploaded in, up to
+ 1080p when available. We never re-encode, never compress, and never add an overlay, so the file you save is a
+ faithful copy of the original. Prefer a smaller file? The SD option trims the size without ruining quality, and
+ both options stay watermark-free.
+ </p>
 
-    <h3 class="text-highlight">Save stories on iPhone, Android, and desktop</h3>
-    <p>
-      Stories are consumed mostly on phones, so the tool is built mobile-first. On iPhone, paste the link into Safari
-      and the video saves through your browser's download manager to the Files app — you can even export it to
-      Photos. On Android, the MP4 lands in your gallery or Downloads folder. On a PC or Mac it drops into the
-      download bar. Every screen gets large, thumb-friendly tap targets, so saving stories feels natural anywhere.
-    </p>
+ <h3 class="text-highlight">Save stories on iPhone, Android, and desktop</h3>
+ <p>
+ Stories are consumed mostly on phones, so the tool is built mobile-first. On iPhone, paste the link into Safari
+ and the video saves through your browser's download manager to the Files app. you can even export it to
+ Photos. On Android, the MP4 lands in your gallery or Downloads folder. On a PC or Mac it drops into the
+ download bar. Every screen gets large, thumb-friendly tap targets, so saving stories feels natural anywhere.
+ </p>
 
-    <h3 class="text-highlight">Photos too, and audio when you need it</h3>
-    <p>
-      Video stories download as MP4 in HD — and if you only want the soundtrack, the <a href="/facebook-to-mp3">Facebook
-      to MP3 converter</a> handles any story video too. For photo-only stories, the platform doesn't expose a
-      downloadable media stream, so a quick screenshot from your device remains the reliable route there. Everything
-      else — every video story — is one link away.
-    </p>
+ <h3 class="text-highlight">Photos too, and audio when you need it</h3>
+ <p>
+ Video stories download as MP4 in HD, and if you only want the soundtrack, the <a href="/facebook-to-mp3">Facebook
+ to MP3 converter</a> handles any story video too. For photo-only stories, the platform doesn't expose a
+ downloadable media stream, so a quick screenshot from your device remains the reliable route there. Everything
+ else, every video story, is one link away.
+ </p>
 
-    <h3 class="text-highlight">Private, free, and unlimited</h3>
-    <p>
-      TikSaveHub works entirely in your browser: no app, no account, no email capture, and no stored history. The
-      story is processed server-side and the only thing on your device is the final file. Downloads are unlimited and
-      100% free — no caps, no premium tier, no surprises — so you can <strong>save Facebook stories to your device
-      online</strong> as often as you like.
-    </p>
+ <h3 class="text-highlight">Private, free, and unlimited</h3>
+ <p>
+ TikSaveHub works entirely in your browser: no app, no account, no email capture, and no stored history. The
+ story is processed server-side and the only thing on your device is the final file. Downloads are unlimited and
+ 100% free, no caps, no premium tier, no surprises, so you can <strong>save Facebook stories to your device
+ online</strong> as often as you like.
+ </p>
 
-    <p>
-      Looking for more? Save full videos with the <a href="/facebook-video-downloader">Facebook video downloader</a>,
-      grab <a href="/facebook-reels-downloader">Reels in HD 1080p</a>, or convert anything to
-      <a href="/facebook-to-mp3">MP3 audio</a> — all free, all without a watermark.
-    </p>
-  </FbSeoArticle>
+ <p>
+ Looking for more? Save full videos with the <a href="/facebook-video-downloader">Facebook video downloader</a>,
+ grab <a href="/facebook-reels-downloader">Reels in HD 1080p</a>, or convert anything to
+ <a href="/facebook-to-mp3">MP3 audio</a> All free, all without a watermark.
+ </p>
+ </FbSeoArticle>
 
-  <!-- How It Works -->
-  <FbStepsSection
-    eyebrow="Step-by-Step Guide"
-    headline="How to download Facebook stories."
-    sub="Three simple steps — no technical skills required."
-    steps={[
-      {
-        num: '01',
-        icon: 'share',
-        title: 'Copy the story link',
-        body: 'Open the Facebook app or site, view the story, tap the share menu, and choose "Copy Link." Public story links work — just make sure to grab it before the 24-hour expiry.',
-      },
-      {
-        num: '02',
-        icon: 'paste',
-        title: 'Paste it into TikSaveHub',
-        body: 'Come back here and paste the link into the field above. We detect the story and fetch its media in seconds.',
-      },
-      {
-        num: '03',
-        icon: 'download',
-        title: 'Download the story in HD',
-        body: 'Tap "Download HD Video" or "Download SD Video" to save the MP4 to your device. The file saves instantly, no app or account needed. Want the soundtrack? Use our <a href="/facebook-to-mp3">Facebook to MP3 converter</a>.',
-      },
-    ]}
-  />
+ <!-- How It Works -->
+ <FbStepsSection
+ eyebrow="Step-by-Step Guide"
+ headline="How to download Facebook stories."
+ sub="Three simple steps, no technical skills required."
+ steps={[
+ {
+ num: '01',
+ icon: 'share',
+ title: 'Copy the story link',
+ body: 'Open the Facebook app or site, view the story, tap the share menu, and choose "Copy Link." Public story links work, just make sure to grab it before the 24-hour expiry.',
+ },
+ {
+ num: '02',
+ icon: 'paste',
+ title: 'Paste it into TikSaveHub',
+ body: 'Come back here and paste the link into the field above. We detect the story and fetch its media in seconds.',
+ },
+ {
+ num: '03',
+ icon: 'download',
+ title: 'Download the story in HD',
+ body: 'Tap "Download HD Video" or "Download SD Video" to save the MP4 to your device. The file saves instantly, no app or account needed. Want the soundtrack? Use our <a href="/facebook-to-mp3">Facebook to MP3 converter</a>.',
+ },
+ ]}
+ />
 
-  <!-- Features -->
-  <FbFeaturesSection
-    eyebrow="Features"
-    headline="Why TikSaveHub is the best FB story saver."
-    features={[
-      {
-        icon: 'zap',
-        accent: 'ship',
-        title: 'Save Before Expiry',
-        body: 'Stories vanish after 24 hours — our downloader is instant, so your story is safely on your device in seconds.',
-      },
-      {
-        icon: 'shield',
-        accent: 'develop',
-        title: 'No Watermark',
-        body: 'Download story videos exactly as uploaded — original quality, no overlay, no branding added.',
-      },
-      {
-        icon: 'music',
-        accent: 'preview',
-        title: 'MP3 Audio Extraction',
-        body: 'Need only the sound? Extract the story’s soundtrack as a high-quality MP3 with one tap.',
-      },
-      {
-        icon: 'device',
-        accent: 'preview',
-        title: 'iPhone + Android Ready',
-        body: 'Mobile-first layout with large tap targets. Save stories to Files, gallery, or Downloads in one tap.',
-      },
-      {
-        icon: 'list',
-        accent: 'develop',
-        title: 'All Link Formats',
-        body: 'Story links, Reels, Watch videos, and fb.watch short links — every public Facebook media link works.',
-      },
-      {
-        icon: 'globe',
-        accent: 'ship',
-        title: 'Unlimited & Free',
-        body: 'No daily caps, no premium tier, no account. Save as many Facebook stories as you want, forever.',
-      },
-    ]}
-  />
+ <!-- Features -->
+ <FbFeaturesSection
+ eyebrow="Features"
+ headline="Why TikSaveHub is the best FB story saver."
+ features={[
+ {
+ icon: 'zap',
+ accent: 'ship',
+ title: 'Save Before Expiry',
+ body: 'Stories vanish after 24 hours. our downloader is instant, so your story is safely on your device in seconds.',
+ },
+ {
+ icon: 'shield',
+ accent: 'develop',
+ title: 'No Watermark',
+ body: 'Download story videos exactly as uploaded. original quality, no overlay, no branding added.',
+ },
+ {
+ icon: 'music',
+ accent: 'preview',
+ title: 'MP3 Audio Extraction',
+ body: 'Need only the sound? Extract the story’s soundtrack as a high-quality MP3 with one tap.',
+ },
+ {
+ icon: 'device',
+ accent: 'preview',
+ title: 'iPhone + Android Ready',
+ body: 'Mobile-first layout with large tap targets. Save stories to Files, gallery, or Downloads in one tap.',
+ },
+ {
+ icon: 'list',
+ accent: 'develop',
+ title: 'All Link Formats',
+ body: 'Story links, Reels, Watch videos, and fb.watch short links, every public Facebook media link works.',
+ },
+ {
+ icon: 'globe',
+ accent: 'ship',
+ title: 'Unlimited & Free',
+ body: 'No daily caps, no premium tier, no account. Save as many Facebook stories as you want, forever.',
+ },
+ ]}
+ />
 
-  <!-- FAQ -->
-  <FbFaqSection
-    eyebrow="FAQ"
-    headline="Facebook story download questions, answered."
-    prefix="story"
-    faqs={faqData}
-  />
+ <!-- FAQ -->
+ <FbFaqSection
+ eyebrow="FAQ"
+ headline="Facebook story download questions, answered."
+ prefix="story"
+ faqs={faqData}
+ />
 
-  <!-- CTA Band -->
-  <FbCtaBand
-    headline="That story won't wait forever."
-    sub="Free, fast, and watermark-free — paste a story link and save it in HD."
-    ctaHref="#download-tool"
-    ctaLabel="Save a Story Now"
-  />
+ <!-- CTA Band -->
+ <FbCtaBand
+ headline="That story won't wait forever."
+ sub="Free, fast, and watermark-free. paste a story link and save it in HD."
+ ctaHref="#download-tool"
+ ctaLabel="Save a Story Now"
+ />
 
-  <!-- Cross-links -->
-  <FbInternalLinks
-    headline="More free tools from TikSaveHub"
-    links={[
-      { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Download full-length Facebook videos and Watch links in HD.' },
-      { href: '/facebook-reels-downloader', icon: 'reels', title: 'Facebook Reels Downloader', desc: 'Save Facebook Reels in HD 1080p with no watermark.' },
-      { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Extract high-quality MP3 audio from any Facebook video.' },
-      { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Save public Facebook photos in full resolution, free.' },
-      { href: '/instagram-story-downloader-without-watermark', icon: 'igstory', title: 'Instagram Story Downloader', desc: 'Save Instagram stories without a watermark.' },
-      { href: '/instagram-video-downloader-without-watermark', icon: 'ig', title: 'Instagram Video Downloader', desc: 'Download Instagram videos and Reels in HD.' },
-      { href: '/tiktok-video-downloader-without-watermark', icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'Download TikTok videos in HD without a watermark.' },
-    ]}
-  />
+ <!-- Cross-links -->
+ <FbInternalLinks
+ headline="More free tools from TikSaveHub"
+ links={[
+ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Download full-length Facebook videos and Watch links in HD.' },
+ { href: '/facebook-reels-downloader', icon: 'reels', title: 'Facebook Reels Downloader', desc: 'Save Facebook Reels in HD 1080p with no watermark.' },
+ { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Extract high-quality MP3 audio from any Facebook video.' },
+ { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Save public Facebook photos in full resolution, free.' },
+ { href: '/instagram-story-downloader-without-watermark', icon: 'igstory', title: 'Instagram Story Downloader', desc: 'Save Instagram stories without a watermark.' },
+ { href: '/instagram-video-downloader-without-watermark', icon: 'ig', title: 'Instagram Video Downloader', desc: 'Download Instagram videos and Reels in HD.' },
+ { href: '/tiktok-video-downloader-without-watermark', icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'Download TikTok videos in HD without a watermark.' },
+ ]}
+ />
 </Layout>

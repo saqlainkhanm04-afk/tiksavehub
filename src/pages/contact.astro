@@ -3,92 +3,92 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 
 const contactJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'ContactPage',
-      name: 'Contact Us — TikSaveHub',
-      description: 'Get in touch with TikSaveHub for support, inquiries, or feedback.',
-      url: 'https://tiksavehub.com/contact',
-    },
-    {
-      '@type': 'Organization',
-      name: 'TikSaveHub',
-      url: 'https://tiksavehub.com',
-      logo: 'https://tiksavehub.com/logo.png',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        contactType: 'customer support',
-        email: 'support@tiksavehub.com',
-        availableLanguage: 'English',
-      },
-    },
-  ],
+ '@context': 'https://schema.org',
+ '@graph': [
+ {
+ '@type': 'ContactPage',
+ name: 'Contact Us. TikSaveHub',
+ description: 'Get in touch with TikSaveHub for support, inquiries, or feedback.',
+ url: 'https://tiksavehub.com/contact',
+ },
+ {
+ '@type': 'Organization',
+ name: 'TikSaveHub',
+ url: 'https://tiksavehub.com',
+ logo: 'https://tiksavehub.com/logo.png',
+ contactPoint: {
+ '@type': 'ContactPoint',
+ contactType: 'customer support',
+ email: 'support@tiksavehub.com',
+ availableLanguage: 'English',
+ },
+ },
+ ],
 });
 ---
 
 <Layout
-  title="Contact Us — TikSaveHub"
-  description="Get in touch with TikSaveHub. Reach out for support, inquiries, or feedback about our TikTok video downloader."
-  keywords="contact tiksavehub, tiksavehub support, contact us, tiktok downloader help"
-  canonical="/contact"
-  ogImage="/og-contact.png"
-  skipSoftwareApp
-  jsonLd={contactJsonLd}
+ title="Contact Us. TikSaveHub"
+ description="Get in touch with TikSaveHub. Reach out for support, inquiries, or feedback about our TikTok video downloader."
+ keywords="contact tiksavehub, tiksavehub support, contact us, tiktok downloader help"
+ canonical="/contact"
+ ogImage="/og-contact.png"
+ skipSoftwareApp
+ jsonLd={contactJsonLd}
 >
-  <section class="legal-section" aria-labelledby="legal-headline">
-    <div class="legal-inner container-page">
-      <!-- Breadcrumb -->
-      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
-        <ol class="breadcrumb-list">
-          <li>
-            <a href="/"><span>Home</span></a>
-                  </li>
-          <li aria-current="page">
-            <span>Contact Us</span>
-                  </li>
-        </ol>
-      </nav>
+ <section class="legal-section" aria-labelledby="legal-headline">
+ <div class="legal-inner container-page">
+ <!-- Breadcrumb -->
+ <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+ <ol class="breadcrumb-list">
+ <li>
+ <a href="/"><span>Home</span></a>
+ </li>
+ <li aria-current="page">
+ <span>Contact Us</span>
+ </li>
+ </ol>
+ </nav>
 
-      <div class="legal-header">
-        <span class="section-eyebrow text-caption-mono">Support</span>
-        <h1 id="legal-headline" class="legal-title">Contact Us</h1>
-        <p class="legal-meta">We'd love to hear from you.</p>
-      </div>
+ <div class="legal-header">
+ <span class="section-eyebrow text-caption-mono">Support</span>
+ <h1 id="legal-headline" class="legal-title">Contact Us</h1>
+ <p class="legal-meta">We'd love to hear from you.</p>
+ </div>
 
-      <div class="legal-card">
-        <div class="legal-content">
+ <div class="legal-card">
+ <div class="legal-content">
 
-          <section class="legal-clause">
-            <h2 class="legal-h2">Get in Touch</h2>
-            <p>
-              Have a question, suggestion, or need help? Reach out to us and we'll get back to you as soon as possible.
-            </p>
-          </section>
+ <section class="legal-clause">
+ <h2 class="legal-h2">Get in Touch</h2>
+ <p>
+ Have a question, suggestion, or need help? Reach out to us and we'll get back to you as soon as possible.
+ </p>
+ </section>
 
-          <section class="legal-clause">
-            <h2 class="legal-h2">Contact Information</h2>
-              <p class="legal-contact">
-                <strong>Email:</strong> <a href="mailto:support@tiksavehub.com">support@tiksavehub.com</a>
-              </p>
-          </section>
+ <section class="legal-clause">
+ <h2 class="legal-h2">Contact Information</h2>
+ <p class="legal-contact">
+ <strong>Email:</strong> <a href="mailto:support@tiksavehub.com">support@tiksavehub.com</a>
+ </p>
+ </section>
 
-          <section class="legal-clause">
-            <h2 class="legal-h2">Response Time</h2>
-            <p>
-              We aim to respond to all inquiries within 24–48 hours. For faster assistance, please include a clear description of your issue or question.
-            </p>
-          </section>
+ <section class="legal-clause">
+ <h2 class="legal-h2">Response Time</h2>
+ <p>
+ We aim to respond to all inquiries within 24–48 hours. For faster assistance, please include a clear description of your issue or question.
+ </p>
+ </section>
 
-        </div>
-      </div>
+ </div>
+ </div>
 
-      <!-- Back to home -->
-      <div class="legal-back">
-        <a href="/" class="btn-primary-sm">&larr; Back to TikSaveHub</a>
-      </div>
-    </div>
-  </section>
+ <!-- Back to home -->
+ <div class="legal-back">
+ <a href="/" class="btn-primary-sm">&larr; Back to TikSaveHub</a>
+ </div>
+ </div>
+ </section>
 </Layout>
 
 <style>

@@ -208,42 +208,81 @@ export const GET: APIRoute = async (ctx) => {
 
     if (mode === 'audio') {
       contentType = 'audio';
+      console.log('[IG Audio] ═══════════════════════════════════════════');
+      console.log('[IG Audio] mode=audio — starting audio extraction');
+      console.log('[IG Audio] shortcode:', parsed.shortcode, 'type:', parsed.type);
+      console.log('[IG Audio] media keys:', Object.keys(media || {}).join(', '));
+      console.log('[IG Audio] has audio_versions:', !!media.audio_versions, 'count:', media.audio_versions?.length);
+      console.log('[IG Audio] has video_dash_manifest:', !!media.video_dash_manifest);
+      console.log('[IG Audio] has video_versions:', !!media.video_versions, 'count:', media.video_versions?.length);
+
       const realAudio = getAudioUrl(media);
       if (realAudio) {
         downloadUrl = realAudio;
         audioExt = /\.mp3(?:\?|$)/i.test(realAudio) ? 'mp3' : 'm4a';
-        console.log('[IG Audio] extracted native DASH audio track');
-      } else if (parsed.shortcode) {
+        console.log('[IG Audio] ✓ extracted native DASH audio track');
+        console.log('[IG Audio] audio url:', realAudio.substring(0, 150));
+      } else {
+        console.log('[IG Audio] ✗ native audio not found — trying cobalt fallback');
         const igUrl = `https://www.instagram.com/${parsed.type === 'reels' ? 'reel' : parsed.type}/${parsed.shortcode}/`;
-        console.log('[IG Audio] trying cobalt for:', igUrl);
+        console.log('[IG Audio] cobalt URL:', igUrl);
+        console.log('[IG Audio] turnstileToken present:', !!turnstileToken);
         const audio = await cobaltExtractAudio(igUrl, turnstileToken);
+        console.log('[IG Audio] cobalt result:', audio ? `url=${audio.url?.substring(0, 120)}...` : 'NULL');
         if (audio?.url) {
-          // Verify the cobalt tunnel actually returns data (some free
-          // instances return empty files). Quick HEAD check.
+          // Cobalt tunnel URLs (status "tunnel") need a GET request to start
+          // streaming — HEAD on tunnels returns content-length: 0. To avoid
+          // false negatives, do a lightweight GET Range probe instead.
+          const isTunnel = audio.url.includes('/tunnel?');
           try {
-            const probe = await fetch(audio.url, { method: 'HEAD', signal: AbortSignal.timeout(5_000) });
-            const cl = Number(probe.headers.get('content-length') || 0);
-            if (cl > 1024) {
+            console.log(`[IG Audio] Probing cobalt URL (${isTunnel ? 'tunnel → GET Range' : 'HEAD'})...`);
+            if (isTunnel) {
+              // Tunnels stream on GET — just check that the server accepts the request.
+              const probe = await fetch(audio.url, {
+                method: 'GET',
+                headers: { Range: 'bytes=0-0' },
+                signal: AbortSignal.timeout(8_000),
+              });
+              const cl = Number(probe.headers.get('content-length') || 0);
+              const cr = probe.headers.get('content-range') || '';
+              console.log('[IG Audio] Tunnel probe: status=' + probe.status, 'content-length=' + cl, 'content-range=' + cr);
+              // Accept if server returned 200/206 — even cl=0 is fine for tunnels
+              // (the full stream only plays on a real GET without Range).
               downloadUrl = audio.url;
               audioExt = audio.ext || 'mp3';
-              console.log('[IG Audio] cobalt extraction succeeded');
+              console.log('[IG Audio] ✓ cobalt tunnel accepted');
+              probe.body?.cancel().catch(() => {});
             } else {
-              console.warn('[IG Audio] cobalt URL returned tiny file:', cl, 'bytes');
+              const probe = await fetch(audio.url, { method: 'HEAD', signal: AbortSignal.timeout(5_000) });
+              const cl = Number(probe.headers.get('content-length') || 0);
+              console.log('[IG Audio] HEAD probe: status=' + probe.status, 'content-length=' + cl);
+              if (cl > 1024) {
+                downloadUrl = audio.url;
+                audioExt = audio.ext || 'mp3';
+                console.log('[IG Audio] ✓ cobalt extraction succeeded');
+              } else {
+                console.warn('[IG Audio] cobalt URL returned tiny file:', cl, 'bytes — skipping');
+              }
             }
-          } catch {
-            // HEAD not supported — try it anyway
+          } catch (probeErr: any) {
+            console.warn('[IG Audio] Probe failed:', probeErr?.message, '— using anyway');
+            // Probe not supported — try it anyway
             downloadUrl = audio.url;
             audioExt = audio.ext || 'mp3';
-            console.log('[IG Audio] cobalt extraction succeeded (HEAD failed, using anyway)');
+            console.log('[IG Audio] cobalt extraction succeeded (probe failed, using anyway)');
           }
         } else {
-          console.warn('[IG Audio] cobalt returned no URL');
+          console.warn('[IG Audio] cobalt returned no URL — audio unavailable');
         }
       }
+
+      console.log('[IG Audio] Final downloadUrl:', downloadUrl ? downloadUrl.substring(0, 120) : 'NULL');
+      console.log('[IG Audio] ═══════════════════════════════════════════');
 
       // No fallback to video URL — return a clear error instead of serving
       // a video file when the user explicitly asked for audio only.
       if (!downloadUrl) {
+        console.error('[IG Audio] FAILED — returning 503 error to client');
         return new Response(
           JSON.stringify({
             success: false,

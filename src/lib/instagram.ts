@@ -603,38 +603,63 @@ export function getThumbnailUrl(media: any): string {
 }
 
 export function getAudioUrl(media: any): string | null {
+  console.log('[IG Audio Debug] getAudioUrl called — media keys:', Object.keys(media || {}).join(', '));
+
   // 1. Direct audio_versions array (some IG responses include this).
   const audioVersions = media.audio_versions;
+  console.log('[IG Audio Debug] audio_versions:', audioVersions ? `${audioVersions.length} entries` : 'MISSING/empty');
   if (audioVersions && audioVersions.length > 0) {
     const sorted = [...audioVersions].sort((a: any, b: any) => (b.bitrate || 0) - (a.bitrate || 0));
+    console.log('[IG Audio Debug] audio_versions[0]:', JSON.stringify(sorted[0]).substring(0, 500));
     if (sorted[0]?.url) return sorted[0].url;
   }
+
   // 2. DASH manifest — look for audio-only AdaptationSet (audio/mp4 or audio/mpeg).
   //    The manifest may be a string or an object with .text / .url.
-  const dash = typeof media.video_dash_manifest === 'string'
-    ? media.video_dash_manifest
-    : media.video_dash_manifest?.text || media.video_dash_manifest?.url || '';
-  if (dash && (dash.includes('audio/mp4') || dash.includes('audio/mpeg'))) {
-    // Match entire AdaptationSet blocks for audio, then pick the best Representation.
-    const adaptBlocks = dash.match(/<AdaptationSet[^>]*mimeType="audio\/(?:mp4|mpeg)"[^>]*>[\s\S]*?<\/AdaptationSet>/gi) || [];
-    const repBlocks = adaptBlocks.length > 0
-      ? adaptBlocks.map((b: string) => b.match(/<Representation[^>]*>[\s\S]*?<\/Representation>/gi) || []).flat()
-      : dash.match(/<Representation[^>]*mimeType="audio\/(?:mp4|mpeg)"[^>]*>[\s\S]*?<\/Representation>/gi) || [];
+  const dashRaw = media.video_dash_manifest;
+  const dashType = typeof dashRaw;
+  console.log('[IG Audio Debug] video_dash_manifest type:', dashType, dashRaw ? `length=${(dashRaw.text || dashRaw.url || dashRaw || '').length}` : 'falsy');
+  const dash = typeof dashRaw === 'string'
+    ? dashRaw
+    : dashRaw?.text || dashRaw?.url || '';
 
-    let best: string | null = null;
-    let bestBandwidth = -1;
-    for (const block of repBlocks) {
-      const bw = Number(block.match(/bandwidth="(\d+)"/)?.[1] || 0);
-      const base = block.match(/<BaseURL>([^<]*)<\/BaseURL>/)?.[1];
-      if (!base) continue;
-      const url = base.replaceAll('&amp;', '&').trim();
-      if (!url.startsWith('http')) continue;
-      if (bw > bestBandwidth) {
-        bestBandwidth = bw;
-        best = url;
+  if (dash) {
+    const hasAudio = dash.includes('audio/mp4') || dash.includes('audio/mpeg');
+    console.log('[IG Audio Debug] DASH contains audio mimeType:', hasAudio);
+    if (hasAudio) {
+      // Match entire AdaptationSet blocks for audio, then pick the best Representation.
+      const adaptBlocks = dash.match(/<AdaptationSet[^>]*mimeType="audio\/(?:mp4|mpeg)"[^>]*>[\s\S]*?<\/AdaptationSet>/gi) || [];
+      const repBlocks = adaptBlocks.length > 0
+        ? adaptBlocks.map((b: string) => b.match(/<Representation[^>]*>[\s\S]*?<\/Representation>/gi) || []).flat()
+        : dash.match(/<Representation[^>]*mimeType="audio\/(?:mp4|mpeg)"[^>]*>[\s\S]*?<\/Representation>/gi) || [];
+
+      console.log('[IG Audio Debug] DASH adaptBlocks:', adaptBlocks.length, 'repBlocks:', repBlocks.length);
+
+      let best: string | null = null;
+      let bestBandwidth = -1;
+      for (const block of repBlocks) {
+        const bw = Number(block.match(/bandwidth="(\d+)"/)?.[1] || 0);
+        const base = block.match(/<BaseURL>([^<]*)<\/BaseURL>/)?.[1];
+        if (!base) continue;
+        const url = base.replaceAll('&amp;', '&').trim();
+        if (!url.startsWith('http')) continue;
+        console.log('[IG Audio Debug] DASH audio rep:', `bw=${bw}`, `url=${url.substring(0, 120)}...`);
+        if (bw > bestBandwidth) {
+          bestBandwidth = bw;
+          best = url;
+        }
+      }
+      if (best) {
+        console.log('[IG Audio Debug] DASH best audio:', best.substring(0, 120));
+        return best;
       }
     }
-    if (best) return best;
   }
+
+  // 3. Check for video_urls — sometimes IG only has progressive video, no separate audio
+  const videoUrls = media.video_versions;
+  console.log('[IG Audio Debug] video_versions:', videoUrls ? `${videoUrls.length} entries` : 'MISSING/empty');
+
+  console.log('[IG Audio Debug] getAudioUrl returning NULL — no audio track found');
   return null;
 }

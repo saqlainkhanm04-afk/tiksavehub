@@ -5,272 +5,272 @@ import Layout from '../layouts/Layout.astro';
 import { posts } from '../data/blog-posts';
 
 const categories = [
-  { id: 'All', label: 'All' },
-  { id: 'TikTok Guides', label: 'TikTok Guides' },
-  { id: 'Instagram Tips', label: 'Instagram Tips' },
-  { id: 'Facebook Guides', label: 'Facebook Guides' },
-  { id: 'X & Twitter Guides', label: 'X & Twitter' },
-  { id: 'Audio Extraction', label: 'Audio Extraction' },
-  { id: 'Tech & Security', label: 'Tech & Security' },
+ { id: 'All', label: 'All' },
+ { id: 'TikTok Guides', label: 'TikTok Guides' },
+ { id: 'Instagram Tips', label: 'Instagram Tips' },
+ { id: 'Facebook Guides', label: 'Facebook Guides' },
+ { id: 'X & Twitter Guides', label: 'X & Twitter' },
+ { id: 'Audio Extraction', label: 'Audio Extraction' },
+ { id: 'Tech & Security', label: 'Tech & Security' },
 ];
 
 const sorted = [...posts].sort(
-  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+ (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
 );
 const [featured, ...restPosts] = sorted;
 const categoryCounts = categories.reduce<Record<string, number>>((acc, cat) => {
-  if (cat.id === 'All') {
-    acc[cat.id] = posts.length;
-  } else {
-    acc[cat.id] = posts.filter((p) => p.category === cat.id).length;
-  }
-  return acc;
+ if (cat.id === 'All') {
+ acc[cat.id] = posts.length;
+ } else {
+ acc[cat.id] = posts.filter((p) => p.category === cat.id).length;
+ }
+ return acc;
 }, {});
 
 const categoryMeta: Record<string, { label: string; icon: string }> = {
-  'TikTok Guides': { label: 'TikTok', icon: 'tiktok' },
-  'Instagram Tips': { label: 'Instagram', icon: 'instagram' },
-  'Facebook Guides': { label: 'Facebook', icon: 'facebook' },
-  'X & Twitter Guides': { label: 'X / Twitter', icon: 'x' },
-  'Audio Extraction': { label: 'Audio', icon: 'audio' },
-  'Tech & Security': { label: 'Security', icon: 'shield' },
+ 'TikTok Guides': { label: 'TikTok', icon: 'tiktok' },
+ 'Instagram Tips': { label: 'Instagram', icon: 'instagram' },
+ 'Facebook Guides': { label: 'Facebook', icon: 'facebook' },
+ 'X & Twitter Guides': { label: 'X / Twitter', icon: 'x' },
+ 'Audio Extraction': { label: 'Audio', icon: 'audio' },
+ 'Tech & Security': { label: 'Security', icon: 'shield' },
 };
 
 const toolCards = [
-  {
-    href: '/tiktok-video-downloader-without-watermark',
-    title: 'TikTok Video Downloader',
-    desc: 'Save TikTok videos without watermark in HD.',
-    icon: 'tiktok',
-  },
-  {
-    href: '/tiktok-to-mp3',
-    title: 'TikTok to MP3 Converter',
-    desc: 'Extract audio from any TikTok video.',
-    icon: 'audio',
-  },
-  {
-    href: '/instagram-video-downloader-without-watermark',
-    title: 'Instagram Video Downloader',
-    desc: 'Save Instagram posts & videos in HD.',
-    icon: 'instagram',
-  },
+ {
+ href: '/tiktok-video-downloader-without-watermark',
+ title: 'TikTok Video Downloader',
+ desc: 'Save TikTok videos without watermark in HD.',
+ icon: 'tiktok',
+ },
+ {
+ href: '/tiktok-to-mp3',
+ title: 'TikTok to MP3 Converter',
+ desc: 'Extract audio from any TikTok video.',
+ icon: 'audio',
+ },
+ {
+ href: '/instagram-video-downloader-without-watermark',
+ title: 'Instagram Video Downloader',
+ desc: 'Save Instagram posts & videos in HD.',
+ icon: 'instagram',
+ },
 ];
 ---
 
 <Layout
-  title="Social Media Guides & Video Downloader Tips — TikSaveHub"
-  description="Social media tips, video downloader guides, and tutorials. Learn how to save TikTok, Instagram, Facebook, and X (Twitter) videos, Reels, and audio without watermarks with TikSaveHub."
-  keywords="tiksavehub blog, social media tips, tiktok downloader guide, instagram video downloader guide, facebook video downloader guide, twitter video downloader guide, video downloading tutorials, save videos without watermark"
-  canonical="/blog"
-  ogImage="/og-blog.png"
-  skipSoftwareApp
+ title="Social Media Guides & Video Downloader Tips. TikSaveHub"
+ description="Social media tips, video downloader guides, and tutorials. Learn how to save TikTok, Instagram, Facebook, and X (Twitter) videos, Reels, and audio without watermarks with TikSaveHub."
+ keywords="tiksavehub blog, social media tips, tiktok downloader guide, instagram video downloader guide, facebook video downloader guide, twitter video downloader guide, video downloading tutorials, save videos without watermark"
+ canonical="/blog"
+ ogImage="/og-blog.png"
+ skipSoftwareApp
 >
-  <!-- ══════════ HERO ══════════ -->
-  <section class="blog-hero" aria-labelledby="blog-headline">
-    <div class="blog-hero-bg gradient-mesh" aria-hidden="true"></div>
-    <div class="blog-hero-inner container-page">
-      <div class="blog-hero-content">
-        <span class="blog-hero-badge">
-          <span class="blog-hero-badge-dot" aria-hidden="true"></span>
-          Knowledge Base &amp; Guides
-        </span>
+ <!-- ══════════ HERO ══════════ -->
+ <section class="blog-hero" aria-labelledby="blog-headline">
+ <div class="blog-hero-bg gradient-mesh" aria-hidden="true"></div>
+ <div class="blog-hero-inner container-page">
+ <div class="blog-hero-content">
+ <span class="blog-hero-badge">
+ <span class="blog-hero-badge-dot" aria-hidden="true"></span>
+ Knowledge Base &amp; Guides
+ </span>
 
-        <h1 id="blog-headline" class="blog-hero-title">
-          Grow Your Content With Smart Saving Tips.
-        </h1>
+ <h1 id="blog-headline" class="blog-hero-title">
+ Grow Your Content With Smart Saving Tips.
+ </h1>
 
-        <p class="blog-hero-sub text-body-lg">
-          Guides on saving TikTok, Instagram, Facebook, and X videos, Reels, and audio — without watermarks, and without the guesswork.
-        </p>
+ <p class="blog-hero-sub text-body-lg">
+ Guides on saving TikTok, Instagram, Facebook, and X videos, Reels, and audio, without watermarks, and without the guesswork.
+ </p>
 
-        <!-- Search -->
-        <div class="blog-search" role="search">
-          <svg class="blog-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input
-            id="blog-search-input"
-            class="blog-search-input"
-            type="search"
-            placeholder="Search guides, tutorials, or long-tail topics..."
-            aria-label="Search articles"
-            autocomplete="off"
-          />
-          <kbd class="blog-search-kbd">⌘K</kbd>
-        </div>
+ <!-- Search -->
+ <div class="blog-search" role="search">
+ <svg class="blog-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+ <input
+ id="blog-search-input"
+ class="blog-search-input"
+ type="search"
+ placeholder="Search guides, tutorials, or long-tail topics..."
+ aria-label="Search articles"
+ autocomplete="off"
+ />
+ <kbd class="blog-search-kbd">⌘K</kbd>
+ </div>
 
-        <!-- Category pills -->
-        <nav class="blog-cat-row" aria-label="Filter by category">
-          {categories.map((cat) => (
-            <button
-              type="button"
-              class="blog-cat-pill"
-              data-cat={cat.id}
-              aria-pressed={cat.id === 'All' ? 'true' : 'false'}
-            >
-              {cat.label}
-              <span class="blog-cat-count">{categoryCounts[cat.id]}</span>
-            </button>
-          ))}
-        </nav>
-      </div>
-    </div>
-  </section>
+ <!-- Category pills -->
+ <nav class="blog-cat-row" aria-label="Filter by category">
+ {categories.map((cat) => (
+ <button
+ type="button"
+ class="blog-cat-pill"
+ data-cat={cat.id}
+ aria-pressed={cat.id === 'All' ? 'true' : 'false'}
+ >
+ {cat.label}
+ <span class="blog-cat-count">{categoryCounts[cat.id]}</span>
+ </button>
+ ))}
+ </nav>
+ </div>
+ </div>
+ </section>
 
-  <!-- ══════════ FEATURED POST ══════════ -->
-  <section class="blog-featured" aria-labelledby="featured-headline">
-    <div class="blog-featured-inner container-page">
-      <div class="blog-section-head">
-        <span class="section-eyebrow text-caption-mono">Featured</span>
-        <h2 id="featured-headline" class="blog-section-title">Trending Guide</h2>
-      </div>
+ <!-- ══════════ FEATURED POST ══════════ -->
+ <section class="blog-featured" aria-labelledby="featured-headline">
+ <div class="blog-featured-inner container-page">
+ <div class="blog-section-head">
+ <span class="section-eyebrow text-caption-mono">Featured</span>
+ <h2 id="featured-headline" class="blog-section-title">Trending Guide</h2>
+ </div>
 
-      <a class="featured-card" href={`/blog/${featured.slug}`} data-featured>
-        <div class="featured-cover">
-          <img
-            src={featured.cover}
-            alt={featured.title}
-            loading="eager"
-            decoding="async"
-            width="800"
-            height="450"
-          />
-          <span class="featured-badge">Trending Guide</span>
-        </div>
+ <a class="featured-card" href={`/blog/${featured.slug}`} data-featured>
+ <div class="featured-cover">
+ <img
+ src={featured.cover}
+ alt={featured.title}
+ loading="eager"
+ decoding="async"
+ width="800"
+ height="450"
+ />
+ <span class="featured-badge">Trending Guide</span>
+ </div>
 
-        <div class="featured-body">
-          <div class="featured-meta-row">
-            <span class="featured-cat">{featured.category}</span>
-            <time class="featured-date text-caption-mono" datetime={featured.date}>{featured.date}</time>
-            <span class="featured-reading">{featured.readingTime}</span>
-          </div>
-          <h3 class="featured-title">{featured.title}</h3>
-          <p class="featured-excerpt">{featured.excerpt}</p>
-          <span class="featured-cta" aria-hidden="false">Read Full Guide
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </span>
-        </div>
-      </a>
-    </div>
-  </section>
+ <div class="featured-body">
+ <div class="featured-meta-row">
+ <span class="featured-cat">{featured.category}</span>
+ <time class="featured-date text-caption-mono" datetime={featured.date}>{featured.date}</time>
+ <span class="featured-reading">{featured.readingTime}</span>
+ </div>
+ <h3 class="featured-title">{featured.title}</h3>
+ <p class="featured-excerpt">{featured.excerpt}</p>
+ <span class="featured-cta" aria-hidden="false">Read Full Guide
+ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+ </span>
+ </div>
+ </a>
+ </div>
+ </section>
 
-  <!-- ══════════ ARTICLES + SIDEBAR ══════════ -->
-  <section class="blog-main" aria-labelledby="articles-headline">
-    <div class="blog-main-inner container-page">
-      <div class="blog-layout">
-        <div class="blog-articles">
-          <div class="blog-section-head">
-            <span class="section-eyebrow text-caption-mono">All Articles</span>
-            <h2 id="articles-headline" class="section-title">Latest Guides &amp; Tutorials</h2>
-          </div>
+ <!-- ══════════ ARTICLES + SIDEBAR ══════════ -->
+ <section class="blog-main" aria-labelledby="articles-headline">
+ <div class="blog-main-inner container-page">
+ <div class="blog-layout">
+ <div class="blog-articles">
+ <div class="blog-section-head">
+ <span class="section-eyebrow text-caption-mono">All Articles</span>
+ <h2 id="articles-headline" class="section-title">Latest Guides &amp; Tutorials</h2>
+ </div>
 
-          <p id="blog-empty" class="blog-empty" hidden>No articles match your search. Try a different keyword or category.</p>
+ <p id="blog-empty" class="blog-empty" hidden>No articles match your search. Try a different keyword or category.</p>
 
-          <div id="blog-grid" class="article-grid">
-            {restPosts.map((post) => {
-              const cat = categoryMeta[post.category] ?? { label: post.category, icon: 'doc' };
-              return (
-                <a class="article-card" href={`/blog/${post.slug}`} data-title={post.title.toLowerCase()} data-cat={post.category}>
-                  <div class="article-cover">
-                    <img src={post.cover} alt={post.title} loading="lazy" decoding="async" width="800" height="450" />
-                    <span class="article-tag">{cat.label}</span>
-                  </div>
-                  <div class="article-body">
-                    <time class="article-date text-caption-mono" datetime={post.date}>{post.date}</time>
-                    <h3 class="article-title">{post.title}</h3>
-                    <p class="article-excerpt">{post.excerpt}</p>
-                    <div class="article-footer">
-                      <span class="article-author">{post.author.replace(' Editorial Team', '')}</span>
-                      <span class="article-sep" aria-hidden="true">·</span>
-                      <span class="article-reading">{post.readingTime}</span>
-                    </div>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        </div>
+ <div id="blog-grid" class="article-grid">
+ {restPosts.map((post) => {
+ const cat = categoryMeta[post.category] ?? { label: post.category, icon: 'doc' };
+ return (
+ <a class="article-card" href={`/blog/${post.slug}`} data-title={post.title.toLowerCase()} data-cat={post.category}>
+ <div class="article-cover">
+ <img src={post.cover} alt={post.title} loading="lazy" decoding="async" width="800" height="450" />
+ <span class="article-tag">{cat.label}</span>
+ </div>
+ <div class="article-body">
+ <time class="article-date text-caption-mono" datetime={post.date}>{post.date}</time>
+ <h3 class="article-title">{post.title}</h3>
+ <p class="article-excerpt">{post.excerpt}</p>
+ <div class="article-footer">
+ <span class="article-author">{post.author.replace(' Editorial Team', '')}</span>
+ <span class="article-sep" aria-hidden="true">·</span>
+ <span class="article-reading">{post.readingTime}</span>
+ </div>
+ </div>
+ </a>
+ );
+ })}
+ </div>
+ </div>
 
-        <!-- Sidebar -->
-        <aside class="blog-aside" aria-label="Resources">
-          <!-- Quick Tools -->
-          <div class="aside-card quick-tools">
-            <span class="aside-eyebrow text-caption-mono">Quick Tools</span>
-            <h3 class="aside-title">Free Downloader Tools</h3>
-            <div class="tool-list">
-              {toolCards.map((tool) => (
-                <a class="tool-card" href={tool.href}>
-                  <span class={`tool-icon tool-icon-${tool.icon}`} aria-hidden="true">
-                    {tool.icon === 'tiktok' && (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v12a3 3 0 1 1-2-2.83"/><path d="M9 3c1.5 0 3 .5 4 1.5S14 8 16 8"/></svg>
-                    )}
-                    {tool.icon === 'audio' && (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-                    )}
-                    {tool.icon === 'instagram' && (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                    )}
-                  </span>
-                  <span class="tool-info">
-                    <span class="tool-title">{tool.title}</span>
-                    <span class="tool-desc">{tool.desc}</span>
-                  </span>
-                  <span class="tool-arrow" aria-hidden="true">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </span>
-                </a>
-              ))}
-            </div>
-            <a href="/tiktok-video-downloader-without-watermark" class="aside-btn">
-              Try TikSaveHub Free
-            </a>
-          </div>
+ <!-- Sidebar -->
+ <aside class="blog-aside" aria-label="Resources">
+ <!-- Quick Tools -->
+ <div class="aside-card quick-tools">
+ <span class="aside-eyebrow text-caption-mono">Quick Tools</span>
+ <h3 class="aside-title">Free Downloader Tools</h3>
+ <div class="tool-list">
+ {toolCards.map((tool) => (
+ <a class="tool-card" href={tool.href}>
+ <span class={`tool-icon tool-icon-${tool.icon}`} aria-hidden="true">
+ {tool.icon === 'tiktok' && (
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v12a3 3 0 1 1-2-2.83"/><path d="M9 3c1.5 0 3 .5 4 1.5S14 8 16 8"/></svg>
+ )}
+ {tool.icon === 'audio' && (
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+ )}
+ {tool.icon === 'instagram' && (
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+ )}
+ </span>
+ <span class="tool-info">
+ <span class="tool-title">{tool.title}</span>
+ <span class="tool-desc">{tool.desc}</span>
+ </span>
+ <span class="tool-arrow" aria-hidden="true">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+ </span>
+ </a>
+ ))}
+ </div>
+ <a href="/tiktok-video-downloader-without-watermark" class="aside-btn">
+ Try TikSaveHub Free
+ </a>
+ </div>
 
-          <!-- Newsletter -->
-          <div class="aside-widget newsletter-card">
-            <span class="aside-eyebrow text-caption-mono">Newsletter</span>
-            <h3 class="newsletter-title">Stay Updated on Social Media Growth &amp; Download Tricks.</h3>
-            <p class="newsletter-text">
-              Get one useful tip a week. No spam, unsubscribe anytime.
-            </p>
-            <form id="newsletter-form" class="newsletter-form" action="#" novalidate>
-              <label class="visually-hidden" for="newsletter-email">Email address</label>
-              <input
-                id="newsletter-email"
-                class="newsletter-input"
-                type="email"
-                name="email"
-                placeholder="you@email.com"
-                required
-              />
-              <button type="submit" class="newsletter-btn">
-                Subscribe
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              </button>
-            </form>
-            <p id="newsletter-msg" class="newsletter-msg" role="status" aria-live="polite"></p>
-          </div>
-        </aside>
-      </div>
-    </div>
-  </section>
+ <!-- Newsletter -->
+ <div class="aside-widget newsletter-card">
+ <span class="aside-eyebrow text-caption-mono">Newsletter</span>
+ <h3 class="newsletter-title">Stay Updated on Social Media Growth &amp; Download Tricks.</h3>
+ <p class="newsletter-text">
+ Get one useful tip a week. No spam, unsubscribe anytime.
+ </p>
+ <form id="newsletter-form" class="newsletter-form" action="#" novalidate>
+ <label class="visually-hidden" for="newsletter-email">Email address</label>
+ <input
+ id="newsletter-email"
+ class="newsletter-input"
+ type="email"
+ name="email"
+ placeholder="you@email.com"
+ required
+ />
+ <button type="submit" class="newsletter-btn">
+ Subscribe
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+ </button>
+ </form>
+ <p id="newsletter-msg" class="newsletter-msg" role="status" aria-live="polite"></p>
+ </div>
+ </aside>
+ </div>
+ </div>
+ </section>
 
-  <!-- CTA band -->
-  <section class="blog-cta" aria-labelledby="blog-cta-headline">
-    <div class="blog-cta-inner container-page">
-      <div class="blog-cta-card">
-        <h2 id="blog-cta-headline" class="blog-cta-title">
-          Ready to start downloading?
-        </h2>
-        <p class="blog-cta-sub">
-          Paste any TikTok, Instagram, Facebook, or X link and save the video in HD — free and without watermark.
-        </p>
-        <a href="/tiktok-video-downloader-without-watermark" class="blog-cta-btn">
-          Try TikSaveHub Now
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
+ <!-- CTA band -->
+ <section class="blog-cta" aria-labelledby="blog-cta-headline">
+ <div class="blog-cta-inner container-page">
+ <div class="blog-cta-card">
+ <h2 id="blog-cta-headline" class="blog-cta-title">
+ Ready to start downloading?
+ </h2>
+ <p class="blog-cta-sub">
+ Paste any TikTok, Instagram, Facebook, or X link and save the video in HD, free and without watermark.
+ </p>
+ <a href="/tiktok-video-downloader-without-watermark" class="blog-cta-btn">
+ Try TikSaveHub Now
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+ </a>
+ </div>
+ </div>
+ </section>
 </Layout>
 
 <style>

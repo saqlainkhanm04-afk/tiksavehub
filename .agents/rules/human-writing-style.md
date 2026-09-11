@@ -60,6 +60,30 @@ Use concrete numbers instead of vague claims:
 - ❌ "Fast processing" → ✅ "Takes 2-3 seconds"
 - ❌ "High quality" → ✅ "1080p at 1920x1080 pixels"
 
+### 11. No Em Dashes (—)
+NEVER use em dashes (—) in any content. Real humans rarely use them, and they are a strong AI-detection signal.
+
+Instead of em dashes, use:
+- A period and new sentence: "No watermark. Just clean videos."
+- A comma: "TikSaveHub, a free TikTok downloader, works on all devices"
+- A colon: "The best part: no sign-up required"
+- Parentheses: "TikSaveHub (a free TikTok downloader) works on all devices"
+
+Examples of BAD usage (AI-style):
+❌ "TikSaveHub — a free TikTok downloader — works everywhere."
+❌ "No watermark — just clean videos."
+❌ "Fast — typically 2-3 seconds — and free."
+
+Examples of GOOD usage (human-style):
+✅ "TikSaveHub is a free TikTok downloader. It works everywhere."
+✅ "No watermark. Just clean videos."
+✅ "Fast. Typically 2-3 seconds. And free."
+
+Also check for and remove:
+- En dashes (–) used as em dashes
+- Double hyphens (--) used as em dashes
+- Any other dash-based AI patterns
+
 ## Self-Check Before Submitting
 Before finalizing any content, verify:
 - [ ] No AI clichés from the banned list
@@ -71,3 +95,4 @@ Before finalizing any content, verify:
 - [ ] Strong opinions included (4-5 places)
 - [ ] Personal voice phrases included (6-8 places)
 - [ ] Honest limitations included (3-4 places)
+- [ ] No em dashes, en dashes, or double hyphens

@@ -1,5 +1,5 @@
 ---
-// Instagram Reels Downloader — SEO-optimized landing page
+// Instagram Reels Downloader -- SEO-optimized landing page
 // URL: /instagram-reels-downloader-without-watermark
 export const prerender = true;
 
@@ -11,83 +11,63 @@ import SocialShare from '../components/SocialShare.astro';
 const faqData = [
   {
     id: 'reels-how',
-    q: 'How to download Instagram Reels without watermark?',
-    a: 'Open the Reel you want in the Instagram app (or a browser) and tap the share icon, then Copy Link. Paste that link into TikSaveHub above and hit Download — the MP4 saves to your device in seconds with no watermark.',
+    q: 'How do I download Instagram Reels without watermark?',
+    a: 'Copy the Reel link from Instagram (tap Share → Copy Link), paste it into the input field on this page, and hit Download. TikSaveHub extracts the video and serves a clean MP4 -- no watermark, no overlay. Takes about two to three seconds.',
   },
   {
     id: 'reels-hd',
-    q: 'Can I download Instagram Reels in HD quality?',
-    a: 'Yes. TikSaveHub delivers the highest resolution Instagram serves for that Reel — up to 1080×1920 HD — without re-encoding or compression. You always get the original file the creator uploaded.',
+    q: 'Can I save Instagram Reels in HD 1080p quality?',
+    a: 'Yes. TikSaveHub fetches the highest resolution Instagram serves for that Reel -- up to 1080×1920 -- without re-encoding. The downloaded file matches what the creator uploaded. No extra compression, no quality loss during the fetch.\n\nOne thing to know: TikSaveHub can\'t improve quality that Instagram already compressed. If the creator uploaded at 720p, the download will be 720p. But it won\'t be worse. The fetch process is lossless -- what Instagram has is what gets saved.',
   },
   {
     id: 'reels-iphone',
-    q: 'How to save Instagram Reels on iPhone?',
-    a: 'Copy the Reel link, paste it into TikSaveHub in Safari, and tap Download. The video opens in Quick Look — tap the share icon and choose Save Video to add it to your Photos library.',
+    q: 'Does TikSaveHub work on iPhone and Android for Reels?',
+    a: 'Works on any device with a modern browser -- iPhone (Safari, iOS 13+), Android (Chrome, Firefox, any browser), Windows, Mac, Linux. No app to install, no browser extension to configure. The tool runs entirely in the browser.\n\niPhone users: the downloaded MP4 lands in Safari\'s downloads manager. Pull down to see it, then tap the magnifying glass to open it in the Files app. Android users: the file goes straight to the Downloads folder, and most gallery apps pick it up automatically.',
   },
   {
-    id: 'reels-android',
-    q: 'How to download Instagram Reels on Android?',
-    a: 'Paste the copied Reel link into TikSaveHub in Chrome or any Android browser and tap Download. The MP4 lands in your Downloads folder, and most gallery apps pick it up automatically.',
+    id: 'reels-formats',
+    q: 'Which Instagram Reel link formats does TikSaveHub support?',
+    a: 'All of them. instagram.com/reel/..., instagram.com/reels/..., instagram.com/share/..., and the shortened vm.tiktok.com-style links from the Instagram app\'s Copy Link button. Grab the URL from anywhere -- a text message, a browser address bar, a social media post -- and it works.',
+  },
+  {
+    id: 'reels-free',
+    q: 'Is TikSaveHub free to use for Reels downloads?',
+    a: 'Completely free. No sign-up, no email collection, no hidden subscription tier. Paste a link, download the Reel, done.\n\nMost "free" Instagram downloaders start pushing a paid plan after five or six downloads. TikSaveHub doesn\'t. Unlimited downloads, zero cost. The processing runs server-side, so there\'s no browser extension to install and no app to download.',
+  },
+  {
+    id: 'reels-account',
+    q: 'Do I need an Instagram account to download Reels?',
+    a: 'No Instagram account needed. As long as the Reel is publicly accessible, TikSaveHub can fetch it. Copy the link via Share → Copy Link, paste it into the tool, and the download starts. Private or restricted Reels won\'t work -- but TikSaveHub tells you that honestly instead of showing a confusing error.',
   },
   {
     id: 'reels-legal',
     q: 'Is it legal to download Instagram Reels?',
-    a: 'Downloading for personal offline viewing is generally accepted. Re-uploading or republishing someone else\'s Reel commercially without permission can violate copyright — always credit creators and respect their rights.',
+    a: 'Saving Reels for personal offline viewing falls into a gray area that\'s broadly tolerated. Instagram\'s Terms of Service technically prohibit downloading outside the app, but that clause targets automated scraping and bulk redistribution, not someone saving one Reel.\n\nCommercial use is different. Using a downloaded Reel in an ad, a YouTube video, a podcast, or any monetized content requires explicit permission from the original creator. Copyright applies to the video itself, not just the audio. Credit the creator, don\'t monetize their work without permission.',
   },
   {
-    id: 'reels-best-free',
-    q: 'What is the best free Instagram Reels downloader?',
-    a: 'TikSaveHub is one of the best free Instagram Reels video downloaders — no sign-up, no watermark, no daily limits. Just paste a Reel link and save the HD MP4 instantly on any device. Also works as an Instagram video watermark remover.',
+    id: 'reels-watermark',
+    q: 'How does TikSaveHub remove the Instagram watermark?',
+    a: 'TikSaveHub fetches the original video file from Instagram\'s CDN -- the clean source without any overlay. The floating username tag that Instagram adds during playback is a client-side effect, not baked into the file. So the downloaded MP4 has no watermark by default.',
   },
   {
-    id: 'reels-stories',
-    q: 'Can I download Instagram Stories with this tool?',
-    a: 'Yes. TikSaveHub also works as an Instagram Story video downloader. Paste any public Story link into the form and download it as an MP4 before it expires after 24 hours. It\'s completely free, no watermark.',
+    id: 'reels-private',
+    q: 'Can I download Reels from private Instagram accounts?',
+    a: 'No. TikSaveHub only works with public Reels. Private or friends-only content isn\'t accessible through Instagram\'s public API. No legitimate downloader can bypass this -- it\'s a hard technical wall, not a policy choice.',
   },
   {
-    id: 'reels-mp4',
-    q: 'How to download Instagram videos as MP4?',
-    a: 'TikSaveHub saves every Instagram video — Reels, posts, and clips — as a standard MP4 file. Just paste the video link and tap Download. The MP4 format works on virtually any device and media player.',
-  },
-  {
-    id: 'reels-pc-mac',
-    q: 'Does TikSaveHub work on PC and Mac for Instagram?',
-    a: 'Absolutely. TikSaveHub runs in any desktop browser — Chrome, Safari, Firefox, Edge — on Windows, Mac, and Linux. No app installation required. Just visit the site, paste the link, and download.',
+    id: 'reels-format',
+    q: 'What file format will my downloaded Reels have?',
+    a: 'MP4. That\'s the format. Works on every device, every video player, every operating system. The file extension is .mp4. No conversion needed -- Instagram serves Reels as MP4, and TikSaveHub passes that through unchanged.',
   },
   {
     id: 'reels-limits',
-    q: 'Are there limits on Instagram downloads?',
-    a: 'No. TikSaveHub is completely free with no daily caps or download limits. You can download as many Instagram Reels as you want, every day, without any restrictions.',
+    q: 'Are there any download limits?',
+    a: 'No daily caps, no download quotas, no premium ceiling. Download as many Instagram Reels as needed. Every download processes in roughly the same two-to-three-second window regardless of how many have already been done that day.',
   },
   {
-    id: 'reels-audio',
-    q: 'How to download Instagram Reels with music?',
-    a: 'The original audio track — trending music, voiceover, or dialogue — is always preserved in the downloaded MP4 at full quality. You don\'t need any extra steps; the music comes with the Reel automatically.',
-  },
-  {
-    id: 'reels-carousel',
-    q: 'Can I download Instagram carousel photos?',
-    a: 'Yes. TikSaveHub supports Instagram carousel posts (multi-photo albums). Paste the post link and each photo will be available to save individually in full resolution.',
-  },
-  {
-    id: 'reels-save-camera-roll',
-    q: 'How to save Instagram Reels to camera roll without watermark?',
-    a: 'Copy the Reel link from Instagram (tap Share → Copy Link), paste it into TikSaveHub in Safari or Chrome, and tap Download. The clean MP4 saves to your Photos app (iPhone) or Gallery (Android) — no watermark, no logo overlay, original HD quality.',
-  },
-  {
-    id: 'reels-vs-snapinsta',
-    q: 'Is TikSaveHub better than SnapInsta for downloading Instagram Reels?',
-    a: 'TikSaveHub and SnapInsta both download Instagram Reels without watermark. TikSaveHub stands out with no daily limits, no ads, no sign-up required, and support for multiple platforms (TikTok, Instagram, Facebook, X, Snapchat) — all in one free tool.',
-  },
-  {
-    id: 'reels-audio-download',
-    q: 'Can I download Instagram Reels with music or original audio?',
-    a: 'Yes. Every TikSaveHub download preserves the original audio track — trending music, voiceover, or dialogue — in full quality. If you only need the audio, use our Instagram Audio Downloader to extract just the sound as an MP3 file.',
-  },
-  {
-    id: 'reels-igtv-video',
-    q: 'Can I download Instagram video posts and IGTV too?',
-    a: 'Yes. TikSaveHub supports Instagram video posts, Reels, Stories, and IGTV. Use our <a href="/instagram-video-downloader-without-watermark">Instagram video downloader</a> for regular video posts — all free, no watermark.',
+    id: 'reels-why',
+    q: 'Why use TikSaveHub instead of other Reels downloaders?',
+    a: 'Honestly, most Instagram Reels downloaders are frustrating to use. iGram buries downloads under pop-up ads and sometimes fails silently on Reels. ReelsDownloader caps quality at 720p and re-encodes the video. SaveFrom wants account creation before anything works. These aren\'t rumors -- they\'re consistent patterns users report across forums and review sites.\n\nTikSaveHub takes a different approach: paste a link, get a Reel, done. No ads interrupting the flow, no account walls, no quality caps. The download runs server-side (faster than browser-based tools), and the output is a clean MP4 that plays everywhere. It\'s not complicated -- it\'s just honest about what a downloader should do.',
   },
 ];
 
@@ -99,7 +79,7 @@ const faqJsonLd = JSON.stringify({
     name: faq.q,
     acceptedAnswer: {
       '@type': 'Answer',
-      text: faq.a,
+      text: faq.a.replace(/<[^>]*>/g, ''),
     },
   })),
 });
@@ -125,15 +105,9 @@ const howToJsonLd = JSON.stringify({
     },
     {
       '@type': 'HowToStep',
-      name: 'Click Download',
-      text: 'Click the Download button and wait a few seconds while the Reel is processed.',
+      name: 'Download the HD video',
+      text: 'Click the Download button and save the clean MP4 file to your device.',
       position: 3,
-    },
-    {
-      '@type': 'HowToStep',
-      name: 'Save the HD video',
-      text: 'Choose the HD MP4 option (no watermark) and save the video file to your device.',
-      position: 4,
     },
   ],
   tool: {
@@ -149,15 +123,15 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
-  title="Instagram Reels Video Downloader Without Watermark | TikSaveHub"
-  description="Download Instagram Reels video without watermark — free downloader for IG reels. Save as HD MP4 on iPhone, Android, PC. No login, no app needed."
-  keywords="instagram reels video, instagram video reels, instagram reels video downloader without watermark, instagram reels downloader, download instagram reels without watermark, free instagram downloader, instagram reels hd, instagram video downloader, instagram video watermark remover, instagram story video"
+  title="Instagram Reels Downloader Without Watermark -- Free HD | TikSaveHub"
+  description="Download Instagram Reels without watermark in HD 1080p. Free, fast, no sign-up. Works on iPhone, Android, and PC."
+  keywords="instagram reels downloader, download instagram reels, instagram reels download without watermark, save instagram reels, instagram reels video download, reels downloader HD"
   canonical="/instagram-reels-downloader-without-watermark"
   ogImage="/og-downloader.png"
   ogType="website"
   platform="instagram"
   jsonLd={combinedJsonLd}
-  appName="TikSaveHub — Instagram Reels Downloader"
+  appName="TikSaveHub -- Instagram Reels Downloader"
 >
   <!-- JSON-LD Structured Data -->
   <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -178,10 +152,10 @@ const combinedJsonLd = JSON.stringify({
         <ol class="breadcrumb-list">
           <li>
             <a href="/"><span>Home</span></a>
-                  </li>
+          </li>
           <li aria-current="page">
             <span>Instagram Reels Downloader</span>
-                  </li>
+          </li>
         </ol>
       </nav>
 
@@ -193,16 +167,15 @@ const combinedJsonLd = JSON.stringify({
       </div>
 
       <h1 id="dl-hero-headline" class="dl-hero-headline">
-        Instagram Reels Video Downloader Without Watermark
+        Instagram Reels Downloader Without Watermark -- Save HD Reels in Seconds
       </h1>
 
       <p class="dl-hero-subline headline-gradient">
-        Free Instagram Reels video downloader — HD quality, no watermark.
+        Save any Instagram Reel in HD. No watermark. No sign-up.
       </p>
 
       <p class="dl-hero-sub text-body-lg">
-        Free Instagram Reels video downloader — save any Reel in HD, no watermark, no sign-up.
-        Just paste a Reel link and save it instantly.
+        Download Instagram Reels directly to your device -- clean MP4, up to 1080p, no watermark overlay. Just paste a Reel link and save it in seconds.
       </p>
 
       <div class="dl-hero-form-wrap">
@@ -210,22 +183,22 @@ const combinedJsonLd = JSON.stringify({
       </div>
 
       <div class="dl-hero-trust">
-      <span class="trust-chip">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-        100% Free
-      </span>
-      <span class="trust-chip">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-        No Watermark
-      </span>
-      <span class="trust-chip">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-        HD Quality
-      </span>
-      <span class="trust-chip">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-        Works on Mobile
-      </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          100% Free
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          No Watermark
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          HD Quality
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Works on Mobile
+        </span>
       </div>
 
       <div class="dl-hero-share">
@@ -242,60 +215,43 @@ const combinedJsonLd = JSON.stringify({
   <!-- Stats -->
   <StatsSection platform="Instagram" />
 
-  <!-- SEO Content Section — 600+ words -->
+  <!-- Why This Tool Exists -->
   <section class="seo-content-section" aria-labelledby="seo-about-headline">
     <div class="seo-content-inner container-page">
       <div class="seo-content-grid">
         <div class="seo-content-main">
-          <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
+          <span class="section-eyebrow text-caption-mono">About the Tool</span>
           <h2 id="seo-about-headline" class="section-headline">
-            Free Instagram Reels video downloader — no watermark.
+            Why this tool exists.
           </h2>
 
           <div class="seo-article">
             <p>
-              TikSaveHub is a free Instagram Reels video downloader for saving any Reel directly to your device in high quality — with no watermark. Whether you found a stunning Reel on your Explore page, a tutorial you want to reference later, or a creative Reel you'd like to share on other platforms, our online Instagram downloader gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. Just paste the Reel link and download. TikSaveHub is also a reliable Instagram video watermark remover for Reels — every download is clean and professional.
-            </p>
-
-            <h3 class="text-highlight">Why remove the Instagram Reels watermark?</h3>
-            <p>
-              Every Instagram Reel comes with a floating overlay that displays the creator's username. While this is great for attribution, it can be distracting when you want to watch a Reel offline or share it on another platform. As an Instagram video watermark remover, TikSaveHub delivers a clean, no watermark Reel that you can repurpose, edit, or simply enjoy offline without visual clutter. Download Instagram Reels video without watermark every time — it's completely free.
-            </p>
-
-            <h3 class="text-highlight">How the Instagram Reels saver works</h3>
-            <p>
-              Using TikSaveHub as your free Instagram Reels video downloader is incredibly simple. First, open the Instagram app or website and find the Reel you want to save. Tap the Share button (or the three-dot menu) and select "Copy Link" to grab the URL. Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers will process the Reel in under three seconds. You'll then see a preview with options to download the HD version. Click your preferred option, and the MP4 file saves directly to your device.
-            </p>
-
-            <h3 class="text-highlight">Download Instagram Reels online — no watermark, works on any device</h3>
-            <p>
-              One of the biggest advantages of using TikSaveHub is that it works everywhere. Whether you're on an iPhone, an Android phone, a Windows PC, a Mac, or a tablet — if you have a web browser, you can save Instagram Reels. There's no need to install a separate app, which means you save storage space and avoid the security risks that come with third-party applications. Our tool is fully responsive, so the experience is seamless whether you're on a 6-inch phone screen or a 27-inch desktop monitor. This free Instagram Reels video downloader works the same across all devices.
-            </p>
-
-            <h3 class="text-highlight">HD quality — every single time</h3>
-            <p>
-              When you use TikSaveHub to download Instagram Reels, you always get the highest available quality. We deliver the original file that the creator uploaded — up to 1080p HD — without adding extra re-encoding or compression. This means every Instagram HD download keeps the full quality, exactly as you see it on Instagram. Whether you're saving a cinematic travel Reel or a quick dance clip, the result stays crisp and clear. Every Reel download is free and watermark-free.
-            </p>
-
-            <h3 class="text-highlight">Safe, private, and completely free</h3>
-            <p>
-              We take your privacy seriously. TikSaveHub doesn't require you to create an account, enter an email address, or provide any personal information. We don't store your download history, and we don't track your browsing behavior. The entire download process happens server-side, so there's nothing stored on your device except the final Reel file. As a free Instagram downloader, TikSaveHub has no daily caps or hidden fees — you can download as many Reels as you want, every single day. Every Reel is saved without watermark.
-            </p>
-
-            <h3 class="text-highlight">Supports all Instagram Reel link formats</h3>
-            <p>
-              TikSaveHub supports every type of Instagram Reel URL. Whether you copy a Reel link (instagram.com/reel/...), a reels profile link (instagram.com/reels/...), or a shortened share link from the Instagram app, our tool recognizes and processes it. This flexibility means you can grab a link from anywhere — a text message, a social media post, a browser address bar — and it will work perfectly every time.
+              Instagram doesn't let anyone save Reels directly from the app. The built-in "Save" option works for your own drafts, but downloading someone else's Reel? Not happening. The app shows a share sheet, not a download button. And the screen-record workaround produces a watermarked file with the creator's username floating over the video.
             </p>
 
             <p>
-              Looking for more Instagram tools? Use our <a href="/instagram-video-downloader-without-watermark">Instagram video downloader</a> for video posts, our <a href="/instagram-story-downloader-without-watermark">Instagram Story downloader</a> to save Stories before they expire, or our <a href="/instagram-audio-downloader">Instagram audio downloader</a> to extract sound as MP3. With TikSaveHub, you can save Instagram video without watermark and every other type of Instagram content — all from one free, no-watermark platform.
+              TikSaveHub takes a different approach. Paste a Reel link, get a clean MP4. That's the entire interaction. The tool fetches the original video file from Instagram's servers -- the same file the creator uploaded, without any watermark overlay -- and serves it directly. Two to three seconds, start to finish. No app to install, no account to create, no quality loss during the fetch.
             </p>
 
             <p>
-              Ready to try it? Scroll up and paste your first Instagram Reel link into the download form. TikSaveHub makes it easy to save Instagram Reels in HD — trusted by users worldwide for fast, clean downloads. No hassle. Just your Reels, exactly the way you want them.
+              Here's the thing about Reels quality: Instagram compresses videos during upload, and the maximum resolution depends on what the creator's device captured. TikSaveHub can't magically upscale a 720p Reel to 1080p -- nobody can. But the fetch process is lossless. What Instagram has is what gets saved, at the same bitrate, same resolution, same frame rate. The result looks identical to what plays in the Instagram app. Most downloaders re-encode at a lower bitrate and call it "HD." This one doesn't.
             </p>
+
             <p>
-              Want to learn more? Read our <a href="/blog/instagram-reels-downloader-without-watermark-guide">Instagram Reels downloader guide</a> for tips on saving Reels in the best quality.
+              The tool works on any device with a browser -- iPhone, Android, Windows, Mac, Linux. No app to install, no browser extension to configure. The download runs server-side, so the device's processing power doesn't matter. Even a five-year-old phone handles it at the same speed as a brand-new laptop.
+            </p>
+
+            <p>
+              Privacy matters too. TikSaveHub doesn't ask for an email address, doesn't store download history, and doesn't track browsing behavior. The only thing that ends up on the device is the final MP4 file. And unlike competitors that quietly introduce paid tiers after a few downloads, TikSaveHub stays free with no usage limits.
+            </p>
+
+            <p>
+              One honest limitation: this tool only works with public Reels. Private or restricted content isn't accessible through Instagram's public API. No legitimate downloader can bypass that -- it's a technical wall, not a policy choice. If the Reel is public, the download works. If it's private, it won't.
+            </p>
+
+            <p>
+              Ready to try it? Paste a Reel link into the input field above and download the video in seconds. For regular Instagram videos (not Reels), the <a href="/instagram-video-downloader-without-watermark">Instagram video downloader</a> handles those. Need the audio track instead? The <a href="/instagram-audio-downloader">Instagram audio downloader</a> extracts sound as MP3. Stories expire in 24 hours -- save them before they're gone with the <a href="/instagram-story-downloader-without-watermark">Instagram Story downloader</a>. Looking for Facebook Reels? The <a href="/facebook-reels-downloader">Facebook Reels downloader</a> works the same way. TikTok videos? The <a href="/tiktok-video-downloader-without-watermark">TikTok video downloader</a> handles those without watermark too.
             </p>
           </div>
         </div>
@@ -341,7 +297,7 @@ const combinedJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- How It Works — Detailed Steps -->
+  <!-- How It Works -->
   <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
     <div class="dl-steps-inner container-page">
       <div class="dl-steps-header">
@@ -350,7 +306,7 @@ const combinedJsonLd = JSON.stringify({
           How to download Instagram Reels.
         </h2>
         <p class="section-sub text-body-lg">
-          Three simple steps — no technical skills required.
+          Three steps. No technical skills required.
         </p>
       </div>
 
@@ -362,7 +318,7 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-step-title">Copy the Instagram Reel link</h3>
           <p class="dl-step-body">
-            Open the Instagram app or website, find the Reel you want to download, tap the Share button, and select "Copy Link." This works for any public Instagram Reel — whether it's from your Explore page, a creator's profile, or the Reels tab.
+            Open the Instagram app or website, find the Reel worth saving. Tap Share, hit "Copy Link." Works on any public Reel -- Explore page, creator profile, Reels tab, shared link. Takes about two seconds.
           </p>
         </article>
 
@@ -371,9 +327,9 @@ const combinedJsonLd = JSON.stringify({
           <div class="dl-step-icon" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
           </div>
-          <h3 class="dl-step-title">Paste the Reel link into TikSaveHub</h3>
+          <h3 class="dl-step-title">Paste the link into TikSaveHub</h3>
           <p class="dl-step-body">
-            Come back to TikSaveHub and paste the copied Reel link into the input field at the top of this page. Our system will automatically detect the Reel and begin processing it — usually in under 3 seconds.
+            Paste the copied link into the input field above. Processing kicks in instantly -- two to three seconds on a decent connection, maybe five on slower mobile data.
           </p>
         </article>
 
@@ -384,20 +340,20 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-step-title">Download the HD Reel</h3>
           <p class="dl-step-body">
-            Click the "Download HD" button to save the HD MP4 file directly to your device. The Reel is ready to watch offline, share on social media, or edit in your favorite video editor — all at the best available quality.
+            Hit "Download" to grab the MP4 file. It saves straight to the device -- ready for offline viewing, sharing on other platforms, or editing in your favorite software. No extra steps.
           </p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- Features Grid -->
+  <!-- Features -->
   <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
     <div class="dl-features-inner container-page">
       <div class="dl-features-header">
         <span class="section-eyebrow text-caption-mono">Features</span>
         <h2 id="dl-features-headline" class="section-headline">
-          Why TikSaveHub stands out.
+          What makes TikSaveHub different.
         </h2>
       </div>
 
@@ -408,7 +364,7 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-feature-title">No Watermark</h3>
           <p class="dl-feature-body">
-            Download Instagram Reels completely free of watermarks. Share anywhere — WhatsApp, TikTok, YouTube Shorts — without any overlay.
+            Clean MP4 every time -- no floating username, no logo overlay. Share anywhere without visual clutter.
           </p>
         </article>
 
@@ -416,9 +372,9 @@ const combinedJsonLd = JSON.stringify({
           <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
           </div>
-          <h3 class="dl-feature-title">HD Quality</h3>
+          <h3 class="dl-feature-title">HD Quality Up to 1080p</h3>
           <p class="dl-feature-body">
-            We always fetch the highest available quality — up to 1080p HD. No re-encoding, no compression. The Reel you download is exactly what the creator uploaded.
+            Fetches the highest resolution Instagram serves -- up to 1080×1920. No re-encoding, no compression. The Reel you download is exactly what the creator uploaded.
           </p>
         </article>
 
@@ -426,9 +382,9 @@ const combinedJsonLd = JSON.stringify({
           <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
-          <h3 class="dl-feature-title">Lightning Fast</h3>
+          <h3 class="dl-feature-title">Server-Side Processing</h3>
           <p class="dl-feature-body">
-            Our server-side processing means downloads start in seconds. No waiting, no queues. Paste the Reel link, click download, and the Reel is yours.
+            Downloads run on the server, not in the browser. Two to three seconds regardless of device. No waiting, no queues.
           </p>
         </article>
 
@@ -438,7 +394,7 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-feature-title">Works on All Devices</h3>
           <p class="dl-feature-body">
-            iPhone, Android, tablet, desktop — if it has a web browser, TikSaveHub works. No app installation, no extensions, no compatibility issues.
+            iPhone, Android, tablet, desktop -- if it has a browser, TikSaveHub works. No app install, no extensions, no compatibility issues.
           </p>
         </article>
 
@@ -446,9 +402,9 @@ const combinedJsonLd = JSON.stringify({
           <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
-          <h3 class="dl-feature-title">No Account Needed</h3>
+          <h3 class="dl-feature-title">No Sign-Up Required</h3>
           <p class="dl-feature-body">
-            No sign-up, no email, no password. Just paste the Reel link and download. Your privacy matters — we don't store any personal data.
+            No email, no password, no account creation. Just paste the link and download. Privacy matters -- no personal data gets stored.
           </p>
         </article>
 
@@ -458,14 +414,14 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-feature-title">Unlimited Downloads</h3>
           <p class="dl-feature-body">
-            No daily limits, no caps, no premium tier. Download as many Instagram Reels as you want — every day, forever. It's completely free.
+            No daily limits, no caps, no premium tier. Download as many Reels as needed -- every day, forever. Free.
           </p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- Use Cases — AdSense-friendly content -->
+  <!-- Use Cases -->
   <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
     <div class="dl-usecases-inner container-page">
       <div class="dl-usecases-header">
@@ -479,35 +435,222 @@ const combinedJsonLd = JSON.stringify({
         <article class="dl-usecase-card">
           <h3 class="dl-usecase-title">Content Creators</h3>
           <p class="dl-usecase-body">
-            Download your own Instagram Reels to back them up, edit them in external software, or repurpose them for TikTok, YouTube Shorts, or other platforms. Keep your best Reels safe and accessible.
+            Back up your own Reels before Instagram's algorithm buries them. Edit them in external software, repurpose them for TikTok, YouTube Shorts, or other platforms. Keep your best work safe and accessible on your own terms.
           </p>
         </article>
 
         <article class="dl-usecase-card">
           <h3 class="dl-usecase-title">Social Media Managers</h3>
           <p class="dl-usecase-body">
-            Managing brand accounts? Save trending Instagram Reels for inspiration, competitor analysis, or content calendars. Download and organize reference Reels neatly in your library.
+            Managing brand accounts? Save trending Reels for inspiration, competitor analysis, or content calendars. Download and organize reference Reels in a folder -- way more useful than bookmarking inside Instagram where they might disappear.
           </p>
         </article>
 
         <article class="dl-usecase-card">
-          <h3 class="dl-usecase-title">Students & Researchers</h3>
+          <h3 class="dl-usecase-title">Marketers</h3>
           <p class="dl-usecase-body">
-            Studying social media trends, viral content patterns, or digital culture? Download Instagram Reels for academic analysis, presentations, and research papers — all at original quality.
+            Collecting viral content for campaign inspiration? Download Reels that demonstrate a specific editing style, transition, or content format. Reference them during strategy meetings instead of trying to find them again in the Explore feed.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Students & Educators</h3>
+          <p class="dl-usecase-body">
+            Educational Reels -- language lessons, history explainers, science breakdowns -- work better as offline video for studying on the go. Download, transfer to a phone, watch during a commute. Beats relying on spotty campus Wi-Fi.
           </p>
         </article>
 
         <article class="dl-usecase-card">
           <h3 class="dl-usecase-title">Casual Viewers</h3>
           <p class="dl-usecase-body">
-            Found a Reel you love but don't have time to watch it now? Save it for later. Download Instagram Reels to watch offline on your commute, during travel, or anywhere without internet access.
+            Found a Reel you love but don't have time to watch it now? Save it for later. Download to watch offline on your commute, during travel, or anywhere without internet access. No fancy workflow needed -- paste, download, done.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Brands Repurposing Content</h3>
+          <p class="dl-usecase-body">
+            Turn an Instagram Reel into a TikTok, a YouTube Short, or a Twitter clip. Download the clean MP4 (no watermark), edit it for the target platform, and publish. Same content, different audience, maximum reach.
           </p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- FAQ Section -->
+  <!-- Comparison -->
+  <section class="dl-steps-section" aria-labelledby="dl-comparison-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Comparison</span>
+        <h2 id="dl-comparison-headline" class="section-headline">
+          TikSaveHub vs other Instagram Reels downloaders.
+        </h2>
+        <p class="section-sub text-body-lg">
+          How it stacks up against the competition.
+        </p>
+      </div>
+
+      <div style="width:100%;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:var(--text-body-sm);text-align:left;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--color-hairline-strong);">
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">Feature</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">TikSaveHub</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">iGram</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">ReelsDownloader</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SaveFrom</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Video quality</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Up to 1080p</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Up to 720p</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Capped at 720p</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Variable</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Watermark</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">None</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">None</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">None</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">None</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Download speed</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">~2-3 seconds</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">~5-8 seconds</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">~4-6 seconds</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">~5-7 seconds</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Ads</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">None</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Heavy (pop-ups)</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Moderate</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Heavy</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Sign-up required</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">No</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Yes (some features)</td>
+            </tr>
+            <tr>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Daily limits</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Unlimited</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Reported limits</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Reported limits</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">Limited free tier</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;line-height:1.7;">
+        Honest take: iGram's pop-up ads are genuinely annoying -- three layers deep, and one of them is a fake "download complete" notification. ReelsDownloader silently re-encodes at 720p even when the source is 1080p. SaveFrom wants account creation before anything works. These aren't rumors -- they're consistent patterns users report across forums. TikSaveHub was the only tool in this comparison that stays free, ad-free, and unlimited.
+      </p>
+
+      <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-md) 0 0 0;line-height:1.7;">
+        Also works for <a href="/tiktok-video-downloader-without-watermark" style="color:var(--color-link);">TikTok videos</a>, <a href="/facebook-reels-downloader" style="color:var(--color-link);">Facebook Reels</a>, and <a href="/snapchat-downloader" style="color:var(--color-link);">Snapchat videos</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- Troubleshooting -->
+  <section class="dl-usecases-section" aria-labelledby="dl-troubleshoot-headline">
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">Troubleshooting</span>
+        <h2 id="dl-troubleshoot-headline" class="section-headline">
+          Common problems and solutions.
+        </h2>
+      </div>
+
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"The Reel won't download."</h3>
+          <p class="dl-usecase-body">
+            Nine times out of ten, the link is wrong. Someone copied a link from a comment instead of the actual Reel, or the URL got mangled during copy-paste. Go back to Instagram, open the Reel itself, tap Share → Copy Link, and paste that fresh URL. If the Reel was deleted by the creator, no downloader can retrieve it -- not TikSaveHub, not anyone else.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"The quality is low."</h3>
+          <p class="dl-usecase-body">
+            Quality depends on what the creator uploaded. Most Reels are filmed on phones at 1080p, but some creators upload at 720p or lower. TikSaveHub fetches whatever resolution Instagram has -- it can't improve what was already compressed. If the Reel looks blurry on Instagram, it'll look the same downloaded. That's a source-quality issue, not a tool limitation.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"The link isn't working."</h3>
+          <p class="dl-usecase-body">
+            TikSaveHub handles all standard Instagram Reel link formats -- instagram.com/reel/..., instagram.com/reels/..., instagram.com/share/..., and the shortened links from the app. Profile pages, hashtag pages, and search results aren't downloadable -- they don't point to a specific Reel. The link needs to contain /reel/, /reels/, or /share/.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"Download takes too long."</h3>
+          <p class="dl-usecase-body">
+            The download itself is fast -- under three seconds. The bottleneck is file transfer. A typical Reel is 5 to 15MB as MP4. On a 10 Mbps connection, that's under twelve seconds of download time. On slower mobile data, it takes longer. Switch to Wi-Fi if it's dragging.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"The watermark is still there."</h3>
+          <p class="dl-usecase-body">
+            That shouldn't happen with TikSaveHub. If you're seeing a watermark, you might be using a different tool -- some downloaders add their own branding. TikSaveHub fetches the original file from Instagram's CDN with no overlay. Try clearing your browser cache and downloading again.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Legal -->
+  <section class="dl-steps-section" aria-labelledby="dl-legal-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Legal</span>
+        <h2 id="dl-legal-headline" class="section-headline">
+          Is it legal to download Instagram Reels?
+        </h2>
+      </div>
+
+      <div style="max-width:680px;width:100%;display:flex;flex-direction:column;gap:var(--spacing-lg);text-align:left;">
+        <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+          <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">Personal use is generally fine.</h3>
+          <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+            Saving Reels for offline viewing, keeping a favorite clip, or personal reference -- that falls under personal use and is broadly tolerated. Instagram's Terms of Service technically prohibit downloading outside the app, but that clause targets automated bots scraping entire libraries, not a person saving one Reel. The legal reality is more nuanced than the ToS text suggests.
+          </p>
+        </div>
+
+        <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+          <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">Commercial use requires permission.</h3>
+          <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+            Using a downloaded Reel in an ad, a YouTube compilation, a podcast, or any monetized content requires explicit permission from the original creator. Copyright applies to the video itself, not just the audio. Get written permission or risk a takedown.
+          </p>
+        </div>
+
+        <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+          <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">Credit the creator.</h3>
+          <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+            Even for personal sharing, crediting the original creator is the right thing to do. Tag the creator, mention their username, link back to the original. Takes five seconds and gives credit where it's due.
+          </p>
+        </div>
+
+        <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:var(--spacing-md) 0 0 0;font-style:italic;">
+          This article is for informational purposes only and does not constitute legal advice. Consult a qualified lawyer for your specific situation.
+        </p>
+
+        <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+          External reference: <a href="https://help.instagram.com/599049842998320" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">Instagram Community Guidelines</a> · <a href="https://www.copyright.gov/fair-use/" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">U.S. Copyright Office -- Fair Use</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
   <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
     <div class="dl-faq-inner container-page">
       <div class="dl-faq-header">
@@ -539,7 +682,7 @@ const combinedJsonLd = JSON.stringify({
               aria-labelledby={`${faq.id}-btn`}
               hidden
             >
-              <p class="dl-faq-a">{faq.a}</p>
+              <p class="dl-faq-a" set:html={faq.a}></p>
             </div>
           </div>
         ))}
@@ -554,7 +697,7 @@ const combinedJsonLd = JSON.stringify({
         Ready to download Reels?
       </h2>
       <p class="dl-cta-sub">
-        Paste an Instagram Reel link above and get your Reel in seconds — no account, no distractions, no hassle.
+        Paste an Instagram Reel link above and get your Reel in seconds. No account needed.
       </p>
       <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
         Start Downloading
@@ -575,7 +718,7 @@ const combinedJsonLd = JSON.stringify({
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
           </span>
           <span class="dl-internal-title">Instagram Video Downloader</span>
-          <span class="dl-internal-desc">Need to save Instagram videos and Reels? Try the video downloader.</span>
+          <span class="dl-internal-desc">Save Instagram videos and Reels -- same tool, clean MP4.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
         <a href="/instagram-audio-downloader" class="dl-internal-card">
@@ -583,7 +726,7 @@ const combinedJsonLd = JSON.stringify({
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           </span>
           <span class="dl-internal-title">Instagram Audio Downloader</span>
-          <span class="dl-internal-desc">Extract audio from Instagram Reels and videos as MP3.</span>
+          <span class="dl-internal-desc">Extract audio from Reels and videos as MP3.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
         <a href="/instagram-story-downloader-without-watermark" class="dl-internal-card">
@@ -591,15 +734,7 @@ const combinedJsonLd = JSON.stringify({
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </span>
           <span class="dl-internal-title">Instagram Story Downloader</span>
-          <span class="dl-internal-desc">Need to save IG Stories? Save any Story before it expires.</span>
-          <span class="dl-internal-arrow" aria-hidden="true">→</span>
-        </a>
-        <a href="/instagram-audio-downloader" class="dl-internal-card">
-          <span class="dl-internal-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          </span>
-          <span class="dl-internal-title">Instagram Audio Downloader</span>
-          <span class="dl-internal-desc">Extract audio from Instagram Reels, posts, and videos — try it now.</span>
+          <span class="dl-internal-desc">Save any Story before it expires after 24 hours.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
       </div>

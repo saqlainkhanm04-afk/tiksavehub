@@ -1,0 +1,22 @@
+/tiktok-video-downloader /tiktok-video-downloader-without-watermark 301
+/instagram-reels-downloader /instagram-reels-downloader-without-watermark 301
+/instagram-video-downloader /instagram-video-downloader-without-watermark 301
+/instagram-story-downloader /instagram-story-downloader-without-watermark 301
+
+# Localized blog posts only exist in English: /de/blog/{slug} -> /blog/{slug}
+/de/blog/* /blog/:splat 301
+/es/blog/* /blog/:splat 301
+/ja/blog/* /blog/:splat 301
+/fr/blog/* /blog/:splat 301
+/it/blog/* /blog/:splat 301
+/pt/blog/* /blog/:splat 301
+/ko/blog/* /blog/:splat 301
+
+# Double locale prefix (Google crawled /de/de/... from pre-prefixed links)
+/de/de/* /de/:splat 301
+/es/es/* /es/:splat 301
+/ja/ja/* /ja/:splat 301
+/fr/fr/* /fr/:splat 301
+/it/it/* /it/:splat 301
+/pt/pt/* /pt/:splat 301
+/ko/ko/* /ko/:splat 301

@@ -188,3 +188,105 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
+
+/* ------------------------------------------------------------------ */
+/*  Race runner — try multiple sources in parallel, first wins          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Run multiple sources in parallel. The first successful normalized result
+ * wins. Losers are canceled/ignored. Much faster than sequential fallback
+ * when the first source in the chain is slow or unreliable.
+ */
+export async function runWithRace<TInput, TOutput>(
+  input: TInput,
+  sources: ApiSource<TInput, TOutput>[],
+): Promise<FallbackResult<TOutput>> {
+  const errors: SourceError[] = [];
+  const startAll = Date.now();
+
+  return new Promise<FallbackResult<TOutput>>((resolve, reject) => {
+    let settled = false;
+    let remaining = sources.length;
+
+    for (const source of sources) {
+      if (circuitIsOpen(source.name)) {
+        errors.push({ source: source.name, message: 'Circuit breaker open — skipped' });
+        remaining--;
+        if (remaining <= 0 && !settled) {
+          settled = true;
+          reject(buildRaceError(errors, startAll));
+        }
+        continue;
+      }
+
+      const maxRetries = source.retries ?? 0; // race uses 0 retries by default (fast fail)
+
+      (async () => {
+        let lastErr = '';
+        let lastHttpStatus: number | undefined;
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          const start = Date.now();
+          try {
+            const raw = await withTimeout(source.fetch(input), source.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+            const normalized = source.normalize(raw, input);
+            const elapsed = Date.now() - start;
+
+            if (normalized) {
+              circuitRecordSuccess(source.name);
+              if (!settled) {
+                settled = true;
+                console.log(`[api-fallback:race] ${source.name} WON in ${elapsed}ms${attempt > 0 ? ` (attempt ${attempt + 1})` : ''}`);
+                resolve({ data: normalized, source: source.name, attemptMs: Date.now() - startAll });
+              }
+              return;
+            }
+
+            lastErr = 'Returned unusable data';
+          } catch (err: any) {
+            const elapsed = Date.now() - start;
+            const msg = err?.name === 'TimeoutError' || err?.name === 'AbortError'
+              ? `Timeout after ${source.timeoutMs ?? DEFAULT_TIMEOUT_MS}ms`
+              : err?.message ?? String(err);
+
+            const statusMatch = msg.match(/returned (\d{3})|→(\d{3})|HTTP (\d{3})|status[= :]+(\d{3})/);
+            const status = statusMatch ? parseInt(statusMatch[1] || statusMatch[2] || statusMatch[3] || statusMatch[4]) : 0;
+            if (status) lastHttpStatus = status;
+
+            if (source.noRetryStatuses?.includes(status)) {
+              lastErr = msg;
+              break;
+            }
+            if (source.noRetryErrors?.some((pat) => msg.toLowerCase().includes(pat.toLowerCase()))) {
+              lastErr = msg;
+              break;
+            }
+
+            lastErr = msg;
+
+            if (attempt < maxRetries) {
+              const delay = Math.min(BACKOFF_BASE_MS * Math.pow(2, attempt), BACKOFF_MAX_MS);
+              await sleep(delay);
+            }
+          }
+        }
+
+        circuitRecordFailure(source.name);
+        errors.push({ source: source.name, message: lastErr || 'Unknown error', httpStatus: lastHttpStatus });
+        remaining--;
+        if (remaining <= 0 && !settled) {
+          settled = true;
+          reject(buildRaceError(errors, startAll));
+        }
+      })();
+    }
+  });
+}
+
+function buildRaceError(errors: SourceError[], startAll: number): Error {
+  const summary = errors.map((e) =>
+    e.httpStatus ? `${e.source}: HTTP ${e.httpStatus} — ${e.message}` : `${e.source}: ${e.message}`
+  ).join(' | ');
+  return new Error(`All ${errors.length} API sources failed (${Date.now() - startAll}ms) — ${summary}`);
+}

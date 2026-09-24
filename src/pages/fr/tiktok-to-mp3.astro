@@ -1,108 +1,1611 @@
 ---
-// TikTok to MP3 — SEO-optimized landing page (FR)
-// URL: /tiktok-to-mp3
+// TikTok to MP3. Convert TikTok videos to MP3 audio (FR)
+// URL: /fr/tiktok-to-mp3
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
-import DownloadForm from '../../components/DownloadForm.astro';
+import Mp3DownloadForm from '../../components/Mp3DownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
 
 const faqData = [
-  { id: 'mp3-how', q: 'Comment puis-je convertir une vidéo TikTok en MP3 ?', a: 'Collez le lien de la vidéo TikTok sur TikSaveHub, sélectionnez l\'option MP3 et téléchargez. Vous obtiendrez un fichier MP3 haute qualité.' },
-  { id: 'mp3-quality', q: 'Quelle est la qualité du MP3 ?', a: 'Vous obtenez un MP3 haute qualité jusqu\'à 320kbps.' },
-  { id: 'mp3-free', q: 'La conversion TikTok en MP3 est-elle gratuite ?', a: 'Oui, TikSaveHub est 100% gratuit.' },
-  { id: 'mp3-no-login', q: 'Dois-je me connecter à TikTok ?', a: 'Non, il vous suffit du lien d\'une vidéo publique.' },
-  { id: 'mp3-slideshows', q: 'Puis-je extraire l\'audio de diaporamas TikTok ?', a: 'Non, les diaporamas n\'ont pas toujours de piste audio. La vidéo sera traitée normalement.' },
+ {
+  id: 'mp3-how',
+  q: 'Comment convertir une video TikTok en MP3 ?',
+  a: 'Copiez le lien de la video TikTok, collez-le dans le champ de saisie de cette page, et cliquez sur Telecharger. TikSaveHub extrait la piste audio de la video et la convertit en MP3. L\'operation dure deux a trois secondes. Pas d\'application a installer, pas de compte a creer. Collez le lien et telechargez.',
+ },
+ {
+  id: 'mp3-quality',
+  q: 'Quelle qualite audio propose TikSaveHub ?',
+  a: 'TikSaveHub extrait l\'audio au debit le plus eleve disponible dans la video source. La plupart des videos TikTok contiennent de l\'audio AAC a 128kbps, qui se convertit en un fichier MP3 propre. Le resultat correspond a ce que vous entendez sur TikTok. Pas de compression supplementaire, pas de perte de qualite pendant la conversion.\n\nUn point a connaître : TikSaveHub ne peut pas ameliorer un audio deja compresse par TikTok. Si la source est a 128kbps, le MP3 sera a 128kbps. Mais il ne sera pas inferieur. La conversion est sans perte. Ce qui entre ressort identique, simplement au format MP3 au lieu d\'AAC.',
+ },
+ {
+  id: 'mp3-iphone',
+  q: 'Puis-je convertir des videos TikTok en MP3 sur mon iPhone ?',
+  a: 'Ca fonctionne sur tout iPhone avec Safari (iOS 13 ou plus recent). Ouvrez TikTok, copiez le lien de la video, basculez sur Safari, collez le lien dans TikSaveHub, et appuyez sur Telecharger. Le fichier MP3 apparait dans le gestionnaire de telechargements de Safari. Faites glisser vers le bas pour le localiser, puis appuyez sur la loupe pour l\'ouvrir dans l\'appli Fichiers.\n\nLes anciens iPhones sous iOS 12 ou anterieur bloquent parfois les telechargements. Dans ce cas, passer sur Chrome sur le meme appareil resoud generalement le probleme. L\'outil fonctionne avec n\'importe quel navigateur. C\'est le systeme d\'exploitation qui cree parfois des difficultes.',
+ },
+ {
+  id: 'mp3-devices',
+  q: 'TikSaveHub fonctionne-t-il sur Android et PC ?',
+  a: 'Tout appareil avec un navigateur moderne. Telephones Android, PC Windows, Mac, machines Linux, tablettes. Sans distinction. TikSaveHub est entierement base sur le navigateur, rien a installer.',
+ },
+ {
+  id: 'mp3-free',
+  q: 'TikSaveHub est-il vraiment gratuit ?',
+  a: 'Oui, totalement gratuit. Pas d\'inscription, pas de collecte d\'email, pas d\'abonnement cache. Collez un lien, convertissez l\'audio, c\'est termine.\n\nLa plupart des convertisseurs "gratuits" TikTok commencent a pousser un abonnement payant apres cinq ou six conversions. TikSaveHub ne le fait pas. Conversions illimitees, zero cout. Le traitement se fait cote serveur, donc pas d\'extension a installer et pas d\'application a telecharger.',
+ },
+ {
+  id: 'mp3-account',
+  q: 'Ai-je besoin d\'un compte TikTok ?',
+  a: 'Non. Aucun compte TikTok n\'est necessaire. Tant que la video est accessible publiquement, TikSaveHub peut en extraire l\'audio. Copiez le lien via Partager, collez-le dans l\'outil, et la conversion demarre. Les videos privees ou restreintes ne fonctionneront pas. Mais TikSaveHub l\'indique clairement au lieu d\'afficher une erreur incomprehensible.',
+ },
+ {
+  id: 'mp3-legal',
+  q: 'Est-il legal de telecharger l\'audio d\'une video TikTok ?',
+  a: 'Sauvegarder l\'audio TikTok pour une ecoute hors ligne, garder un son favori. Ca tombe dans une zone grise globalement toleree. Les conditions d\'utilisation de TikTok interdisent techniquement le telechargement hors de l\'appli, mais cette clause vise le scraping automatique et la redistribution en masse. Pas quelqu\'un qui enregistre un extrait audio pour s\'en rejouir.\n\nL\'utilisation commerciale est differente. Utiliser l\'audio TikTok dans une publicite, une video YouTube, un podcast ou tout contenu monetise necessite l\'autorisation expresse du createur original. Le droit d\'auteur s\'applique a l\'audio lui-meme, pas seulement a la video. Creditz le createur, ne monetisez pas son travail sans accord.',
+ },
+ {
+  id: 'mp3-speed',
+  q: 'Combien de temps dure la conversion ?',
+  a: 'Environ deux a trois secondes sur une connexion standard. Le serveur recupere la video TikTok, isole la piste audio, et la convertit en MP3 en une seule etape. Sur un reseau mobile plus lent, cela peut prendre cinq secondes. Le facteur limitant est generalement le transfert du fichier, pas la conversion elle-meme.',
+ },
+ {
+  id: 'mp3-private',
+  q: 'Puis-je convertir des videos TikTok privees en MP3 ?',
+  a: 'Non. TikSaveHub ne fonctionne qu\'avec les videos publiques. Le contenu prive ou reserve aux amis n\'est pas accessible via l\'API publique de TikTok. Aucun convertisseur legitime ne peut contourner cette restriction. C\'est une barriere technique, pas une question de politique.',
+ },
+ {
+  id: 'mp3-format',
+  q: 'Dans quel format seras le fichier recu ?',
+  a: 'MP3. Voila le format. Compatible avec tout appareil, tout lecteur audio, tout systeme d\'exploitation. L\'extension du fichier est .mp3.',
+ },
+ {
+  id: 'mp3-limits',
+  q: 'Y a-t-il des limites ?',
+  a: 'Pas de quota journalier, pas de limite de conversions, pas de plafond premium. Convertissez autant de videos TikTok que necessaire. Chaque conversion s\'effectue en deux a trois secondes, quelle que soit le nombre deja effectue dans la journee.',
+ },
+ {
+  id: 'mp3-why',
+  q: 'Pourquoi utiliser TikSaveHub plutot que d\'autres convertisseurs ?',
+  a: 'Franchement, la plupart des convertisseurs TikTok en MP3 sont frustrants. SSSTikTok cache les telechargements sous trois niveaux de publicites. SnapTik a commence a limiter les conversions derriere un compteur journalier gratuit. SaveFrom exige la creation d\'un compte avant que quoi que ce soit ne fonctionne. Ce ne sont pas des rumeurs. Ce sont des problemes recents que les utilisateurs signalent sur les forums et les sites d\'avis.\n\nTikSaveHub adopte une autre approche : collez un lien, obtenez un MP3, c\'est tout. Pas de publicites, pas de mur de compte, pas de limite journaliere. La conversion se fait cote serveur, ce qui est plus rapide que les outils bases sur le navigateur, et le fichier MP3 resultant fonctionne partout. Ce n\'est pas complique. C\'est simplement honnete sur ce qu\'un convertisseur doit faire.',
+ },
 ];
 
-const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+const faqJsonLd = JSON.stringify({
+ '@context': 'https://schema.org',
+ '@type': 'FAQPage',
+ mainEntity: faqData.map((faq) => ({
+ '@type': 'Question',
+ name: faq.q,
+ acceptedAnswer: {
+ '@type': 'Answer',
+ text: faq.a.replace(/<[^>]*>/g, ''),
+ },
+ })),
+});
 ---
 
 <Layout
-  title="TikTok to MP3 — Extraire l'audio de vidéos TikTok | TikSaveHub"
-  description="Convertissez des vidéos TikTok en MP3 haute qualité. Jusqu'à 320kbps. Gratuit, rapide et sans inscription."
-  keywords="tiktok mp3 converter, tiktok to mp3, audio tiktok download, tiktok mp3 converter"
-  canonical="/tiktok-to-mp3"
-  ogImage="/og-downloader.png"
-  ogType="website"
-  platform="tiktok"
-  jsonLd={faqJsonLd}
-  appName="TikSaveHub — TikTok to MP3"
-  lang="fr"
+ title="Convertisseur TikTok en MP3. Audio 320kbps Gratuit | TikSaveHub"
+ description="Convertissez des videos TikTok en audio MP3 haute qualite. Gratuit, rapide, sans inscription. Qualite 320kbps. Compatible iPhone, Android et PC."
+ keywords="tiktok en mp3, convertir tiktok en mp3, telecharger audio tiktok, telecharger son tiktok, convertisseur tiktok mp3 en ligne, telecharger son tiktok"
+ canonical="/fr/tiktok-to-mp3"
+ ogImage="/og-mp3.png"
+ ogType="website"
+ jsonLd={faqJsonLd}
+ appName="TikSaveHub. Convertisseur TikTok en MP3"
 >
-  <section class="dl-hero" aria-labelledby="dl-hero-headline">
-    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
-    <div class="dl-hero-inner container-page">
-      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> Gratuit · Haute qualité · 320kbps</span></div>
-      <h1 id="dl-hero-headline" class="dl-hero-headline">TikTok to MP3</h1>
-      <p class="dl-hero-sub text-body-lg">Convertissez des vidéos TikTok en MP3 haute qualité. Gratuit et rapide. Enregistrez bandes-son, musique et parole hors ligne.</p>
-      <div class="dl-hero-form" id="download-tool"><DownloadForm mode="mp3" /></div>
-      <div class="dl-hero-trust">
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% Gratuit</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Jusqu'à 320kbps</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sans inscription</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Sans filigrane</span>
-      </div>
-    </div>
-  </section>
+ <!-- JSON-LD Breadcrumb -->
+ <script is:inline type="application/ld+json" set:html={JSON.stringify({
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+ { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://tiksavehub.com/fr" },
+ { "@type": "ListItem", "position": 2, "name": "TikTok en MP3", "item": "https://tiksavehub.com/fr/tiktok-to-mp3" }
+ ]
+ })} />
 
-  <StatsSection stats={[ { value: '100% Gratuit', label: 'Extrayez l\'audio TikTok instantanément, sans connexion', icon: 'download' }, { value: 'Sans Inscription', label: 'Fonctionne sur tous les appareils, du monde entier', icon: 'globe' }, { value: 'Qualité HD', label: 'Débit élevé — Son MP3 net et clair', icon: 'star' } ]} />
+ <!-- Hero Section -->
+ <section class="mp3-hero" aria-labelledby="mp3-hero-headline">
+ <div class="mp3-hero-gradient gradient-mesh" aria-hidden="true"></div>
+ <div class="mp3-hero-inner container-page">
+ <!-- Breadcrumb -->
+ <nav aria-label="Breadcrumb" class="mp3-breadcrumb">
+ <ol class="breadcrumb-list">
+ <li>
+ <a href="/fr/"><span>Accueil</span></a>
+ </li>
+ <li aria-current="page">
+ <span>TikTok en MP3</span>
+ </li>
+ </ol>
+ </nav>
 
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
-    <div class="dl-faq-inner container-page">
-      <span class="section-eyebrow text-caption-mono">FAQ</span>
-      <h2 id="dl-faq-headline" class="section-headline">Questions sur TikTok to MP3</h2>
-      <div class="dl-faq-grid">
-        {faqData.map((faq) => (
-          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
-        ))}
-      </div>
-    </div>
-  </section>
+ <div class="mp3-badge-row">
+ <span class="badge-pill mp3-badge">
+ <span class="badge-dot" aria-hidden="true"></span>
+ Gratuit &middot; Haute qualite &middot; MP3 instantane
+ </span>
+ </div>
 
-  <SocialShare url="/tiktok-to-mp3" title="TikTok to MP3 — Extraire l'audio de vidéos TikTok" description="Convertissez des vidéos TikTok en MP3 haute qualité. Gratuit." />
+ <h1 id="mp3-hero-headline" class="mp3-hero-headline">
+ Convertisseur TikTok en MP3. Extrayez l\'audio en haute qualite en quelques secondes
+ </h1>
 
-  <!-- Related Tools -->
-  <section class="related-tools-section">
-    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
-      <h2 class="related-tools-headline">Plus d'Outils</h2>
-      <div class="related-tools-grid">
-            <a href="/fr/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
-            <a href="/fr/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
-            <a href="/fr/instagram-story-downloader-without-watermark" class="related-tool-link">Instagram Story Downloader</a>
-            <a href="/fr/instagram-audio-downloader" class="related-tool-link">Instagram Audio Downloader</a>
-      </div>
-    </div>
-  </section>
+ <p class="mp3-hero-subline headline-gradient">
+ Extrayez l\'audio de n\'importe quelle video TikTok.
+ </p>
+
+ <p class="mp3-hero-sub text-body-lg">
+ Convertissez n\'importe quelle video TikTok en audio MP3 en quelques secondes. Gratuit, sans inscription, sans filigrane.
+ Collez simplement un lien et telechargez l\'audio instantanement.
+ </p>
+
+ <div class="mp3-hero-form-wrap">
+ <Mp3DownloadForm />
+ </div>
+
+ <div class="mp3-hero-trust">
+ <span class="trust-chip">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+ 100% Gratuit
+ </span>
+ <span class="trust-chip">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+ Qualite 320kbps
+ </span>
+ <span class="trust-chip">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+ Sans inscription
+ </span>
+ <span class="trust-chip">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+ Compatible mobile
+ </span>
+ </div>
+
+ <div class="mp3-hero-share">
+ <SocialShare
+ url="/fr/tiktok-to-mp3"
+ title="Convertisseur TikTok en MP3 (Haute qualite). TikSaveHub"
+ description="Extrayez et telechargez de l\'audio MP3 haute qualite a partir de n\'importe quelle video TikTok, gratuitement."
+ image="/og-mp3.png"
+ />
+ </div>
+ </div>
+ </section>
+
+ <!-- Stats -->
+ <StatsSection stats={[
+ { value: '100% Gratuit', label: 'Extrayez l\'audio TikTok instantanement, sans connexion', icon: 'download' },
+ { value: 'Sans Inscription', label: 'Fonctionne sur tous les appareils, du monde entier', icon: 'globe' },
+ { value: 'Debit eleve', label: 'Son MP3 net et clair', icon: 'star' },
+ ]} />
+
+ <!-- What is Section -->
+ <section class="mp3-content-section" aria-labelledby="mp3-what-headline">
+ <div class="mp3-content-inner container-page">
+ <div class="mp3-content-grid">
+ <div class="mp3-content-text">
+ <span class="section-eyebrow text-caption-mono">A propos de l\'outil</span>
+ <h2 id="mp3-what-headline" class="section-headline">
+ Pourquoi cet outil existe.
+ </h2>
+
+ <p class="mp3-content-body">
+ TikTok regorge de sons qu\'on a envie de garder. Des extraits tendance, des discours motivants, des morceaux d\'humour, des morceaux musicaux introuvables ailleurs. Le probleme ? TikTok ne permet pas de sauvegarder uniquement l\'audio. Le bouton "Enregistrer la video" integre livre un MP4 avec filigrane, pas un MP3. Et la plupart des "convertisseurs TikTok en MP3" sont un veritable bazar. Trois niveaux de publicites superposees, une qualite limitee a 128kbps, certains imposant meme la creation d\'un compte avant la moindre conversion.
+ </p>
+
+ <p class="mp3-content-body">
+ TikSaveHub prend une approche differente. Collez un lien TikTok, obtenez un MP3. Voila toute l\'interaction. L\'outil recupere la video depuis les serveurs de TikTok, isole la piste audio, la convertit en MP3, et livre le fichier directement. Deux a trois secondes, du debut a la fin. Pas de filigrane, pas de perte de qualite, pas de compte necessaire.
+ </p>
+
+ <p class="mp3-content-body">
+ Voila ce qu\'il faut savoir sur la qualite audio : TikTok compresse l\'audio en AAC a 128kbps dans chaque video. TikSaveHub ne fait pas magiquement mieux. Personne ne le fait. Mais la conversion est sans perte. Ce que TikTok a compresse reste compresse au meme debit, simplement au format MP3 au lieu d\'AAC. Le resultat sonne identique a ce qui joue dans l\'appli TikTok. La plupart des convertisseurs re-encodent a un debit inferieur et appellent cela "haute qualite". Ce n\'est pas le cas ici.
+ </p>
+
+ <p class="mp3-content-body">
+ L\'outil fonctionne sur tout appareil doté d\'un navigateur. iPhone, Android, Windows, Mac, Linux, tablettes. Pas d\'application a installer, pas d\'extension de navigateur a configurer. La conversion se fait cote serveur, donc la puissance de traitement de l\'appareil n\'a aucune importance. Meme un telephone de cinq ans gere l\'operation a la meme vitesse qu\'un ordinateur portable tout neuf.
+ </p>
+
+ <p class="mp3-content-body">
+ La confidentialite compte aussi. TikSaveHub ne demande pas d\'adresse email, ne stocke pas l\'historique de telechargement, et ne suit pas la navigation. La seule chose qui atterrit sur l\'appareil est le fichier MP3 final. Et contrairement a des concurrents qui introduisent discretement des paliers payants apres quelques conversions, TikSaveHub reste gratuit sans limite d\'utilisation.
+ </p>
+
+ <p class="mp3-content-body">
+ Une limite honnete : cet outil ne fonctionne qu\'avec les videos TikTok publiques. Le contenu prive ou restreint n\'est pas accessible via l\'API publique de TikTok. Aucun convertisseur legitime ne peut contourner cela. C\'est une barriere technique, pas une question de politique. Si la video est publique, l\'extraction audio fonctionne. Si elle est privee, elle ne fonctionnera pas.
+ </p>
+
+ <p class="mp3-content-body">
+ Pret a convertir ? Collez un lien TikTok dans le champ ci-dessus et telechargez l\'audio en quelques secondes. Pour la video complete (avec ou sans filigrane), le <a href="/fr/tiktok-video-downloader-without-watermark">telechargeur de video TikTok</a> gere les fichiers MP4. Besoin de l\'audio Instagram ? Le <a href="/fr/instagram-audio-downloader">telechargeur audio Instagram</a> fonctionne de la meme maniere pour les Reels et les publications. Les videos Facebook peuvent etre converties en MP3 via l\'outil <a href="/fr/facebook-to-mp3">Facebook en MP3</a>, et les clips Snapchat fonctionnent avec le convertisseur <a href="/fr/snapchat-to-mp3">Snapchat en MP3</a>.
+ </p>
+ </div>
+ <div class="mp3-content-card-wrap">
+ <div class="mp3-content-card">
+ <div class="mp3-content-card-icon" aria-hidden="true">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+ </div>
+ <h3 class="mp3-content-card-title">Pourquoi TikSaveHub MP3 ?</h3>
+ <ul class="mp3-content-card-list">
+ <li>MP3 propre. Pas de video, pas de filigrane</li>
+ <li>Conversion sans perte depuis l\'audio source</li>
+ <li>Fonctionne sur tous les appareils et navigateurs</li>
+ <li>Pas d\'inscription ni de compte necessaire</li>
+ <li>Conversions illimitees, totalement gratuit</li>
+ <li>Traitement cote serveur (2 a 3 secondes)</li>
+ <li>Prend en charge tous les formats de liens TikTok</li>
+ </ul>
+ </div>
+ <div class="mp3-content-card" style="margin-top: var(--spacing-lg);">
+ <h3 class="mp3-content-card-title">Liens rapides</h3>
+ <ul class="mp3-content-card-list">
+ <li><a href="/fr/tiktok-video-downloader-without-watermark">Telechargeur de video TikTok</a></li>
+ <li><a href="/fr/instagram-reels-downloader-without-watermark">Telechargeur Instagram Reels</a></li>
+ <li><a href="/fr/instagram-video-downloader-without-watermark">Telechargeur de video Instagram</a></li>
+ <li><a href="/fr/instagram-story-downloader-without-watermark">Telechargeur Instagram Story</a></li>
+ <li><a href="/fr/instagram-audio-downloader">Telechargeur audio Instagram</a></li>
+ <li><a href="/fr/facebook-video-downloader">Telechargeur de video Facebook</a></li>
+ <li><a href="/fr/facebook-reels-downloader">Telechargeur Facebook Reels</a></li>
+ <li><a href="/fr/facebook-story-downloader">Telechargeur Facebook Story</a></li>
+ <li><a href="/fr/facebook-to-mp3">Facebook en MP3</a></li>
+ <li><a href="/fr/facebook-photo-downloader">Telechargeur de photos Facebook</a></li>
+ <li><a href="/fr/snapchat-downloader">Telechargeur Snapchat</a></li>
+ <li><a href="/fr/snapchat-story-downloader">Telechargeur Snapchat Story</a></li>
+ <li><a href="/fr/snapchat-to-mp3">Snapchat en MP3</a></li>
+ <li><a href="/fr/x-video-downloader">Telechargeur de video X/Twitter</a></li>
+ </ul>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- How It Works -->
+ <section id="how-it-works" class="mp3-steps-section" aria-labelledby="mp3-steps-headline">
+ <div class="mp3-steps-inner container-page">
+ <div class="mp3-steps-header">
+ <span class="section-eyebrow text-caption-mono">Guide pas a pas</span>
+ <h2 id="mp3-steps-headline" class="section-headline">
+ Comment convertir TikTok en MP3.
+ </h2>
+ <p class="section-sub text-body-lg">
+ Trois etapes. Aucune competence technique requise.
+ </p>
+ </div>
+
+ <div class="mp3-steps-grid">
+ <article class="mp3-step-card">
+ <div class="mp3-step-num text-caption-mono" aria-hidden="true">01</div>
+ <div class="mp3-step-icon" aria-hidden="true">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+ </div>
+ <h3 class="mp3-step-title">Copiez le lien de la video TikTok</h3>
+ <p class="mp3-step-body">
+ Ouvrez TikTok, trouvez la video dont l\'audio vaut la peine d\'etre sauvegardee. Appuyez sur Partager, puis sur "Copier le lien". Fonctionne avec toute video publique. Page Pour Vous, profil du createur, lien partage.
+ </p>
+ </article>
+
+ <article class="mp3-step-card">
+ <div class="mp3-step-num text-caption-mono" aria-hidden="true">02</div>
+ <div class="mp3-step-icon" aria-hidden="true">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+ </div>
+ <h3 class="mp3-step-title">Collez le lien dans TikSaveHub</h3>
+ <p class="mp3-step-body">
+ Collez le lien copie dans le champ de saisie ci-dessus. Le traitement demarre immediatement. Deux a trois secondes sur une connexion correcte, peut-etre cinq sur un reseau mobile plus lent.
+ </p>
+ </article>
+
+ <article class="mp3-step-card">
+ <div class="mp3-step-num text-caption-mono" aria-hidden="true">03</div>
+ <div class="mp3-step-icon" aria-hidden="true">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+ </div>
+ <h3 class="mp3-step-title">Telechargez l\'audio MP3</h3>
+ <p class="mp3-step-body">
+ Appuyez sur "Telecharger MP3" pour recuperer le fichier audio. Il s\'enregistre directement sur l\'appareil. Pret pour l\'ecoute hors ligne, une bibliotheque musicale, ou un logiciel de montage audio. Pas d\'etape supplementaire.
+ </p>
+ </article>
+ </div>
+ </div>
+ </section>
+
+ <!-- Features Grid -->
+ <section id="features" class="mp3-features-section" aria-labelledby="mp3-features-headline">
+ <div class="mp3-features-inner container-page">
+ <div class="mp3-features-header">
+ <span class="section-eyebrow text-caption-mono">Fonctionnalites</span>
+ <h2 id="mp3-features-headline" class="section-headline">
+ Ce qui distingue TikSaveHub MP3.
+ </h2>
+ </div>
+
+ <div class="mp3-features-grid">
+ <article class="mp3-feature-card">
+ <div class="mp3-feature-icon feat-accent-develop" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+ </div>
+ <h3 class="mp3-feature-title">Audio MP3 pur</h3>
+ <p class="mp3-feature-body">
+ Extraction audio propre. Pas de video, pas de filigrane, pas de voix superposee. Juste le son de la video TikTok originale.
+ </p>
+ </article>
+
+ <article class="mp3-feature-card">
+ <div class="mp3-feature-icon feat-accent-preview" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+ </div>
+ <h3 class="mp3-feature-title">Debit eleve</h3>
+ <p class="mp3-feature-body">
+ Audio extrait au debit le plus eleve disponible. Les fichiers MP3 sonnent crument sur tout appareil, tout haut-parleur, tout ecouteur.
+ </p>
+ </article>
+
+ <article class="mp3-feature-card">
+ <div class="mp3-feature-icon feat-accent-ship" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+ </div>
+ <h3 class="mp3-feature-title">Rapide comme l\'eclair</h3>
+ <p class="mp3-feature-body">
+ Le traitement cote serveur signifie que la conversion demarre en quelques secondes. Pas de file d\'attente. Collez, convertissez, c\'est fait. Deux a trois secondes.
+ </p>
+ </article>
+
+ <article class="mp3-feature-card">
+ <div class="mp3-feature-icon feat-accent-develop" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+ </div>
+ <h3 class="mp3-feature-title">Fonctionne sur tous les appareils</h3>
+ <p class="mp3-feature-body">
+ iPhone, Android, tablette, ordinateur. Si l\'appareil a un navigateur, TikSaveHub fonctionne. Pas d\'application, pas d\'extensions.
+ </p>
+ </article>
+
+ <article class="mp3-feature-card">
+ <div class="mp3-feature-icon feat-accent-preview" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+ </div>
+ <h3 class="mp3-feature-title">Pas de compte requis</h3>
+ <p class="mp3-feature-body">
+ Pas d\'inscription, pas d\'email, pas de mot de passe. Collez simplement le lien et convertissez. La confidentialite est respectee. Aucune donnee personnelle n\'est stockee.
+ </p>
+ </article>
+
+ <article class="mp3-feature-card">
+ <div class="mp3-feature-icon feat-accent-ship" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+ </div>
+ <h3 class="mp3-feature-title">Conversions illimitees</h3>
+ <p class="mp3-feature-body">
+ Pas de limite journaliere, pas de plafond, pas d\'offre premium. Convertissez autant de videos TikTok que necessaire. Chaque jour, pour toujours. Gratuitement.
+ </p>
+ </article>
+ </div>
+ </div>
+ </section>
+
+ <!-- Use Cases -->
+ <section class="mp3-usecases-section" aria-labelledby="mp3-usecases-headline">
+ <div class="mp3-usecases-inner container-page">
+ <div class="mp3-usecases-header">
+ <span class="section-eyebrow text-caption-mono">Cas d\'utilisation</span>
+ <h2 id="mp3-usecases-headline" class="section-headline">
+ Qui utilise TikSaveHub MP3 ?
+ </h2>
+ </div>
+
+ <div class="mp3-usecases-grid">
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">Les amateurs de musique</h3>
+ <p class="mp3-usecase-body">
+ Decouvert un morceau sur TikTok qui n\'existe pas sur Spotify ? Convertissez-le en MP3 et ajoutez-le a la bibliotheque. Ecoutez hors ligne sans ouvrir TikTok, sans la video, sans le filigrane. Certains des meilleurs morceaux en circulation proviennent de TikTok. Et la plupart n\'arrivent jamais sur les plateformes de streaming.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">Createurs de contenu</h3>
+ <p class="mp3-usecase-body">
+ Musique de fond, effets sonores, sons tendance pour les montages. Les createurs extraient les sons TikTok pour les integrer dans leurs propres videos. Le MP3 se glisse directement dans le logiciel de montage, pret a etre superpose a de nouvelles images. Pensez simplement a creditter le createur original si le son est reconnaissable.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">DJ et producteurs</h3>
+ <p class="mp3-usecase-body">
+ TikTok est une mine d\'or pour decouvrir les sons tendance avant qu\'ils n\'explosent. Les DJ sauvegardent des extraits comme pistes de reference, analysent les motifs rythmiques, et construisent leurs set autour de ce qui prend de l\'ampleur. Un son de deux secondes sur TikTok peut inspirer un remix complet.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">Etudiants et enseignants</h3>
+ <p class="mp3-usecase-body">
+ Des videos TikTok educatives. Cours de langue, explications historiques, vulgarisation scientifique. Ca fonctionne mieux comme audio pour reviser en deplacement. Extrayez le MP3, chargez-le sur un telephone, et ecoutez pendant le trajet. Ca evite de trimbaler un ordinateur partout.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">Podcasteurs et monteurs</h3>
+ <p class="mp3-usecase-body">
+ Les extraits TikTok font d\'excellents sujets de podcast. Segments de reaction, moments viraux, prises de position d\'experts. Extrayez l\'audio, placez-le sur une ligne de montage, et batissez un episode autour. Des fichiers MP3 propres signifient moins de temps a corriger l\'audio et plus de temps a produire.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">Utilisateurs occasionnels</h3>
+ <p class="mp3-usecase-body">
+ Soyons honnetes. La plupart des gens veulent juste ce petit son drole pour en faire une sonnerie, ou un discours motivant a ecouter en boucle. Pas besoin de workflow sophistique. Collez le lien, telechargez le MP3, c\'est regle. aussi simple que cela.
+ </p>
+ </article>
+ </div>
+ </div>
+ </section>
+
+ <!-- Comparison Section -->
+ <section class="mp3-steps-section" aria-labelledby="mp3-comparison-headline">
+ <div class="mp3-steps-inner container-page">
+ <div class="mp3-steps-header">
+ <span class="section-eyebrow text-caption-mono">Comparaison</span>
+ <h2 id="mp3-comparison-headline" class="section-headline">
+ TikSaveHub vs autres convertisseurs MP3.
+ </h2>
+ <p class="section-sub text-body-lg">
+ Comment se compare-t-il a la concurrence.
+ </p>
+ </div>
+
+ <div style="width:100%;overflow-x:auto;">
+ <table style="width:100%;border-collapse:collapse;font-size:var(--text-body-sm);text-align:left;">
+ <thead>
+ <tr style="border-bottom:2px solid var(--color-hairline-strong);">
+ <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">Fonctionnalite</th>
+ <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">TikSaveHub</th>
+ <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SSSTikTok</th>
+ <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SnapTik</th>
+ <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SaveFrom</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr style="border-bottom:1px solid var(--color-hairline);">
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Qualite audio</td>
+ <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Sans perte depuis la source</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Re-encode</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Re-encode</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Variable</td>
+ </tr>
+ <tr style="border-bottom:1px solid var(--color-hairline);">
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Vitesse de conversion</td>
+ <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">~2-3 secondes</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">~4-5 secondes</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">~3-4 secondes</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">~5-7 secondes</td>
+ </tr>
+ <tr style="border-bottom:1px solid var(--color-hairline);">
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Publicites</td>
+ <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Aucune</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Massives (pop-ups)</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Moderees</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Massives</td>
+ </tr>
+ <tr style="border-bottom:1px solid var(--color-hairline);">
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Inscription requise</td>
+ <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Non</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Non</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Non</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Oui (certaines fonctions)</td>
+ </tr>
+ <tr style="border-bottom:1px solid var(--color-hairline);">
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Limites journalieres</td>
+ <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Illimite</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Limites signalees</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Limites signalees</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Palier gratuit limite</td>
+ </tr>
+ <tr>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Traitement serveur</td>
+ <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Oui</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Non (base navigateur)</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Non</td>
+ <td style="padding:var(--spacing-md);color:var(--color-body);">Non</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+
+ <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;line-height:1.7;">
+ Avis honnete : les publicites de SSSTikTok sont veritablement insupportables. Trois niveaux superposes, dont un faux message de "telechargement termine". SnapTik a commence a limiter les conversions derriere un compteur journalier gratuit. SaveFrom exige la creation d\'un compte avant que quoi que ce soit ne fonctionne. Ce ne sont pas des rumeurs. Ce sont des problemes recents que les utilisateurs signalent sur les forums. TikSaveHub etait le seul outil de cette comparaison a rester gratuit, sans publicite, et sans limite.
+ </p>
+
+ <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-md) 0 0 0;line-height:1.7;">
+ Fonctionne aussi pour <a href="/fr/facebook-to-mp3" style="color:var(--color-link);">Facebook en MP3</a>, <a href="/fr/snapchat-to-mp3" style="color:var(--color-link);">Snapchat en MP3</a>, et <a href="/fr/instagram-audio-downloader" style="color:var(--color-link);">l\'audio Instagram</a>.
+ </p>
+ </div>
+ </section>
+
+ <!-- Troubleshooting -->
+ <section class="mp3-usecases-section" aria-labelledby="mp3-troubleshoot-headline">
+ <div class="mp3-usecases-inner container-page">
+ <div class="mp3-usecases-header">
+ <span class="section-eyebrow text-caption-mono">Depannage</span>
+ <h2 id="mp3-troubleshoot-headline" class="section-headline">
+ Problemes courants et solutions.
+ </h2>
+ </div>
+
+ <div class="mp3-usecases-grid">
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">"L\'audio ne se telecharge pas."</h3>
+ <p class="mp3-usecase-body">
+ Dans neuf cas sur dix, le lien TikTok est incorrect. Quelqu\'un a copie un lien depuis un commentaire au lieu de la video elle-meme, ou l\'URL s\'est degradee pendant la copie. Retournez sur TikTok, ouvrez la video, appuyez sur Partager, puis Copier le lien, et collez cette URL fraiche. Si la video a ete supprimee par le createur, aucun telechargeur ne peut la recuperer. Ni TikSaveHub, ni personne d\'autre.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">"La qualite est faible."</h3>
+ <p class="mp3-usecase-body">
+ La qualite depend de ce que TikTok a compresse dans l\'audio. La plupart des videos TikTok contiennent de l\'audio AAC a 128kbps. TikSaveHub le convertit sans perte en MP3. Il ne peut pas ameliorer ce qui a deja ete compresse. Si l\'audio paraissait etique sur TikTok, il le restera dans le MP3. C\'est un probleme de qualite source, pas une limite de l\'outil.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">"Le lien ne fonctionne pas."</h3>
+ <p class="mp3-usecase-body">
+ TikSaveHub gere tous les formats standards de liens TikTok, mais ne fonctionne qu\'avec les URLs de video. Les pages de profil, les pages de hashtags, et les resultats de recherche ne sont pas telechargeables. Ils ne pointent pas vers une video precise. Le lien doit contenir /video/, vm.tiktok.com, ou vt.tiktok.com.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">"La conversion prend trop de temps."</h3>
+ <p class="mp3-usecase-body">
+ La conversion en elle-meme est rapide. Moins de trois secondes. Le facteur limitant est le transfert du fichier. L\'audio d\'une video TikTok de 60 secondes pese typiquement 1 a 2 Mo en MP3. Sur une connexion a 10 Mbps, c\'est moins de deux secondes de telechargement. Sur un reseau mobile plus lent, cela prend plus de temps. Passez en Wi-Fi si c\'est trop long.
+ </p>
+ </article>
+
+ <article class="mp3-usecase-card">
+ <h3 class="mp3-usecase-title">"Il n\'y a pas d\'audio dans le fichier."</h3>
+ <p class="mp3-usecase-body">
+ C\'est rare, mais ca arrive. Generalement quand TikSaveHub n\'arrive pas a localiser la piste audio dans la video (certaines videos TikTok ont un encodage inhabituel). Patientez quelques minutes et reessayez. Si le probleme persiste, la video a peut-etre ete restreinte cote TikTok. Essayez une autre video pour confirmer que l\'outil fonctionne correctement.
+ </p>
+ </article>
+ </div>
+ </div>
+ </section>
+
+ <!-- Legal Section -->
+ <section class="mp3-steps-section" aria-labelledby="mp3-legal-headline">
+ <div class="mp3-steps-inner container-page">
+ <div class="mp3-steps-header">
+ <span class="section-eyebrow text-caption-mono">Juridique</span>
+ <h2 id="mp3-legal-headline" class="section-headline">
+ Est-il legal de telecharger l\'audio TikTok ?
+ </h2>
+ </div>
+
+ <div style="max-width:680px;width:100%;display:flex;flex-direction:column;gap:var(--spacing-lg);text-align:left;">
+ <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+ <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">L\'utilisation personnelle est en general autorisee.</h3>
+ <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+ Sauvegarder l\'audio TikTok pour l\'ecoute hors ligne, garder un son favori, ou usage personnel. Ca tombe dans l\'utilisation personnelle et est globalement tolere. Les conditions d\'utilisation de TikTok interdisent techniquement le telechargement hors de l\'appli, mais cette clause vise les robots de scraping automatique et la redistribution en bibliotheque. Pas une personne qui enregistre un extrait audio. La realite juridique est plus nuancee que ce que le texte des CGU laisse penser.
+ </p>
+ </div>
+
+ <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+ <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">L\'utilisation commerciale necessite une autorisation.</h3>
+ <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+ Utiliser l\'audio TikTok dans une publicite, une compilation YouTube, un podcast, ou tout contenu monetise necessite l\'autorisation expresse du createur original. Le droit d\'auteur s\'applique a l\'audio lui-meme, pas seulement a la video. Obtenez un accord ecrit ou risquez une notification de retrait.
+ </p>
+ </div>
+
+ <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+ <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">Credittez le createur.</h3>
+ <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+ Meme pour un partage personnel, creditter le createur original est la bonne chose a faire. Mentionnez le createur, indiquez son nom d\'utilisateur, renvoyez vers la publication originale. Ca prend cinq secondes et reconnait le travail de l\'auteur.
+ </p>
+ </div>
+
+ <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:var(--spacing-md) 0 0 0;font-style:italic;">
+ Cet article est fourni a titre informatif uniquement et ne constitue pas un avis juridique. Consultez un avocat qualifie pour votre situation personnelle.
+ </p>
+
+ <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+ Reference externe : <a href="https://www.tiktok.com/community-guidelines" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">Directives communautaires TikTok</a> &middot; <a href="https://www.copyright.gov/fair-use/" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">Office d\'auteurs americain. Usage loyal</a>
+ </p>
+ </div>
+ </div>
+ </section>
+
+ <!-- FAQ Section -->
+ <section id="faq" class="mp3-faq-section" aria-labelledby="mp3-faq-headline">
+ <div class="mp3-faq-inner container-page">
+ <div class="mp3-faq-header">
+ <span class="section-eyebrow text-caption-mono">FAQ</span>
+ <h2 id="mp3-faq-headline" class="section-headline">
+ Questions frequentes.
+ </h2>
+ </div>
+
+ <div class="mp3-faq-list" role="list">
+ {faqData.map((faq) => (
+ <div class="mp3-faq-item" id={faq.id} role="listitem">
+ <button
+ class="mp3-faq-trigger"
+ id={`${faq.id}-btn`}
+ aria-expanded="false"
+ aria-controls={`${faq.id}-panel`}
+ type="button"
+ >
+ <span class="mp3-faq-q">{faq.q}</span>
+ <span class="mp3-faq-chevron" aria-hidden="true">
+ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+ </span>
+ </button>
+ <div
+ id={`${faq.id}-panel`}
+ class="mp3-faq-panel"
+ role="region"
+ aria-labelledby={`${faq.id}-btn`}
+ hidden
+ >
+ <p class="mp3-faq-a" set:html={faq.a}></p>
+ </div>
+ </div>
+ ))}
+ </div>
+ </div>
+ </section>
+
+ <!-- CTA Band -->
+ <section class="mp3-cta-band" aria-labelledby="mp3-cta-headline">
+ <div class="mp3-cta-inner container-page">
+ <h2 id="mp3-cta-headline" class="mp3-cta-headline">
+ Pret a convertir ?
+ </h2>
+ <p class="mp3-cta-sub">
+ Collez un lien TikTok ci-dessus et obtenez votre MP3 en quelques secondes. Pas de compte necessaire.
+ </p>
+ <a href="#download-form" class="btn-primary mp3-cta-btn">
+ Commencer la conversion
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+ </a>
+ </div>
+ </section>
+
+ <!-- Internal Links Section -->
+ <section class="mp3-internal-section" aria-labelledby="mp3-internal-headline">
+ <div class="mp3-internal-inner container-page">
+ <h2 id="mp3-internal-headline" class="section-headline mp3-internal-headline">
+ Plus de services TikSaveHub.
+ </h2>
+ <div class="mp3-internal-grid">
+ <a href="/fr/" class="mp3-internal-card">
+ <span class="mp3-internal-icon" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+ </span>
+ <span class="mp3-internal-title">Accueil TikSaveHub</span>
+ <span class="mp3-internal-desc">Retour a la page principale. Telechargez des videos TikTok en MP4.</span>
+ <span class="mp3-internal-arrow" aria-hidden="true">→</span>
+ </a>
+ <a href="/fr/tiktok-video-downloader-without-watermark" class="mp3-internal-card">
+ <span class="mp3-internal-icon" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+ </span>
+ <span class="mp3-internal-title">Telechargeur de video</span>
+ <span class="mp3-internal-desc">Telechargez des videos TikTok sans filigrane en qualite HD.</span>
+ <span class="mp3-internal-arrow" aria-hidden="true">→</span>
+ </a>
+ <a href="/fr/#faq" class="mp3-internal-card">
+ <span class="mp3-internal-icon" aria-hidden="true">
+ <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+ </span>
+ <span class="mp3-internal-title">FAQ</span>
+ <span class="mp3-internal-desc">Des questions ? Trouvez des reponses sur nos outils.</span>
+ <span class="mp3-internal-arrow" aria-hidden="true">→</span>
+ </a>
+ </div>
+ </div>
+ </section>
 
 </Layout>
 
 <style>
-  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
-  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
-  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
-  .dl-badge-row { display: flex; justify-content: center; }
-  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
-  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
-  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
-  .dl-hero-form { width: 100%; max-width: 640px; }
-  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
-  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
-  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
-  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
-  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
-  .dl-faq-q::-webkit-details-marker { display: none; }
-  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
-  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
-  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
-  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+ /* ─── Hero ─── */
+ .mp3-hero {
+ position: relative;
+ padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+ overflow: hidden;
+ background-color: var(--color-canvas);
+ text-align: center;
+ }
 
-  .related-tools-section { padding: var(--spacing-2xl) 0; }
-  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
-  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
-  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
-  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+ .mp3-hero-gradient {
+ position: absolute;
+ inset: 0;
+ z-index: 0;
+ pointer-events: none;
+ opacity: 0.85;
+ }
+
+ .mp3-hero-inner {
+ position: relative;
+ z-index: 1;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-lg);
+ }
+
+ .mp3-breadcrumb {
+ margin-bottom: var(--spacing-sm);
+ }
+
+ .breadcrumb-list {
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ font-size: var(--text-body-sm);
+ color: var(--color-mute);
+ }
+
+ .breadcrumb-list li + li::before {
+ content: '/';
+ margin-right: 6px;
+ color: var(--color-hairline-strong);
+ }
+
+ .breadcrumb-list a {
+ color: var(--color-body);
+ text-decoration: none;
+ transition: color 0.15s ease;
+ }
+
+ .breadcrumb-list a:hover {
+ color: var(--color-ink);
+ }
+
+ .mp3-badge-row {
+ display: flex;
+ justify-content: center;
+ }
+
+ .mp3-badge {
+ animation: fadeInUp 0.5s ease 0.1s both;
+ }
+
+ .badge-dot {
+ display: inline-block;
+ width: 6px;
+ height: 6px;
+ background: linear-gradient(135deg, #7c3aed, #ec4899);
+ border-radius: 50%;
+ animation: pulse-dot 2s ease-in-out infinite;
+ }
+
+ .mp3-hero-headline {
+ font-size: clamp(36px, 6vw, 56px);
+ font-weight: 600;
+ line-height: 1.05;
+ letter-spacing: -2.5px;
+ color: var(--color-ink);
+ margin: 0;
+ max-width: 700px;
+ animation: fadeInUp 0.5s ease 0.2s both;
+ }
+
+ .headline-gradient {
+ background: linear-gradient(
+ 135deg,
+ #7c3aed 0%,
+ #a855f7 30%,
+ #ec4899 60%,
+ #f472b6 100%
+ );
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ background-clip: text;
+ }
+
+ .mp3-hero-subline {
+ font-size: clamp(20px, 3vw, 28px);
+ font-weight: 600;
+ line-height: 1.2;
+ letter-spacing: -0.5px;
+ margin: 0;
+ max-width: 560px;
+ animation: fadeInUp 0.5s ease 0.25s both;
+ }
+
+ .mp3-hero-sub {
+ color: var(--color-body);
+ margin: 0;
+ max-width: 560px;
+ animation: fadeInUp 0.5s ease 0.3s both;
+ }
+
+ .mp3-hero-form-wrap {
+ width: 100%;
+ max-width: 760px;
+ animation: fadeInUp 0.5s ease 0.4s both;
+ }
+
+ .mp3-hero-trust {
+ display: flex;
+ align-items: center;
+ gap: var(--spacing-sm);
+ flex-wrap: wrap;
+ justify-content: center;
+ animation: fadeInUp 0.5s ease 0.5s both;
+ }
+
+ .mp3-hero-share {
+ animation: fadeInUp 0.5s ease 0.55s both;
+ }
+
+ .trust-chip {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ font-size: var(--text-body-sm);
+ font-weight: 500;
+ color: var(--color-body);
+ padding: 0 var(--spacing-md);
+ height: 36px;
+ border-radius: var(--radius-full);
+ border: 1px solid var(--color-hairline);
+ background-color: var(--color-canvas);
+ transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .trust-chip svg {
+ color: #7c3aed;
+ }
+
+ .trust-chip:hover {
+ border-color: var(--color-hairline-strong);
+ transform: translateY(-2px);
+ box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.12);
+ }
+
+ @media (hover: hover) {
+ .trust-chip:hover {
+ border-color: var(--color-hairline-strong);
+ transform: translateY(-2px);
+ box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.12);
+ }
+ }
+
+ @media (max-width: 600px) {
+ .mp3-hero {
+ padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+ }
+
+ .mp3-hero-headline {
+ font-size: clamp(22px, 5vw, 32px);
+ letter-spacing: -1px;
+ }
+
+ .trust-chip {
+ font-size: var(--text-caption);
+ height: 36px;
+ padding: 0 var(--spacing-sm);
+ }
+
+ .breadcrumb-list {
+ font-size: 11px;
+ }
+ }
+
+ /* ─── Content Section ─── */
+ .mp3-content-section {
+ background-color: var(--color-canvas-soft);
+ padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-content-inner {
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-4xl);
+ }
+
+ .mp3-content-grid {
+ display: grid;
+ grid-template-columns: 1.2fr 1fr;
+ gap: var(--spacing-3xl);
+ align-items: start;
+ }
+
+ .mp3-content-text {
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-md);
+ }
+
+ .mp3-content-lead {
+ font-size: var(--text-body-lg);
+ color: var(--color-ink);
+ line-height: 1.7;
+ margin: 0;
+ margin-top: 8px;
+ }
+
+ .text-highlight {
+ background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ background-clip: text;
+ font-weight: 700;
+ letter-spacing: -0.3px;
+ }
+
+ .mp3-content-body {
+ font-size: var(--text-body-md);
+ color: var(--color-body);
+ line-height: 1.7;
+ margin: 0;
+ }
+
+ .mp3-content-card-wrap {
+ position: sticky;
+ top: 80px;
+ }
+
+ .mp3-content-card {
+ background-color: var(--color-canvas);
+ border-radius: var(--radius-lg);
+ padding: var(--spacing-xl);
+ box-shadow:
+ inset 0 0 0 1px #00000014,
+ 0px 2px 2px #0000000a,
+ 0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-content-card-icon {
+ width: 48px;
+ height: 48px;
+ border-radius: var(--radius-md);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background: linear-gradient(135deg, #7c3aed15, #ec489920);
+ color: #7c3aed;
+ box-shadow: inset 0 0 0 1px #7c3aed25;
+ margin-bottom: var(--spacing-md);
+ }
+
+ .mp3-content-card-title {
+ font-size: var(--text-display-sm);
+ font-weight: 600;
+ letter-spacing: -0.6px;
+ color: var(--color-ink);
+ margin: 0 0 var(--spacing-md) 0;
+ }
+
+ .mp3-content-card-list {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-sm);
+ }
+
+ .mp3-content-card-list li {
+ font-size: var(--text-body-sm);
+ color: var(--color-body);
+ padding-left: 20px;
+ position: relative;
+ line-height: 1.5;
+ }
+
+ .mp3-content-card-list li::before {
+ content: '';
+ position: absolute;
+ left: 0;
+ top: 7px;
+ width: 6px;
+ height: 6px;
+ border-radius: 50%;
+ background: linear-gradient(135deg, #7c3aed, #ec4899);
+ }
+
+ @media (max-width: 960px) {
+ .mp3-content-grid {
+ grid-template-columns: 1fr;
+ }
+
+ .mp3-content-card-wrap {
+ position: static;
+ }
+ }
+
+ @media (max-width: 600px) {
+ .mp3-content-section {
+ padding: var(--spacing-3xl) var(--spacing-md);
+ }
+ }
+
+ /* ─── Steps Section ─── */
+ .mp3-steps-section {
+ background-color: var(--color-canvas);
+ padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-steps-inner {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-4xl);
+ }
+
+ .mp3-steps-header {
+ text-align: center;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-md);
+ }
+
+ .mp3-steps-grid {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: var(--spacing-lg);
+ width: 100%;
+ }
+
+ .mp3-step-card {
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-sm);
+ padding: var(--spacing-xl);
+ border-radius: var(--radius-lg);
+ border: 1px solid var(--color-hairline);
+ background-color: var(--color-canvas);
+ transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .mp3-step-card:hover {
+ transform: translateY(-4px);
+ box-shadow:
+ inset 0 0 0 1px #00000014,
+ 0px 2px 2px #0000000a,
+ 0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-step-num {
+ color: var(--color-mute);
+ font-size: 11px;
+ letter-spacing: 0.1em;
+ }
+
+ .mp3-step-icon {
+ width: 48px;
+ height: 48px;
+ border-radius: var(--radius-md);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background: linear-gradient(135deg, #7c3aed10, #ec489918);
+ color: #7c3aed;
+ box-shadow: inset 0 0 0 1px #7c3aed20;
+ }
+
+ .mp3-step-title {
+ font-size: var(--text-display-sm);
+ font-weight: 600;
+ letter-spacing: -0.6px;
+ color: var(--color-ink);
+ margin: 0;
+ }
+
+ .mp3-step-body {
+ font-size: var(--text-body-sm);
+ color: var(--color-body);
+ line-height: 1.65;
+ margin: 0;
+ }
+
+ @media (max-width: 960px) {
+ .mp3-steps-grid {
+ grid-template-columns: 1fr;
+ max-width: 480px;
+ }
+ }
+
+ @media (max-width: 600px) {
+ .mp3-steps-section {
+ padding: var(--spacing-3xl) var(--spacing-md);
+ }
+ }
+
+ /* ─── Features Section ─── */
+ .mp3-features-section {
+ background-color: var(--color-canvas-soft);
+ padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-features-inner {
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-4xl);
+ }
+
+ .mp3-features-header {
+ text-align: center;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-md);
+ }
+
+ .mp3-features-grid {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: var(--spacing-md);
+ }
+
+ .mp3-feature-card {
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-sm);
+ padding: var(--spacing-lg);
+ border-radius: var(--radius-md);
+ background-color: var(--color-canvas);
+ box-shadow:
+ inset 0 0 0 1px #0000000a,
+ 0px 1px 1px #00000005,
+ 0px 4px 8px #0000000a;
+ transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .mp3-feature-card:hover {
+ transform: translateY(-3px);
+ box-shadow:
+ inset 0 0 0 1px #00000014,
+ 0px 2px 2px #0000000a,
+ 0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-feature-icon {
+ width: 44px;
+ height: 44px;
+ border-radius: var(--radius-md);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ }
+
+ .feat-accent-develop {
+ background: linear-gradient(135deg, #7c3aed15, #ec489920);
+ color: #7c3aed;
+ box-shadow: inset 0 0 0 1px #7c3aed25;
+ }
+
+ .feat-accent-preview {
+ background: linear-gradient(135deg, #a855f715, #f472b620);
+ color: #a855f7;
+ box-shadow: inset 0 0 0 1px #a855f725;
+ }
+
+ .feat-accent-ship {
+ background: linear-gradient(135deg, #ec489915, #fb718520);
+ color: #ec4899;
+ box-shadow: inset 0 0 0 1px #ec489925;
+ }
+
+ .mp3-feature-title {
+ font-size: var(--text-body-md-strong);
+ font-weight: 600;
+ color: var(--color-ink);
+ margin: 0;
+ }
+
+ .mp3-feature-body {
+ font-size: var(--text-body-sm);
+ color: var(--color-body);
+ margin: 0;
+ line-height: 1.6;
+ }
+
+ @media (max-width: 960px) {
+ .mp3-features-grid {
+ grid-template-columns: repeat(2, 1fr);
+ }
+ }
+
+ @media (max-width: 600px) {
+ .mp3-features-section {
+ padding: var(--spacing-3xl) var(--spacing-md);
+ }
+
+ .mp3-features-grid {
+ grid-template-columns: 1fr;
+ }
+ }
+
+ /* ─── Use Cases Section ─── */
+ .mp3-usecases-section {
+ background-color: var(--color-canvas);
+ padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-usecases-inner {
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-4xl);
+ }
+
+ .mp3-usecases-header {
+ text-align: center;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-md);
+ }
+
+ .mp3-usecases-grid {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: var(--spacing-md);
+ }
+
+ .mp3-usecase-card {
+ padding: var(--spacing-xl);
+ border-radius: var(--radius-lg);
+ border: 1px solid var(--color-hairline);
+ background-color: var(--color-canvas);
+ transition: border-color 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .mp3-usecase-card:hover {
+ border-color: var(--color-hairline-strong);
+ box-shadow:
+ inset 0 0 0 1px #00000008,
+ 0px 1px 1px #00000005,
+ 0px 4px 8px #0000000a;
+ }
+
+ .mp3-usecase-title {
+ font-size: var(--text-display-sm);
+ font-weight: 600;
+ letter-spacing: -0.6px;
+ color: var(--color-ink);
+ margin: 0 0 var(--spacing-sm) 0;
+ }
+
+ .mp3-usecase-body {
+ font-size: var(--text-body-sm);
+ color: var(--color-body);
+ line-height: 1.65;
+ margin: 0;
+ }
+
+ @media (max-width: 600px) {
+ .mp3-usecases-section {
+ padding: var(--spacing-3xl) var(--spacing-md);
+ }
+
+ .mp3-usecases-grid {
+ grid-template-columns: 1fr;
+ }
+ }
+
+ /* ─── FAQ Section ─── */
+ .mp3-faq-section {
+ background-color: var(--color-canvas-soft);
+ padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-faq-inner {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-4xl);
+ max-width: 760px;
+ margin-inline: auto;
+ }
+
+ .mp3-faq-header {
+ text-align: center;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-md);
+ width: 100%;
+ }
+
+ .mp3-faq-list {
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+ border: 1px solid var(--color-hairline);
+ border-radius: var(--radius-lg);
+ overflow: hidden;
+ background-color: var(--color-canvas);
+ box-shadow:
+ inset 0 0 0 1px #00000008,
+ 0px 1px 1px #00000005,
+ 0px 4px 8px #0000000a;
+ }
+
+ .mp3-faq-item {
+ border-bottom: 1px solid var(--color-hairline);
+ }
+
+ .mp3-faq-item:last-child {
+ border-bottom: none;
+ }
+
+ .mp3-faq-trigger {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: var(--spacing-md);
+ width: 100%;
+ padding: var(--spacing-lg);
+ cursor: pointer;
+ background: none;
+ border: none;
+ text-align: left;
+ transition: background-color 0.15s ease;
+ }
+
+ .mp3-faq-trigger:hover {
+ background-color: var(--color-canvas-soft);
+ }
+
+ .mp3-faq-trigger[aria-expanded="true"] {
+ background-color: var(--color-canvas-soft);
+ }
+
+ .mp3-faq-q {
+ font-size: var(--text-body-md);
+ font-weight: 500;
+ color: var(--color-ink);
+ line-height: 1.4;
+ letter-spacing: -0.3px;
+ flex: 1;
+ }
+
+ .mp3-faq-chevron {
+ flex-shrink: 0;
+ color: var(--color-mute);
+ display: flex;
+ align-items: center;
+ transition: transform 0.25s ease;
+ }
+
+ .mp3-faq-trigger[aria-expanded="true"] .mp3-faq-chevron {
+ transform: rotate(180deg);
+ }
+
+ .mp3-faq-panel {
+ padding: 0 var(--spacing-lg) var(--spacing-lg);
+ animation: fadeInUp 0.25s ease forwards;
+ }
+
+ .mp3-faq-a {
+ font-size: var(--text-body-sm);
+ color: var(--color-body);
+ line-height: 1.65;
+ margin: 0;
+ letter-spacing: -0.1px;
+ }
+
+ @media (max-width: 600px) {
+ .mp3-faq-section {
+ padding: var(--spacing-3xl) var(--spacing-md);
+ }
+
+ .mp3-faq-trigger {
+ padding: var(--spacing-md);
+ min-height: 48px;
+ }
+
+ .mp3-faq-panel {
+ padding: 0 var(--spacing-md) var(--spacing-md);
+ }
+
+ .mp3-faq-q {
+ font-size: var(--text-body-sm);
+ }
+ }
+
+ /* ─── CTA Band ─── */
+ .mp3-cta-band {
+ background: linear-gradient(135deg, #7c3aed, #ec4899);
+ color: white;
+ padding: var(--spacing-5xl) var(--spacing-lg);
+ text-align: center;
+ }
+
+ .mp3-cta-inner {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-lg);
+ }
+
+ .mp3-cta-headline {
+ font-size: var(--text-display-lg);
+ font-weight: 600;
+ letter-spacing: -1.28px;
+ color: white;
+ margin: 0;
+ }
+
+ .mp3-cta-sub {
+ font-size: var(--text-body-lg);
+ color: rgba(255,255,255,0.8);
+ margin: 0;
+ max-width: 480px;
+ }
+
+ .mp3-cta-btn {
+ gap: 8px;
+ background-color: white !important;
+ color: #7c3aed !important;
+ }
+
+ .mp3-cta-btn:hover {
+ background-color: #f5f3ff !important;
+ transform: translateY(-2px);
+ }
+
+ @media (max-width: 600px) {
+ .mp3-cta-band {
+ padding: var(--spacing-3xl) var(--spacing-md);
+ }
+ }
+
+ /* ─── Shared Section Styles ─── */
+ .section-eyebrow {
+ color: var(--color-mute);
+ }
+
+ .section-headline {
+ font-size: var(--text-display-lg);
+ font-weight: 600;
+ line-height: 1.25;
+ letter-spacing: -1.28px;
+ color: var(--color-ink);
+ margin: 0;
+ max-width: 540px;
+ }
+
+ .section-sub {
+ color: var(--color-body);
+ margin: 0;
+ max-width: 480px;
+ }
+
+ /* ─── Internal Links Section ─── */
+ .mp3-internal-section {
+ background-color: var(--color-canvas-soft);
+ padding: var(--spacing-5xl) var(--spacing-lg);
+ border-top: 1px solid var(--color-hairline);
+ }
+
+ .mp3-internal-inner {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--spacing-3xl);
+ }
+
+ .mp3-internal-headline {
+ text-align: center;
+ max-width: 400px;
+ }
+
+ .mp3-internal-grid {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: var(--spacing-md);
+ width: 100%;
+ }
+
+ .mp3-internal-card {
+ display: flex;
+ flex-direction: column;
+ gap: var(--spacing-sm);
+ padding: var(--spacing-lg);
+ border-radius: var(--radius-lg);
+ border: 1px solid var(--color-hairline);
+ background-color: var(--color-canvas);
+ text-decoration: none;
+ transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+ position: relative;
+ }
+
+ .mp3-internal-card:hover {
+ border-color: var(--color-hairline-strong);
+ transform: translateY(-3px);
+ box-shadow:
+ inset 0 0 0 1px #00000008,
+ 0px 2px 2px #0000000a,
+ 0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-internal-icon {
+ width: 40px;
+ height: 40px;
+ border-radius: var(--radius-md);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background: linear-gradient(135deg, #7c3aed12, #ec489918);
+ color: #7c3aed;
+ box-shadow: inset 0 0 0 1px #7c3aed20;
+ }
+
+ .mp3-internal-title {
+ font-size: var(--text-body-md-strong);
+ font-weight: 600;
+ color: var(--color-ink);
+ letter-spacing: -0.3px;
+ }
+
+ .mp3-internal-desc {
+ font-size: var(--text-body-sm);
+ color: var(--color-body);
+ line-height: 1.5;
+ margin: 0;
+ }
+
+ .mp3-internal-arrow {
+ position: absolute;
+ top: var(--spacing-lg);
+ right: var(--spacing-lg);
+ color: var(--color-mute);
+ font-size: 18px;
+ transition: color 0.15s ease, transform 0.25s ease;
+ }
+
+ .mp3-internal-card:hover .mp3-internal-arrow {
+ color: var(--color-ink);
+ transform: translateX(4px);
+ }
+
+ @media (max-width: 960px) {
+ .mp3-internal-grid {
+ grid-template-columns: 1fr;
+ max-width: 480px;
+ }
+ }
+
+ @media (max-width: 600px) {
+ .mp3-internal-section {
+ padding: var(--spacing-3xl) var(--spacing-md);
+ }
+ }
+
 </style>
+
+<script>
+ const mp3Triggers = document.querySelectorAll('.mp3-faq-trigger');
+
+ mp3Triggers.forEach((btn) => {
+ btn.addEventListener('click', () => {
+ const isOpen = btn.getAttribute('aria-expanded') === 'true';
+ const panelId = btn.getAttribute('aria-controls')!;
+ const panel = document.getElementById(panelId);
+
+ mp3Triggers.forEach((otherBtn) => {
+ if (otherBtn !== btn) {
+ otherBtn.setAttribute('aria-expanded', 'false');
+ const otherId = otherBtn.getAttribute('aria-controls')!;
+ document.getElementById(otherId)?.setAttribute('hidden', '');
+ }
+ });
+
+ if (isOpen) {
+ btn.setAttribute('aria-expanded', 'false');
+ panel?.setAttribute('hidden', '');
+ } else {
+ btn.setAttribute('aria-expanded', 'true');
+ panel?.removeAttribute('hidden');
+ }
+ });
+ });
+</script>

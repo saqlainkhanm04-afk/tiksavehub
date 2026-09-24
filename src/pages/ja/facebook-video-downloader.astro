@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Video Downloader — SEO-optimized landing page (Japanese)
 // URL: /ja/facebook-video-downloader
 export const prerender = true;
@@ -7,6 +7,8 @@ import Layout from '../../layouts/Layout.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'ja' as Lang);
 
 const faqData = [
   {
@@ -158,7 +160,7 @@ const combinedJsonLd = JSON.stringify({
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
         <ol class="breadcrumb-list">
           <li>
-            <a href="/ja"><span>ホーム</span></a>
+            <a href={lp('/ja')}><span>ホーム</span></a>
                   </li>
           <li aria-current="page">
             <span>Facebookビデオダウンローダー</span>
@@ -275,7 +277,7 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Facebook音声をMP3として抽出</h3>
             <p>
-              動画の保存に加えて、TikSaveHubの<a href="/facebook-to-mp3">Facebook MP3コンバーター</a>は、任意の動画またはReelからオーディオトラックを抽出し、高品質なMP3に変換します — Reelサウンドトラック、ポッドキャストクリップ、ライブストリームセグメントのオフラインリスニングに最適です。
+              動画の保存に加えて、TikSaveHubの<a href={lp('/facebook-to-mp3')}>Facebook MP3コンバーター</a>は、任意の動画またはReelからオーディオトラックを抽出し、高品質なMP3に変換します — Reelサウンドトラック、ポッドキャストクリップ、ライブストリームセグメントのオフラインリスニングに最適です。
             </p>
 
             <h3 class="text-highlight">すべてのデバイスで動作 — Android、iPhone、デスクトップ</h3>
@@ -285,7 +287,7 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">どのような品質と形式が得られますか？</h3>
             <p>
-              すべてのダウンロードは利用可能な最高解像度のMP4です — クリエイターがHDでアップロードした場合はHD最大1080p、ストレージが限られている場合はSDオプションも用意されています。TikSaveHubはウォーターマークを追加せず、再エンコーディングも行わず、オリジナルアップロードの品質も低下させません。音声だけ必要な場合は<a href="/facebook-to-mp3">Facebook MP3コンバーター</a>をご利用ください。
+              すべてのダウンロードは利用可能な最高解像度のMP4です — クリエイターがHDでアップロードした場合はHD最大1080p、ストレージが限られている場合はSDオプションも用意されています。TikSaveHubはウォーターマークを追加せず、再エンコーディングも行わず、オリジナルアップロードの品質も低下させません。音声だけ必要な場合は<a href={lp('/facebook-to-mp3')}>Facebook MP3コンバーター</a>をご利用ください。
             </p>
 
             <h3 class="text-highlight">iPhone、Android、デスクトップでFacebook動画をダウンロード</h3>
@@ -309,7 +311,7 @@ const combinedJsonLd = JSON.stringify({
             </p>
 
             <p>
-              他のツールをお探しですか？<a href="/tiktok-video-downloader-without-watermark">TikTok動画をウォーターマークなしでダウンロード</a>したり、<a href="/instagram-reels-downloader-without-watermark">Instagram Reel</a>も同じ方法で保存できます。
+              他のツールをお探しですか？<a href={lp('/tiktok-video-downloader-without-watermark')}>TikTok動画をウォーターマークなしでダウンロード</a>したり、<a href={lp('/instagram-reels-downloader-without-watermark')}>Instagram Reel</a>も同じ方法で保存できます。
             </p>
 
             <p>
@@ -403,7 +405,7 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-step-title">HDまたはSDをダウンロード</h3>
           <p class="dl-step-body">
-            「HD動画をダウンロード」または「SD動画をダウンロード」をタップしてMP4をデバイスに保存します。ファイルは即座に保存されます — アプリやアカウントは不要。音声だけ必要な場合は<a href="/facebook-to-mp3">Facebook MP3コンバーター</a>をご利用ください。
+            「HD動画をダウンロード」または「SD動画をダウンロード」をタップしてMP4をデバイスに保存します。ファイルは即座に保存されます — アプリやアカウントは不要。音声だけ必要な場合は<a href={lp('/facebook-to-mp3')}>Facebook MP3コンバーター</a>をご利用ください。
           </p>
         </article>
       </div>
@@ -589,7 +591,7 @@ const combinedJsonLd = JSON.stringify({
         TikSaveHubを探す。
       </h2>
       <div class="dl-internal-grid">
-        <a href="/tiktok-video-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/tiktok-video-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
           </span>
@@ -597,7 +599,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">TikTok動画をウォーターマークなしでHDでダウンロード。</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/tiktok-to-mp3" class="dl-internal-card">
+        <a href={lp('/tiktok-to-mp3')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           </span>
@@ -605,7 +607,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">TikTok動画をMP3音声に即座に変換。</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/instagram-video-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/instagram-video-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           </span>
@@ -613,7 +615,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Instagram動画をウォーターマークなしでHDで保存。</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/instagram-reels-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           </span>
@@ -621,7 +623,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Instagram Reelをウォーターマークなしでダウンロード。</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/facebook-photo-downloader" class="dl-internal-card">
+        <a href={lp('/facebook-photo-downloader')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           </span>

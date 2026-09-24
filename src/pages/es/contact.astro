@@ -2,7 +2,7 @@
 export const prerender = true;
 import Layout from '../../layouts/Layout.astro';
 
-const contactJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [ { '@type': 'ContactPage', name: 'Contáctenos — TikSaveHub', description: 'Ponte en contacto con TikSaveHub para soporte, consultas o comentarios.', url: 'https://tiksavehub.com/contact' }, { '@type': 'Organization', name: 'TikSaveHub', url: 'https://tiksavehub.com', logo: 'https://tiksavehub.com/logo.png', contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: 'support@tiksavehub.com', availableLanguage: 'Spanish' } } ] });
+const contactJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [ { '@type': 'ContactPage', name: 'Contáctenos — TikSaveHub', description: 'Ponte en contacto con TikSaveHub para soporte, consultas o comentarios.', url: 'https://tiksavehub.com/contact' }, { '@type': 'Organization', name: 'TikSaveHub', url: 'https://tiksavehub.com', logo: 'https://tiksavehub.com/web-app-manifest-512x512.png', contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: 'support@tiksavehub.com', availableLanguage: 'Spanish' } } ] });
 ---
 
 <Layout

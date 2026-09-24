@@ -1,6 +1,6 @@
----
-// Instagram Reels Downloader — SEO-optimized landing page (Korean)
-// URL: /instagram-reels-downloader-without-watermark
+﻿---
+// Instagram Reels Downloader -- SEO-optimized landing page (Korean)
+// URL: /ko/instagram-reels-downloader-without-watermark
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
@@ -9,106 +9,1837 @@ import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
 
 const faqData = [
-  { id: 'reels-how', q: 'Instagram ??? ??????? ??? ?? ????', a: 'Instagram ?? ??? TikSaveHub? ???? ????? ?????.' },
-  { id: 'reels-watermark', q: '???? ?? ????? ? ????', a: '?, TikSaveHub? ???? ?? Instagram ?? ????? ?????.' },
-  { id: 'reels-free', q: 'Instagram ?? ????? ??????', a: '?, TikSaveHub? 100% ?????.' },
-  { id: 'reels-private', q: '??? ??? ????? ? ????', a: '???, ??? ??? ?????.' },
-];
+ {
+  id: 'reels-how',
+  q: 'Instagram Reels를 워터마크 없이 어떻게 다운로드하나요?',
+  a: 'Instagram에서 Reel 링크를 복사하세요. 공유 버튼을 누르고 링크 복사를 선택하면 됩니다. 그 다음 위 입력창에 붙여넣고 다운로드 버튼을 누르면 끝이에요. TikSaveHub가 영상을 추출해서 깔끔한 MP4 파일로 만들어줍니다. 워터마크도 없고, 오버레이도 없어요. 보통 2~3초면 끝납니다.',
+ },
+ {
+  id: 'reels-hd',
+  q: 'Instagram Reels를 HD 1080p 화질로 저장할 수 있나요?',
+  a: '네, 가능합니다. TikSaveHub는 Instagram이 해당 Reel에 제공하는 최고 해상도를 그대로 가져옵니다. 1080x1920까지 가능하구요. 재인코딩도 없고, 압축도 없어요. 다운로드한 파일은 크리에이터가 업로드한 것과 완전히 동일합니다.\n\n한 가지 알아두셔야 할 점은, TikSaveHub가 Instagram이 이미 압축한 화질을 더 좋게 만들 수는 없다는 거예요. 크리에이터가 720p로 업로드했으면 다운로드도 720p입니다. 하지만 그 이하로는 절대 떨어지지 않아요. 가져오는 과정은 무손실이에요. Instagram에 있는 그대로 저장됩니다. 대부분의 다운로더는 낮은 비트레이트로 재인코딩하면서 "HD"라고 하는데, 이건 그렇지 않아요.',
+ },
+ {
+  id: 'reels-iphone',
+  q: 'iPhone과 Android에서 TikSaveHub를 사용할 수 있나요?',
+  a: '모든 기기에서 작동합니다. iPhone(Safari, iOS 13 이상), Android(Chrome, Firefox 등 어떤 브라우저든), Windows, Mac, Linux 전부요. 설치할 앱도 없고, 브라우저 확장 프로그램도 필요 없어요. 도구가 완전히 브라우저에서 동작합니다.\n\niPhone 사용자라면 다운로드된 MP4가 Safari의 다운로드 관리자에 저장됩니다. 아래로 당겨서 확인한 뒤 돋보기 아이콘을 눌러 파일 앱에서 열면 돼요. Android 사용자라면 다운로드 폴더에 바로 저장되고, 대부분의 갤러리 앱이 자동으로 인식합니다.',
+ },
+ {
+  id: 'reels-formats',
+  q: 'TikSaveHub가 지원하는 Instagram Reel 링크 형식은 무엇인가요?',
+  a: '전부 지원합니다. instagram.com/reel/..., instagram.com/reels/..., instagram.com/share/..., 그리고 Instagram 앱의 링크 복사 버튼에서 나오는 단축 링크까지요. 문자 메시지에서든, 브라우저 주소창에서든, SNS 게시물에서든 URL을 가져오면 작동합니다.',
+ },
+ {
+  id: 'reels-free',
+  q: 'TikSaveHub의 Reels 다운로드는 정말 무료인가요?',
+  a: '완전히 무료입니다. 회원가입도 없고, 이메일 수집도 없으며, 숨겨진 유료 플랜도 없어요. 링크를 붙여넣고 Reel을 다운로드하면 끝이에요.\n\n대부분의 "무료" Instagram 다운로더는 5~6번 다운로드하면 유료 플랜을 밀기 시작합니다. TikSaveHub는 그렇지 않습니다. 무제한 다운로드, 비용 제로. 처리가 서버에서 일어나기 때문에 브라우저 확장 프로그램 설치도 없고, 앱 다운로드도 필요 없어요.',
+ },
+ {
+  id: 'reels-account',
+  q: 'Reels를 다운로드하려면 Instagram 계정이 필요한가요?',
+  a: '아니요, Instagram 계정은 필요 없습니다. Reel이 공개적으로 접근 가능하기만 하면 TikSaveHub가 가져올 수 있어요. 공유 버튼에서 링크 복사를 하고 도구에 붙여넣으면 다운로드가 시작됩니다. 비공개 또는 제한된 Reels는 작동하지 않지만, TikSaveHub는 그 사실을 솔직하게 알려줍니다. 어려운 에러 메시지 대신에요.',
+ },
+ {
+  id: 'reels-legal',
+  q: 'Instagram Reels를 다운로드하는 것이 합법적인가요?',
+  a: '개인 오프라인 시청용으로 Reels를 저장하는 것은 널리 허용되는 회색 영역에 속합니다. Instagram의 서비스 약관은 기술적으로 앱 외부 다운로드를 금지하고 있지만, 그 조항은 자동화된 스크래핑과 대량 재배포를 대상으로 한 것이지, 한 사람의 Reel을 저장하는 것을 대상으로 한 것은 아니에요.\n\n상업적 사용은 다릅니다. 다운로드한 Reel을 광고, YouTube 영상, 팟캐스트 또는 수익화된 콘텐츠에 사용하려면 원본 크리에이터의 명시적 허가가 필요합니다. 저작권은 비디오 자체에 적용되며, 오디오에만 적용되는 것은 아니에요. 크리에이터에게 크레딧을 주세요. 허가 없이 그들의 작업으로 수익을 내지 마세요.',
+ },
+ {
+  id: 'reels-watermark',
+  q: 'TikSaveHub가 Instagram 워터마크를 어떻게 제거하나요?',
+  a: 'TikSaveHub는 Instagram의 CDN에서 원본 비디오 파일을 가져옵니다. 오버레이가 없는 깔끔한 소스죠. Instagram이 재생 중에 추가하는 사용자 이름 태그는 클라이언트 측 효과일 뿐, 파일에 내장되어 있지 않아요. 그래서 다운로드한 MP4에는 기본적으로 워터마크가 없습니다.',
+ },
+ {
+  id: 'reels-private',
+  q: '비공개 Instagram 계정의 Reels를 다운로드할 수 있나요?',
+  a: '아니요, 불가능합니다. TikSaveHub는 공개 Reels에서만 작동합니다. 비공개 또는 친구 공개 콘텐츠는 Instagram의 공개 API를 통해서는 접근할 수 없어요. 합법적인 다운로더가 이 제한을 우회할 수 있는 방법은 없습니다. 이것은 기술적 벽이지, 정책적 선택이 아니에요.',
+ },
+ {
+  id: 'reels-format',
+  q: '다운로드한 Reels의 파일 형식은 무엇인가요?',
+  a: 'MP4입니다. 그게 전부예요. 모든 기기, 모든 비디오 플레이어, 모든 운영체제에서 작동합니다. 파일 확장자는 .mp4입니다. 변환할 필요도 없어요. Instagram이 Reels를 MP4로 제공하고, TikSaveHub가 그대로 전달합니다.',
+ },
+ {
+  id: 'reels-limits',
+  q: '다운로드에 제한이 있나요?',
+  a: '일일 제한도 없고, 다운로드 할당량도 없으며, 프리미엄 상한도 없어요. 필요한 만큼 Instagram Reels를 다운로드하세요. 매일 몇 번을 하든_processing은 항상 2~3초 정도 걸립니다.',
+ },
+ {
+  id: 'reels-why',
+  q: '다른 Reels 다운로더 대신 TikSaveHub를 사용하는 이유는 무엇인가요?',
+     a: '솔직히 말하면, 대부분의 Instagram Reels 다운로더는 쓰기 답답합니다. iGram은 팝업 광고 밑에 다운로드를 숨기고, 때로는 조용히 실패하기도 해요. ReelsDownloader는 화질을 720p로 제한하고 비디오를 재인코딩합니다. SaveFrom은 먼저 계정 생성을 요구하죠. 이것들은 루머가 아닙니다. 포럼과 리뷰 사이트에서 사용자들이 일관되게 보고하는 패턴이에요.\n\nTikSaveHub는 접근이 다릅니다. 링크를 붙여넣고, Reel을 받으면 끝. 광고가 흐름을 방해하지 않고, 계정 벽도 없으며, 화질 제한도 없어요. 다운로드가 서버에서 돌아가기 때문에 브라우저 기반 도구보다 빠르고, 출력은 모든 곳에서 재생되는 깔끔한 MP4입니다. 복잡한 게 아니에요. 다운로더가 무엇을 해야 하는지 솔직하게 말해주는 것뿐이에요.',
+ },
+ ];
 
 const faqJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') },
-  })),
+ '@context': 'https://schema.org',
+ '@type': 'FAQPage',
+ mainEntity: faqData.map((faq) => ({
+  '@type': 'Question',
+  name: faq.q,
+  acceptedAnswer: {
+   '@type': 'Answer',
+   text: faq.a.replace(/<[^>]*>/g, ''),
+  },
+ })),
+});
+
+const howToJsonLd = JSON.stringify({
+ '@context': 'https://schema.org',
+ '@type': 'HowTo',
+ name: 'Instagram Reels를 워터마크 없이 다운로드하는 방법',
+ description: 'TikSaveHub를 사용하여 Instagram Reels를 HD 화질로 워터마크 없이 다운로드하는 단계별 가이드입니다.',
+ totalTime: 'PT2M',
+ step: [
+  {
+   '@type': 'HowToStep',
+   name: 'Instagram Reel 링크 복사',
+   text: 'Instagram 앱을 열고 저장할 Reel을 찾은 뒤, 공유 아이콘을 누르고 링크 복사를 선택하세요.',
+   position: 1,
+  },
+  {
+   '@type': 'HowToStep',
+   name: 'TikSaveHub에 링크 붙여넣기',
+   text: 'TikSaveHub.com에 접속한 뒤 복사한 Reel 링크를 다운로드 입력창에 붙여넣으세요.',
+   position: 2,
+  },
+  {
+   '@type': 'HowToStep',
+   name: 'HD 영상 다운로드',
+   text: '다운로드 버튼을 누르고 깔끔한 MP4 파일을 기기에 저장하세요.',
+   position: 3,
+  },
+ ],
+ tool: {
+  '@type': 'HowToTool',
+  name: 'TikSaveHub',
+ },
+});
+
+const combinedJsonLd = JSON.stringify({
+ '@context': 'https://schema.org',
+ '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
 });
 ---
 
 <Layout
-  title="인스타그램 릴스 다운로더 워터마크 없이 | TikSaveHub"
-  description="인스타그램 릴스를 워터마크 없이 HD 화질로 무료 다운로드. TikSaveHub에서 인스타 릴스를 MP4로 저장. 모바일과 PC 모두 지원, 회원가입 없이 즉시 사용."
-  keywords="instagram ?? ????, instagram reels downloader, reels ????, reels ???? ??"
-  canonical="/instagram-reels-downloader-without-watermark"
-  ogImage="/og-downloader.png"
-  ogType="website"
-  platform="instagram"
-  jsonLd={faqJsonLd}
-  appName="TikSaveHub — Instagram ?? ????"
-  lang="ko"
+ title="Instagram Reels 다운로더 워터마크 없이 무료 HD | TikSaveHub"
+ description="Instagram Reels를 워터마크 없이 HD 1080p로 다운로드하세요. 무료, 빠르고, 회원가입 없이. iPhone, Android, PC 모두 지원."
+ keywords="instagram reels 다운로더, instagram reels 다운로드, reels 다운로드 워터마크 없이, instagram reels 영상 다운로드, reels 다운로더 HD"
+ canonical="/ko/instagram-reels-downloader-without-watermark"
+ ogImage="/og-downloader.png"
+ ogType="website"
+ platform="instagram"
+ jsonLd={combinedJsonLd}
+ lang="ko"
+ appName="TikSaveHub -- Instagram Reels 다운로더"
 >
-  <section class="dl-hero" aria-labelledby="dl-hero-headline">
-    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
-    <div class="dl-hero-inner container-page">
-      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> ?? — ???? ?? — HD</span></div>
-      <h1 id="dl-hero-headline" class="dl-hero-headline">Instagram ?? ????</h1>
-      <p class="dl-hero-sub text-body-lg">Instagram ??? ???? ?? HD ??? ????. ??? ???.</p>
-      <div class="dl-hero-form" id="download-tool"><InstagramDownloadForm mode="reels" /></div>
-      <div class="dl-hero-trust">
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% ??</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> ???? ??</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> HD ??</span>
-      </div>
+ <!-- JSON-LD Structured Data -->
+ <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   { "@type": "ListItem", "position": 1, "name": "홈", "item": "https://tiksavehub.com/ko" },
+   { "@type": "ListItem", "position": 2, "name": "Instagram Reels 다운로더", "item": "https://tiksavehub.com/ko/instagram-reels-downloader-without-watermark" }
+  ]
+ })} />
+
+ <!-- Hero Section -->
+ <section class="dl-hero" aria-labelledby="dl-hero-headline">
+  <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+  <div class="dl-hero-inner container-page">
+   <!-- Breadcrumb -->
+   <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+    <ol class="breadcrumb-list">
+     <li>
+      <a href="/ko"><span>홈</span></a>
+     </li>
+     <li aria-current="page">
+      <span>Instagram Reels 다운로더</span>
+     </li>
+    </ol>
+   </nav>
+
+   <div class="dl-badge-row">
+    <span class="badge-pill dl-badge">
+     <span class="badge-dot" aria-hidden="true"></span>
+     무료 · 워터마크 없음 · HD Reels
+    </span>
+   </div>
+
+   <h1 id="dl-hero-headline" class="dl-hero-headline">
+    Instagram Reels 다운로더 워터마크 없이 HD Reels를 몇 초 만에 저장하세요
+   </h1>
+
+   <p class="dl-hero-subline headline-gradient">
+    어떤 Instagram Reel이든 HD로 저장하세요. 워터마크 없이. 회원가입도 필요 없습니다.
+   </p>
+
+   <p class="dl-hero-sub text-body-lg">
+    Instagram Reels를 기기에 바로 다운로드하세요. 깔끔한 MP4 파일, 최대 1080p, 워터마크 오버레이 없이요. Reel 링크만 붙여넣으면 몇 초 만에 저장됩니다.
+   </p>
+
+   <div class="dl-hero-form-wrap">
+    <InstagramDownloadForm type="reels" />
+   </div>
+
+   <div class="dl-hero-trust">
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     100% 무료
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     워터마크 없음
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     HD 화질
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     모바일에서도 작동
+    </span>
+   </div>
+
+   <div class="dl-hero-share">
+    <SocialShare
+     url="/ko/instagram-reels-downloader-without-watermark"
+     title="Instagram Reels 다운로더 워터마크 없이 | TikSaveHub"
+     description="Instagram Reels를 워터마크 없이 HD로 다운로드하세요. 무료, 빠르고, 회원가입 없이."
+     image="/og-downloader.png"
+    />
+   </div>
+  </div>
+ </section>
+
+ <!-- Stats -->
+ <StatsSection platform="Instagram" />
+
+ <!-- Why This Tool Exists -->
+ <section class="seo-content-section" aria-labelledby="seo-about-headline">
+  <div class="seo-content-inner container-page">
+   <div class="seo-content-grid">
+    <div class="seo-content-main">
+     <span class="section-eyebrow text-caption-mono">도구 소개</span>
+     <h2 id="seo-about-headline" class="section-headline">
+      왜 이 도구가 생겼는지.
+     </h2>
+
+     <div class="seo-article">
+      <p>
+       Instagram은 앱에서 직접 Reels를 저장하는 것을 허용하지 않습니다. 내 드래프트용 "저장" 옵션은 있지만, 다른 사람의 Reel을 다운로드하는 건? 그건 안 됩니다. 앱은 공유 시트를 보여줄 뿐, 다운로드 버튼은 없어요. 화면 녹화 우회법은 크리에이터의 사용자 이름이 영상 위에 떠다니는 워터마크 파일을 만들어낼 뿐이에요.
+      </p>
+
+      <p>
+       TikSaveHub는 접근이 다릅니다. Reel 링크를 붙여넣으면 깔끔한 MP4 파일을 받습니다. 그게 전부 상호작용이에요. 도구가 Instagram 서버에서 원본 비디오 파일을 가져옵니다. 크리에이터가 업로드한 것과 똑같은 파일이에요. 어떤 워터마크 오버레이도 없이요. 2~3초면 끝납니다. 설치할 앱도, 만들 계정도, 가져오기 과정에서의 화질 저하도 없어요.
+      </p>
+
+      <p>
+       Reels 화질에 대해 솔직하게 말씀드릴게요. Instagram은 업로드 시 비디오를 압축하고, 최대 해상도는 크리에이터의 기기가 어떤 걸 캡처했느냐에 달려 있습니다. TikSaveHub가 720p Reel을 마법처럼 1080p로 올릴 수는 없어요. 그건 아무도 못 합니다. 하지만 가져오기 과정은 무손실입니다. Instagram이 가진 것, 즉 같은 비트레이트, 같은 해상도, 같은 프레임 레이트 그대로 저장됩니다. 결과물은 Instagram 앱에서 재생하는 것과 완전히 동일해요. 대부분의 다운로더는 낮은 비트레이트로 재인코딩하면서 "HD"라고 부릅니다. 이건 그렇지 않습니다.
+      </p>
+
+      <p>
+       이 도구는 브라우저가 있는 모든 기기에서 작동합니다. iPhone, Android, Windows, Mac, Linux요. 설치할 앱도 없고, 브라우저 확장 프로그램도 필요 없어요. 다운로드가 서버에서 돌아가기 때문에 기기의 처리 능력은 상관없습니다. 5년 된 오래된 폰도 최신 노트북과 같은 속도로 동작해요.
+      </p>
+
+      <p>
+       개인정보 보호도 중요하잖아요. TikSaveHub는 이메일 주소를 요구하지 않고, 다운로드 기록을 저장하지 않으며, 브라우징 행동을 추적하지 않습니다. 기기에 남는 것은 최종 MP4 파일뿐이에요. 몇 번 다운로드하면 유료 플랜을 조용히 추가하는 경쟁사들과 달리, TikSaveHub는 사용 제한 없이 계속 무료입니다.
+      </p>
+
+      <p>
+       솔직한 한계 하나: 이 도구는 공개 Reels에서만 작동합니다. 비공개 또는 제한된 콘텐츠는 Instagram의 공개 API를 통해서는 접근할 수 없어요. 합법적인 다운로더가 그 제한을 우회할 수 있는 방법은 없습니다. 기술적 벽이지, 정책적 선택이 아니에요. Reel이 공개적이면 다운로드가 작동합니다. 비공개라면 작동하지 않아요.
+      </p>
+
+      <p>
+       사용해보실래요? 위 입력창에 Reel 링크를 붙여넣고 몇 초 만에 영상을 다운로드하세요. 일반 Instagram 영상(Reels가 아닌 것)은 <a href="/ko/instagram-video-downloader-without-watermark">Instagram 영상 다운로더</a>가 처리합니다. 오디오 트랙이 필요하다면 <a href="/ko/instagram-audio-downloader">Instagram 오디오 다운로더</a>가 MP3로 추출해줍니다. 스토리는 24시간 후 만료되니 <a href="/ko/instagram-story-downloader-without-watermark">Instagram 스토리 다운로더</a>로 사라지기 전에 저장하세요. Facebook Reels가 필요한가요? <a href="/ko/facebook-reels-downloader">Facebook Reels 다운로더</a>가 같은 방식으로 작동합니다. TikTok 영상은? <a href="/ko/tiktok-video-downloader-without-watermark">TikTok 영상 다운로더</a>가 워터마크 없이 처리해줍니다.
+      </p>
+
+      <figure class="tool-screenshot">
+       <img src="/images/instagram-reels/instagram-reels-hero.webp" alt="TikSaveHub Instagram Reels 다운로더 인터페이스: HD와 SD 다운로드 옵션이 표시된 입력창" width="1200" height="675" loading="eager" />
+       <figcaption>Instagram Reel 링크를 붙여넣으면 즉시 HD 다운로드 옵션이 표시됩니다</figcaption>
+      </figure>
+     </div>
     </div>
-  </section>
 
-  <StatsSection stats={[ { value: '100% 무료', label: '워터마크 없이 Instagram Reels을(를) 즉시 다운로드', icon: 'download' }, { value: '가입 불필요', label: '모든 기기에서, 전 세계 어디에서든 작동', icon: 'globe' }, { value: 'HD 품질', label: '원본 해상도, 워터마크 없음, 로그인 불필요', icon: 'star' } ]} />
+    <aside class="seo-content-sidebar">
+     <div class="seo-sidebar-card">
+      <h3 class="seo-sidebar-title">빠른 링크</h3>
+      <ul class="seo-sidebar-list">
+       <li><a href="/ko/tiktok-video-downloader-without-watermark">TikTok 영상 다운로더</a></li>
+       <li><a href="/ko/tiktok-to-mp3">TikTok MP3 변환</a></li>
+       <li><a href="/ko/instagram-reels-downloader-without-watermark">Instagram Reels 다운로더</a></li>
+       <li><a href="/ko/instagram-video-downloader-without-watermark">Instagram 영상 다운로더</a></li>
+       <li><a href="/ko/instagram-story-downloader-without-watermark">Instagram 스토리 다운로더</a></li>
+       <li><a href="/ko/instagram-audio-downloader">Instagram 오디오 다운로더</a></li>
+       <li><a href="/ko/facebook-video-downloader">Facebook 영상 다운로더</a></li>
+       <li><a href="/ko/facebook-reels-downloader">Facebook Reels 다운로더</a></li>
+       <li><a href="/ko/facebook-story-downloader">Facebook 스토리 다운로더</a></li>
+       <li><a href="/ko/facebook-to-mp3">Facebook MP3 변환</a></li>
+       <li><a href="/ko/facebook-photo-downloader">Facebook 사진 다운로더</a></li>
+       <li><a href="/ko/snapchat-downloader">Snapchat 다운로더</a></li>
+       <li><a href="/ko/snapchat-story-downloader">Snapchat 스토리 다운로더</a></li>
+       <li><a href="/ko/snapchat-to-mp3">Snapchat MP3 변환</a></li>
+       <li><a href="/ko/x-video-downloader">X/Twitter 영상 다운로더</a></li>
+      </ul>
+     </div>
 
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
-    <div class="dl-faq-inner container-page">
-      <span class="section-eyebrow text-caption-mono">?? ?? ??</span>
-      <h2 id="dl-faq-headline" class="section-headline">Instagram ?? ???? ?? ??</h2>
-      <div class="dl-faq-grid">
-        {faqData.map((faq) => (
-          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
-        ))}
-      </div>
+     <div class="seo-sidebar-card">
+      <h3 class="seo-sidebar-title">지원되는 링크</h3>
+      <ul class="seo-sidebar-list seo-sidebar-mono">
+       <li>instagram.com/reel/...</li>
+       <li>instagram.com/reels/...</li>
+       <li>instagram.com/share/...</li>
+      </ul>
+     </div>
+
+     <div class="seo-sidebar-card seo-sidebar-highlight">
+      <h3 class="seo-sidebar-title">바로 다운로드하기</h3>
+      <p class="seo-sidebar-text">위에 Instagram Reel 링크를 붙여넣으면 몇 초 만에 Reel을 받을 수 있어요.</p>
+      <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">시도해보기</a>
+     </div>
+    </aside>
+   </div>
+  </div>
+ </section>
+
+ <!-- How It Works -->
+ <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+  <div class="dl-steps-inner container-page">
+   <div class="dl-steps-header">
+    <span class="section-eyebrow text-caption-mono">단계별 가이드</span>
+    <h2 id="dl-steps-headline" class="section-headline">
+     Instagram Reels 다운로드 방법.
+    </h2>
+    <p class="section-sub text-body-lg">
+     3단계면 끝입니다. 기술적 지식은 필요 없어요.
+    </p>
+   </div>
+
+   <div class="dl-steps-grid">
+    <article class="dl-step-card">
+     <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+     <div class="dl-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+     </div>
+     <h3 class="dl-step-title">Instagram Reel 링크 복사</h3>
+     <p class="dl-step-body">
+      Instagram 앱이나 웹사이트를 열고 저장할 Reel을 찾으세요. 공유 버튼을 누르고 "링크 복사"를 선택하면 됩니다. 어떤 공개 Reel이든 작동해요. 탐색 탭, 크리에이터 프로필, Reels 탭, 공유된 링크에서든요. 2초면 끝납니다.
+     </p>
+    </article>
+
+    <article class="dl-step-card">
+     <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+     <div class="dl-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+     </div>
+     <h3 class="dl-step-title">TikSaveHub에 링크 붙여넣기</h3>
+     <p class="dl-step-body">
+      복사한 링크를 위 입력창에 붙여넣으세요. 처리가 즉시 시작됩니다. 빠른 인터넷이면 2~3초, 느린 모바일 데이터면 5초 정도 걸려요.
+     </p>
+    </article>
+
+    <article class="dl-step-card">
+     <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+     <div class="dl-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+     </div>
+     <h3 class="dl-step-title">HD Reel 다운로드</h3>
+     <p class="dl-step-body">
+      "다운로드"를 눌러 MP4 파일을 받으세요. 기기에 바로 저장됩니다. 오프라인 시청, 다른 플랫폼에서 공유, 원하는 편집 소프트웨어에서 편집까지 바로 가능해요. 추가 단계는 없습니다.
+     </p>
+    </article>
+   </div>
+
+   <figure class="tool-screenshot">
+    <img src="/images/instagram-reels/instagram-reels-steps.webp" alt="Instagram Reel 링크 복사, TikSaveHub에 붙여넣기, HD 영상 다운로드의 3단계 과정 안내" width="1000" height="800" loading="lazy" />
+    <figcaption>3단계 다운로드 전체 과정</figcaption>
+   </figure>
+  </div>
+ </section>
+
+ <!-- Features -->
+ <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+  <div class="dl-features-inner container-page">
+   <div class="dl-features-header">
+    <span class="section-eyebrow text-caption-mono">기능</span>
+    <h2 id="dl-features-headline" class="section-headline">
+     TikSaveHub가 다른 이유.
+    </h2>
+   </div>
+
+   <div class="dl-features-grid">
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+     </div>
+     <h3 class="dl-feature-title">워터마크 없음</h3>
+     <p class="dl-feature-body">
+      매번 깔끔한 MP4 파일이에요. 떠다니는 사용자 이름도 없고, 로고 오버레이도 없죠. 시각적 잡음 없이 어디서든 공유하세요.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+     </div>
+     <h3 class="dl-feature-title">최대 1080p HD 화질</h3>
+     <p class="dl-feature-body">
+      Instagram이 제공하는 최고 해상도를 그대로 가져옵니다. 최대 1080x1920까지 가능해요. 재인코딩도, 압축도 없어요. 다운로드한 Reel은 크리에이터가 업로드한 것과 정확히 동일합니다.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+     </div>
+     <h3 class="dl-feature-title">서버 사이드 처리</h3>
+     <p class="dl-feature-body">
+      다운로드가 서버에서 돌아갑니다. 브라우저가 아니에요. 어떤 기기든 2~3초면 끝. 기다릴 필요도, 대기열도 없습니다.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+     </div>
+     <h3 class="dl-feature-title">모든 기기에서 작동</h3>
+     <p class="dl-feature-body">
+      iPhone, Android, 태블릿, 데스크톱. 브라우저만 있으면 TikSaveHub가 작동합니다. 앱 설치도, 확장 프로그램도, 호환성 문제도 없어요.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+     </div>
+     <h3 class="dl-feature-title">회원가입 불필요</h3>
+     <p class="dl-feature-body">
+      이메일도, 비밀번호도, 계정 생성도 필요 없습니다. 링크만 붙여넣고 다운로드하면 돼요. 개인정보 보호가 중요하니까요. 개인 데이터는 저장되지 않습니다.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+     </div>
+     <h3 class="dl-feature-title">무제한 다운로드</h3>
+     <p class="dl-feature-body">
+      일일 제한도, 상한도, 프리미엄 등급도 없습니다. 필요한 만큼 Reels를 다운로드하세요. 매일, 영원히, 무료로요.
+     </p>
+    </article>
+   </div>
+
+   <figure class="tool-screenshot">
+    <img src="/images/instagram-reels/instagram-reels-devices.webp" alt="TikSaveHub Instagram Reels 다운로더가 iPhone, Android, 데스크톱 브라우저에서 작동하는 모습" width="1200" height="600" loading="lazy" />
+    <figcaption>폰, 태블릿, 데스크톱에서 모두 동일하게 작동합니다</figcaption>
+   </figure>
+  </div>
+ </section>
+
+ <!-- Use Cases -->
+ <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
+  <div class="dl-usecases-inner container-page">
+   <div class="dl-usecases-header">
+    <span class="section-eyebrow text-caption-mono">활용 사례</span>
+    <h2 id="dl-usecases-headline" class="section-headline">
+     누가 TikSaveHub를 사용하나요?
+    </h2>
+   </div>
+
+   <div class="dl-usecases-grid">
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">콘텐츠 크리에이터</h3>
+     <p class="dl-usecase-body">
+      Instagram의 알고리즘이 내 Reels를 묵히기 전에 백업하세요. 외부 소프트웨어로 편집하고, TikTok이나 YouTube Shorts 같은 다른 플랫폼에서 재활용하세요. 최고의 작품을 내 기준에 맞게 안전하게 보관하세요.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">소셜 미디어 매니저</h3>
+     <p class="dl-usecase-body">
+      브랜드 계정을 관리하고 계신가요? 트렌딩 Reels를 영감용, 경쟁사 분석용, 콘텐츠 캘린더용으로 저장하세요. 폴더에 정리해서 다운로드하는 게 Instagram 북마크보다 훨씬 유용해요. 사라질 수도 있으니까요.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">마케터</h3>
+     <p class="dl-usecase-body">
+      바이럴 콘텐츠를 캠페인 영감용으로 수집하고 계신가요? 특정 편집 스타일이나 전환 효과, 콘텐츠 형식을 보여주는 Reels를 다운로드하세요. 탐색 피드에서 다시 찾으려 애쓰는 대신 전략 회의에서 바로 참고할 수 있어요.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">학생과 교육자</h3>
+     <p class="dl-usecase-body">
+      언어 수업, 역사 설명, 과학 분해 같은 교육용 Reels는 이동 중 학습에 오프라인 영상이 더 잘 맞습니다. 다운로드하고 폰으로 옮겨서 출퇴근길에 보세요. 불안정한 캠퍼스 Wi-Fi에 의존하는 것보다 낫죠.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">일반 시청자</h3>
+     <p class="dl-usecase-body">
+      좋아하는 Reel을 찾았는데 지금 볼 시간이 없나요? 나중을 위해 저장하세요. 출퇴근길, 여행 중, 인터넷이 없는 곳에서 오프라인으로 보세요. 복잡한 워크플로우도 필요 없습니다. 붙여넣고, 다운로드하고, 끝이에요.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">콘텐츠 재활용하는 브랜드</h3>
+     <p class="dl-usecase-body">
+      Instagram Reel을 TikTok이나 YouTube Short, Twitter 클립으로 바꾸세요. 깔끔한 MP4를 다운로드하고(워터마크 없이), 대상 플랫폼에 맞게 편집한 뒤 게시하세요. 같은 콘텐츠, 다른 오디언스, 최대 도달 범위요.
+     </p>
+    </article>
+   </div>
+  </div>
+ </section>
+
+ <!-- Comparison -->
+ <section class="dl-steps-section" aria-labelledby="dl-comparison-headline">
+  <div class="dl-steps-inner container-page">
+   <div class="dl-steps-header">
+    <span class="section-eyebrow text-caption-mono">비교</span>
+    <h2 id="dl-comparison-headline" class="section-headline">
+     TikSaveHub vs 다른 Instagram Reels 다운로더.
+    </h2>
+    <p class="section-sub text-body-lg">
+     경쟁사와 어떻게 비교되는지 확인하세요.
+    </p>
+   </div>
+
+   <div style="width:100%;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:var(--text-body-sm);text-align:left;">
+     <thead>
+      <tr style="border-bottom:2px solid var(--color-hairline-strong);">
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">기능</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">TikSaveHub</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">iGram</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">ReelsDownloader</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SaveFrom</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">영상 화질</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">최대 1080p</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">최대 720p</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">720p로 제한</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">다름</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">워터마크</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">없음</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">없음</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">없음</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">없음</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">다운로드 속도</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">약 2~3초</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">약 5~8초</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">약 4~6초</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">약 5~7초</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">광고</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">없음</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">많음 (팝업)</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">보통</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">많음</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">회원가입 필요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">아니요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">네 (일부 기능)</td>
+      </tr>
+      <tr>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">일일 제한</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">무제한</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">제한 보고됨</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">제한 보고됨</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">제한된 무료 등급</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+
+   <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;line-height:1.7;">
+     솔직하게 말하면요. iGram의 팝업 광고는 진짜 짜증나요. 3단계로 깊이 파고드는데, 그중 하나는 가짜 "다운로드 완료" 알림이에요. ReelsDownloader는 소스가 1080p이더라도 720p로 재인코딩합니다. SaveFrom은 먼저 계정 생성을 요구하죠. 이것들은 루머가 아니에요. 포럼에서 사용자들이 일관되게 보고하는 패턴이에요. TikSaveHub는 이 비교에서 무료, 광고 제한, 무제한인 유일한 도구였습니다.
+   </p>
+
+   <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-md) 0 0 0;line-height:1.7;">
+    <a href="/ko/tiktok-video-downloader-without-watermark" style="color:var(--color-link);">TikTok 영상</a>, <a href="/ko/facebook-reels-downloader" style="color:var(--color-link);">Facebook Reels</a>, <a href="/ko/snapchat-downloader" style="color:var(--color-link);">Snapchat 영상</a>도 지원합니다.
+   </p>
+  </div>
+ </section>
+
+ <!-- Troubleshooting -->
+ <section class="dl-usecases-section" aria-labelledby="dl-troubleshoot-headline">
+  <div class="dl-usecases-inner container-page">
+   <div class="dl-usecases-header">
+    <span class="section-eyebrow text-caption-mono">문제 해결</span>
+    <h2 id="dl-troubleshoot-headline" class="section-headline">
+     자주 발생하는 문제와 해결법.
+    </h2>
+   </div>
+
+   <div class="dl-usecases-grid">
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"Reel이 다운로드되지 않아요."</h3>
+     <p class="dl-usecase-body">
+      열 번 중 아홉 번은 링크가 잘못된 거예요. 댓글에서 링크를 복사했거나, 복사-붙여넣기 과정에서 URL이 망가진 경우가 대부분입니다. Instagram으로 돌아가서 Reel을 직접 열고, 공유 → 링크 복사를 한 뒤 새로 받은 URL을 붙여넣으세요. 크리에이터가 Reel을 삭제했다면 어떤 다운로더도 복구할 수 없습니다. TikSaveHub도, 다른 도구도 마찬가지예요.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"화질이 낮아요."</h3>
+     <p class="dl-usecase-body">
+      화질은 크리에이터가 업로드한 것에 달려 있습니다. 대부분의 Reels는 폰으로 1080p 촬영되지만, 720p 이하로 업로드하는 크리에이터도 있어요. TikSaveHub는 Instagram이 가진 해상도를 그대로 가져옵니다. 이미 압축된 것을 개선할 수는 없어요. Instagram에서 흐릿하게 보이면 다운로드해도 똑같이 보입니다. 그건 소스 화질의 문제지, 도구의 한계가 아니에요.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"링크가 작동하지 않아요."</h3>
+     <p class="dl-usecase-body">
+      TikSaveHub는 모든 표준 Instagram Reel 링크 형식을 지원합니다. instagram.com/reel/..., instagram.com/reels/..., instagram.com/share/..., 그리고 앱에서 나오는 단축 링크까지요. 프로필 페이지, 해시태그 페이지, 검색 결과는 다운로드 대상이 아닙니다. 특정 Reel을 가리키고 있지 않으니까요. 링크에 /reel/, /reels/, 또는 /share/가 포함되어야 합니다.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"다운로드가 너무 느려요."</h3>
+     <p class="dl-usecase-body">
+      다운로드 자체는 빠릅니다. 3초 미만이에요. 병목은 파일 전송입니다. 일반적인 Reel은 MP4로 5~15MB 정도예요. 10Mbps 연결이면 12초 미만, 느린 모바일 데이터면 더 오래 걸립니다. Wi-Fi로 바꿔보세요.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"워터마크가 아직 있어요."</h3>
+     <p class="dl-usecase-body">
+      TikSaveHub에서는 일어나지 않는 일이에요. 워터마크가 보인다면 다른 도구를 사용하고 있을 수 있습니다. 일부 다운로더가 자기 브랜드를 추가하거든요. TikSaveHub는 Instagram CDN에서 오버레이 없이 원본 파일을 가져옵니다. 브라우저 캐시를 지우고 다시 다운로드해보세요.
+     </p>
+    </article>
+   </div>
+
+   <figure class="tool-screenshot">
+    <img src="/images/instagram-reels/instagram-reels-problems.webp" alt="자주 발생하는 Instagram Reels 다운로더 문제 5가지와 해결법 안내 인포그래픽" width="1200" height="675" loading="lazy" />
+    <figcaption>빠른 참고: 자주 발생하는 5가지 문제와 해결 방법</figcaption>
+   </figure>
+  </div>
+ </section>
+
+ <!-- Legal -->
+ <section class="dl-steps-section" aria-labelledby="dl-legal-headline">
+  <div class="dl-steps-inner container-page">
+   <div class="dl-steps-header">
+    <span class="section-eyebrow text-caption-mono">법적 고지</span>
+    <h2 id="dl-legal-headline" class="section-headline">
+     Instagram Reels를 다운로드하는 것이 합법적인가요?
+    </h2>
+   </div>
+
+   <div style="max-width:680px;width:100%;display:flex;flex-direction:column;gap:var(--spacing-lg);text-align:left;">
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">개인 사용은 대체로 괜찮습니다.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      오프라인 시청용으로 Reels를 저장하거나, 마음에 드는 클립을 보관하거나, 개인 참고용으로 사용하는 것은 개인 사용 범주에 속하며 널리 허용됩니다. Instagram의 서비스 약관은 기술적으로 앱 외부 다운로드를 금지하고 있지만, 그 조항은 자동화된 봇이 전체 라이브러리를 스크래핑하는 것을 대상으로 한 것이지, 한 사람의 Reel을 저장하는 것을 대상으로 한 것은 아니에요. 법적 현실은 약관 텍스트가 시사하는 것보다 훨씬 복잡합니다.
+     </p>
     </div>
-  </section>
 
-  <SocialShare url="/instagram-reels-downloader-without-watermark" title="Instagram ?? ???? — ???? ?? HD" description="Instagram ??? ???? ?? HD ??? ????." />
-
-  <!-- Related Tools -->
-  <section class="related-tools-section">
-    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
-      <h2 class="related-tools-headline">추가 도구</h2>
-      <div class="related-tools-grid">
-            <a href="/ko/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
-            <a href="/ko/tiktok-to-mp3" class="related-tool-link">TikTok MP3</a>
-            <a href="/ko/facebook-video-downloader" class="related-tool-link">Facebook Video Downloader</a>
-            <a href="/ko/facebook-reels-downloader" class="related-tool-link">Facebook Reels Downloader</a>
-      </div>
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">상업적 사용은 허가가 필요합니다.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      다운로드한 Reel을 광고, YouTube 컴필레이션, 팟캐스트 또는 수익화된 콘텐츠에 사용하려면 원본 크리에이터의 명시적 허가가 필요합니다. 저작권은 비디오 자체에 적용되며, 오디오에만 적용되는 것은 아니에요. 서면 허가를 받으세요. 그렇지 않으면 삭제 통보의 위험이 있습니다.
+     </p>
     </div>
-  </section>
+
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">크리에이터에게 크레딧을 주세요.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      개인 공유더라도 원본 크리에이터에게 크레딧을 주는 것이 올바른 일입니다. 크리에이터를 태그하고, 사용자 이름을 언급하고, 원본으로 링크를 거세요. 5초면 충분하고, 마땅히 받아야 할 크레딧을 줄 수 있어요.
+     </p>
+    </div>
+
+    <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:var(--spacing-md) 0 0 0;font-style:italic;">
+     이 기사는 정보 제공 목적이며 법률 자문을 구성하지 않습니다. 구체적인 상황에 대해서는 자격을 갖춘 변호사와 상담하세요.
+    </p>
+
+    <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+     외부 참고: <a href="https://help.instagram.com/599049842998320" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">Instagram 커뮤니티 가이드라인</a> · <a href="https://www.copyright.gov/fair-use/" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">미국 저작권국 -- 공정 사용</a>
+    </p>
+   </div>
+  </div>
+ </section>
+
+ <!-- FAQ -->
+ <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+  <div class="dl-faq-inner container-page">
+   <div class="dl-faq-header">
+    <span class="section-eyebrow text-caption-mono">FAQ</span>
+    <h2 id="dl-faq-headline" class="section-headline">
+     자주 묻는 질문.
+    </h2>
+   </div>
+
+   <div class="dl-faq-list" role="list">
+    {faqData.map((faq) => (
+     <div class="dl-faq-item" id={faq.id} role="listitem">
+      <button
+       class="dl-faq-trigger"
+       id={`${faq.id}-btn`}
+       aria-expanded="false"
+       aria-controls={`${faq.id}-panel`}
+       type="button"
+      >
+       <span class="dl-faq-q">{faq.q}</span>
+       <span class="dl-faq-chevron" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+       </span>
+      </button>
+      <div
+       id={`${faq.id}-panel`}
+       class="dl-faq-panel"
+       role="region"
+       aria-labelledby={`${faq.id}-btn`}
+       hidden
+      >
+       <p class="dl-faq-a" set:html={faq.a}></p>
+      </div>
+     </div>
+    ))}
+   </div>
+  </div>
+ </section>
+
+ <!-- CTA Band -->
+ <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+  <div class="dl-cta-inner container-page">
+   <h2 id="dl-cta-headline" class="dl-cta-headline">
+    Reels 다운로드할 준비가 되셨나요?
+   </h2>
+   <p class="dl-cta-sub">
+    위에 Instagram Reel 링크를 붙여넣으면 몇 초 만에 Reel을 받을 수 있어요. 계정도 필요 없습니다.
+   </p>
+   <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+    다운로드 시작
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+   </a>
+  </div>
+ </section>
+
+ <figure class="tool-screenshot">
+  <img src="/images/instagram-reels/instagram-reels-final.webp" alt="TikSaveHub Instagram Reels 다운로더가 폰, 태블릿, 노트북 기기에서 작동하는 모습" width="1200" height="675" loading="lazy" />
+  <figcaption>하나의 도구, 모든 기기. 링크를 붙여넣고 다운로드하세요</figcaption>
+ </figure>
+
+ <!-- Internal Links Section -->
+ <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+  <div class="dl-internal-inner container-page">
+   <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+    TikSaveHub 더 둘러보기.
+   </h2>
+   <div class="dl-internal-grid">
+    <a href="/ko/instagram-video-downloader-without-watermark" class="dl-internal-card">
+     <span class="dl-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+     </span>
+     <span class="dl-internal-title">Instagram 영상 다운로더</span>
+     <span class="dl-internal-desc">Instagram 영상과 Reels를 저장하세요. 같은 도구, 깔끔한 MP4.</span>
+     <span class="dl-internal-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="/ko/instagram-audio-downloader" class="dl-internal-card">
+     <span class="dl-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+     </span>
+     <span class="dl-internal-title">Instagram 오디오 다운로더</span>
+     <span class="dl-internal-desc">Reels와 영상에서 오디오를 MP3로 추출하세요.</span>
+     <span class="dl-internal-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="/ko/instagram-story-downloader-without-watermark" class="dl-internal-card">
+     <span class="dl-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+     </span>
+     <span class="dl-internal-title">Instagram 스토리 다운로더</span>
+     <span class="dl-internal-desc">24시간 후 만료되기 전에 스토리를 저장하세요.</span>
+     <span class="dl-internal-arrow" aria-hidden="true">→</span>
+    </a>
+   </div>
+  </div>
+ </section>
 
 </Layout>
 
 <style>
-  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
-  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
-  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
-  .dl-badge-row { display: flex; justify-content: center; }
-  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
-  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
-  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
-  .dl-hero-form { width: 100%; max-width: 640px; }
-  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
-  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
-  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
-  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
-  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
-  .dl-faq-q::-webkit-details-marker { display: none; }
-  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
-  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
-  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
-  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+ .tool-screenshot {
+  display: block;
+  margin: 2rem auto;
+  max-width: 1100px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+ }
 
-  .related-tools-section { padding: var(--spacing-2xl) 0; }
-  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
-  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
-  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
-  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+ .tool-screenshot figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+ }
+
+ @media (max-width: 768px) {
+  .tool-screenshot {
+   margin: 1.5rem auto;
+  }
+  .tool-screenshot figcaption {
+   font-size: 0.8rem;
+  }
+ }
+ /* ─── Hero ─── */
+ .dl-hero {
+  position: relative;
+  padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+  overflow: hidden;
+  background-color: var(--color-canvas);
+  text-align: center;
+ }
+
+ .dl-hero-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+ }
+
+ .dl-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+ }
+
+ /* Breadcrumb */
+ .dl-breadcrumb {
+  margin-bottom: var(--spacing-sm);
+ }
+
+ .breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-mute);
+ }
+
+ .breadcrumb-list li + li::before {
+  content: '/';
+  margin-right: 6px;
+  color: var(--color-hairline-strong);
+ }
+
+ .breadcrumb-list a {
+  color: var(--color-body);
+  text-decoration: none;
+  transition: color 0.15s ease;
+ }
+
+ .breadcrumb-list a:hover {
+  color: var(--color-ink);
+ }
+
+ .dl-badge-row {
+  display: flex;
+  justify-content: center;
+ }
+
+ .dl-badge {
+  animation: fadeInUp 0.5s ease 0.1s both;
+ }
+
+ .badge-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+ }
+
+ .dl-hero-headline {
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  color: var(--color-ink);
+  margin: 0;
+  max-width: 700px;
+  animation: fadeInUp 0.5s ease 0.2s both;
+ }
+
+ .headline-gradient {
+  background: linear-gradient(
+   135deg,
+   var(--color-grad-develop-start) 0%,
+   var(--color-grad-preview-start) 40%,
+   var(--color-grad-preview-end) 70%,
+   var(--color-grad-ship-end) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+ }
+
+ .dl-hero-subline {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin: 0;
+  max-width: 560px;
+  animation: fadeInUp 0.5s ease 0.25s both;
+ }
+
+ .dl-hero-sub {
+  color: var(--color-body);
+  margin: 0;
+  max-width: 560px;
+  animation: fadeInUp 0.5s ease 0.3s both;
+ }
+
+ .dl-hero-form-wrap {
+  width: 100%;
+  max-width: 760px;
+  animation: fadeInUp 0.5s ease 0.4s both;
+ }
+
+ .dl-hero-trust {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.5s ease 0.5s both;
+ }
+
+ .dl-hero-share {
+  animation: fadeInUp 0.5s ease 0.55s both;
+ }
+
+ .trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--color-body);
+  padding: 0 var(--spacing-md);
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .trust-chip svg {
+  color: var(--color-cyan-deep);
+ }
+
+ .trust-chip:hover {
+  border-color: var(--color-hairline-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+ }
+
+ @media (hover: hover) {
+  .trust-chip:hover {
+   border-color: var(--color-hairline-strong);
+   transform: translateY(-2px);
+   box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-hero {
+   padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+  }
+
+  .dl-hero-headline {
+   font-size: clamp(22px, 5vw, 32px);
+   letter-spacing: -1px;
+  }
+
+  .trust-chip {
+   font-size: var(--text-caption);
+   height: 36px;
+   padding: 0 var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+   font-size: 11px;
+  }
+ }
+
+ /* ─── Content Section ─── */
+ .dl-content-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-content-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--spacing-3xl);
+  align-items: start;
+ }
+
+ .dl-content-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+ }
+
+ .dl-content-lead {
+  font-size: var(--text-body-lg);
+  color: var(--color-ink);
+  line-height: 1.7;
+  margin: 0;
+ }
+
+ .dl-content-body {
+  font-size: var(--text-body-md);
+  color: var(--color-body);
+  line-height: 1.7;
+  margin: 0;
+ }
+
+ .dl-content-card-wrap {
+  position: sticky;
+  top: 80px;
+ }
+
+ .dl-content-card {
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-content-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #007cf015, #00dfd820);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf025;
+  margin-bottom: var(--spacing-md);
+ }
+
+ .dl-content-card-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-md) 0;
+ }
+
+ .dl-content-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+ }
+
+ .dl-content-card-list li {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+ }
+
+ .dl-content-card-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+ }
+
+ @media (max-width: 960px) {
+  .dl-content-grid {
+   grid-template-columns: 1fr;
+  }
+
+  .dl-content-card-wrap {
+   position: static;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-content-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Steps Section ─── */
+ .dl-steps-section {
+  background-color: var(--color-canvas);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-steps-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-steps-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .dl-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  width: 100%;
+ }
+
+ .dl-step-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .dl-step-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-step-num {
+  color: var(--color-mute);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+ }
+
+ .dl-step-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #007cf010, #00dfd818);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf020;
+ }
+
+ .dl-step-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0;
+ }
+
+ .dl-step-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+ }
+
+ @media (max-width: 960px) {
+  .dl-steps-grid {
+   grid-template-columns: 1fr;
+   max-width: 480px;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-steps-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Features Section ─── */
+ .dl-features-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-features-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-features-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .dl-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+ }
+
+ .dl-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background-color: var(--color-canvas);
+  box-shadow:
+   inset 0 0 0 1px #0000000a,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .dl-feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ }
+
+ .feat-accent-develop {
+  background: linear-gradient(135deg, #007cf015, #00dfd820);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf025;
+ }
+
+ .feat-accent-preview {
+  background: linear-gradient(135deg, #7928ca15, #ff008020);
+  color: var(--color-grad-preview-start);
+  box-shadow: inset 0 0 0 1px #7928ca25;
+ }
+
+ .feat-accent-ship {
+  background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+  color: var(--color-grad-ship-start);
+  box-shadow: inset 0 0 0 1px #ff4d4d25;
+ }
+
+ .dl-feature-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+ }
+
+ .dl-feature-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  margin: 0;
+  line-height: 1.6;
+ }
+
+ @media (max-width: 960px) {
+  .dl-features-grid {
+   grid-template-columns: repeat(2, 1fr);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-features-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .dl-features-grid {
+   grid-template-columns: 1fr;
+  }
+ }
+
+ /* ─── Use Cases Section ─── */
+ .dl-usecases-section {
+  background-color: var(--color-canvas);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-usecases-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-usecases-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .dl-usecases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+ }
+
+ .dl-usecase-card {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .dl-usecase-card:hover {
+  border-color: var(--color-hairline-strong);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .dl-usecase-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-sm) 0;
+ }
+
+ .dl-usecase-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+ }
+
+ @media (max-width: 600px) {
+  .dl-usecases-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .dl-usecases-grid {
+   grid-template-columns: 1fr;
+  }
+ }
+
+ /* ─── FAQ Section ─── */
+ .dl-faq-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-faq-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4xl);
+  max-width: 760px;
+  margin-inline: auto;
+ }
+
+ .dl-faq-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+ }
+
+ .dl-faq-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-canvas);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .dl-faq-item {
+  border-bottom: 1px solid var(--color-hairline);
+ }
+
+ .dl-faq-item:last-child {
+  border-bottom: none;
+ }
+
+ .dl-faq-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+  transition: background-color 0.15s ease;
+ }
+
+ .dl-faq-trigger:hover {
+  background-color: var(--color-canvas-soft);
+ }
+
+ .dl-faq-trigger[aria-expanded="true"] {
+  background-color: var(--color-canvas-soft);
+ }
+
+ .dl-faq-q {
+  font-size: var(--text-body-md);
+  font-weight: 500;
+  color: var(--color-ink);
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+  flex: 1;
+ }
+
+ .dl-faq-chevron {
+  flex-shrink: 0;
+  color: var(--color-mute);
+  display: flex;
+  align-items: center;
+  transition: transform 0.25s ease;
+ }
+
+ .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron {
+  transform: rotate(180deg);
+ }
+
+ .dl-faq-panel {
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
+  animation: fadeInUp 0.25s ease forwards;
+ }
+
+ .dl-faq-a {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+  letter-spacing: -0.1px;
+ }
+
+ @media (max-width: 600px) {
+  .dl-faq-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .dl-faq-trigger {
+   padding: var(--spacing-md);
+   min-height: 48px;
+  }
+
+  .dl-faq-panel {
+   padding: 0 var(--spacing-md) var(--spacing-md);
+  }
+
+  .dl-faq-q {
+   font-size: var(--text-body-sm);
+  }
+ }
+
+ /* ─── CTA Band ─── */
+ .dl-cta-band {
+  background-color: var(--color-ink);
+  color: var(--color-on-primary);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+  text-align: center;
+ }
+
+ .dl-cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+ }
+
+ .dl-cta-headline {
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  letter-spacing: -1.28px;
+  color: var(--color-on-primary);
+  margin: 0;
+ }
+
+ .dl-cta-sub {
+  font-size: var(--text-body-lg);
+  color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+  margin: 0;
+  max-width: 480px;
+ }
+
+ .dl-cta-btn {
+  gap: 8px;
+  background-color: var(--color-canvas) !important;
+  color: var(--color-ink) !important;
+ }
+
+ .dl-cta-btn:hover {
+  background-color: var(--color-canvas-soft) !important;
+  transform: translateY(-2px);
+ }
+
+ @media (max-width: 600px) {
+  .dl-cta-band {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Shared Section Styles ─── */
+ .section-eyebrow {
+  color: var(--color-mute);
+ }
+
+ .section-headline {
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -1.28px;
+  color: var(--color-ink);
+  margin: 0;
+  max-width: 540px;
+ }
+
+ .section-sub {
+  color: var(--color-body);
+  margin: 0;
+  max-width: 480px;
+ }
+
+ /* ─── Internal Links Section ─── */
+ .dl-internal-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+  border-top: 1px solid var(--color-hairline);
+ }
+
+ .dl-internal-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3xl);
+ }
+
+ .dl-internal-headline {
+  text-align: center;
+  max-width: 400px;
+ }
+
+ .dl-internal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  width: 100%;
+ }
+
+ .dl-internal-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  text-decoration: none;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+ }
+
+ .dl-internal-card:hover {
+  border-color: var(--color-hairline-strong);
+  transform: translateY(-3px);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-internal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #007cf012, #00dfd818);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf020;
+ }
+
+ .dl-internal-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.3px;
+ }
+
+ .dl-internal-desc {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.5;
+  margin: 0;
+ }
+
+ .dl-internal-arrow {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  color: var(--color-mute);
+  font-size: 18px;
+  transition: color 0.15s ease, transform 0.25s ease;
+ }
+
+ .dl-internal-card:hover .dl-internal-arrow {
+  color: var(--color-ink);
+  transform: translateX(4px);
+ }
+
+ @media (max-width: 960px) {
+  .dl-internal-grid {
+   grid-template-columns: 1fr;
+   max-width: 480px;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-internal-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── SEO Content Section ─── */
+ .seo-content-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .seo-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .seo-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--spacing-3xl);
+  align-items: start;
+ }
+
+ .seo-content-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+ }
+
+ .seo-article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+ }
+
+ .seo-article p {
+  font-size: var(--text-body-md);
+  color: var(--color-body);
+  line-height: 1.75;
+  margin: 0;
+  letter-spacing: -0.1px;
+ }
+
+ .text-highlight {
+  background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+ }
+
+ .seo-article h3 {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: var(--spacing-sm) 0 0 0;
+  line-height: 1.35;
+ }
+
+ .seo-content-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  position: sticky;
+  top: 80px;
+ }
+
+ .seo-sidebar-card {
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow:
+   inset 0 0 0 1px #0000000a,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .seo-sidebar-highlight {
+  background: linear-gradient(135deg, #007cf008, #00dfd808);
+  border: 1px solid #007cf020;
+ }
+
+ .seo-sidebar-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-md) 0;
+ }
+
+ .seo-sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+ }
+
+ .seo-sidebar-list li {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.5;
+ }
+
+ .seo-sidebar-list a {
+  color: var(--color-body);
+  text-decoration: none;
+  transition: color 0.15s ease;
+ }
+
+ .seo-sidebar-list a:hover {
+  color: var(--color-ink);
+ }
+
+ .seo-sidebar-mono li {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--color-mute);
+ }
+
+ .seo-sidebar-text {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  margin: 0 0 var(--spacing-md) 0;
+  line-height: 1.5;
+ }
+
+ .seo-sidebar-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+ }
+
+ @media (max-width: 960px) {
+  .seo-content-grid {
+   grid-template-columns: 1fr;
+  }
+
+  .seo-content-sidebar {
+   position: static;
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .seo-content-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .seo-content-sidebar {
+   grid-template-columns: 1fr;
+  }
+ }
 </style>
+
+<script>
+ const dlTriggers = document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
+
+ dlTriggers.forEach((btn) => {
+  btn.addEventListener('click', () => {
+   const isOpen = btn.getAttribute('aria-expanded') === 'true';
+   const panelId = btn.getAttribute('aria-controls')!;
+   const panel = document.getElementById(panelId);
+
+   dlTriggers.forEach((otherBtn) => {
+    if (otherBtn !== btn) {
+     otherBtn.setAttribute('aria-expanded', 'false');
+     const otherId = otherBtn.getAttribute('aria-controls')!;
+     document.getElementById(otherId)?.setAttribute('hidden', '');
+    }
+   });
+
+   if (isOpen) {
+    btn.setAttribute('aria-expanded', 'false');
+    panel?.setAttribute('hidden', '');
+   } else {
+    btn.setAttribute('aria-expanded', 'true');
+    panel?.removeAttribute('hidden');
+   }
+  });
+ });
+</script>

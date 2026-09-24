@@ -4,6 +4,11 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import { posts } from '../data/blog-posts';
 
+const usDate = (iso: string) => {
+ const [y, m, d] = iso.split('-');
+ return `${m}/${d}/${y}`;
+};
+
 const categories = [
  { id: 'All', label: 'All' },
  { id: 'TikTok Guides', label: 'TikTok Guides' },
@@ -56,15 +61,36 @@ const toolCards = [
  icon: 'instagram',
  },
 ];
+
+const blogJsonLd = JSON.stringify({
+ '@context': 'https://schema.org',
+ '@graph': [
+ {
+  '@type': 'CollectionPage',
+  name: 'Social Media Guides & Video Downloader Tips',
+  description: 'Guides and tutorials for saving TikTok, Instagram, Facebook, and X videos without watermarks.',
+  url: 'https://tiksavehub.com/blog',
+ },
+ {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tiksavehub.com' },
+   { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://tiksavehub.com/blog' },
+  ],
+ },
+ ],
+});
+
 ---
 
 <Layout
  title="Social Media Guides & Video Downloader Tips. TikSaveHub"
- description="Social media tips, video downloader guides, and tutorials. Learn how to save TikTok, Instagram, Facebook, and X (Twitter) videos, Reels, and audio without watermarks with TikSaveHub."
+ description="Guides and tutorials for saving TikTok, Instagram, Facebook, and X videos without watermarks. Tips, tricks, and downloader reviews."
  keywords="tiksavehub blog, social media tips, tiktok downloader guide, instagram video downloader guide, facebook video downloader guide, twitter video downloader guide, video downloading tutorials, save videos without watermark"
  canonical="/blog"
  ogImage="/og-blog.png"
  skipSoftwareApp
+ jsonLd={blogJsonLd}
 >
  <!-- ══════════ HERO ══════════ -->
  <section class="blog-hero" aria-labelledby="blog-headline">
@@ -140,7 +166,7 @@ const toolCards = [
  <div class="featured-body">
  <div class="featured-meta-row">
  <span class="featured-cat">{featured.category}</span>
- <time class="featured-date text-caption-mono" datetime={featured.date}>{featured.date}</time>
+ <time class="featured-date text-caption-mono" datetime={featured.date}>{usDate(featured.date)}</time>
  <span class="featured-reading">{featured.readingTime}</span>
  </div>
  <h3 class="featured-title">{featured.title}</h3>
@@ -175,7 +201,7 @@ const toolCards = [
  <span class="article-tag">{cat.label}</span>
  </div>
  <div class="article-body">
- <time class="article-date text-caption-mono" datetime={post.date}>{post.date}</time>
+ <time class="article-date text-caption-mono" datetime={post.date}>{usDate(post.date)}</time>
  <h3 class="article-title">{post.title}</h3>
  <p class="article-excerpt">{post.excerpt}</p>
  <div class="article-footer">

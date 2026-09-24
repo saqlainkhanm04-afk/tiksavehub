@@ -26,10 +26,6 @@ const seoPages = [
   '/snapchat-story-downloader',
   '/snapchat-to-mp3',
   '/blog',
-  '/contact',
-  '/privacy',
-  '/terms',
-  '/dmca',
 ];
 
 const customPages = [

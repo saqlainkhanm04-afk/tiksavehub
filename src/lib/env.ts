@@ -24,9 +24,11 @@ export interface CfEnv {
   FB_COOKIES?: string;
   FB_APP_TOKEN?: string;
   RATE_LIMIT_PER_MIN?: string;
+  RATE_LIMIT_PER_HOUR?: string;
   MEDIA_TTL_MS?: string;
   INSTAGRAM_MEDIA_TTL_MS?: string;
   MAX_CACHE_AGE_MS?: string;
+  FB_RSA_PUBLIC_KEY?: string;
 }
 
 /**
@@ -48,6 +50,7 @@ export function getEnv(locals?: Record<string, any>): CfEnv {
     FB_COOKIES: (globalThis as any).process?.env?.FB_COOKIES || '',
     FB_APP_TOKEN: (globalThis as any).process?.env?.FB_APP_TOKEN || '',
     RATE_LIMIT_PER_MIN: (globalThis as any).process?.env?.RATE_LIMIT_PER_MIN || '30',
+    RATE_LIMIT_PER_HOUR: (globalThis as any).process?.env?.RATE_LIMIT_PER_HOUR || '300',
     MEDIA_TTL_MS: (globalThis as any).process?.env?.MEDIA_TTL_MS || '',
     INSTAGRAM_MEDIA_TTL_MS: (globalThis as any).process?.env?.INSTAGRAM_MEDIA_TTL_MS || '',
     MAX_CACHE_AGE_MS: (globalThis as any).process?.env?.MAX_CACHE_AGE_MS || '',

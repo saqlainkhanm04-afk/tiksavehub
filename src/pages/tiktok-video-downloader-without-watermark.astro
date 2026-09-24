@@ -1,4 +1,4 @@
----
+﻿---
 // TikTok Video Downloader. SEO-optimized landing page
 // URL: /tiktok-video-downloader-without-watermark
 export const prerender = true;
@@ -129,14 +129,15 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
- title="TikTok Video Downloader Without Watermark. Free HD | TikSaveHub"
- description="Download TikTok videos without watermark in HD 1080p. Free, fast, no sign-up. Works on iPhone, Android, and PC. Try TikSaveHub now."
+ title="TikTok Video Downloader - Save HD | TikSaveHub"
+ description="Download TikTok videos without watermark in HD 1080p. Fast, no sign-up. Works on iPhone, Android, and PC. Try TikSaveHub now."
  keywords="tiktok video downloader without watermark, download tiktok videos, tiktok downloader HD, save tiktok videos, tiktok no watermark downloader, tiktok mp4 downloader, free tiktok video downloader, tiktok video saver"
  canonical="/tiktok-video-downloader-without-watermark"
  ogImage="/og-downloader.png"
  ogType="website"
  jsonLd={combinedJsonLd}
  appName="TikSaveHub. TikTok Video Downloader"
+ heroImage="/images/tiktok/tiktok-hero.webp"
 >
  <!-- JSON-LD Structured Data -->
  <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -247,7 +248,7 @@ const combinedJsonLd = JSON.stringify({
  </p>
 
  <figure class="tool-screenshot">
- <img src="/images/tiktok/tiktok-hero.webp" alt="TikSaveHub TikTok video downloader interface showing input field with HD, SD, and MP3 download options" width="1200" height="675" loading="eager" />
+ <img src="/images/tiktok/tiktok-hero.webp" alt="TikSaveHub TikTok video downloader interface showing input field with HD, SD, and MP3 download options" width="1200" height="675" loading="eager" fetchpriority="high" />
  <figcaption>Paste a TikTok link and get HD download options instantly</figcaption>
  </figure>
 
@@ -896,13 +897,16 @@ const combinedJsonLd = JSON.stringify({
  }
 
  .breadcrumb-list a {
- color: var(--color-body);
- text-decoration: none;
- transition: color 0.15s ease;
+  color: var(--color-body);
+  text-decoration: underline;
+  text-decoration-color: var(--color-hairline-strong);
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
  }
 
  .breadcrumb-list a:hover {
- color: var(--color-ink);
+  color: var(--color-ink);
+  text-decoration-color: var(--color-ink);
  }
 
  .dl-badge-row {
@@ -1637,16 +1641,26 @@ const combinedJsonLd = JSON.stringify({
  }
 
  .dl-internal-card {
- display: flex;
- flex-direction: column;
- gap: var(--spacing-sm);
- padding: var(--spacing-lg);
- border-radius: var(--radius-lg);
- border: 1px solid var(--color-hairline);
- background-color: var(--color-canvas);
- text-decoration: none;
- transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
- position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  text-decoration: none;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+ }
+
+ .dl-internal-card::after {
+  content: '';
+  position: absolute;
+  bottom: var(--spacing-lg);
+  left: var(--spacing-lg);
+  right: var(--spacing-lg);
+  height: 1px;
+  background: var(--color-hairline);
  }
 
  .dl-internal-card:hover {
@@ -1814,13 +1828,16 @@ const combinedJsonLd = JSON.stringify({
  }
 
  .seo-sidebar-list a {
- color: var(--color-body);
- text-decoration: none;
- transition: color 0.15s ease;
+  color: var(--color-body);
+  text-decoration: underline;
+  text-decoration-color: var(--color-hairline-strong);
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
  }
 
  .seo-sidebar-list a:hover {
- color: var(--color-ink);
+  color: var(--color-ink);
+  text-decoration-color: var(--color-ink);
  }
 
  .seo-sidebar-mono li {

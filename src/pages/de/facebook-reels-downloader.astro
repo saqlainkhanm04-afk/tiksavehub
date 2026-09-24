@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Reels Downloader — SEO-optimized landing page (Deutsch)
 // URL: /facebook-reels-downloader
 export const prerender = true;
@@ -13,6 +13,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'de' as Lang);
 
 const faqData = [
   { id: 'reels-hd1080', q: 'Wie kann ich Facebook Reels in HD herunterladen?', a: 'Kopiere den öffentlichen Link des Facebook Reels, füge ihn bei TikSaveHub ein und klicke auf Herunterladen. Wenn der Originalreel in 1080p hochgeladen wurde, wird automatisch die volle HD-MP4-Datei gespeichert.' },
@@ -108,7 +110,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Weitere kostenlose Facebook- und Social-Tools"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos und Watch-Links in HD herunter.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook-zu-MP3-Konverter', desc: 'Extrahiere hochwertiges MP3-Audio aus Facebook-Videos.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Speichere Facebook-Stories in HD, bevor sie nach 24 Stunden verschwinden.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Foto Downloader', desc: 'Speichere Facebook-Fotos in voller Auflösung kostenlos.' }, { href: '/instagram-video-downloader-without-watermark', icon: 'ig', title: 'Instagram Video Downloader', desc: 'Lade Instagram-Videos in HD herunter.' }, { href: '/instagram-reels-downloader-without-watermark', icon: 'igreels', title: 'Instagram Reels Downloader', desc: 'Speichere Instagram Reels ohne Wasserzeichen.' }, { href: '/tiktok-video-downloader-without-watermark', icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'Lade TikTok-Videos in HD ohne Wasserzeichen herunter.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos und Watch-Links in HD herunter.' }, { href: lp('/facebook-to-mp3'), icon: 'mp3', title: 'Facebook-zu-MP3-Konverter', desc: 'Extrahiere hochwertiges MP3-Audio aus Facebook-Videos.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Speichere Facebook-Stories in HD, bevor sie nach 24 Stunden verschwinden.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Foto Downloader', desc: 'Speichere Facebook-Fotos in voller Auflösung kostenlos.' }, { href: lp('/instagram-video-downloader-without-watermark'), icon: 'ig', title: 'Instagram Video Downloader', desc: 'Lade Instagram-Videos in HD herunter.' }, { href: lp('/instagram-reels-downloader-without-watermark'), icon: 'igreels', title: 'Instagram Reels Downloader', desc: 'Speichere Instagram Reels ohne Wasserzeichen.' }, { href: lp('/tiktok-video-downloader-without-watermark'), icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'Lade TikTok-Videos in HD ohne Wasserzeichen herunter.' } ]}
+    lang="de"
   />
 
   <!-- Related Tools -->

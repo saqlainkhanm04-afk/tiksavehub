@@ -18,7 +18,9 @@ interface Props {
   jsonLd?: string;
   appName?: string;
   skipSoftwareApp?: boolean;
+  heroImage?: string;
   lang?: string;
+  localizedHreflang?: boolean;
 }
 
 const {
@@ -33,7 +35,9 @@ const {
   jsonLd,
   appName = 'TikSaveHub',
   skipSoftwareApp = false,
+  heroImage,
   lang: propLang,
+  localizedHreflang = true,
 } = Astro.props;
 
 const detectedLang = propLang || getLangFromUrl(Astro.url);
@@ -51,7 +55,8 @@ const detectedLocale = urlSegments[1] && urlSegments[1] in languages ? urlSegmen
 // we must prepend the locale so the canonical is SELF-REFERENCING, not
 // pointing at the English version.
 const rawCanonical = canonical ?? Astro.url.pathname;
-const canonicalPath = detectedLocale
+// If the page already includes the locale prefix in its canonical, don't add it again.
+const canonicalPath = detectedLocale && !rawCanonical.startsWith(`/${detectedLocale}`)
   ? `/${detectedLocale}${rawCanonical === '/' ? '/' : rawCanonical}`
   : rawCanonical;
 const normalizedCanonicalPath =
@@ -94,9 +99,12 @@ if (!noindex && !skipSoftwareApp) {
 }
 if (jsonLd) {
   try {
-    const parsed = JSON.parse(jsonLd) as Record<string, unknown>;
-    // Support a nested @graph from pages that emit multiple schema types.
-    if (Array.isArray(parsed['@graph'])) {
+    const parsed = JSON.parse(jsonLd) as Record<string, unknown> | Record<string, unknown>[];
+    // Support a raw array of schemas from index pages.
+    if (Array.isArray(parsed)) {
+      graph.push(...parsed);
+    } else if (Array.isArray(parsed['@graph'])) {
+      // Support a nested @graph from pages that emit multiple schema types.
       graph.push(...(parsed['@graph'] as Record<string, unknown>[]));
     } else {
       graph.push(parsed);
@@ -125,6 +133,9 @@ const structuredData =
     <link rel="alternate" type="application/rss+xml" title="TikSaveHub Blog" href="/rss.xml" />
 
     {(() => {
+      // English-only pages (e.g. blog posts) must not declare localized
+      // alternates: "/de/blog/{slug}" does not exist and would 404.
+      if (localizedHreflang === false) return null;
       // Strip the locale prefix from the pathname so alternates are built from
       // the base path (e.g. "/de/blog" → "/blog", then each locale gets its
       // own prefixed version: /ja/blog, /es/blog, /blog for English).
@@ -136,7 +147,13 @@ const structuredData =
         <link rel="alternate" hreflang={altLang} href={href} />
       ));
     })()}
-    <link rel="alternate" hreflang="x-default" href={`${siteURL}${rawCanonical === '/' ? '/' : rawCanonical.replace(/\/+$/, '')}`} />
+    {/* x-default always points to the English (no-locale) version */}
+    <link rel="alternate" hreflang="x-default" href={`${siteURL}${(() => {
+      const p = rawCanonical === '/' ? '/' : rawCanonical.replace(/\/+$/, '');
+      return detectedLocale && p.startsWith(`/${detectedLocale}/`)
+        ? p.slice(detectedLocale.length + 1) || '/'
+        : p;
+    })()}`} />
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
@@ -165,12 +182,16 @@ const structuredData =
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
 
+    {/* Preload hero image for LCP */}
+    {heroImage && <link rel="preload" as="image" href={heroImage} fetchpriority="high" />}
+
     <!-- Preconnect to analytics + LCP resource hints -->
     <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://challenges.cloudflare.com" />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
     <!-- Favicon & PWA -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
@@ -178,6 +199,8 @@ const structuredData =
     <!-- Theme color matches the page background in light & dark mode -->
     <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)" />
+
+    <!-- CSS loads synchronously to prevent FOUC -->
 
     <!-- Anti-FOUC: apply dark class before first paint (non-blocking) -->
     <script is:inline defer>

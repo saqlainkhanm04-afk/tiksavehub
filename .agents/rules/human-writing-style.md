@@ -84,9 +84,207 @@ Also check for and remove:
 - Double hyphens (--) used as em dashes
 - Any other dash-based AI patterns
 
+## Multilingual Content Rules
+
+The rules above are English-specific. Each language has its own natural patterns, contractions, and AI-detection signals. Follow these when writing or translating content.
+
+### Spanish (es)
+
+CONTRACTIONS & NATURAL FORMS:
+- Use informal "tu" form (not formal "usted" unless necessary)
+- Use colloquial contractions: "pa'" (para), "ta" (esta), "na" (nada)
+- Use natural spoken Spanish: "mira", "oye", "venga", "vale"
+
+BANNED AI CLICHES IN SPANISH:
+- "en la era digital"
+- "es importante destacar/notar"
+- "sin duda alguna"
+- "sumérgete en"
+- "aprovecha al máximo"
+- "no busques más"
+- "revolucionario"
+- "innovador"
+- "de última generación"
+- "en conclusión"
+
+NATURAL EXPRESSIONS TO USE:
+- "La verdad es que..."
+- "Mira, esto es lo que pasa..."
+- "Te cuento..."
+- "Francamente..."
+- "Aquí está el asunto..."
+- "Ojo con esto..."
+
+### French (fr)
+
+CONTRACTIONS & NATURAL FORMS:
+- Use informal "tu" form (not formal "vous" unless necessary)
+- French naturally uses apostrophes: l'outil, j'ai, c'est, qu'il
+- Use natural spoken French: "franchement", "ecoute", "bon", "bref"
+
+BANNED AI CLICHES IN FRENCH:
+- "a l'ere numerique"
+- "il est important de noter"
+- "plongez dans"
+- "ne cherchez plus"
+- "revolutionnaire"
+- "innovant"
+- "a la pointe de la technologie"
+- "en conclusion"
+- "sans plus attendre"
+
+NATURAL EXPRESSIONS TO USE:
+- "Franchement..."
+- "Ecoute, voila le truc..."
+- "La verite c'est que..."
+- "En vrai..."
+- "Le truc, c'est que..."
+- "Attention a ca..."
+
+### German (de)
+
+CONTRACTIONS & NATURAL FORMS:
+- Use informal "du" form (not formal "Sie" unless necessary)
+- Use natural contractions: "hab's", "geht's", "is'"
+- Use natural spoken German: "ehrlich gesagt", "schau mal", "also"
+
+BANNED AI CLICHES IN GERMAN:
+- "im digitalen Zeitalter"
+- "es ist wichtig zu beachten"
+- "tauchen Sie ein"
+- "suchen Sie nicht weiter"
+- "revolutionar"
+- "innovativ"
+- "auf dem neuesten Stand der Technik"
+- "abschliessend"
+- "ohne weiteres"
+
+NATURAL EXPRESSIONS TO USE:
+- "Ehrlich gesagt..."
+- "Schau mal, die Sache ist die..."
+- "Die Wahrheit ist..."
+- "Also, hier ist der Punkt..."
+- "Pass auf..."
+- "Mal im Ernst..."
+
+### Portuguese (pt)
+
+CONTRACTIONS & NATURAL FORMS:
+- Use informal "voce" form (Brazilian) or "tu" (European)
+- Use colloquial contractions: "ta" (esta), "pra" (para), "ce" (voce)
+- Use natural spoken Portuguese: "olha", "sinceramente", "entao"
+
+BANNED AI CLICHES IN PORTUGUESE:
+- "na era digital"
+- "e importante notar"
+- "mergulhe em"
+- "nao procure mais"
+- "revolucionario"
+- "inovador"
+- "de ponta"
+- "em conclusao"
+- "sem mais delongas"
+
+NATURAL EXPRESSIONS TO USE:
+- "Olha, e o seguinte..."
+- "Sinceramente..."
+- "A verdade e que..."
+- "Vou te contar..."
+- "Presta atencao nisso..."
+- "Serio mesmo..."
+
+### Korean (ko)
+
+CONTRACTIONS & NATURAL FORMS:
+- Use casual mixed style: banmal for relatable tone, jondaemal when appropriate
+- Use casual endings: ~거든요, ~잖아요, ~더라고요, ~네요
+- Use natural spoken Korean: "솔직히", "보세요", "사실은"
+
+BANNED AI CLICHES IN KOREAN:
+- "디지털 시대에"
+- "중요한 것은"
+- "뛰어들어"
+- "더 이상 찾지 마세요"
+- "혁신적인"
+- "최첨단"
+- "결론적으로"
+- "지금 바로"
+
+NATURAL EXPRESSIONS TO USE:
+- "솔직히 말하면..."
+- "보세요, 이게 핵심이에요..."
+- "사실은..."
+- "제가 말씀드릴게요..."
+- "이거 아세요?"
+- "진짜로..."
+
+### Japanese (ja)
+
+CONTRACTIONS & NATURAL FORMS:
+- Use casual style (da/dearu) mixed with polite (desu/masu) appropriately
+- Use casual particles: sa, ne, yo, na
+- Use natural spoken Japanese: "正直に言うと", "見てください", "実は"
+
+BANNED AI CLICHES IN JAPANESE:
+- "デジタル時代において"
+- "重要なのは"
+- "飛び込んで"
+- "もう探す必要はありません"
+- "革新的な"
+- "最先端の"
+- "結論として"
+- "今すぐに"
+
+NATURAL EXPRESSIONS TO USE:
+- "正直に言うと..."
+- "見てください、これがポイントです..."
+- "実は..."
+- "お伝えしたいのは..."
+- "知ってましたか?"
+- "マジで..."
+
+### Italian (it)
+
+CONTRACTIONS & NATURAL FORMS:
+- Use informal "tu" form (not formal "Lei" unless necessary)
+- Use natural contractions: c'e, l'ho, un'altra, dell'acqua
+- Use natural spoken Italian: "sinceramente", "guarda", "dai"
+
+BANNED AI CLICHES IN ITALIAN:
+- "nell'era digitale"
+- "e importante notare"
+- "immergiti in"
+- "non cercare oltre"
+- "rivoluzionario"
+- "innovativo"
+- "all'avanguardia"
+- "in conclusione"
+- "senza ulteriori indugi"
+
+NATURAL EXPRESSIONS TO USE:
+- "Sinceramente..."
+- "Guarda, il punto e questo..."
+- "La verita e che..."
+- "Ti racconto..."
+- "Fai attenzione a questo..."
+- "Dai, su..."
+
+### Universal Rules (All Languages)
+
+1. NO em dashes in ANY language
+2. NO fake first-person claims in any language
+3. NO AI cliches specific to each language (see lists above)
+4. Use contractions/natural forms specific to each language
+5. Vary sentence lengths in every paragraph
+6. Include personal voice phrases (6-8 per page)
+7. Include strong opinions (4-5 per page)
+8. Include honest limitations (3-4 per page)
+9. FAQ answers must vary in length (short, medium, long)
+10. Section lengths must vary
+
 ## Self-Check Before Submitting
 Before finalizing any content, verify:
-- [ ] No AI clichés from the banned list
+- [ ] No AI cliches from the banned list
 - [ ] Contractions used throughout
 - [ ] Sentence lengths varied
 - [ ] No fake first-person claims
@@ -96,3 +294,6 @@ Before finalizing any content, verify:
 - [ ] Personal voice phrases included (6-8 places)
 - [ ] Honest limitations included (3-4 places)
 - [ ] No em dashes, en dashes, or double hyphens
+- [ ] If multilingual: language-specific AI cliches removed
+- [ ] If multilingual: natural contractions/forms used for that language
+- [ ] If multilingual: sounds like a native speaker wrote it

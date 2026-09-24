@@ -76,6 +76,10 @@ const faqData = [
  },
 ];
 
+function stripHtml(text: string): string {
+  return text.replace(/<[^>]*>/g, '').trim();
+}
+
 const faqJsonLd = JSON.stringify({
  '@context': 'https://schema.org',
  '@type': 'FAQPage',
@@ -84,7 +88,7 @@ const faqJsonLd = JSON.stringify({
  name: faq.q,
  acceptedAnswer: {
  '@type': 'Answer',
- text: faq.a,
+ text: stripHtml(faq.a),
  },
  })),
 });
@@ -92,7 +96,7 @@ const faqJsonLd = JSON.stringify({
 
 <Layout
  title="Instagram Audio Downloader (MP3 & Music). TikSaveHub"
- description="Download Instagram audio as MP3 from Reels, videos & Stories. Free IG audio extractor. save music, voiceovers & soundtracks. No login, no app needed."
+ description="Download Instagram audio as MP3 from Reels, videos & Stories. IG audio extractor. save music, voiceovers & soundtracks. No login, no app needed."
  keywords="instagram audio downloader, instagram to mp3, download instagram audio, extract instagram music, ig reels mp3 downloader, instagram audio extractor, instagram reels audio downloader"
  canonical="/instagram-audio-downloader"
  ogImage="/og-downloader.png"

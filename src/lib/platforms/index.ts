@@ -16,7 +16,7 @@
 export type { MediaMeta } from './types';
 
 // TikTok
-export { tiktokSources, tikwmSource, cobaltSource as tiktokCobaltSource, tiktokItemDetailSource } from './tiktok';
+export { tiktokSources, tikwmSource, cobaltSource as tiktokCobaltSource, tiktokItemDetailSource, tiktokDirectSource, tiktokDownbloderSource, tiktokCdnDirectSource } from './tiktok';
 
 // Instagram
 export { instagramSources, igMultiApiSource, igGraphqlSource, igEmbedSource, igLegacySource } from './instagram';

@@ -75,6 +75,19 @@ function localPath(path: string): string {
         <li><a href={localPath('/contact')} class="footer-link" id="footer-link-contact">{t('footer.contact')}</a></li>
       </ul>
     </div>
+
+    <!-- Popular Searches -->
+    <div class="footer-col">
+      <p class="footer-col-label text-caption-mono">Popular Searches</p>
+      <ul class="footer-link-list">
+        <li><a href={localPath('/facebook-photo-downloader')} class="footer-link" id="footer-link-pop-photo">Download Facebook photos</a></li>
+        <li><a href={localPath('/facebook-to-mp3')} class="footer-link" id="footer-link-pop-mp3">Convert Facebook to MP3</a></li>
+        <li><a href={localPath('/instagram-story-downloader-without-watermark')} class="footer-link" id="footer-link-pop-ig-story">Save Instagram Stories</a></li>
+        <li><a href={localPath('/instagram-audio-downloader')} class="footer-link" id="footer-link-pop-ig-audio">Instagram audio to MP3</a></li>
+        <li><a href={localPath('/tiktok-video-downloader-without-watermark')} class="footer-link" id="footer-link-pop-tiktok">TikTok video no watermark</a></li>
+        <li><a href={localPath('/x-video-downloader')} class="footer-link" id="footer-link-pop-x">X video downloader</a></li>
+      </ul>
+    </div>
   </div>
 
   <!-- Bottom Bar -->
@@ -96,7 +109,7 @@ function localPath(path: string): string {
 
   .footer-inner {
     display: grid;
-    grid-template-columns: 1fr 180px 180px;
+    grid-template-columns: 1fr 180px 180px 180px;
     gap: var(--spacing-4xl);
     padding-top: var(--spacing-4xl);
     padding-bottom: var(--spacing-4xl);
@@ -196,7 +209,7 @@ function localPath(path: string): string {
     line-height: 1.5;
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 1060px) {
     .footer-inner {
       grid-template-columns: 1fr 1fr;
     }

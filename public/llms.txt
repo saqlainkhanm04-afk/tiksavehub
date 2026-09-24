@@ -1,0 +1,40 @@
+# TikSaveHub
+
+> Free online video downloader for TikTok, Instagram, Facebook, Snapchat, and X (Twitter). Downloads videos without watermarks, extracts audio as MP3. No app installation required. Works in any browser on iPhone, Android, Windows, Mac, and Linux.
+
+TikSaveHub processes all downloads server-side. No user data is stored. Supports 7 languages: English, Spanish, French, German, Italian, Japanese, Korean, Portuguese.
+
+## TikTok
+
+- [TikTok Video Downloader](https://tiksavehub.com/tiktok-video-downloader-without-watermark): Download TikTok videos without watermark as MP4 files up to 1080p HD
+- [TikTok to MP3](https://tiksavehub.com/tiktok-to-mp3): Extract audio from TikTok videos as MP3 files
+
+## Instagram
+
+- [Instagram Video Downloader](https://tiksavehub.com/instagram-video-downloader-without-watermark): Download Instagram videos without watermark
+- [Instagram Reels Downloader](https://tiksavehub.com/instagram-reels-downloader-without-watermark): Save Instagram Reels in HD quality
+- [Instagram Story Downloader](https://tiksavehub.com/instagram-story-downloader-without-watermark): Download Instagram Stories anonymously
+- [Instagram Audio Downloader](https://tiksavehub.com/instagram-audio-downloader): Extract audio from Instagram Reels and videos as MP3
+
+## Facebook
+
+- [Facebook Video Downloader](https://tiksavehub.com/facebook-video-downloader): Download Facebook videos in HD or SD quality
+- [Facebook Reels Downloader](https://tiksavehub.com/facebook-reels-downloader): Save Facebook Reels without watermark
+- [Facebook Story Downloader](https://tiksavehub.com/facebook-story-downloader): Download Facebook Stories anonymously
+- [Facebook Photo Downloader](https://tiksavehub.com/facebook-photo-downloader): Download Facebook photos and albums in full resolution
+- [Facebook to MP3](https://tiksavehub.com/facebook-to-mp3): Extract audio from Facebook videos as MP3 files
+
+## Snapchat
+
+- [Snapchat Video Downloader](https://tiksavehub.com/snapchat-downloader): Download Snapchat videos and Spotlight content
+- [Snapchat Story Downloader](https://tiksavehub.com/snapchat-story-downloader): Save Snapchat Stories anonymously
+- [Snapchat to MP3](https://tiksavehub.com/snapchat-to-mp3): Extract audio from Snapchat videos as MP3
+
+## X (Twitter)
+
+- [X Video Downloader](https://tiksavehub.com/x-video-downloader): Download X/Twitter videos and GIFs without watermark
+
+## Optional
+
+- [Blog](https://tiksavehub.com/blog): Guides and tips for downloading videos from social media platforms
+- [llms-full.txt](https://tiksavehub.com/llms-full.txt): Extended context file with detailed tool descriptions and API information

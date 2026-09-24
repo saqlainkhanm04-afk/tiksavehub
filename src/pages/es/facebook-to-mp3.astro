@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook to MP3 — SEO-optimized landing page (Español)
 // URL: /facebook-to-mp3
 export const prerender = true;
@@ -13,6 +13,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'es' as Lang);
 
 const faqData = [
   { id: 'mp3-how', q: '¿Cómo convertir un video de Facebook a MP3?', a: 'Copia el enlace del video de Facebook, pégalo en TikSaveHub, selecciona el modo MP3 y haz clic en descargar. Obtendrás un archivo MP3 de alta calidad.' },
@@ -105,7 +107,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Más herramientas gratuitas de Facebook"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Descargador de Videos de Facebook', desc: 'Descarga videos completos de Facebook en HD.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Descargador de Facebook Reels', desc: 'Guarda Facebook Reels sin marca de agua.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Descargador de Historias de Facebook', desc: 'Guarda historias de Facebook antes de que desaparezcan.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Descargador de Fotos de Facebook', desc: 'Guarda fotos de Facebook en resolución completa.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Descargador de Videos de Facebook', desc: 'Descarga videos completos de Facebook en HD.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Descargador de Facebook Reels', desc: 'Guarda Facebook Reels sin marca de agua.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Descargador de Historias de Facebook', desc: 'Guarda historias de Facebook antes de que desaparezcan.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Descargador de Fotos de Facebook', desc: 'Guarda fotos de Facebook en resolución completa.' } ]}
+    lang="es"
   />
 
   <!-- Related Tools -->

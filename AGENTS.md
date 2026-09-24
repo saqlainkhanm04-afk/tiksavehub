@@ -22,7 +22,18 @@ Facebook Variable Anti-Scraping Behavior: Facebook serves login walls ("Log into
 
 **Success rate (flagged dev IP, 13 URLs tested):** 46% overall. Most failures are login walls (5/6 reader proxy responses confirmed login-walled). On unflagged production IPs, success rate is significantly higher (estimated 70-85%+).
 
-## WIP Status (last session: IG story session UNLOCKED — full-cookie + mobile-web fingerprint wins)
+## WIP Status (last session: TikTok MP3 downloader FIXED — invalid "tiksavehub-audio.mp3" files)
+
+- **User bug report: TikTok MP3 downloader gives an INVALID file named `tiksavehub-audio.mp3` (opens with "site wasn't available").** Root cause (verified live via probe): TikWM `music_info.play` IS a real MP3 (`audio/mpeg`, starts with ID3 `49 44 33`) — the break was in the streaming layer: `streamFromUpstream` was VIDEO-ONLY. It rejected non-`video/` content-types (`audio/mpeg`) AND validated bytes with `isValidVideoBytes` (MP4/EBML/FLV only), so every valid MP3 was thrown away → the API returned a 500 JSON error → the frontend anchor's `download="tiksavehub-audio.mp3"` attribute force-saved that JSON body as `.mp3` → invalid file.
+- **FIXES (all verified):**
+  - `src/lib/platforms/video-probe.ts`: new `isValidAudioBytes()` (ID3 `49 44 33` OR MPEG sync `0xFF 0xE0` mask) + `probeAudioUrl()` (only accepts `audio/*` CT + audio magic bytes; rejects ftyp-M4A and text/html honestly — never fakes an MP3).
+  - `src/lib/stream.ts` `streamFromUpstream`: new `audio?: boolean` mode — accepts `audio/*`/octet-stream content-types and validates audio magic bytes; video path (`download.ts`) untouched. Sequence: CT gate → first-chunk magic check → pump.
+  - `src/pages/api/download-mp3.ts`: passes `audio: true`; new `isNotAudio` error class → honest "MP3 audio is not available for this video. Try another public TikTok link or download the video instead."
+  - `src/scripts/mp3-form.ts` + regenerated `public/scripts/mp3-form.js`: download click handler now fetches the `dl=1` response, checks `res.ok` + `audio/*` content-type + ID3/0xFF first bytes, then saves via a blob anchor (honors server `Content-Disposition` filename); a server error is NEVER written as `.mp3` anymore. Rebuild via `node_modules\.bin\esbuild.cmd src/scripts/mp3-form.ts --bundle --minify --format=iife --platform=browser --target=es2019 --outfile=public/scripts/mp3-form.js`.
+- **Verified:** deterministic local mock-server probe 12/12 PASS (real ID3 streams, HTML/M4A rejected, video path still rejects audio — no regression); astro check 0/0/0 + 44 hints (2 pre-existing unrelated? no — 0 errors); live on dev IP: `@krisan.geline/video/7632685614411844881` meta + `dl=1` → **HTTP 200 `audio/mpeg`, 485,295 bytes, first bytes `49 44 33` (valid MP3)**, clean filename from `music.title`. Cache-hit path + `dl=1` re-verify OK.
+- NOTE: the dev IP is TikTok-throttled (most CDN probes + the full meta chain time out — `@postmalone` gives `play_url:null` from Cobalt/TikWM/TikTokDownbloder all timing out; that is env, not code). `src/middleware.ts` has an UNCOMMITTED `ctx.url.protocol === 'http:'` → HTTPS 301 fallback that blocks plain-HTTP curl tests on dev; bypass by commenting it out only during verification (reverted after — it's back in place).
+
+## WIP Status (prior session: IG story session UNLOCKED — full-cookie + mobile-web fingerprint wins)
 
 - **New IG `/reels/{code}/` URL format now supported (user request — Chrome address-bar links).** Instagram moved reels links to plural `/reels/` in current builds; the SEO pages already advertised it but the parser/form only matched `/reel/`. FIX: `parseInstagramUrl` regex now accepts `(?:\/reel|\/reels)`, and the client-side patterns in `InstagramDownloadForm.astro` (reels + audio tabs) accept `reel|reels`. Verified live on dev IP: `https://www.instagram.com/reels/DcPd4TNt0vK/` → 200 `type:"reels"` + real CDN mp4 (CLIPS C3.720) + `dl` stream 200 video/mp4 1.47MB; astro check 0/0/0.
 

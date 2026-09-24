@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook to MP3 — SEO-optimized landing page (FR)
 // URL: /facebook-to-mp3
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'fr' as Lang);
 
 const faqData = [
   { id: 'mp3-how', q: 'Comment puis-je convertir une vidéo Facebook en MP3 ?', a: 'Copiez le lien de la vidéo Facebook, collez-le sur TikSaveHub, sélectionnez l\'option MP3 et cliquez sur télécharger. Vous obtiendrez un fichier MP3 haute qualité.' },
@@ -71,7 +73,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Autres outils Facebook gratuits"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Téléchargez des vidéos Facebook en HD.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Enregistrez des Reels Facebook sans filigrane.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Enregistrez les stories Facebook avant qu\'elles ne disparaissent.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Enregistrez des photos Facebook en résolution complète.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Téléchargez des vidéos Facebook en HD.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Enregistrez des Reels Facebook sans filigrane.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Enregistrez les stories Facebook avant qu\'elles ne disparaissent.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Enregistrez des photos Facebook en résolution complète.' } ]}
+    lang="fr"
   />
 
   <!-- Related Tools -->

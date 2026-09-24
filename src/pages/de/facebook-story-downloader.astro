@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Story Downloader — SEO-optimized landing page (Deutsch)
 // URL: /facebook-story-downloader
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'de' as Lang);
 
 const faqData = [
   { id: 'story-hd', q: 'Wie kann ich Facebook Stories in HD herunterladen?', a: 'Kopiere den Link der öffentlichen Facebook-Story, füge ihn bei TikSaveHub ein und klicke auf Herunterladen. Wenn die Story noch verfügbar ist, wird sie in Originalqualität als MP4 gespeichert.' },
@@ -72,7 +74,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Weitere kostenlose Facebook-Tools"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos in voller Länge in HD herunter.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Speichere Facebook Reels ohne Wasserzeichen.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook-zu-MP3-Konverter', desc: 'Extrahiere MP3-Audio aus Facebook-Videos.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Foto Downloader', desc: 'Speichere Facebook-Fotos in voller Auflösung.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos in voller Länge in HD herunter.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Speichere Facebook Reels ohne Wasserzeichen.' }, { href: lp('/facebook-to-mp3'), icon: 'mp3', title: 'Facebook-zu-MP3-Konverter', desc: 'Extrahiere MP3-Audio aus Facebook-Videos.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Foto Downloader', desc: 'Speichere Facebook-Fotos in voller Auflösung.' } ]}
+    lang="de"
   />
 
   <!-- Related Tools -->

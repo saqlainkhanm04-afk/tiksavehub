@@ -1,6 +1,6 @@
----
-// TikTok Video Downloader — SEO-optimized landing page (Korean)
-// URL: /tiktok-video-downloader-without-watermark
+﻿---
+// TikTok Video Downloader. SEO-optimized landing page (Korean)
+// URL: /ko/tiktok-video-downloader-without-watermark
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
@@ -9,11 +9,66 @@ import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
 
 const faqData = [
-  { id: 'tt-how', q: 'TikTok 동영상을 다운로드하려면 어떻게 해야 하나요?', a: 'TikTok 링크를 TikSaveHub에 붙여넣고 다운로드를 클릭하세요.' },
-  { id: 'tt-watermark', q: '워터마크 없이 다운로드할 수 있나요?', a: '네, TikSaveHub는 워터마크 없는 TikTok 동영상 다운로드를 지원합니다.' },
-  { id: 'tt-free', q: 'TikTok 동영상 다운로드는 무료인가요?', a: '네, TikSaveHub는 100% 무료입니다.' },
-  { id: 'tt-mp3', q: 'TikTok을 MP3로 변환할 수 있나요?', a: '네, TikTok to MP3 도구로 가능합니다.' },
-  { id: 'tt-private', q: '비공개 TikTok 동영상을 다운로드할 수 있나요?', a: '아니요, 공개된 동영상만 지원됩니다.' },
+  {
+    id: 'dl-ww',
+    q: 'TikSaveHub에서 TikTok 동영상을 워터마크 없이 어떻게 다운로드하나요?',
+    a: 'TikTok에서 링크를 복사하고, 이 페이지의 입력란에 붙여넣은 다음 다운로드를 누르기만 하면 됩니다. TikSaveHub는 TikTok 서버에 있는 원본 동영상을 가져옵니다. 워터마크가 붙여지기 전의 깨끗한 버전이요. 2~3초면 워터마크 없는 MP4가 준비됩니다.',
+  },
+  {
+    id: 'dl-hd',
+    q: 'TikSaveHub로 TikTok 동영상을 HD 1080p 품질로 저장할 수 있나요?',
+    a: 'TikSaveHub는 해당 동영상에 대해 TikTok이 제공하는 최고 품질을 그대로 가져갑니다. 대부분의 인기 크리에이터가 1080p(1920×1080 픽셀)로 업로드하는데, 그대로 다운로드됩니다. 재인코딩도, 추가 압축도 없습니다. 브라우저에서 재생되는 원본 스트림을 그대로 가져오니까요.\n\n크리에이터가 720p나 480p로만 업로드했다면, TikSaveHub가 마법처럼 업스케일링할 수는 없습니다. 품질은 전적으로 크리에이터가 내보낸 것에 달려있어요. 다만, 여러 비트레이트의 스트림 중에서 선택할 때는 항상 가장 높은 것을 골라줍니다.',
+  },
+  {
+    id: 'dl-iphone',
+    q: '아이폰(Safari)에서도 TikSaveHub로 TikTok 동영상을 다운로드할 수 있나요?',
+    a: 'iOS 13 이상이면 어떤 아이폰에서든 작동합니다. Safari를 열고 TikTok 링크를 복사한 다음 TikSaveHub에 붙여넣고 다운로드를 탭하세요. 파일은 Safari의 다운로드 관리자에 저장됩니다.\n\n알아두면 좋은 것이 몇 가지 있어요. 구버전 iOS(12 이하)에서는 Apple의 제한 때문에 다운로드가 아예 차단될 수 있습니다. 그리고 Safari에서 "이 유형의 파일은 다운로드할 수 없다"는 이상한 메시지가 뜨면, 같은 아이폰에서 Chrome으로 바꿔보세요. 보통 해결됩니다. 도구 자체는 어떤 브라우저에서든 상관없는데, 가끔 휴대폰 OS가 문제를 일으키거든요.',
+  },
+  {
+    id: 'dl-devices',
+    q: '안드로이드와 PC에서도 TikSaveHub로 TikTok 동영상을 다운로드할 수 있나요?',
+    a: '최신 브라우저만 있으면 어떤 기기에서든 됩니다. 안드로이드 폰, Windows PC, Mac, Linux, 태블릿. 상관없어요. TikSaveHub는 완전히 브라우저 기반이라 설치할 것이 없습니다.',
+  },
+  {
+    id: 'dl-links',
+    q: 'TikSaveHub는 어떤 TikTok 링크 형식을 지원하나요? (vm.tiktok.com 또는 vt.tiktok.com)',
+    a: '모든 TikTok URL 형식이 작동합니다. 전체 링크(tiktok.com/@user/video/...), 단축 공유 링크(vm.tiktok.com/...), 모바일 공유 링크(vt.tiktok.com/...)가 모두 자동으로 해결됩니다. 공유 메뉴에서 복사했든, 브라우저 주소창에서 복사했든, 문자메시지에서 복사했든 상관없이 붙여넣기만 하면 나머지는 도구가 알아서 합니다.',
+  },
+  {
+    id: 'dl-free',
+    q: 'TikSaveHub는 무료인가요? 가입이나 소프트웨어 설치가 필요한가요?',
+    a: '완전히 무료입니다. 가입도, 이메일 수집도, 숨겨진 유료 플랜도 없습니다. 링크를 붙여넣고 동영상을 다운로드하면 끝이에요.\n\nTikSaveHub가 하지 않는 것: 계정을 요구하지 않고, 다운로드 전에 중간 광고를 보여주지 않고, 일일 다운로드를 제한하지 않습니다. 처리가 서버 측에서 이루어지기 때문에 브라우저 확장 프로그램이나 앱을 설치할 필요도 없어요. 몇몇 "무료" TikTok 다운로더가 몇 번 저장하면 유료 플랜으로 넘기는데, 여기는 그렇지 않습니다.',
+  },
+  {
+    id: 'dl-account',
+    q: 'TikSaveHub에서 동영상을 다운로드하려면 TikTok 계정이 필요한가요?',
+    a: 'TikTok 계정은 필요 없습니다. 동영상이 TikTok에서 공개적으로 접근 가능하기만 하면 TikSaveHub가 가져올 수 있어요. 공유 → 링크 복사를 통해 링크를 복사한 다음 도구에 붙여넣으면 다운로드가 시작됩니다. 비공개 또는 제한된 동영상은 작동하지 않지만, TikSaveHub는 그 사실을 솔직하게 알려줍니다. 당황스러운 에러를 띄우거나 조용히 실패하지 않아요.',
+  },
+  {
+    id: 'dl-legal',
+    q: '워터마크 없이 TikTok 동영상을 다운로드하는 것은 합법적인가요?',
+    a: 'TikTok 동영상을 오프라인 시청이나 개인적 용도로 저장하는 것은 넓게 허용되는 회색 영역에 속합니다. TikTok의 이용약관은 앱 외부 다운로드를 기술적으로 금지하고 있지만, 그 조항은 자동화된 스크래핑과 대량 재배포를 겨냥한 것입니다. 비행기에서 볼 동영상을 하나 저장하는 사람 말이에요.\n\n법적으로 문제가 되는 것은 상업적 사용입니다. 다른 사람의 TikTok으로 컴필레이션 채널을 운영하거나, 광고 캠페인에 Someone의 동영상을 사용하거나, 크레딧 없이 콘텐츠를 리포스팅하는 것. 워터마크를 제거했든 말든 저작권 침해에 해당할 수 있어요. 원작 크리에이터에게 크레딧을 주고, 허락 없이 수익화하지 않는 것이 올바른 방법입니다.',
+  },
+  {
+    id: 'dl-remove',
+    q: 'TikSaveHub는 TikTok 워터마크를 어떻게 제거하나요?',
+    a: 'TikTok은 모든 동영상의 깨끗한 버전을 서버에 스트리밍용으로 보관합니다. 워터마크는 앱 자체를 통해 저장할 때만 추가됩니다. TikSaveHub는 그 원본 스트리밍 파일을 다운로드합니다. 로고나 오버레이가 전혀 없는 버전이요.',
+  },
+  {
+    id: 'dl-private',
+    q: 'TikSaveHub는 비공개 TikTok 계정의 동영상을 다운로드할 수 있나요?',
+    a: '아니요. 이것은 기술적 벽이지 정책 선택이 아닙니다. 비공개 동영상은 TikTok의 공개 API를 통해 노출되지 않습니다. 정당한 다운로더는 누구도 비공개 콘텐츠에 접근할 수 없어요. 동영상이 비공개로 설정되어 있으면, 해당 계정 외부에서는 가져올 수 없습니다.',
+  },
+  {
+    id: 'dl-format',
+    q: '다운로드된 TikTok 동영상의 파일 형식과 품질은 어떻게 되나요?',
+    a: 'MP4입니다. TikTok이 스트리밍하는 형식이고, 그대로 저장됩니다. 크리에이터가 업로드한 것에 따라 최대 1080p까지 지원됩니다.',
+  },
+  {
+    id: 'dl-limits',
+    q: 'TikTok 동영상을 다운로드하는 데 제한이 있나요?',
+    a: '일일 상한도, 다운로드 할당량도, 프리미엄 제한도 없습니다. 필요한 만큼 많이 저장하세요. 하루에 이미 얼마나 다운로드했든 상관없이 모든 다운로드는 대략 2~3초 안에 처리됩니다.',
+  },
 ];
 
 const faqJsonLd = JSON.stringify({
@@ -22,63 +77,774 @@ const faqJsonLd = JSON.stringify({
   mainEntity: faqData.map((faq) => ({
     '@type': 'Question',
     name: faq.q,
-    acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') },
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
   })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: '워터마크 없이 TikTok 동영상을 다운로드하는 방법',
+  description: 'TikSaveHub를 사용하여 워터마크 없이 TikTok 동영상을 HD 품질로 저장하는 단계별 가이드.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'TikTok 동영상 링크 복사',
+      text: 'TikTok 앱을 열고 저장할 동영상을 찾은 다음 공유 버튼을 탭하고 링크 복사를 선택하세요.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'TikSaveHub에 링크 붙여넣기',
+      text: 'TikSaveHub.com에 방문한 다음 복사한 TikTok 링크를 다운로드 입력란에 붙여넣으세요.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: '다운로드 클릭',
+      text: '다운로드 버튼을 클릭하고 동영상이 처리되는 동안 몇 초간 기다리세요.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'HD 동영상 저장',
+      text: 'HD MP4 옵션(워터마크 없음)을 선택하고 동영상 파일을 기기에 저장하세요.',
+      position: 4,
+    },
+  ],
+  tool: {
+    '@type': 'HowToTool',
+    name: 'TikSaveHub',
+  },
+});
+
+const combinedJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
 });
 ---
 
 <Layout
-  title="틱톡 비디오 다운로더 워터마크 없이 | TikSaveHub"
-  description="틱톡 동영상을 워터마크 없이 HD MP4로 다운로드하세요. TikSaveHub는 무료, 빠르고 로그인 없이 틱톡 영상을 고품질로 저장할 수 있는 온라인 다운로더입니다."
-  keywords="tiktok 다운로더, tiktok video downloader, tiktok 워터마크 제거, tiktok mp4"
-  canonical="/tiktok-video-downloader-without-watermark"
+  title="틱톡 비디오 다운로더 워터마크 없이. 무료 HD | TikSaveHub"
+  description="틱톡 동영상을 워터마크 없이 HD 1080p로 다운로드하세요. 무료, 빠르고 로그인 불필요. 아이폰, 안드로이드, PC 모두 지원. 지금 바로 사용해보세요."
+  keywords="tiktok 다운로더, tiktok video downloader without watermark, tiktok downloader HD, tiktok 동영상 저장, tiktok 워터마크 제거, tiktok mp4 다운로드, 무료 tiktok 다운로더, tiktok 비디오 저장"
+  canonical="/ko/tiktok-video-downloader-without-watermark"
   ogImage="/og-downloader.png"
   ogType="website"
-  platform="tiktok"
-  jsonLd={faqJsonLd}
-  appName="TikSaveHub — TikTok 다운로더"
+  jsonLd={combinedJsonLd}
+  appName="TikSaveHub. 틱톡 비디오 다운로더"
   lang="ko"
 >
+  <!-- JSON-LD Structured Data -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "홈", "item": "https://tiksavehub.com/ko" },
+      { "@type": "ListItem", "position": 2, "name": "틱톡 비디오 다운로더", "item": "https://tiksavehub.com/ko/tiktok-video-downloader-without-watermark" }
+    ]
+  })} />
+
+  <!-- Hero Section -->
   <section class="dl-hero" aria-labelledby="dl-hero-headline">
     <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
     <div class="dl-hero-inner container-page">
-      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> 무료 · 워터마크 없음 · HD</span></div>
-      <h1 id="dl-hero-headline" class="dl-hero-headline">TikTok 다운로더</h1>
-      <p class="dl-hero-sub text-body-lg">TikTok 동영상을 워터마크 없이 HD 품질로 다운로드. 무료로 빠르게.</p>
-      <div class="dl-hero-form" id="download-tool"><DownloadForm /></div>
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/ko"><span itemprop="name">홈</span></a>
+            <meta itemprop="position" content="1" />
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
+            <span itemprop="name">틱톡 비디오 다운로더</span>
+            <meta itemprop="position" content="2" />
+          </li>
+        </ol>
+      </nav>
+
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          무료 · 워터마크 없음 · HD 품질
+        </span>
+      </div>
+
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        틱톡 비디오 다운로더 워터마크 없이: HD 동영상을 몇 초 만에 저장
+      </h1>
+
+      <p class="dl-hero-subline headline-gradient">
+        HD 품질로 동영상을 저장하세요. 무료고 즉시 사용 가능합니다.
+      </p>
+
+      <p class="dl-hero-sub text-body-lg">
+        어떤 TikTok 동영상이든 HD 품질로 저장하세요. 무료, 빠르고, 가입도 필요 없고, 사용자 이름 오버레이도 없습니다.
+        링크만 붙여넣으면 즉시 저장됩니다.
+      </p>
+
+      <div class="dl-hero-form-wrap">
+        <DownloadForm />
+      </div>
+
       <div class="dl-hero-trust">
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% 무료</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 워터마크 없음</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> HD 품질</span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          100% 무료
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          워터마크 없음
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          HD 품질
+        </span>
+        <span class="trust-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          모바일에서도 작동
+        </span>
+      </div>
+
+      <div class="dl-hero-share">
+        <SocialShare
+          url="/ko/tiktok-video-downloader-without-watermark"
+          title="틱톡 비디오 다운로더 워터마크 없이 (HD). TikSaveHub"
+          description="틱톡 동영상을 워터마크 없이 HD로 저장하세요. 무료, 빠르고, 가입 불필요."
+          image="/og-downloader.png"
+        />
       </div>
     </div>
   </section>
 
-  <StatsSection stats={[ { value: '100% 무료', label: '워터마크 없이 TikTok 동영상을 즉시 다운로드', icon: 'download' }, { value: '가입 불필요', label: '모든 기기에서, 전 세계 어디에서든 작동', icon: 'globe' }, { value: 'HD 품질', label: '원본 해상도, 워터마크 없음, 로그인 불필요', icon: 'star' } ]} />
+  <!-- Stats -->
+  <StatsSection stats={[
+    { value: '100% 무료', label: '워터마크 없이 TikTok 동영상을 즉시 다운로드', icon: 'download' },
+    { value: '가입 불필요', label: '모든 기기에서 작동, 전 세계 어디에서든', icon: 'globe' },
+    { value: 'HD 품질', label: '원본 해상도, 워터마크 없음, 로그인 불필요', icon: 'star' },
+  ]} />
 
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+  <!-- SEO Content Section -->
+  <section class="seo-content-section" aria-labelledby="seo-about-headline">
+    <div class="seo-content-inner container-page">
+      <div class="seo-content-grid">
+        <div class="seo-content-main">
+          <span class="section-eyebrow text-caption-mono">TikSaveHub 소개</span>
+          <h2 id="seo-about-headline" class="section-headline">
+            틱톡 동영상을 깨끗한 HD 품질로 저장하세요.
+          </h2>
+
+          <div class="seo-article">
+            <p>
+              TikTok 앱에서 "동영상 저장" 버튼을 누르면 무슨 일이 일어나나요? 크리에이터의 사용자 이름이 워터마크로 화면 한가운데를 돌아다니는 MP4가 생성됩니다. 개인 북마크로는 괜찮지만, 클립을 인스타그램 릴스에 리포스팅하거나 프레젠테이션에 넣거나 도로 여행 중에 로고 없이 보고 싶을 때는 완전히 쓸모없죠.
+            </p>
+
+            <p>
+              대부분의 TikTok 다운로더 도구가 해결책을 약속하고 두통을 안겨줍니다. 팝업 광고가 세 겹씩 쌓이고, 품질은 480p로 제한되고, 폰보다 큰 화면에서는 뭉개진 화면이 보입니다. 어떤 도구는 브라우저 확장 프로그램 설치를 요구하고, 다른 도구는 매 다운로드마다 30초짜리 광고를 강제합니다. 다양한 기기와 연결 속도에서 여러 도구를 살펴본 후, 패턴이 명확해졌어요. 진짜 작동하는 도구들의 공통점은 하나입니다. 워터마크 레이어가 적용되기 전에 TikTok 서버에서 원본 동영상 스트림을 가져온다는 것이죠.
+            </p>
+
+            <p>
+              TikSaveHub가 정확히 그렇게 합니다. 워터마크 없음. 품질 저하 없음. 설치할 앱 없음. 이 도구는 TikTok 링크를 받아서 브라우저로 스트리밍되는 원본 MP4 파일을 찾아 직접 전달합니다. 크리에이터가 업로드한 것이 그대로 다운로드됩니다. 사용 가능한 경우 최대 1080p(1920×1080 픽셀)까지 지원해요.
+            </p>
+
+            <figure class="tool-screenshot">
+              <img src="/images/tiktok/tiktok-hero.webp" alt="TikSaveHub 틱톡 비디오 다운로더 인터페이스로, HD, SD, MP3 다운로드 옵션이 있는 입력란이 보임" width="1200" height="675" loading="eager" />
+              <figcaption>TikTok 링크를 붙여넣으면 즉시 HD 다운로드 옵션이 나타납니다</figcaption>
+            </figure>
+
+            <p>
+              현실적으로 대부분의 사람은 이 작업에 복잡한 도구가 필요하지 않습니다. 링크를 넣고 동영상을 받으면 그만이죠.
+            </p>
+
+            <h3 class="text-highlight">틱톡 동영상을 다운로드하는 방법</h3>
+            <p>
+              전체 과정은 2분도 걸리지 않습니다. TikTok을 열고 저장할 가치가 있는 동영상을 찾으세요. 모바일에서는 화면 오른쪽의 공유 화살표를 탭한 다음 "링크 복사"를 누르면 됩니다. 데스크톱에서는 동영상을 우클릭하고 컨텍스트 메뉴에서 "링크 주소 복사"를 선택하거나, 주소창에서 URL을 바로 복사할 수도 있어요.
+            </p>
+
+            <p>
+              어떤 브라우저에서든 tiksavehub.com을 열면 페이지 상단에 입력란 하나가 있습니다. 링크를 붙여넣으세요 (Ctrl+V / Cmd+V, 또는 붙여넣기 버튼을 탭하면 클립보드에서 자동으로 가져옵니다). 링크가 붙여넣어지는 순간 처리가 시작됩니다. 일반적인 광대역 연결에서는 보통 2~3초, 느린 모바일 네트워크에서는 5초 정도 걸립니다.
+            </p>
+
+            <p>
+              미리보기 카드에 동영상 썸네일, 제목, 크리에이터 정보가 나타납니다. 아래에 두 개의 버튼이 있습니다. "HD 다운로드"(사용 가능한 경우 1080p)와 "SD 다운로드"(파일이 더 작고 느린 연결에서更快). 하나를 탭하면 MP4가 기기에 바로 저장됩니다. 아이폰에서는 파일 앱의 다운로드 폴더에, 안드로이드에서는 갤러리 또는 다운로드 폴더에, 데스크톱에서는 브라우저의 다운로드 바에 저장됩니다.
+            </p>
+
+            <h3 class="text-highlight">왜 TikTok 워터마크를 제거해야 하나요?</h3>
+            <p>
+              모든 TikTok 동영상에는 크리에이터의 사용자 이름이 떠다니는 오버레이가 있습니다. 저작물 표시로는 영리하지만, 클립을 다른 플랫폼에서 공유하거나 오프라인으로 볼 때는 성가시죠. TikSaveHub는 그 오버레이를 제거하고 깨끗한 버전을 전달합니다. TikTok이 앱 내 스트리밍에 사용하는 바로 그 버전이에요.
+            </p>
+
+            <h3 class="text-highlight">HD 품질. 매번 보장</h3>
+            <p>
+              대부분의 다운로더가 "HD"라고 광고하는 것의 현실은 다음과 같습니다. 절반은 더 낮은 비트레이트로 동영상을 재인코딩하고 HD라고 부릅니다. TikSaveHub는 인코딩을 건드리지 않습니다. TikTok이 브라우저에 전달하는 정확한 바이트 스트림을 다운로드합니다. TikTok이 1080p 스트림을 보내면 그대로 도착합니다. 파일 크기, 비트레이트, 코덱. 모든 것이 소스와 일치합니다. 대부분의 도구는 720p로 제한하면서 사용자에게 말하지 않습니다. 여기는 그렇지 않아요.
+            </p>
+
+            <h3 class="text-highlight">모든 기기에서 작동, 앱 설치 불필요</h3>
+            <p>
+              아이폰, 안드로이드, Windows, Mac, Linux, 태블릿. 최신 브라우저가 작동하면 TikSaveHub도 작동합니다. 앱 스토어에서 다운로드할 것 없고, 확장 프로그램 설치할 것 없고, 설정을 구성할 것 없습니다. 휴대폰 화면이든 27인치 데스크톱 모니터든 동일한 경험입니다.
+            </p>
+
+            <h3 class="text-highlight">안전하고, 프라이빗하고, 완전히 무료</h3>
+            <p>
+              계정 생성도 없습니다. 이메일 주소 입력란도 없습니다. 개인 정보를 수집하지 않죠. TikSaveHub는 다운로드 기록을 저장하지 않고, 브라우징 행동을 추적하지 않으며, 데이터를 판매하지 않습니다. 다운로드 과정은 서버 측에서 처리됩니다. 기기에 남는 것은 최종 MP4 파일뿐입니다. 그리고 몇 번 사용하면 유료 플랜이나 일일 제한을 도입하는 경쟁사와 달리, TikSaveHub는 사용 제한 없이 계속 무료로 유지됩니다.
+            </p>
+
+            <h3 class="text-highlight">모든 TikTok 링크 형식 지원</h3>
+            <p>
+              공유 메뉴의 전체 링크(tiktok.com/@user/video/...), 단축 공유 링크(vm.tiktok.com/...), 모바일 공유 링크(vt.tiktok.com/...). 모두 작동합니다. TikSaveHub는 모든 표준 TikTok URL 형식을 자동으로 해결합니다.
+            </p>
+
+            <figure class="tool-screenshot">
+              <img src="/images/tiktok/tiktok-devices.webp" alt="TikSaveHub 틱톡 다운로더가 아이폰, 안드로이드, 데스크톱 브라우저에서 작동하는 모습" width="1200" height="600" loading="lazy" />
+              <figcaption>폰, 태블릿, 데스크톱 모두 동일하게 작동합니다</figcaption>
+            </figure>
+
+            <p>
+              위로 스크롤해서 다운로드 양식에 TikTok 링크를 붙여넣으세요. 도구를 평가하는 가장 좋은 방법은 직접 사용해보는 것입니다.
+            </p>
+          </div>
+        </div>
+
+        <aside class="seo-content-sidebar">
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">빠른 링크</h3>
+            <ul class="seo-sidebar-list">
+              <li><a href="/ko/tiktok-video-downloader-without-watermark">틱톡 비디오 다운로더</a></li>
+              <li><a href="#how-it-works">작동 방식</a></li>
+              <li><a href="#features">기능</a></li>
+              <li><a href="#faq">자주 묻는 질문</a></li>
+              <li><a href="/ko/blog">블로그</a></li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card">
+            <h3 class="seo-sidebar-title">지원되는 링크</h3>
+            <ul class="seo-sidebar-list seo-sidebar-mono">
+              <li>tiktok.com/@user/video/...</li>
+              <li>vm.tiktok.com/...</li>
+              <li>vt.tiktok.com/...</li>
+            </ul>
+          </div>
+
+          <div class="seo-sidebar-card seo-sidebar-highlight">
+            <h3 class="seo-sidebar-title">지금 다운로드 시작</h3>
+            <p class="seo-sidebar-text">위에 TikTok 링크를 붙여넣고 몇 초 만에 동영상을 받으세요.</p>
+            <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">바로 사용하기</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works. Detailed Steps -->
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">단계별 가이드</span>
+        <h2 id="dl-steps-headline" class="section-headline">
+          틱톡 동영상을 다운로드하는 방법.
+        </h2>
+        <p class="section-sub text-body-lg">
+          세 단계면 끝. 기술적 지식은 필요 없습니다.
+        </p>
+      </div>
+
+      <div class="dl-steps-grid">
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <h3 class="dl-step-title">TikTok 동영상 링크 복사</h3>
+          <p class="dl-step-body">
+            TikTok 앱이나 웹사이트를 열고 저장할 동영상을 찾으세요. 공유 버튼을 탭하고 "링크 복사"를 누르면 됩니다. 어떤 공개 동영성이든 작동합니다. For You 페이지, 크리에이터 프로필, 친구가 공유한 링크 어떤 것이든요.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </div>
+          <h3 class="dl-step-title">TikSaveHub에 링크 붙여넣기</h3>
+          <p class="dl-step-body">
+            복사한 링크를 이 페이지 상단의 입력란에 붙여넣으세요. 붙여넣기 버튼을 탭해서 클립보드에서 가져오거나, Ctrl+V / Cmd+V를 사용하세요. 처리가 즉시 시작됩니다. 괜찮은 연결에서는 2~3초면 됩니다.
+          </p>
+        </article>
+
+        <article class="dl-step-card">
+          <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+          <div class="dl-step-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3 class="dl-step-title">HD 동영상 다운로드</h3>
+          <p class="dl-step-body">
+            "HD 다운로드"를 눌러 최고 품질의 MP4를 받으세요. 파일이 기기에 바로 저장됩니다. 오프라인 시청, 소셜 공유, 어떤 편집 앱에서든 사용할 준비가 됩니다. 추가 단계는 없습니다.
+          </p>
+        </article>
+      </div>
+
+      <figure class="tool-screenshot">
+        <img src="/images/tiktok/tiktok-steps.webp" alt="TikTok 링크 복사, TikSaveHub에 붙여넣기, HD 동영상 다운로드의 3단계 가이드" width="1000" height="800" loading="lazy" />
+        <figcaption>완전한 3단계 다운로드 흐름</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+    <div class="dl-features-inner container-page">
+      <div class="dl-features-header">
+        <span class="section-eyebrow text-caption-mono">기능</span>
+        <h2 id="dl-features-headline" class="section-headline">
+          TikSaveHub를 특별하게 만드는 것.
+        </h2>
+      </div>
+
+      <div class="dl-features-grid">
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">워터마크 없음</h3>
+          <p class="dl-feature-body">
+            워터마크 제로. 도구가 오버레이가 적용되기 전에 TikTok CDN에서 원본 파일을 가져옵니다. 인스타그램, WhatsApp, YouTube Shorts에 공유하세요. 떠다니는 로고 없이 깔끔하게요.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+          </div>
+          <h3 class="dl-feature-title">HD 품질</h3>
+          <p class="dl-feature-body">
+            항상 사용 가능한 최고 품질. 최대 1080p HD. 재인코딩도 재압축도 없습니다. 다운로드는 TikTok에서 재생되는 것과 정확히 일치합니다.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="dl-feature-title">번개처럼 빠름</h3>
+          <p class="dl-feature-body">
+            서버 측 처리로 다운로드가 몇 초 안에 시작됩니다. 대기열도, 대기실도 없습니다. 링크를 붙여넣고 다운로드를 클릭하면 끝. 시작부터 끝까지 2~3초.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="dl-feature-title">모든 기기에서 작동</h3>
+          <p class="dl-feature-body">
+            아이폰, 안드로이드, Windows, Mac, 태블릿. 모든 최신 브라우저 지원. 앱 설치도, 확장 프로그램도, 호환성 문제도 없습니다.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3 class="dl-feature-title">계정 불필요</h3>
+          <p class="dl-feature-body">
+            가입도, 이메일도, 비밀번호도 없습니다. 링크를 붙여넣고 다운로드하면 그만이에요. 프라이버시가 중요하죠. 개인 정보는 저장되지 않습니다.
+          </p>
+        </article>
+
+        <article class="dl-feature-card">
+          <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 class="dl-feature-title">무제한 다운로드</h3>
+          <p class="dl-feature-body">
+            일일 제한도, 상한도, 프리미엄 플랜도 없습니다. 필요한 만큼 TikTok 동영상을 다운로드하세요. 매일, 영원히. 완전히 무료입니다.
+          </p>
+        </article>
+      </div>
+
+      <p style="text-align:center;color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;">
+        오디오만 필요하세요? <a href="/ko/tiktok-to-mp3" style="color:var(--color-link);">TikTok to MP3 변환기</a>가 어떤 TikTok 동영상에서든 소리를 추출합니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">활용 사례</span>
+        <h2 id="dl-usecases-headline" class="section-headline">
+          누가 TikSaveHub를 사용하나요?
+        </h2>
+      </div>
+
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">콘텐츠 크리에이터</h3>
+          <p class="dl-usecase-body">
+            자주 일어나는 끔찍한 이야기가 있습니다. 크리에이터가 아침에 일어나니 계정이 잠기고, 수백 개의 동영상이 사라지고, 백업도 없습니다. 자신의 콘텐츠를 다운로드하는 것은 어떤 TikTok 크리에이터가 할 수 있는 가장 현명한 조치입니다. 계정이 해킹되고, 플랫폼이 경고 없이 정책을 바꾸고, 서버가 오작동하죠. 내 작업물의 로컬 사본을 갖는 것은 편집증이 아닙니다. 기본적인 디지털 위생입니다.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">소셜 미디어 매니저</h3>
+          <p class="dl-usecase-body">
+            소셜 미디어 팀은 콘텐츠 기획 회의를 위해 트렌딩 TikTok 클립을 다운로드합니다. 동영상을 캡처해서 프레젠테이션 슬라이드에서 편집 스타일을 설명하는 대신, 실제 파일을 가져다가 공유 드라이브에 넣고 전략 회의에서 참고합니다. "카메라로 무언가를 하는 트렌드가 있는데"라고 말하는 것보다 훨씬 효과적이에요.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">학생 및 연구자</h3>
+          <p class="dl-usecase-body">
+            기후 커뮤니케이션, 데이터 시각화, 연구 방법론을 공부하는 학생들은 TikTok 동영상을 1차 자료로 다운로드합니다. 깨진 수 가능한 링크가 아니라, 로컬 동영상 파일을 말이에요. 논문에서 인용되는 것은 바로 그 파일입니다. 워터마크 없는 다운로드는 프레임별 분석을 더 깔끔하게 만듭니다.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">여행 브로거</h3>
+          <p class="dl-usecase-body">
+            여행 전 레퍼런스 클립을 준비합니다. 다른 크리에이터의 짧은 풍경 샷을 다운로드하고, 카메라 앵글을 분석하고, 장면 간 컷 스타일을 공부한 다음, 현지에서 비슷한 기법을 재현합니다.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">일반 시청자</h3>
+          <p class="dl-usecase-body">
+            솔직히 말하면, 이것이 대부분의 사람이 실제로 사용하는 이유입니다. 친구가 재미있는 TikTok 링크를 보내면, "그거 봤어?"라고 묻는 대신 동영상이 삭제되기 전에 바로 저장하죠. 요리 튜토리얼을 오프라인용으로 주방에 놓고 보거나, TikTok이 없는 사람에게 WhatsApp으로 코미디 클립을 공유하거나. 단순한 이유지만 완전히 타당합니다.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">마케터</h3>
+          <p class="dl-usecase-body">
+            디지털 마케팅 에이전시는 바이럴 콘텐츠 패턴의 레퍼런스 라이브러리를 구축합니다. 특정 참여도 기준을 넘은 동영상을 다운로드하고, 콘텐츠 유형별로 태그를 달죠. 유머, 튜토리얼, 트렌드, 감정적 훅. 클라이언트 캠페인을 브레인스토밍할 때 꺼내봅니다. 지난 화요일의 그 동영상을 기억하려고 TikTok 피드를 스크롤하는 것보다 빠르죠.
+          </p>
+        </article>
+      </div>
+
+      <p style="text-align:center;color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;">
+        인스타그램 콘텐츠는 <a href="/ko/instagram-reels-downloader-without-watermark" style="color:var(--color-link);">인스타그램 릴스 다운로더</a>가 릴스와 게시물을 처리합니다. <a href="/ko/facebook-video-downloader" style="color:var(--color-link);">페이스북 비디오 다운로더</a>도 페이스북 동영상에 동일하게 작동합니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section class="dl-steps-section" aria-labelledby="dl-comparison-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">비교</span>
+        <h2 id="dl-comparison-headline" class="section-headline">
+          TikSaveHub vs 다른 틱톡 다운로더.
+        </h2>
+        <p class="section-sub text-body-lg">
+          경쟁사 대비 TikSaveHub의 위치.
+        </p>
+      </div>
+
+      <div style="width:100%;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:var(--text-body-sm);text-align:left;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--color-hairline-strong);">
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">기능</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">TikSaveHub</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SSSTikTok</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SnapTik</th>
+              <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SaveFrom</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">워터마크 제거</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">부분 지원</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">최대 품질</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">1080p HD</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">720p로 제한된다는 보고</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">720p로 제한된다는 보고</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">480p로 제한된다는 보고</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">다운로드 속도</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">빠름 (~2-3초)</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">보통 (~4-5초)</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">보통 (~3-4초)</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">느림 (~5-7초)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">광고</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">없음</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">심함 (팝업)</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">보통</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">심함</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">가입 필요</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">아니요</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">일부 기능 필요</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">모바일 지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">부분 지원</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-hairline);">
+              <td style="padding:var(--spacing-md);color:var(--color-body);">무료 다운로드</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">무제한</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">일일 제한 있다는 보고</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">일일 제한 있다는 보고</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">제한된 무료 플랜</td>
+            </tr>
+            <tr>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">서버 측 처리</td>
+              <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">지원</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">아니요 (브라우저 기반)</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+              <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;line-height:1.7;">
+        솔직히 말씀드릴게요. SSSTikTok의 팝업 광고는 진짜로 견딜 수 없어요. 가끔 세 겹씩 쌓이는데, 그중 하나가 "다운로드 완료" 가짜 알림이에요. SnapTik은 유료 플랜을 적용하지 않으면 일일 무료 한도 뒤에 다운로드를 가리기 시작했습니다. SaveFrom은 가장 기본적인 다운로드 이상을 위해 계정 생성을 요구합니다. 이건 루머가 아니라 사용자 보고에서 일관되게 나타나는 패턴이에요. TikSaveHub는 광고, 제한, 유료 벽 없이 1080p를 일관되게 전달하는 유일한 도구였습니다.
+      </p>
+
+      <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-md) 0 0 0;line-height:1.7;">
+        <a href="/ko/facebook-reels-downloader" style="color:var(--color-link);">페이스북 릴스</a>, <a href="/ko/snapchat-downloader" style="color:var(--color-link);">스냅챗</a>, <a href="/ko/x-video-downloader" style="color:var(--color-link);">트위터/X 동영상</a>에도 작동합니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- Common Problems & Solutions -->
+  <section class="dl-usecases-section" aria-labelledby="dl-problems-headline">
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">문제 해결</span>
+        <h2 id="dl-problems-headline" class="section-headline">
+          문제 해결.
+        </h2>
+      </div>
+
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"동영상이 다운로드되지 않아요."</h3>
+          <p class="dl-usecase-body">
+            열 번 중 아홉 번은 TikTok 링크가 잘못된 경우입니다. 누군가 실제 동영상이 아니라 댓글 스레드에서 링크를 복사했거나, 복사-붙여넣기 과정에서 URL이 손상된 것이죠. TikTok으로 돌아가서 동영상을 직접 열고, 공유 → 링크 복사를 탭한 다음 새로운 URL을 붙여넣으세요. 동영상이 크리에이터에 의해 삭제되었다면, 어떤 다운로더도 되살릴 수 없습니다. TikSaveHub도, 다른 누구도 마찬가지예요.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"품질이 낮아요."</h3>
+          <p class="dl-usecase-body">
+            품질은 전적으로 크리에이터가 내보내고 업로드한 것에 달려있습니다. TikSaveHub는 480p 동영상을 1080p로 마법처럼 개선할 수 없어요. 먼저 TikTok에서 동영상을 확인하세요. 거기서 선명하면 TikSaveHub도 같은 것을 전달합니다. TikTok에서 뭉개지면 다운로드에서도 뭉개집니다. 이것은 소스 품질 문제이지 도구의 한계가 아닙니다.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"링크가 작동하지 않아요."</h3>
+          <p class="dl-usecase-body">
+            TikSaveHub는 모든 표준 TikTok 링크 형식을 처리하지만, 동영상 URL에만 작동합니다. 프로필 페이지, 해시태그 페이지, 검색 결과 URL은 다운로드가 불가능합니다. 특정 동영상을 가리키지 않기 때문이에요. 링크에 /video/, vm.tiktok.com, 또는 vt.tiktok.com이 포함되어야 합니다. 프로필 링크(/video/ 없이 tiktok.com/@username)인 경우 가져올 동영상이 없습니다.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"다운로드가 너무 느려요."</h3>
+          <p class="dl-usecase-body">
+            처리 자체는 빠릅니다. 3초 이내. 병목은 파일 전송입니다. 60초짜리 1080p TikTok 동영상은 대략 8~15MB입니다. 10Mbps 연결에서는 실제 다운로드 시간이 약 8~12초입니다. 느린 모바일 데이터에서는 더 걸립니다. 더 작은 파일을 위해 SD 옵션을 사용하거나 Wi-Fi로 전환해보세요.
+          </p>
+        </article>
+
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"워터마크가 아직 있어요."</h3>
+          <p class="dl-usecase-body">
+            드물지만 가끔 발생합니다. 보통 TikSaveHub가 원본 스트림을 찾지 못하고 앱 내 버전으로 대체할 때 일어납니다. 몇 분 기다렸다가 다시 시도해보세요. 문제가 지속되면 동영상이 TikTok 측에서 제한된 것일 수 있습니다. 흔한 경우는 아니지만 알아두면 좋습니다.
+          </p>
+        </article>
+      </div>
+
+      <figure class="tool-screenshot">
+        <img src="/images/tiktok/tiktok-problems.webp" alt="5가지 흔한 틱톡 다운로더 문제와 해결 방법을 보여주는 인포그래픽" width="1200" height="800" loading="lazy" />
+        <figcaption>빠른 참조: 5가지 흔한 문제와 해결 방법</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Is It Legal Section -->
+  <section class="dl-steps-section" aria-labelledby="dl-legal-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">법적 고지</span>
+        <h2 id="dl-legal-headline" class="section-headline">
+          TikTok 동영상을 다운로드하는 것은 합법적인가요?
+        </h2>
+      </div>
+
+      <div style="max-width:680px;width:100%;display:flex;flex-direction:column;gap:var(--spacing-lg);text-align:left;">
+        <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+          <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">개인적 사용은 대체로 괜찮습니다.</h3>
+          <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+            TikTok 동영상을 오프라인 시청용으로 저장하거나, 개인 컬렉션에 보관하거나, 친구와 비공개로 공유하는 것. 이는 개인적 사용에 해당하며 널리 허용됩니다. TikTok의 이용약관은 앱 외부 다운로드를 기술적으로 금지하고 있지만, 그 조항은 자동화된 봇이 전체 라이브러리를 스크래핑하는 것을 겨냥한 것입니다. 피드에서 동영상을 하나 저장하는 사람 말이에요. 법적 현실은 이용약관 텍스트가 시사하는 것보다 더 미묘하지만, 개인적 사용의 경우 위험은 사실상 제로에 가깝습니다.
+          </p>
+        </div>
+
+        <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+          <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">상업적 사용은 허락이 필요합니다.</h3>
+          <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+            다운로드한 TikTok 동영상을 광고, YouTube 컴필레이션, 마케팅 캠페인 또는 수익화 콘텐츠에 사용하려면 원작 크리에이터의 명시적 허락이 필요합니다. 워터마크를 제거했든 말든 상관없습니다. 저작권은 기본 저작물에 적용되지, 워터마크에 적용되지 않아요. 서면 허락을 받거나 삭제 요청 위험을 감수해야 합니다.
+          </p>
+        </div>
+
+        <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+          <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">크리에이터에게 크레딧을 주세요.</h3>
+          <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+            개인적 공유라도 원작 크리에이터에게 크레딧을 주는 것이 올바른 일입니다. 워터마크는 이중 역할을 합니다. 성가시지만 동시에 저작물 표시이기도 하죠. 워터마크를 제거하면 자동 크레딧도 사라집니다. 크리에이터를 태그하고, 사용자 이름을 언급하고, 원본으로 링크를 걸어주세요. 5초밖에 걸리지 않지만, 적절한 크레딧을 줄 수 있습니다.
+          </p>
+        </div>
+
+        <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:var(--spacing-md) 0 0 0;font-style:italic;">
+          이 기사는 정보 제공 목적이며 법률 자문을 구성하지 않습니다. 귀하의 특정 상황에 대해서는 자격을 갖춘 변호사에게 상담하십시오.
+        </p>
+
+        <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+          외부 참고: <a href="https://www.tiktok.com/community-guidelines" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">TikTok 커뮤니티 가이드라인</a> · <a href="https://www.copyright.gov/fair-use/" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">미국 저작권청. 공정 사용</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
     <div class="dl-faq-inner container-page">
-      <span class="section-eyebrow text-caption-mono">자주 묻는 질문</span>
-      <h2 id="dl-faq-headline" class="section-headline">TikTok 다운로더 관련 질문</h2>
-      <div class="dl-faq-grid">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">자주 묻는 질문</span>
+        <h2 id="dl-faq-headline" class="section-headline">
+          자주 묻는 질문.
+        </h2>
+      </div>
+
+      <div class="dl-faq-list" role="list">
         {faqData.map((faq) => (
-          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button
+              class="dl-faq-trigger"
+              id={`${faq.id}-btn`}
+              aria-expanded="false"
+              aria-controls={`${faq.id}-panel`}
+              type="button"
+            >
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div
+              id={`${faq.id}-panel`}
+              class="dl-faq-panel"
+              role="region"
+              aria-labelledby={`${faq.id}-btn`}
+              hidden
+            >
+              <p class="dl-faq-a" set:html={faq.a}></p>
+            </div>
+          </div>
         ))}
       </div>
+
+      <p style="text-align:center;color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;">
+        더 많은 가이드와 팁은 <a href="/ko/blog" style="color:var(--color-link);">블로그</a>를 확인하세요.
+      </p>
     </div>
   </section>
 
-  <SocialShare url="/tiktok-video-downloader-without-watermark" title="TikTok 다운로더 — 워터마크 없는 HD MP4" description="TikTok 동영상을 워터마크 없이 HD MP4로 다운로드." />
+  <!-- CTA Band -->
+  <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+    <div class="dl-cta-inner container-page">
+      <h2 id="dl-cta-headline" class="dl-cta-headline">
+        다운로드할 준비가 되셨나요?
+      </h2>
+      <p class="dl-cta-sub">
+        위에 TikTok 링크를 붙여넣고 몇 초 만에 깨끗하고 워터마크 없는 동영상을 받으세요. 계정은 필요 없습니다.
+      </p>
+      <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+        다운로드 시작
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+    </div>
+  </section>
 
-  <!-- Related Tools -->
-  <section class="related-tools-section">
-    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
-      <h2 class="related-tools-headline">추가 도구</h2>
-      <div class="related-tools-grid">
-            <a href="/ko/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
-            <a href="/ko/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
-            <a href="/ko/instagram-story-downloader-without-watermark" class="related-tool-link">Instagram Story Downloader</a>
-            <a href="/ko/instagram-audio-downloader" class="related-tool-link">Instagram Audio Downloader</a>
+  <figure class="tool-screenshot">
+    <img src="/images/tiktok/tiktok-final.webp" alt="TikSaveHub 틱톡 비디오 다운로더가 폰, 태블릿, 노트북에서 작동하는 모습" width="1200" height="800" loading="lazy" />
+    <figcaption>하나의 도구, 모든 기기. 링크를 붙여넣고 다운로드하세요</figcaption>
+  </figure>
+
+  <!-- Internal Links Section -->
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+        TikSaveHub의 다른 도구들.
+      </h2>
+      <div class="dl-internal-grid">
+        <a href="/ko/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </span>
+          <span class="dl-internal-title">인스타그램 릴스 다운로더</span>
+          <span class="dl-internal-desc">워터마크 없이 인스타그램 릴스를 HD로 다운로드하세요.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/ko/facebook-video-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.37h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </span>
+          <span class="dl-internal-title">페이스북 비디오 다운로더</span>
+          <span class="dl-internal-desc">페이스북 동영상, 릴스, 게시물을 HD로 저장하세요.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/ko/tiktok-to-mp3" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          </span>
+          <span class="dl-internal-title">TikTok to MP3</span>
+          <span class="dl-internal-desc">TikTok 동영상에서 오디오를 MP3로 추출하세요.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/ko/instagram-story-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </span>
+          <span class="dl-internal-title">인스타그램 스토리 다운로더</span>
+          <span class="dl-internal-desc">사라지기 전에 인스타그램 스토리를 저장하세요.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/ko/facebook-reels-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </span>
+          <span class="dl-internal-title">페이스북 릴스 다운로더</span>
+          <span class="dl-internal-desc">워터마크 없이 페이스북 릴스를 다운로드하세요.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/ko/x-video-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+          </span>
+          <span class="dl-internal-title">X / 트위터 비디오 다운로더</span>
+          <span class="dl-internal-desc">X(트위터)에서 동영상을 HD로 저장하세요.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
   </section>
@@ -86,30 +852,1077 @@ const faqJsonLd = JSON.stringify({
 </Layout>
 
 <style>
-  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
-  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
-  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
-  .dl-badge-row { display: flex; justify-content: center; }
-  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
-  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
-  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
-  .dl-hero-form { width: 100%; max-width: 640px; }
-  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
-  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
-  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
-  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
-  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
-  .dl-faq-q::-webkit-details-marker { display: none; }
-  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
-  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
-  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
-  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+  /* ─── Hero ─── */
+  .dl-hero {
+    position: relative;
+    padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    text-align: center;
+  }
 
-  .related-tools-section { padding: var(--spacing-2xl) 0; }
-  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
-  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
-  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
-  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+  .dl-hero-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .dl-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  /* Breadcrumb */
+  .dl-breadcrumb {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .dl-badge-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dl-badge {
+    animation: fadeInUp 0.5s ease 0.1s both;
+  }
+
+  .badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .dl-hero-headline {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 700px;
+    animation: fadeInUp 0.5s ease 0.2s both;
+  }
+
+  .headline-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-grad-develop-start) 0%,
+      var(--color-grad-preview-start) 40%,
+      var(--color-grad-preview-end) 70%,
+      var(--color-grad-ship-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dl-hero-subline {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.25s both;
+  }
+
+  .dl-hero-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 560px;
+    animation: fadeInUp 0.5s ease 0.3s both;
+  }
+
+  .dl-hero-form-wrap {
+    width: 100%;
+    max-width: 760px;
+    animation: fadeInUp 0.5s ease 0.4s both;
+  }
+
+  .dl-hero-trust {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.5s ease 0.5s both;
+  }
+
+  .dl-hero-share {
+    animation: fadeInUp 0.5s ease 0.55s both;
+  }
+
+  .trust-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-body);
+    padding: 0 var(--spacing-md);
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trust-chip svg {
+    color: var(--color-cyan-deep);
+  }
+
+  .trust-chip:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+  }
+
+  @media (hover: hover) {
+    .trust-chip:hover {
+      border-color: var(--color-hairline-strong);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-hero {
+      padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+    }
+
+    .dl-hero-headline {
+      font-size: clamp(22px, 5vw, 32px);
+      letter-spacing: -1px;
+    }
+
+    .trust-chip {
+      font-size: var(--text-caption);
+      height: 36px;
+      padding: 0 var(--spacing-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: 11px;
+    }
+  }
+
+  /* ─── Content Section ─── */
+  .dl-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .dl-content-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .dl-content-lead {
+    font-size: var(--text-body-lg);
+    color: var(--color-ink);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .dl-content-body {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .dl-content-card-wrap {
+    position: sticky;
+    top: 80px;
+  }
+
+  .dl-content-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-content-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .dl-content-card-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .dl-content-card-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .dl-content-card-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .dl-content-card-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+  }
+
+  @media (max-width: 960px) {
+    .dl-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dl-content-card-wrap {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Steps Section ─── */
+  .dl-steps-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-steps-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-steps-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .dl-step-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-step-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-step-num {
+    color: var(--color-mute);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .dl-step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf010, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-step-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-step-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 960px) {
+    .dl-steps-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-steps-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Features Section ─── */
+  .dl-features-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-features-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-features-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000014,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feat-accent-develop {
+    background: linear-gradient(135deg, #007cf015, #00dfd820);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf025;
+  }
+
+  .feat-accent-preview {
+    background: linear-gradient(135deg, #7928ca15, #ff008020);
+    color: var(--color-grad-preview-start);
+    box-shadow: inset 0 0 0 1px #7928ca25;
+  }
+
+  .feat-accent-ship {
+    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+    color: var(--color-grad-ship-start);
+    box-shadow: inset 0 0 0 1px #ff4d4d25;
+  }
+
+  .dl-feature-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .dl-feature-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 960px) {
+    .dl-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-features-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── Use Cases Section ─── */
+  .dl-usecases-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-usecases-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-usecases-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .dl-usecase-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .dl-usecase-card:hover {
+    border-color: var(--color-hairline-strong);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-usecase-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .dl-usecase-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .dl-usecases-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-usecases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── FAQ Section ─── */
+  .dl-faq-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .dl-faq-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .dl-faq-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-faq-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .dl-faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .dl-faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .dl-faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    transition: background-color 0.15s ease;
+  }
+
+  .dl-faq-trigger:hover {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dl-faq-q {
+    font-size: var(--text-body-md);
+    font-weight: 500;
+    color: var(--color-ink);
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .dl-faq-chevron {
+    flex-shrink: 0;
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+  }
+
+  .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .dl-faq-panel {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    animation: fadeInUp 0.25s ease forwards;
+  }
+
+  .dl-faq-a {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.65;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  @media (max-width: 600px) {
+    .dl-faq-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .dl-faq-trigger {
+      padding: var(--spacing-md);
+      min-height: 48px;
+    }
+
+    .dl-faq-panel {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+    }
+
+    .dl-faq-q {
+      font-size: var(--text-body-sm);
+    }
+  }
+
+  /* ─── CTA Band ─── */
+  .dl-cta-band {
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    text-align: center;
+  }
+
+  .dl-cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .dl-cta-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-on-primary);
+    margin: 0;
+  }
+
+  .dl-cta-sub {
+    font-size: var(--text-body-lg);
+    color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .dl-cta-btn {
+    gap: 8px;
+    background-color: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+  }
+
+  .dl-cta-btn:hover {
+    background-color: var(--color-canvas-soft) !important;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .dl-cta-band {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── Shared Section Styles ─── */
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  /* ─── Internal Links Section ─── */
+  .dl-internal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .dl-internal-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .dl-internal-headline {
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .dl-internal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+  }
+
+  .dl-internal-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    text-decoration: none;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .dl-internal-card:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .dl-internal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007cf012, #00dfd818);
+    color: var(--color-grad-develop-start);
+    box-shadow: inset 0 0 0 1px #007cf020;
+  }
+
+  .dl-internal-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.3px;
+  }
+
+  .dl-internal-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .dl-internal-arrow {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    color: var(--color-mute);
+    font-size: 18px;
+    transition: color 0.15s ease, transform 0.25s ease;
+  }
+
+  .dl-internal-card:hover .dl-internal-arrow {
+    color: var(--color-ink);
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 960px) {
+    .dl-internal-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .dl-internal-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+
+  /* ─── SEO Content Section ─── */
+  .seo-content-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .seo-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl);
+  }
+
+  .seo-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .seo-content-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .seo-article {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .seo-article p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .text-highlight {
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .seo-article h3 {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.35;
+  }
+
+  .seo-content-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    position: sticky;
+    top: 80px;
+  }
+
+  .seo-sidebar-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .seo-sidebar-highlight {
+    background: linear-gradient(135deg, #007cf008, #00dfd808);
+    border: 1px solid #007cf020;
+  }
+
+  .seo-sidebar-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  .seo-sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .seo-sidebar-list li {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .seo-sidebar-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .seo-sidebar-mono li {
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+  }
+
+  .seo-sidebar-text {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.5;
+  }
+
+  .seo-sidebar-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  @media (max-width: 960px) {
+    .seo-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .seo-content-sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .seo-content-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .seo-content-sidebar {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .tool-screenshot {
+    display: block;
+    margin: 2rem auto;
+    max-width: 1100px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .tool-screenshot figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-style: italic;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .tool-screenshot {
+      margin: 1.5rem auto;
+    }
+    .tool-screenshot figcaption {
+      font-size: 0.8rem;
+    }
+  }
 </style>
+
+<script>
+  const dlTriggers = document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
+
+  dlTriggers.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      const panelId = btn.getAttribute('aria-controls')!;
+      const panel = document.getElementById(panelId);
+
+      dlTriggers.forEach((otherBtn) => {
+        if (otherBtn !== btn) {
+          otherBtn.setAttribute('aria-expanded', 'false');
+          const otherId = otherBtn.getAttribute('aria-controls')!;
+          document.getElementById(otherId)?.setAttribute('hidden', '');
+        }
+      });
+
+      if (isOpen) {
+        btn.setAttribute('aria-expanded', 'false');
+        panel?.setAttribute('hidden', '');
+      } else {
+        btn.setAttribute('aria-expanded', 'true');
+        panel?.removeAttribute('hidden');
+      }
+    });
+  });
+</script>

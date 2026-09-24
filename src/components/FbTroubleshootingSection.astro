@@ -1,0 +1,123 @@
+---
+// FbTroubleshootingSection — common problems and solutions (usecases-grid pattern)
+interface Prop {
+  title: string;
+  body: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline: string;
+  sub?: string;
+  problems: Prop[];
+}
+
+const { eyebrow = 'Troubleshooting', headline, sub, problems } = Astro.props;
+---
+
+<section class="trouble-section" aria-labelledby="trouble-headline">
+  <div class="trouble-inner container-page">
+    <div class="trouble-header">
+      <span class="section-eyebrow text-caption-mono">{eyebrow}</span>
+      <h2 id="trouble-headline" class="section-headline">{headline}</h2>
+      {sub && <p class="section-sub text-body-lg">{sub}</p>}
+    </div>
+
+    <div class="trouble-grid">
+      {problems.map((problem) => (
+        <article class="trouble-card">
+          <h3 class="trouble-title">{problem.title}</h3>
+          <p class="trouble-body">{problem.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .trouble-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .trouble-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4xl);
+  }
+
+  .trouble-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .trouble-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .trouble-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .trouble-card:hover {
+    border-color: var(--color-hairline-strong);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .trouble-title {
+    font-size: var(--text-display-sm);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+
+  .trouble-body {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .trouble-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+
+    .trouble-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

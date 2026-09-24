@@ -249,8 +249,8 @@ export const POST: APIRoute = async (ctx) => {
 
       return json({ success: true, type: 'facebook-photo', photo: payload }, 200, true);
     } catch (err: any) {
-      console.error('[Facebook API] Photo error:', err?.message ?? err);
-      return json({ success: false, error: photoMessageFor(err) }, 500);
+      console.error(`[Facebook API] ${new Date().toISOString()} Photo POST error: ${err?.message ?? err}`);
+      return json({ success: false, error: photoMessageFor(err), errorType: 'api_error' }, 500);
     }
   }
 
@@ -347,8 +347,8 @@ export const POST: APIRoute = async (ctx) => {
 
     return json({ success: true, type: 'facebook', video }, 200, true);
   } catch (err: any) {
-    console.error('[Facebook API] Error:', err?.message ?? err);
-    return json({ success: false, error: isStory ? storyMessageFor(err) : userMessageFor(err) }, 500);
+    console.error(`[Facebook API] ${new Date().toISOString()} POST error: ${err?.message ?? err}`);
+    return json({ success: false, error: isStory ? storyMessageFor(err) : userMessageFor(err), errorType: 'api_error' }, 500);
   }
 };
 
@@ -435,14 +435,14 @@ export const GET: APIRoute = async (ctx) => {
         }
 
         if (!photoUrls.length) {
-          return json({ success: false, error: 'Could not load this Facebook photo.' }, 500);
+          return json({ success: false, error: 'Could not load this Facebook photo.', errorType: 'api_error' }, 200);
         }
 
         const files = await fetchFacebookPhotosAsFiles(photoUrls);
         if (!files.length) {
           return json(
-            { success: false, error: 'The photos could not be downloaded right now. Please try again later.' },
-            500
+            { success: false, error: 'The photos could not be downloaded right now. Please try again later.', errorType: 'api_error' },
+            200
           );
         }
 
@@ -469,8 +469,8 @@ export const GET: APIRoute = async (ctx) => {
 
       return streamPhoto(photoUrl, altUrl);
     } catch (err: any) {
-      console.error('[Facebook API] Photo error:', err?.message ?? err);
-      return json({ success: false, error: photoMessageFor(err) }, 500);
+      console.error(`[Facebook API] ${new Date().toISOString()} Photo GET error: ${err?.message ?? err}`);
+      return json({ success: false, error: photoMessageFor(err), errorType: 'api_error' }, 500);
     }
   }
 
@@ -487,7 +487,7 @@ export const GET: APIRoute = async (ctx) => {
         const files = await fetchFacebookStoryAsFiles(set);
         if (!files.length) {
           return json(
-            { success: false, error: 'The story could not be downloaded right now. Please try again later.' },
+            { success: false, error: 'The story could not be downloaded right now. Please try again later.', errorType: 'api_error' },
             500
           );
         }
@@ -532,8 +532,8 @@ export const GET: APIRoute = async (ctx) => {
         referer: FACEBOOK_REFERER,
       });
     } catch (err: any) {
-      console.error('[Facebook API] Story error:', err?.message ?? err);
-      return json({ success: false, error: storyMessageFor(err) }, 500);
+      console.error(`[Facebook API] ${new Date().toISOString()} Story GET error: ${err?.message ?? err}`);
+      return json({ success: false, error: storyMessageFor(err), errorType: 'api_error' }, 500);
     }
   }
 
@@ -626,7 +626,7 @@ export const GET: APIRoute = async (ctx) => {
       referer: FACEBOOK_REFERER,
     });
   } catch (err: any) {
-    console.error('[Facebook API] Error:', err?.message ?? err);
-    return json({ success: false, error: userMessageFor(err) }, 500);
+    console.error(`[Facebook API] ${new Date().toISOString()} Video GET error: ${err?.message ?? err}`);
+    return json({ success: false, error: userMessageFor(err), errorType: 'api_error' }, 500);
   }
 };

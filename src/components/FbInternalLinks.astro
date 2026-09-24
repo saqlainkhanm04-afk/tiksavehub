@@ -1,5 +1,7 @@
 ---
-// FbInternalLinks — cross-linking cards for related tools
+// FbInternalLinks -- cross-linking cards for related tools
+import { getLocalizedPath, type Lang } from '../i18n/utils';
+
 interface Link {
   href: string;
   title: string;
@@ -10,9 +12,10 @@ interface Link {
 interface Props {
   headline?: string;
   links: Link[];
+  lang?: Lang;
 }
 
-const { headline = 'More free tools', links } = Astro.props;
+const { headline = 'More free tools', links, lang } = Astro.props;
 
 const icons: Record<Link['icon'], string> = {
   fb: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
@@ -37,7 +40,7 @@ const icons: Record<Link['icon'], string> = {
 
     <div class="dl-internal-grid">
       {links.map((link) => (
-        <a href={link.href} class="dl-internal-card">
+        <a href={lang ? getLocalizedPath(link.href, lang) : link.href} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true" set:html={icons[link.icon]}></span>
           <span class="dl-internal-title">{link.title}</span>
           <span class="dl-internal-desc">{link.desc}</span>

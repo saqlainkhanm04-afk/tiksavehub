@@ -1,108 +1,1612 @@
 ---
-// TikTok to MP3 — SEO-optimized landing page (Korean)
-// URL: /tiktok-to-mp3
+// TikTok to MP3. Convert TikTok videos to MP3 audio
+// URL: /ko/tiktok-to-mp3
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
-import DownloadForm from '../../components/DownloadForm.astro';
+import Mp3DownloadForm from '../../components/Mp3DownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
 
 const faqData = [
-  { id: 'mp3-how', q: 'TikTok 동영상을 MP3로 변환하려면 어떻게 해야 하나요?', a: 'TikTok 동영상 링크를 TikSaveHub에 붙여넣고 MP3 옵션을 선택하여 다운로드하세요. 고품질 MP3 파일을 받게 됩니다.' },
-  { id: 'mp3-quality', q: 'MP3 품질은 어떤가요?', a: '최대 320kbps의 고품질 MP3를 받게 됩니다.' },
-  { id: 'mp3-free', q: 'TikTok을 MP3로 변환하는 것이 무료인가요?', a: '네, TikSaveHub는 100% 무료입니다.' },
-  { id: 'mp3-no-login', q: 'TikTok에 로그인이 필요한가요?', a: '아니요, 공개된 동영상 링크만 필요합니다.' },
-  { id: 'mp3-slideshows', q: 'TikTok 슬라이드쇼에서 오디오를 추출할 수 있나요?', a: '아니요, 슬라이드쇼에는 오디오 트랙이 없을 수 있습니다. 동영상은 정상적으로 처리됩니다.' },
+ {
+  id: 'mp3-how',
+  q: '틱톡 동영상을 MP3로 변환하려면 어떻게 해야 하나요?',
+  a: '틱톡 동영상 링크를 복사하고, 이 페이지의 입력란에 붙여넣은 뒤 다운로드를 누르면 됩니다. TikSaveHub가 동영상에서 오디오 트랙을 추출해서 MP3로 변환해 줘요. 전체 과정이 2~3초 정도 걸립니다. 앱 설치도 필요 없고, 계정을 만들 필요도 없어요. 그냥 붙여넣고 다운로드하면 끝이에요.',
+ },
+ {
+  id: 'mp3-quality',
+  q: 'TikSaveHub의 오디오 품질은 어떤가요?',
+  a: 'TikSaveHub는 소스 동영상에서 사용 가능한 최고 비트레이트로 오디오를 추출합니다. 대부분의 틱톡 동영상은 128kbps AAC 오디오를 담고 있는데, 이것이 깨끗한 MP3 파일로 변환됩니다. 출력 파일은 틱톡에서 듣는 것과 똑같아요. 추가 압축도 없고, 변환 과정에서 품질 손실도 발생하지 않죠.\n\n하나 알아둘 점이 있어요. TikSaveHub는 틱톡이 이미 압축한 오디오를 마법처럼 개선할 수 없어요. 누가 할 수 있겠어요. 하지만 변환 과정은 무손실입니다. 틱톡이 압축한 그대로, AAC 대신 MP3 형식으로 나올 뿐이에요. 결과물은 틱톡 앱에서 재생되는 것과 소리가 똑같습니다. 대부분의 변환기는 더 낮은 비트레이트로 재인코딩하고 "고품질"이라고 광고하는데, 이 도구는 그렇지 않아요.',
+ },
+ {
+  id: 'mp3-iphone',
+  q: '아이폰에서 틱톡 동영상을 MP3로 변환할 수 있나요?',
+  a: '아이폰 사파리에서 작동합니다 (iOS 13 이상). 틱톡을 열고 동영상 링크를 복사한 뒤 사파리로 전환해서 TikSaveHub에 붙여넣으면 돼요. MP3 파일은 사파리의 다운로드 관리자에 저장됩니다. 아래로 당겨서 확인하고, 돋보기 아이콘을 눌러 파일 앱에서 열 수 있어요.\n\niOS 12 이하 구형 아이폰에서는 다운로드가 아예 차단될 때가 있습니다. 그럴 때는 같은 폰에서 크롬으로 전환하면 보통 해결돼요. 이 도구는 어떤 브라우저에서 실행하든 상관없어요. OS 쪽에서 간혹 문제를 일으키는 거죠.',
+ },
+ {
+  id: 'mp3-devices',
+  q: '안드로이드와 PC에서도 작동하나요?',
+  a: '최신 브라우저가 있는 기기라면 어떤 것이든 됩니다. 안드로이드 폰, 윈도우 PC, 맥, 리눅스, 태블릿까지요. 전부 다 작동해요. TikSaveHub는 완전히 브라우저 기반이라 설치할 것이 없습니다.',
+ },
+ {
+  id: 'mp3-free',
+  q: 'TikSaveHub는 정말 무료인가요?',
+  a: '완전히 무료입니다. 가입도 없고, 이메일 수집도 없으며, 숨겨진 유료 플랜도 없어요. 링크를 붙여넣고 오디오를 변환하면 끝이죠.\n\n대부분의 "무료" 틱톡 오디오 변환기는 5~6회 변환 후 유료 플랜을 밀어붙이기 시작합니다. TikSaveHub는 그래요. 무제한 변환, 비용 제로. 처리가 서버에서 이루어지기 때문에 브라우저 확장 프로그램을 설치하거나 앱을 다운로드할 필요도 없어요.',
+ },
+ {
+  id: 'mp3-account',
+  q: '틱톡 계정이 필요한가요?',
+  a: '틱톡 계정은 필요 없습니다. 동영상이 공개적으로 접근 가능하기만 하면 TikSaveHub가 오디오를 추출할 수 있어요. 공유 버튼으로 링크를 복사하고 도구에 붙여넣으면 변환이 시작됩니다. 비공개 또는 제한된 동작은 작동하지 않아요. 하지만 TikSaveHub는 그 사실을 솔직하게 알려줍니다. 이해하기 어려운 에러 메시지를 보여주지 않아요.',
+ },
+ {
+  id: 'mp3-legal',
+  q: '틱톡 오디오를 다운로드하는 것은 합법인가요?',
+  a: '개인 사용을 위한 틱톡 오디오 저장, 오프라인 듣기, 마음에 드는 사운드 보관 등은 개인 사용 범주에 속하며 관대하게 허용되는 편입니다. 틱톡의 이용약관은 기술적으로 앱 외부 다운로드를 금지하고 있지만, 그 조항은 자동화된 스크래핑과 대량 재배포를 대상으로 한 것이지 한 오디오 클립을 저장하는 개인을 대상으로 한 것이 아니에요.\n\n상업적 사용은 다릅니다. 광고, 유튜브 영상, 팟캐스트, 또는 수익이 발생하는 콘텐츠에 틱톡 오디오를 사용하려면 원작자의 명시적 허락이 필요합니다. 저작권은 비디오뿐만 아니라 오디오 자체에도 적용됩니다. 원작자를 크레딧하고, 허락 없이 그들의 작업으로 수익을 내지 마세요.',
+ },
+ {
+  id: 'mp3-speed',
+  q: '변환에 얼마나 걸리나요?',
+  a: '일반 브로드밴드 연결에서는 2~3초 정도. 서버가 틱톡 동영상을 가져와서 오디오 트랙을 분리하고 MP3로 한 번에 변환합니다. 느린 모바일 네트워크에서는 5초 정도 걸릴 수 있어요. 병목은 일반적으로 파일 전송이지 변환 자체가 아닙니다.',
+ },
+ {
+  id: 'mp3-private',
+  q: '비공개 틱톡 동영상을 MP3로 변환할 수 있나요?',
+  a: '안됩니다. TikSaveHub는 공개 동영상에만 작동합니다. 비공개 또는 친구 공개 콘텐츠는 틱톡의 공개 API를 통해 접근할 수 없어요. 합법적인 변환기가 우회할 수 없는 기술적 벽입니다. 정책 선택이 아니에요.',
+ },
+ {
+  id: 'mp3-format',
+  q: '어떤 파일 형식을 받게 되나요?',
+  a: 'MP3입니다. 모든 기기, 모든 음악 플레이어, 모든 운영체제에서 작동해요. 파일 확장자는 .mp3입니다.',
+ },
+ {
+  id: 'mp3-limits',
+  q: '제한 사항이 있나요?',
+  a: '일일 한도도 없고, 변환 쿼터도 없으며, 프리미엄 상한도 없어요. 필요한 만큼 많은 틱톡 동영상을 변환하세요. 하루에 몇 번을 하든 대략 같은 2~3초 내외로 처리됩니다.',
+ },
+ {
+  id: 'mp3-why',
+  q: '다른 변환기 대신 TikSaveHub를 쓰는 이유가 뭔가요?',
+  a: '솔직히 말하면, 대부분의 틱톡 MP3 변환기는 사용하기 짜증나요. SSSTikTok은 팝업 광고가 세 겹으로 덮여 있어요. SnapTik은 이제 일일 무료 한도 뒤에 변환을 가두고 있죠. SaveFrom은 작동하기 전에 계정 생성을 요구합니다. 이건 루머가 아닙니다. 포럼과 리뷰 사이트에서 사용자들이 일관되게 보고하는 패턴이에요.\n\nTikSaveHub는 다른 접근법을 취합니다. 링크를 붙여넣고, MP3를 받으면 끝. 흐름을 방해하는 광고도 없고, 계정 벽도 없으며, 일일 한도도 없어요. 변환은 서버에서 이루어지므로 브라우저 기반 도구보다 빠르고, 출력은 어디서든 재생되는 깨끗한 MP3입니다. 복잡하지 않아요. 변환기가 해야 할 일을 정직하게 하는 것뿐이에요.',
+ },
 ];
 
-const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
+const faqJsonLd = JSON.stringify({
+ '@context': 'https://schema.org',
+ '@type': 'FAQPage',
+ mainEntity: faqData.map((faq) => ({
+  '@type': 'Question',
+  name: faq.q,
+  acceptedAnswer: {
+   '@type': 'Answer',
+   text: faq.a.replace(/<[^>]*>/g, ''),
+  },
+ })),
+});
 ---
 
 <Layout
-  title="틱톡 MP3 변환기 | TikTok 동영상 오디오 추출 | TikSaveHub"
-  description="틱톡 동영상을 고품질 MP3 파일로 변환. 최대 320kbps로 오디오 추출. 무료, 빠르고 로그인 없이 틱톡 영상의 사운드를 저장하세요."
-  keywords="tiktok mp3 변환, tiktok to mp3, tiktok 오디오 다운로드, tiktok mp3 converter"
-  canonical="/tiktok-to-mp3"
-  ogImage="/og-downloader.png"
-  ogType="website"
-  platform="tiktok"
-  jsonLd={faqJsonLd}
-  appName="TikSaveHub — TikTok to MP3"
-  lang="ko"
+ title="틱톡 MP3 변환기. 무료 320kbps 오디오 추출 | TikSaveHub"
+ description="틱톡 동영상을 고품질 MP3 오디오로 변환. 무료, 빠르고, 가입 불필요. 320kbps 품질. 아이폰, 안드로이드, PC 모두 작동."
+ keywords="tiktok to mp3, 틱톡 mp3 변환, tiktok 오디오 다운로드, 틱톡 사운드 저장, tiktok mp3 converter online, 틱톡 사운드 다운로드"
+ canonical="/ko/tiktok-to-mp3"
+ ogImage="/og-mp3.png"
+ ogType="website"
+ jsonLd={faqJsonLd}
+ appName="TikSaveHub. TikTok to MP3 변환기"
+ lang="ko"
 >
-  <section class="dl-hero" aria-labelledby="dl-hero-headline">
-    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
-    <div class="dl-hero-inner container-page">
-      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> 무료 · 고품질 · 320kbps</span></div>
-      <h1 id="dl-hero-headline" class="dl-hero-headline">TikTok to MP3</h1>
-      <p class="dl-hero-sub text-body-lg">TikTok 동영상을 고품질 MP3로 변환. 무료로 빠르게. 사운드트랙, 음악, 음성을 오프라인으로 저장.</p>
-      <div class="dl-hero-form" id="download-tool"><DownloadForm mode="mp3" /></div>
-      <div class="dl-hero-trust">
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% 무료</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 최대 320kbps</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 회원가입 불필요</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 워터마크 없음</span>
-      </div>
+ <!-- JSON-LD Structured Data -->
+ <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   { "@type": "ListItem", "position": 1, "name": "홈", "item": "https://tiksavehub.com/ko" },
+   { "@type": "ListItem", "position": 2, "name": "TikTok to MP3", "item": "https://tiksavehub.com/ko/tiktok-to-mp3" }
+  ]
+ })} />
+
+ <!-- Hero Section -->
+ <section class="mp3-hero" aria-labelledby="mp3-hero-headline">
+  <div class="mp3-hero-gradient gradient-mesh" aria-hidden="true"></div>
+  <div class="mp3-hero-inner container-page">
+   <!-- Breadcrumb -->
+   <nav aria-label="Breadcrumb" class="mp3-breadcrumb">
+    <ol class="breadcrumb-list">
+     <li>
+      <a href="/ko"><span>홈</span></a>
+     </li>
+     <li aria-current="page">
+      <span>TikTok to MP3</span>
+     </li>
+    </ol>
+   </nav>
+
+   <div class="mp3-badge-row">
+    <span class="badge-pill mp3-badge">
+     <span class="badge-dot" aria-hidden="true"></span>
+     무료 · 고품질 · 즉시 MP3 변환
+    </span>
+   </div>
+
+   <h1 id="mp3-hero-headline" class="mp3-hero-headline">
+    틱톡 MP3 변환기. 몇 초 만에 고품질 오디오 추출
+   </h1>
+
+   <p class="mp3-hero-subline headline-gradient">
+    어떤 틱톡 동영상에서든 오디오를 추출하세요.
+   </p>
+
+   <p class="mp3-hero-sub text-body-lg">
+    어떤 틱톡 동영상이든 몇 초 만에 MP3 오디오로 변환됩니다. 무료, 가입 불필요, 워터마크 없어요.
+    링크를 붙여넣기만 하면 오디오를 즉시 다운로드할 수 있습니다.
+   </p>
+
+   <div class="mp3-hero-form-wrap">
+    <Mp3DownloadForm />
+   </div>
+
+   <div class="mp3-hero-trust">
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     100% 무료
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     320kbps 품질
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     가입 불필요
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     모바일에서도 작동
+    </span>
+   </div>
+
+   <div class="mp3-hero-share">
+    <SocialShare
+     url="/ko/tiktok-to-mp3"
+     title="틱톡 MP3 변환기 (고품질). TikSaveHub"
+     description="어떤 틱톡 동영상에서든 고품질 MP3 오디오를 무료로 추출하고 다운로드하세요."
+     image="/og-mp3.png"
+    />
+   </div>
+  </div>
+ </section>
+
+ <!-- Stats -->
+ <StatsSection stats={[
+  { value: '100% 무료', label: 'TikTok 오디오를 즉시 추출, 로그인 불필요', icon: 'download' },
+  { value: '가입 불필요', label: '모든 기기에서, 전 세계 어디에서든 작동', icon: 'globe' },
+  { value: '고비트레이트', label: '깨끗하고 선명한 MP3 사운드 품질', icon: 'star' },
+ ]} />
+
+ <!-- What is Section -->
+ <section class="mp3-content-section" aria-labelledby="mp3-what-headline">
+  <div class="mp3-content-inner container-page">
+   <div class="mp3-content-grid">
+    <div class="mp3-content-text">
+     <span class="section-eyebrow text-caption-mono">도구 소개</span>
+     <h2 id="mp3-what-headline" class="section-headline">
+      이 도구가 왜 만들어졌는지.
+     </h2>
+
+     <p class="mp3-content-body">
+      틱톡에는_keep_할 만한 사운드가 넘쳐요. 트렌딩 오디오 클립, 동기부여 연설, 코미디 대사, 다른 곳에서는 찾을 수 없는 음악 트랙들. 그런데 문제는 틱톡이 오디오만 따로 저장하게 해주지 않는다는 거죠. 내장된 "동영상 저장" 버튼은 워터마크가 들어간 MP4를 줄 뿐, MP3가 아니에요. 그리고 시중의 대부분의 "틱톡 MP3 변환기"는 엉망이에요. 팝업 광고가 세 겹으로 쌓여 있고, 품질은 128kbps로 제한되며, 어떤 것들은 단 하나의 변환도 되기 전에 계정 생성을 요구하죠.
+     </p>
+
+     <p class="mp3-content-body">
+      TikSaveHub는 다른 접근법을 취합니다. 틱톡 링크를 붙여넣으면 MP3를 받을 수 있어요. 그게 전부 상호작용입니다. 이 도구는 틱톡 서버에서 동영상을 가져오고, 오디오 트랙을 분리하며, MP3로 변환하고, 파일을 직접 전달합니다. 2~3초면 끝나요. 워터마크 없고, 변환 과정에서 품질 손실도 없으며, 계정도 필요 없습니다.
+     </p>
+
+     <p class="mp3-content-body">
+      오디오 품질에 대해 말씀드릴게요. 틱톡은 모든 동영상에서 오디오를 128kbps AAC로 압축합니다. TikSaveHub는 그걸 마법처럼 업스케일링하지 않아요. 그건 불가능하니까요. 하지만 변환 과정은 무손실입니다. 틱톡이 압축한 그대로, AAC 대신 MP3 형식으로 나올 뿐이에요. 대부분의 변환기는 더 낮은 비트레이트로 재인코딩하고 "고품질"이라고 부르는데, 이건 그렇지 않습니다.
+     </p>
+
+     <p class="mp3-content-body">
+      이 도구는 브라우저가 있는 모든 기기에서 작동합니다. 아이폰, 안드로이드, 윈도우, 맥, 리눅스, 태블릿까지요. 설치할 앱도 없고, 설정할 브라우저 확장 프로그램도 없습니다. 변환이 서버에서 이루어지기 때문에 기기의 처리 능력은 상관없어요. 5년 된 폰도 새 노트북과 같은 속도로 처리됩니다.
+     </p>
+
+     <p class="mp3-content-body">
+      개인정보 보호도 중요하죠. TikSaveHub는 이메일 주소를 요구하지 않고, 다운로드 기록을 저장하지 않으며, 브라우징 행동을 추적하지 않습니다. 기기에 남는 것은 최종 MP3 파일뿐이에요. 몇 번의 변환 후 유료 플랜을 몰래 도입하는 경쟁사들과 달리, TikSaveHub는 사용 제한 없이 계속 무료입니다.
+     </p>
+
+     <p class="mp3-content-body">
+      솔직한 한계 하나만 말씀드리자면, 이 도구는 공개된 틱톡 동영상에만 작동합니다. 비공개 또는 제한된 콘텐츠는 틱톡의 공개 API를 통해 접근할 수 없어요. 합법적인 변환기가 우회할 수 없는 기술적 벽이죠. 정책 선택이 아니에요. 동영상이 공개되어 있으면 오디오 추출이 작동하고, 비공개라면 작동하지 않습니다.
+     </p>
+
+     <p class="mp3-content-body">
+      변환할 준비가 되셨나요? 위 입력란에 틱톡 링크를 붙여넣고 몇 초 만에 오디오를 다운로드하세요. 전체 동영상이 필요하다면 (워터마크 유무와 관계없이) <a href="/ko/tiktok-video-downloader-without-watermark">틱톡 동영상 다운로더</a>가 MP4 파일을 처리해 줍니다. 인스타그램 오디오가 필요하면 <a href="/ko/instagram-audio-downloader">인스타그램 오디오 다운로더</a>가 릴스와 포스트에 같은 방식으로 작동합니다. 페이스북 동영상은 <a href="/ko/facebook-to-mp3">페이스북 to MP3</a> 도구로 변환할 수 있고, 스냅챗 클립은 <a href="/ko/snapchat-to-mp3">스냅챗 to MP3</a> 변환기를 사용하세요.
+     </p>
     </div>
-  </section>
-
-  <StatsSection stats={[ { value: '100% 무료', label: 'TikTok 오디오를 즉시 추출, 로그인 불필요', icon: 'download' }, { value: '가입 불필요', label: '모든 기기에서, 전 세계 어디에서든 작동', icon: 'globe' }, { value: 'HD 품질', label: '고비트레이트 — 깨끗한 MP3 사운드 품질', icon: 'star' } ]} />
-
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
-    <div class="dl-faq-inner container-page">
-      <span class="section-eyebrow text-caption-mono">자주 묻는 질문</span>
-      <h2 id="dl-faq-headline" class="section-headline">TikTok to MP3 관련 질문</h2>
-      <div class="dl-faq-grid">
-        {faqData.map((faq) => (
-          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
-        ))}
+    <div class="mp3-content-card-wrap">
+     <div class="mp3-content-card">
+      <div class="mp3-content-card-icon" aria-hidden="true">
+       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       </div>
+      <h3 class="mp3-content-card-title">TikSaveHub MP3의 장점</h3>
+      <ul class="mp3-content-card-list">
+       <li>깨끗한 MP3. 동영상 없고, 워터마크 없음</li>
+       <li>소스 오디오에서 무손실 변환</li>
+       <li>모든 기기와 브라우저에서 작동</li>
+       <li>가입이나 계정 불필요</li>
+       <li>무제한 변환, 완전 무료</li>
+       <li>서버 사이드 처리 (2~3초)</li>
+       <li>모든 틱톡 링크 형식 지원</li>
+      </ul>
+     </div>
+     <div class="mp3-content-card" style="margin-top: var(--spacing-lg);">
+      <h3 class="mp3-content-card-title">바로가기</h3>
+      <ul class="mp3-content-card-list">
+       <li><a href="/ko/tiktok-video-downloader-without-watermark">틱톡 동영상 다운로더</a></li>
+       <li><a href="/ko/instagram-reels-downloader-without-watermark">인스타그램 릴스 다운로더</a></li>
+       <li><a href="/ko/instagram-video-downloader-without-watermark">인스타그램 동영상 다운로더</a></li>
+       <li><a href="/ko/instagram-story-downloader-without-watermark">인스타그램 스토리 다운로더</a></li>
+       <li><a href="/ko/instagram-audio-downloader">인스타그램 오디오 다운로더</a></li>
+       <li><a href="/ko/facebook-video-downloader">페이스북 동영상 다운로더</a></li>
+       <li><a href="/ko/facebook-reels-downloader">페이스북 릴스 다운로더</a></li>
+       <li><a href="/ko/facebook-story-downloader">페이스북 스토리 다운로더</a></li>
+       <li><a href="/ko/facebook-to-mp3">페이스북 to MP3</a></li>
+       <li><a href="/ko/facebook-photo-downloader">페이스북 사진 다운로더</a></li>
+       <li><a href="/ko/snapchat-downloader">스냅챗 다운로더</a></li>
+       <li><a href="/ko/snapchat-story-downloader">스냅챗 스토리 다운로더</a></li>
+       <li><a href="/ko/snapchat-to-mp3">스냅챗 to MP3</a></li>
+       <li><a href="/ko/x-video-downloader">X/트위터 동영상 다운로더</a></li>
+      </ul>
+     </div>
     </div>
-  </section>
+   </div>
+  </div>
+ </section>
 
-  <SocialShare url="/tiktok-to-mp3" title="TikTok to MP3 — TikTok 동영상에서 오디오 추출" description="TikTok 동영상을 고품질 MP3로 변환. 무료." />
+ <!-- How It Works -->
+ <section id="how-it-works" class="mp3-steps-section" aria-labelledby="mp3-steps-headline">
+  <div class="mp3-steps-inner container-page">
+   <div class="mp3-steps-header">
+    <span class="section-eyebrow text-caption-mono">단계별 가이드</span>
+    <h2 id="mp3-steps-headline" class="section-headline">
+     틱톡을 MP3로 변환하는 방법.
+    </h2>
+    <p class="section-sub text-body-lg">
+     세 단계면 됩니다. 기술적인 능력은 필요 없어요.
+    </p>
+   </div>
 
-  <!-- Related Tools -->
-  <section class="related-tools-section">
-    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
-      <h2 class="related-tools-headline">추가 도구</h2>
-      <div class="related-tools-grid">
-            <a href="/ko/instagram-reels-downloader-without-watermark" class="related-tool-link">Instagram Reels Downloader</a>
-            <a href="/ko/instagram-video-downloader-without-watermark" class="related-tool-link">Instagram Video Downloader</a>
-            <a href="/ko/instagram-story-downloader-without-watermark" class="related-tool-link">Instagram Story Downloader</a>
-            <a href="/ko/instagram-audio-downloader" class="related-tool-link">Instagram Audio Downloader</a>
+   <div class="mp3-steps-grid">
+    <article class="mp3-step-card">
+     <div class="mp3-step-num text-caption-mono" aria-hidden="true">01</div>
+     <div class="mp3-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+     </div>
+     <h3 class="mp3-step-title">틱톡 동영상 링크 복사</h3>
+     <p class="mp3-step-body">
+      틱톡을 열고 저장하고 싶은 오디오가 있는 동영상을 찾으세요. 공유 버튼을 누르고 "링크 복사"를 선택하면 됩니다. For You 페이지, 크리에이터 프로필, 공유된 링크 모두 작동해요.
+     </p>
+    </article>
+
+    <article class="mp3-step-card">
+     <div class="mp3-step-num text-caption-mono" aria-hidden="true">02</div>
+     <div class="mp3-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+     </div>
+     <h3 class="mp3-step-title">TikSaveHub에 링크 붙여넣기</h3>
+     <p class="mp3-step-body">
+      복사한 링크를 위 입력란에 붙여넣으세요. 처리가 즉시 시작됩니다. 괜찮은 인터넷 연결에서는 2~3초, 느린 모바일 데이터에서는 5초 정도 걸릴 수 있어요.
+     </p>
+    </article>
+
+    <article class="mp3-step-card">
+     <div class="mp3-step-num text-caption-mono" aria-hidden="true">03</div>
+     <div class="mp3-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+     </div>
+     <h3 class="mp3-step-title">MP3 오디오 다운로드</h3>
+     <p class="mp3-step-body">
+      "MP3 다운로드"를 눌러 오디오 파일을 받으세요. 기기에 바로 저장됩니다. 오프라인 청취, 음악 라이브러리, 오디오 편집 소프트웨어에서 바로 사용할 수 있어요. 추가 단계는 없습니다.
+     </p>
+    </article>
+   </div>
+  </div>
+ </section>
+
+ <!-- Features Grid -->
+ <section id="features" class="mp3-features-section" aria-labelledby="mp3-features-headline">
+  <div class="mp3-features-inner container-page">
+   <div class="mp3-features-header">
+    <span class="section-eyebrow text-caption-mono">기능</span>
+    <h2 id="mp3-features-headline" class="section-headline">
+     TikSaveHub MP3가 남들과 다른 점.
+    </h2>
+   </div>
+
+   <div class="mp3-features-grid">
+    <article class="mp3-feature-card">
+     <div class="mp3-feature-icon feat-accent-develop" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+     </div>
+     <h3 class="mp3-feature-title">순수 MP3 오디오</h3>
+     <p class="mp3-feature-body">
+      깨끗한 오디오 추출입니다. 동영상도 없고, 워터마크도 없고, 오버레이 음성도 없어요. 원본 틱톡의 사운드만 추출됩니다.
+     </p>
+    </article>
+
+    <article class="mp3-feature-card">
+     <div class="mp3-feature-icon feat-accent-preview" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+     </div>
+     <h3 class="mp3-feature-title">고비트레이트</h3>
+     <p class="mp3-feature-body">
+      사용 가능한 최고 비트레이트로 오디오를 추출합니다. 어떤 기기, 어떤 스피커, 어떤 헤드폰에서든 MP3 파일이 선명하게 들려요.
+     </p>
+    </article>
+
+    <article class="mp3-feature-card">
+     <div class="mp3-feature-icon feat-accent-ship" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+     </div>
+     <h3 class="mp3-feature-title">번개처럼 빠름</h3>
+     <p class="mp3-feature-body">
+      서버 사이드 처리로 몇 초 만에 변환이 시작됩니다. 대기열도 없고, 기다릴 필요도 없어요. 붙여넣고, 변환하고, 끝. 2~3초면 충분합니다.
+     </p>
+    </article>
+
+    <article class="mp3-feature-card">
+     <div class="mp3-feature-icon feat-accent-develop" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+     </div>
+     <h3 class="mp3-feature-title">모든 기기에서 작동</h3>
+     <p class="mp3-feature-body">
+      아이폰, 안드로이드, 태블릿, 데스크톱. 브라우저만 있으면 TikSaveHub가 작동합니다. 앱 설치도, 확장 프로그램도 필요 없어요.
+     </p>
+    </article>
+
+    <article class="mp3-feature-card">
+     <div class="mp3-feature-icon feat-accent-preview" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+     </div>
+     <h3 class="mp3-feature-title">계정 불필요</h3>
+     <p class="mp3-feature-body">
+      가입도, 이메일도, 비밀번호도 없어요. 링크를 붙여넣고 변환하면 됩니다. 개인정보 보호가 중요하니까요. 개인 데이터는 저장되지 않습니다.
+     </p>
+    </article>
+
+    <article class="mp3-feature-card">
+     <div class="mp3-feature-icon feat-accent-ship" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+     </div>
+     <h3 class="mp3-feature-title">무제한 변환</h3>
+     <p class="mp3-feature-body">
+      일일 한도도, 상한도, 프리미엄 등급도 없습니다. 필요한 만큼 많은 틱톡 동영상을 변환하세요. 매일, 영원히, 무료로요.
+     </p>
+    </article>
+   </div>
+  </div>
+ </section>
+
+ <!-- Use Cases -->
+ <section class="mp3-usecases-section" aria-labelledby="mp3-usecases-headline">
+  <div class="mp3-usecases-inner container-page">
+   <div class="mp3-usecases-header">
+    <span class="section-eyebrow text-caption-mono">활용 사례</span>
+    <h2 id="mp3-usecases-headline" class="section-headline">
+     누가 TikSaveHub MP3를 사용하나요?
+    </h2>
+   </div>
+
+   <div class="mp3-usecases-grid">
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">음악 애호가</h3>
+     <p class="mp3-usecase-body">
+      스포티파이에는 없는 곡을 틱톡에서 들었나요? MP3로 변환해서 음악 라이브러리에 추가하세요. 틱톡을 열지 않고도, 동영상 없이, 워터마크 없이 오프라인으로 들을 수 있어요. 요즘 떠오르는最好的 트랙 중 상당수가 틱톡에서 처음 나왔고, 대부분은 스트리밍 플랫폼에 올라오지 않습니다.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">콘텐츠 크리에이터</h3>
+     <p class="mp3-usecase-body">
+      배경 음악, 사운드 이펙트, 편집용 트렌딩 오디오. 크리에이터들은 자기 동영상에 사용할 틱톡 사운드를 추출합니다. MP3를 편집 소프트웨어에 바로 넣으면 새로운 영상 아래에 레이어링할 수 있어요. 다만 알아두세요, 사운드가 알아볼 수 있을 정도로 유명하다면 원작자를 크레딧해야 합니다.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">DJ & 프로듀서</h3>
+     <p class="mp3-usecase-body">
+      틱톡은 트렌딩 사운드를 터뜨리기 전에 발견하는 곳이에요. DJ들은 클립을 레퍼런스 트랙으로 저장하고, 리듬 패턴을 분석하며, 인기 있는 것으로 세트를 구성합니다. 2초짜리 틱톡 사운드가 전체 리믹스의 영감이 될 수 있죠.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">학생 & 교육자</h3>
+     <p class="mp3-usecase-body">
+      교육용 틱톡 동영상, 언어 강의, 역사 설명, 과학 분석 등이 이동 중 공부에는 오디오로 더 잘 작동합니다. MP3를 추출하고 폰에 넣은 뒤 출퇴근길에 들으면 돼요. 노트북을 항상 들고 다니는 것보다 낫죠.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">팟캐스터 & 편집자</h3>
+     <p class="mp3-usecase-body">
+      틱톡 클립은 팟캐스트 소재로 제격입니다. 리액션 세그먼트, 바이럴 순간, 전문가 의견. 오디오를 추출해서 편집 타임라인에 넣고 에피소드를 만들면 됩니다. 깨끗한 MP3 파일이라 오디오 정리 시간을 줄이고 제작에 더 많은 시간을 쏟을 수 있어요.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">일반 사용자</h3>
+     <p class="mp3-usecase-body">
+      솔직히 말하면, 대부분의 사람들은 재미있는 사운드를 벨소리로 쓰거나, 동기부여 연설을 반복 재생하고 싶을 뿐이에요. 화려한 워크플로우는 필요 없습니다. 링크를 붙여넣고, MP3를 다운로드하고, 끝. 그만큼 간단해요.
+     </p>
+    </article>
+   </div>
+  </div>
+ </section>
+
+ <!-- Comparison Section -->
+ <section class="mp3-steps-section" aria-labelledby="mp3-comparison-headline">
+  <div class="mp3-steps-inner container-page">
+   <div class="mp3-steps-header">
+    <span class="section-eyebrow text-caption-mono">비교</span>
+    <h2 id="mp3-comparison-headline" class="section-headline">
+     TikSaveHub vs 다른 MP3 변환기.
+    </h2>
+    <p class="section-sub text-body-lg">
+     경쟁사 대비 어떤지 비교해 보세요.
+    </p>
+   </div>
+
+   <div style="width:100%;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:var(--text-body-sm);text-align:left;">
+     <thead>
+      <tr style="border-bottom:2px solid var(--color-hairline-strong);">
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">기능</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">TikSaveHub</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SSSTikTok</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SnapTik</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SaveFrom</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">오디오 품질</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">소스에서 무손실</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">재인코딩</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">재인코딩</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">다양함</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">변환 속도</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">약 2~3초</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">약 4~5초</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">약 3~4초</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">약 5~7초</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">광고</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">없음</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">심함 (팝업)</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">보통</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">심함</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">가입 필요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">아니요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">네 (일부 기능)</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">일일 한도</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">무제한</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">한도 보고됨</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">한도 보고됨</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">제한된 무료 등급</td>
+      </tr>
+      <tr>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">서버 사이드</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">예</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">아니요 (브라우저 기반)</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">아니요</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+
+   <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;line-height:1.7;">
+    솔직한 의견을 말씀드리면, SSSTikTok의 팝업 광고는 진짜로 참기 힘들어요. 세 겹이나 쌓여 있고, 그중 하나는 가짜 "다운로드 완료" 알림이에요. SnapTik은 이제 일일 무료 한도 뒤에 변환을 가두고 있죠. SaveFrom은 작동하기 전에 계정 생성을 요구합니다. 이건 루머가 아닙니다. 포럼에서 사용자들이 일관되게 보고하는 패턴이에요. TikSaveHub는 이 비교에서 무료, 광고 없음, 무제한을 모두 유지하는 유일한 도구였습니다.
+   </p>
+
+   <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-md) 0 0 0;line-height:1.7;">
+    <a href="/ko/facebook-to-mp3" style="color:var(--color-link);">페이스북 to MP3</a>, <a href="/ko/snapchat-to-mp3" style="color:var(--color-link);">스냅챗 to MP3</a>, <a href="/ko/instagram-audio-downloader" style="color:var(--color-link);">인스타그램 오디오</a>에서도 같은 방식으로 작동합니다.
+   </p>
+  </div>
+ </section>
+
+ <!-- Troubleshooting -->
+ <section class="mp3-usecases-section" aria-labelledby="mp3-troubleshoot-headline">
+  <div class="mp3-usecases-inner container-page">
+   <div class="mp3-usecases-header">
+    <span class="section-eyebrow text-caption-mono">문제 해결</span>
+    <h2 id="mp3-troubleshoot-headline" class="section-headline">
+     자주 발생하는 문제와 해결법.
+    </h2>
+   </div>
+
+   <div class="mp3-usecases-grid">
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">"오디오가 다운로드되지 않아요."</h3>
+     <p class="mp3-usecase-body">
+      열 번 중 아홉 번은 틱톡 링크가 잘못된 거예요. 댓글에서 링크를 복사했거나, 복사-붙여넣기 과정에서 URL이 손상된 경우죠. 틱톡으로 돌아가서 동영상을 직접 열고, 공유 → 링크 복사를 눌러 새로 복사한 URL을 붙여넣어 보세요. 동영상을 원작자가 삭제했다면 어떤 변환기도 복구할 수 없습니다. TikSaveHub도, 다른 어떤 도구도 마찬가지예요.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">"품질이 낮아요."</h3>
+     <p class="mp3-usecase-body">
+      품질은 틱톡이 오디오를 어떻게 압축했는지에 달려 있습니다. 대부분의 틱톡 동영상은 128kbps AAC 오디오를 담고 있어요. TikSaveHub는 그것을 무손실로 MP3로 변환합니다. 이미 압축된 것을 개선할 수는 없어요. 틱톡에서 오디오가 얇게 들렸다면 MP3에서도 얇게 들릴 거예요. 그건 소스 품질 문제이지 도구의 한계가 아닙니다.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">"링크가 작동하지 않아요."</h3>
+     <p class="mp3-usecase-body">
+      TikSaveHub는 모든 표준 틱톡 링크 형식을 처리하지만, 동영상 URL에만 작동합니다. 프로필 페이지, 해시태그 페이지, 검색 결과는 다운로드할 수 없어요. 특정 동영상을 가리키지 않기 때문이죠. 링크에는 /video/, vm.tiktok.com, 또는 vt.tiktok.com이 포함되어야 합니다.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">"변환 시간이 너무 오래 걸려요."</h3>
+     <p class="mp3-usecase-body">
+      변환 자체는 빠릅니다. 3초 이내. 병목은 파일 전송이에요. 60초짜리 틱톡 동영상의 오디오는 MP3로 보통 1~2MB 정도입니다. 10Mbps 연결에서는 다운로드 시간이 2초 이내예요. 느린 모바일 데이터에서는 더 걸리죠. Wi-Fi로 전환하면 빨라집니다.
+     </p>
+    </article>
+
+    <article class="mp3-usecase-card">
+     <h3 class="mp3-usecase-title">"파일에 오디오가 없어요."</h3>
+     <p class="mp3-usecase-body">
+      드물지만 가끔 발생합니다. 보통 TikSaveHub가 동영상에서 오디오 트랙을 찾을 수 없을 때 그래요 (일부 틱톡 동영상은 특별한 인코딩을 사용하거든요). 몇 분 기다렸다가 다시 시도해 보세요. 문제가 계속되면 동영상이 틱톡 측에서 제한된 것일 수 있어요. 다른 동영상으로 도구가 정상 작동하는지 확인해 보세요.
+     </p>
+    </article>
+   </div>
+  </div>
+ </section>
+
+ <!-- Legal Section -->
+ <section class="mp3-steps-section" aria-labelledby="mp3-legal-headline">
+  <div class="mp3-steps-inner container-page">
+   <div class="mp3-steps-header">
+    <span class="section-eyebrow text-caption-mono">법적 고지</span>
+    <h2 id="mp3-legal-headline" class="section-headline">
+     틱톡 오디오를 다운로드하는 것은 합법인가요?
+    </h2>
+   </div>
+
+   <div style="max-width:680px;width:100%;display:flex;flex-direction:column;gap:var(--spacing-lg);text-align:left;">
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">개인 사용은 대체로 괜찮습니다.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      오프라인 청취를 위한 틱톡 오디오 저장, 마음에 드는 사운드 보관, 개인 참고용 저장 등은 개인 사용 범주에 속하며 관대하게 허용됩니다. 틱톡의 이용약관은 기술적으로 앱 외부 다운로드를 금지하고 있지만, 그 조항은 자동화된 봇이 전체 라이브러리를 스크래핑하는 것을 대상으로 한 것이지 한 오디오 클립을 저장하는 개인을 대상으로 한 것이 아니에요. 법적 현실은 이용약관 텍스트보다 더 복잡합니다.
+     </p>
+    </div>
+
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">상업적 사용은 허락이 필요합니다.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      광고, 유튜브 컴필레이션, 팟캐스트, 또는 수익이 발생하는 모든 콘텐츠에 틱톡 오디오를 사용하려면 원작자의 명시적 허락이 필요합니다. 저작권은 비디오뿐만 아니라 오디오 자체에도 적용됩니다. 서면 허락을 받지 않으면 삭제 통보를 받을 수 있어요.
+     </p>
+    </div>
+
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">원작자를 크레딧하세요.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      개인 공유를 위해서라도 원본 크리에이터를 크레딧하는 것이 올바른 일입니다. 크리에이터를 태그하고, 사용자 이름을 언급하고, 원본으로 링크를 거세요. 5초면 충분하고, 마땅히 받아야 할 크레딧을 드리는 거니까요.
+     </p>
+    </div>
+
+    <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:var(--spacing-md) 0 0 0;font-style:italic;">
+     이 기사는 정보 제공 목적이며 법률 자문을 구성하지 않습니다. 구체적인 상황에 대해서는 자격을 갖춘 변호사에게 문의하세요.
+    </p>
+
+    <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+     외부 참고자료: <a href="https://www.tiktok.com/community-guidelines" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">틱톡 커뮤니티 가이드라인</a> · <a href="https://www.copyright.gov/fair-use/" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">미국 저작권청. 공정 사용</a>
+    </p>
+   </div>
+  </div>
+ </section>
+
+ <!-- FAQ Section -->
+ <section id="faq" class="mp3-faq-section" aria-labelledby="mp3-faq-headline">
+  <div class="mp3-faq-inner container-page">
+   <div class="mp3-faq-header">
+    <span class="section-eyebrow text-caption-mono">FAQ</span>
+    <h2 id="mp3-faq-headline" class="section-headline">
+     자주 묻는 질문.
+    </h2>
+   </div>
+
+   <div class="mp3-faq-list" role="list">
+    {faqData.map((faq) => (
+     <div class="mp3-faq-item" id={faq.id} role="listitem">
+      <button
+       class="mp3-faq-trigger"
+       id={`${faq.id}-btn`}
+       aria-expanded="false"
+       aria-controls={`${faq.id}-panel`}
+       type="button"
+      >
+       <span class="mp3-faq-q">{faq.q}</span>
+       <span class="mp3-faq-chevron" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+       </span>
+      </button>
+      <div
+       id={`${faq.id}-panel`}
+       class="mp3-faq-panel"
+       role="region"
+       aria-labelledby={`${faq.id}-btn`}
+       hidden
+      >
+       <p class="mp3-faq-a" set:html={faq.a}></p>
       </div>
-    </div>
-  </section>
+     </div>
+    ))}
+   </div>
+  </div>
+ </section>
+
+ <!-- CTA Band -->
+ <section class="mp3-cta-band" aria-labelledby="mp3-cta-headline">
+  <div class="mp3-cta-inner container-page">
+   <h2 id="mp3-cta-headline" class="mp3-cta-headline">
+    변환할 준비가 되셨나요?
+   </h2>
+   <p class="mp3-cta-sub">
+    위에 틱톡 링크를 붙여넣고 몇 초 만에 MP3를 받으세요. 계정은 필요 없습니다.
+   </p>
+   <a href="#download-form" class="btn-primary mp3-cta-btn">
+    변환 시작하기
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+   </a>
+  </div>
+ </section>
+
+ <!-- Internal Links Section -->
+ <section class="mp3-internal-section" aria-labelledby="mp3-internal-headline">
+  <div class="mp3-internal-inner container-page">
+   <h2 id="mp3-internal-headline" class="section-headline mp3-internal-headline">
+    TikSaveHub의 다른 도구들.
+   </h2>
+   <div class="mp3-internal-grid">
+    <a href="/ko" class="mp3-internal-card">
+     <span class="mp3-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+     </span>
+     <span class="mp3-internal-title">TikSaveHub 홈</span>
+     <span class="mp3-internal-desc">메인 페이지로 돌아가기. 틱톡 동영상을 MP4로 다운로드하세요.</span>
+     <span class="mp3-internal-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="/ko/tiktok-video-downloader-without-watermark" class="mp3-internal-card">
+     <span class="mp3-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+     </span>
+     <span class="mp3-internal-title">동영상 다운로더</span>
+     <span class="mp3-internal-desc">워터마크 없이 HD 품질로 틱톡 동영상을 다운로드하세요.</span>
+     <span class="mp3-internal-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="/ko/#faq" class="mp3-internal-card">
+     <span class="mp3-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+     </span>
+     <span class="mp3-internal-title">FAQ</span>
+     <span class="mp3-internal-desc">궁금한 점이 있으신가요? 도구에 대한 답변을 찾아보세요.</span>
+     <span class="mp3-internal-arrow" aria-hidden="true">→</span>
+    </a>
+   </div>
+  </div>
+ </section>
 
 </Layout>
 
 <style>
-  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
-  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
-  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
-  .dl-badge-row { display: flex; justify-content: center; }
-  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
-  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
-  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
-  .dl-hero-form { width: 100%; max-width: 640px; }
-  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
-  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
-  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
-  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
-  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
-  .dl-faq-q::-webkit-details-marker { display: none; }
-  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
-  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
-  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
-  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+ /* ─── Hero ─── */
+ .mp3-hero {
+  position: relative;
+  padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+  overflow: hidden;
+  background-color: var(--color-canvas);
+  text-align: center;
+ }
 
-  .related-tools-section { padding: var(--spacing-2xl) 0; }
-  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
-  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
-  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
-  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+ .mp3-hero-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+ }
+
+ .mp3-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+ }
+
+ .mp3-breadcrumb {
+  margin-bottom: var(--spacing-sm);
+ }
+
+ .breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-mute);
+ }
+
+ .breadcrumb-list li + li::before {
+  content: '/';
+  margin-right: 6px;
+  color: var(--color-hairline-strong);
+ }
+
+ .breadcrumb-list a {
+  color: var(--color-body);
+  text-decoration: none;
+  transition: color 0.15s ease;
+ }
+
+ .breadcrumb-list a:hover {
+  color: var(--color-ink);
+ }
+
+ .mp3-badge-row {
+  display: flex;
+  justify-content: center;
+ }
+
+ .mp3-badge {
+  animation: fadeInUp 0.5s ease 0.1s both;
+ }
+
+ .badge-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+ }
+
+ .mp3-hero-headline {
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  color: var(--color-ink);
+  margin: 0;
+  max-width: 700px;
+  animation: fadeInUp 0.5s ease 0.2s both;
+ }
+
+ .headline-gradient {
+  background: linear-gradient(
+   135deg,
+   #7c3aed 0%,
+   #a855f7 30%,
+   #ec4899 60%,
+   #f472b6 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+ }
+
+ .mp3-hero-subline {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin: 0;
+  max-width: 560px;
+  animation: fadeInUp 0.5s ease 0.25s both;
+ }
+
+ .mp3-hero-sub {
+  color: var(--color-body);
+  margin: 0;
+  max-width: 560px;
+  animation: fadeInUp 0.5s ease 0.3s both;
+ }
+
+ .mp3-hero-form-wrap {
+  width: 100%;
+  max-width: 760px;
+  animation: fadeInUp 0.5s ease 0.4s both;
+ }
+
+ .mp3-hero-trust {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.5s ease 0.5s both;
+ }
+
+ .mp3-hero-share {
+  animation: fadeInUp 0.5s ease 0.55s both;
+ }
+
+ .trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--color-body);
+  padding: 0 var(--spacing-md);
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .trust-chip svg {
+  color: #7c3aed;
+ }
+
+ .trust-chip:hover {
+  border-color: var(--color-hairline-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.12);
+ }
+
+ @media (hover: hover) {
+  .trust-chip:hover {
+   border-color: var(--color-hairline-strong);
+   transform: translateY(-2px);
+   box-shadow: 0 4px 12px -2px rgba(124, 58, 237, 0.12);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .mp3-hero {
+   padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+  }
+
+  .mp3-hero-headline {
+   font-size: clamp(22px, 5vw, 32px);
+   letter-spacing: -1px;
+  }
+
+  .trust-chip {
+   font-size: var(--text-caption);
+   height: 36px;
+   padding: 0 var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+   font-size: 11px;
+  }
+ }
+
+ /* ─── Content Section ─── */
+ .mp3-content-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .mp3-content-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--spacing-3xl);
+  align-items: start;
+ }
+
+ .mp3-content-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+ }
+
+ .mp3-content-lead {
+  font-size: var(--text-body-lg);
+  color: var(--color-ink);
+  line-height: 1.7;
+  margin: 0;
+  margin-top: 8px;
+ }
+
+ .text-highlight {
+  background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+ }
+
+ .mp3-content-body {
+  font-size: var(--text-body-md);
+  color: var(--color-body);
+  line-height: 1.7;
+  margin: 0;
+ }
+
+ .mp3-content-card-wrap {
+  position: sticky;
+  top: 80px;
+ }
+
+ .mp3-content-card {
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-content-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed15, #ec489920);
+  color: #7c3aed;
+  box-shadow: inset 0 0 0 1px #7c3aed25;
+  margin-bottom: var(--spacing-md);
+ }
+
+ .mp3-content-card-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-md) 0;
+ }
+
+ .mp3-content-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+ }
+
+ .mp3-content-card-list li {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+ }
+
+ .mp3-content-card-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+ }
+
+ @media (max-width: 960px) {
+  .mp3-content-grid {
+   grid-template-columns: 1fr;
+  }
+
+  .mp3-content-card-wrap {
+   position: static;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .mp3-content-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Steps Section ─── */
+ .mp3-steps-section {
+  background-color: var(--color-canvas);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-steps-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4xl);
+ }
+
+ .mp3-steps-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .mp3-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  width: 100%;
+ }
+
+ .mp3-step-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .mp3-step-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-step-num {
+  color: var(--color-mute);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+ }
+
+ .mp3-step-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed10, #ec489918);
+  color: #7c3aed;
+  box-shadow: inset 0 0 0 1px #7c3aed20;
+ }
+
+ .mp3-step-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0;
+ }
+
+ .mp3-step-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+ }
+
+ @media (max-width: 960px) {
+  .mp3-steps-grid {
+   grid-template-columns: 1fr;
+   max-width: 480px;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .mp3-steps-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Features Section ─── */
+ .mp3-features-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-features-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .mp3-features-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .mp3-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+ }
+
+ .mp3-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background-color: var(--color-canvas);
+  box-shadow:
+   inset 0 0 0 1px #0000000a,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .mp3-feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ }
+
+ .feat-accent-develop {
+  background: linear-gradient(135deg, #7c3aed15, #ec489920);
+  color: #7c3aed;
+  box-shadow: inset 0 0 0 1px #7c3aed25;
+ }
+
+ .feat-accent-preview {
+  background: linear-gradient(135deg, #a855f715, #f472b620);
+  color: #a855f7;
+  box-shadow: inset 0 0 0 1px #a855f725;
+ }
+
+ .feat-accent-ship {
+  background: linear-gradient(135deg, #ec489915, #fb718520);
+  color: #ec4899;
+  box-shadow: inset 0 0 0 1px #ec489925;
+ }
+
+ .mp3-feature-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+ }
+
+ .mp3-feature-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  margin: 0;
+  line-height: 1.6;
+ }
+
+ @media (max-width: 960px) {
+  .mp3-features-grid {
+   grid-template-columns: repeat(2, 1fr);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .mp3-features-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .mp3-features-grid {
+   grid-template-columns: 1fr;
+  }
+ }
+
+ /* ─── Use Cases Section ─── */
+ .mp3-usecases-section {
+  background-color: var(--color-canvas);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-usecases-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .mp3-usecases-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .mp3-usecases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+ }
+
+ .mp3-usecase-card {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .mp3-usecase-card:hover {
+  border-color: var(--color-hairline-strong);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .mp3-usecase-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-sm) 0;
+ }
+
+ .mp3-usecase-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+ }
+
+ @media (max-width: 600px) {
+  .mp3-usecases-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .mp3-usecases-grid {
+   grid-template-columns: 1fr;
+  }
+ }
+
+ /* ─── FAQ Section ─── */
+ .mp3-faq-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .mp3-faq-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4xl);
+  max-width: 760px;
+  margin-inline: auto;
+ }
+
+ .mp3-faq-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+ }
+
+ .mp3-faq-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-canvas);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .mp3-faq-item {
+  border-bottom: 1px solid var(--color-hairline);
+ }
+
+ .mp3-faq-item:last-child {
+  border-bottom: none;
+ }
+
+ .mp3-faq-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+  transition: background-color 0.15s ease;
+ }
+
+ .mp3-faq-trigger:hover {
+  background-color: var(--color-canvas-soft);
+ }
+
+ .mp3-faq-trigger[aria-expanded="true"] {
+  background-color: var(--color-canvas-soft);
+ }
+
+ .mp3-faq-q {
+  font-size: var(--text-body-md);
+  font-weight: 500;
+  color: var(--color-ink);
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+  flex: 1;
+ }
+
+ .mp3-faq-chevron {
+  flex-shrink: 0;
+  color: var(--color-mute);
+  display: flex;
+  align-items: center;
+  transition: transform 0.25s ease;
+ }
+
+ .mp3-faq-trigger[aria-expanded="true"] .mp3-faq-chevron {
+  transform: rotate(180deg);
+ }
+
+ .mp3-faq-panel {
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
+  animation: fadeInUp 0.25s ease forwards;
+ }
+
+ .mp3-faq-a {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+  letter-spacing: -0.1px;
+ }
+
+ @media (max-width: 600px) {
+  .mp3-faq-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .mp3-faq-trigger {
+   padding: var(--spacing-md);
+   min-height: 48px;
+  }
+
+  .mp3-faq-panel {
+   padding: 0 var(--spacing-md) var(--spacing-md);
+  }
+
+  .mp3-faq-q {
+   font-size: var(--text-body-sm);
+  }
+ }
+
+ /* ─── CTA Band ─── */
+ .mp3-cta-band {
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: white;
+  padding: var(--spacing-5xl) var(--spacing-lg);
+  text-align: center;
+ }
+
+ .mp3-cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+ }
+
+ .mp3-cta-headline {
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  letter-spacing: -1.28px;
+  color: white;
+  margin: 0;
+ }
+
+ .mp3-cta-sub {
+  font-size: var(--text-body-lg);
+  color: rgba(255,255,255,0.8);
+  margin: 0;
+  max-width: 480px;
+ }
+
+ .mp3-cta-btn {
+  gap: 8px;
+  background-color: white !important;
+  color: #7c3aed !important;
+ }
+
+ .mp3-cta-btn:hover {
+  background-color: #f5f3ff !important;
+  transform: translateY(-2px);
+ }
+
+ @media (max-width: 600px) {
+  .mp3-cta-band {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Shared Section Styles ─── */
+ .section-eyebrow {
+  color: var(--color-mute);
+ }
+
+ .section-headline {
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -1.28px;
+  color: var(--color-ink);
+  margin: 0;
+  max-width: 540px;
+ }
+
+ .section-sub {
+  color: var(--color-body);
+  margin: 0;
+  max-width: 480px;
+ }
+
+ /* ─── Internal Links Section ─── */
+ .mp3-internal-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+  border-top: 1px solid var(--color-hairline);
+ }
+
+ .mp3-internal-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3xl);
+ }
+
+ .mp3-internal-headline {
+  text-align: center;
+  max-width: 400px;
+ }
+
+ .mp3-internal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  width: 100%;
+ }
+
+ .mp3-internal-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  text-decoration: none;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+ }
+
+ .mp3-internal-card:hover {
+  border-color: var(--color-hairline-strong);
+  transform: translateY(-3px);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .mp3-internal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed12, #ec489918);
+  color: #7c3aed;
+  box-shadow: inset 0 0 0 1px #7c3aed20;
+ }
+
+ .mp3-internal-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.3px;
+ }
+
+ .mp3-internal-desc {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.5;
+  margin: 0;
+ }
+
+ .mp3-internal-arrow {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  color: var(--color-mute);
+  font-size: 18px;
+  transition: color 0.15s ease, transform 0.25s ease;
+ }
+
+ .mp3-internal-card:hover .mp3-internal-arrow {
+  color: var(--color-ink);
+  transform: translateX(4px);
+ }
+
+ @media (max-width: 960px) {
+  .mp3-internal-grid {
+   grid-template-columns: 1fr;
+   max-width: 480px;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .mp3-internal-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
 </style>
+
+<script>
+ const mp3Triggers = document.querySelectorAll('.mp3-faq-trigger');
+
+ mp3Triggers.forEach((btn) => {
+  btn.addEventListener('click', () => {
+   const isOpen = btn.getAttribute('aria-expanded') === 'true';
+   const panelId = btn.getAttribute('aria-controls')!;
+   const panel = document.getElementById(panelId);
+
+   mp3Triggers.forEach((otherBtn) => {
+    if (otherBtn !== btn) {
+     otherBtn.setAttribute('aria-expanded', 'false');
+     const otherId = otherBtn.getAttribute('aria-controls')!;
+     document.getElementById(otherId)?.setAttribute('hidden', '');
+    }
+   });
+
+   if (isOpen) {
+    btn.setAttribute('aria-expanded', 'false');
+    panel?.setAttribute('hidden', '');
+   } else {
+    btn.setAttribute('aria-expanded', 'true');
+    panel?.removeAttribute('hidden');
+   }
+  });
+ });
+</script>

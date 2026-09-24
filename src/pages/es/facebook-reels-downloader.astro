@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Reels Downloader — SEO-optimized landing page (Español)
 // URL: /facebook-reels-downloader
 export const prerender = true;
@@ -13,6 +13,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'es' as Lang);
 
 const faqData = [
   { id: 'reels-hd1080', q: '¿Cómo puedo descargar Facebook Reels en HD 1080p?', a: 'Para descargar Facebook Reels en HD 1080p, copia el enlace público del Reel, pégalo en TikSaveHub y haz clic en descargar. Si el Reel original se subió en 1080p, nuestra herramienta extraerá y guardará automáticamente el archivo MP4 en alta definición.' },
@@ -91,19 +93,19 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
     <h3 class="text-highlight">Calidad HD 1080p — exactamente como se subió</h3>
     <p>Cuando un creador sube un Reel en 1080p, nuestro descargador entrega 1080p. Cuando la fuente es solo 720p, obtienes 720p. Nunca recodificamos, nunca comprimimos y nunca agregamos superposiciones — el MP4 que guardas es una copia fiel del original.</p>
     <h3 class="text-highlight">Guarda el audio del Reel como MP3 también</h3>
-    <p>A veces quieres más el sonido que la imagen — una canción trending, un clip motivacional, un excerpt de podcast. Nuestro <a href="/facebook-to-mp3">convertidor de Facebook a MP3</a> extrae la banda sonora de cualquier Reel o video y la convierte a un MP3 de alta calidad al instante.</p>
+    <p>A veces quieres más el sonido que la imagen — una canción trending, un clip motivacional, un excerpt de podcast. Nuestro <a href={lp('/facebook-to-mp3')}>convertidor de Facebook a MP3</a> extrae la banda sonora de cualquier Reel o video y la convierte a un MP3 de alta calidad al instante.</p>
     <h3 class="text-highlight">Descarga Reels en iPhone, Android y escritorio</h3>
     <p>En iPhone o iPad, abre Safari, pega el enlace y toca Descargar — el MP4 aparece en Archivos. En Android, el video se guarda en tu galería. En PC o Mac, aparece en la barra de descargas de tu navegador. Todo es responsivo y fácil de usar.</p>
     <h3 class="text-highlight">Privacidad y seguridad — sin cuenta, sin rastreo</h3>
     <p>No pedimos tu correo electrónico, no almacenamos tu historial de descargas y nunca rastreamos tu perfil. La conversión ocurre del lado del servidor y lo único que llega a tu dispositivo es el archivo de video final. Esa es la promesa de TikSaveHub: un descargador gratuito, rápido y privado de <strong>Facebook Reels sin marca de agua</strong>.</p>
-    <p>¿Otros formatos también? También puedes guardar <a href="/facebook-video-downloader">videos de Facebook en HD</a>, convertir <a href="/facebook-to-mp3">videos de Facebook a MP3</a> o descargar <a href="/facebook-story-downloader">historias de Facebook</a> — todo gratis, todo sin marca de agua.</p>
+    <p>¿Otros formatos también? También puedes guardar <a href={lp('/facebook-video-downloader')}>videos de Facebook en HD</a>, convertir <a href={lp('/facebook-to-mp3')}>videos de Facebook a MP3</a> o descargar <a href={lp('/facebook-story-downloader')}>historias de Facebook</a> — todo gratis, todo sin marca de agua.</p>
   </FbSeoArticle>
 
   <FbStepsSection
     eyebrow="Guía Paso a Paso"
     headline="Cómo descargar Facebook Reels."
     sub="Tres pasos simples — no se requieren habilidades técnicas."
-    steps={[ { num: '01', icon: 'copy', title: 'Copia el enlace del Reel', body: 'Abre la aplicación o sitio de Facebook, encuentra el Reel que quieres, toca Compartir y selecciona "Copiar Enlace". Todo formato de enlace funciona: facebook.com/reel/…, enlaces de Watch, publicaciones de video o enlaces cortos de fb.watch.' }, { num: '02', icon: 'paste', title: 'Pégalo en TikSaveHub', body: 'Vuelve aquí y pega el enlace en el campo de arriba. Detectamos el Reel y obtenemos sus detalles en segundos.' }, { num: '03', icon: 'download', title: 'Descarga HD 1080p o MP3', body: 'Toca "Descargar Video HD" para hasta 1080p, o "Descargar Video SD" para un archivo más pequeño. ¿Solo quieres la banda sonora? Usa nuestro <a href="/facebook-to-mp3">convertidor de Facebook a MP3</a>.' } ]} />
+    steps={[ { num: '01', icon: 'copy', title: 'Copia el enlace del Reel', body: 'Abre la aplicación o sitio de Facebook, encuentra el Reel que quieres, toca Compartir y selecciona "Copiar Enlace". Todo formato de enlace funciona: facebook.com/reel/…, enlaces de Watch, publicaciones de video o enlaces cortos de fb.watch.' }, { num: '02', icon: 'paste', title: 'Pégalo en TikSaveHub', body: 'Vuelve aquí y pega el enlace en el campo de arriba. Detectamos el Reel y obtenemos sus detalles en segundos.' }, { num: '03', icon: 'download', title: 'Descarga HD 1080p o MP3', body: 'Toca "Descargar Video HD" para hasta 1080p, o "Descargar Video SD" para un archivo más pequeño. ¿Solo quieres la banda sonora? Usa nuestro <a href="/es/facebook-to-mp3">convertidor de Facebook a MP3</a>.' } ]} />
 
   <FbFeaturesSection
     eyebrow="Características"
@@ -116,7 +118,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Más herramientas gratuitas de Facebook y redes sociales"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Descargador de Videos de Facebook', desc: 'Descarga videos completos de Facebook y enlaces de Watch en HD.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Convertidor de Facebook a MP3', desc: 'Extrae audio MP3 de alta calidad de cualquier video o Reel de Facebook.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Descargador de Historias de Facebook', desc: 'Guarda historias de Facebook en HD antes de que desaparezcan en 24 horas.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Descargador de Fotos de Facebook', desc: 'Guarda fotos públicas de Facebook en resolución completa, gratis.' }, { href: '/instagram-video-downloader-without-watermark', icon: 'ig', title: 'Descargador de Videos de Instagram', desc: '¿Necesitas el video completo? Descarga videos de Instagram en HD.' }, { href: '/instagram-reels-downloader-without-watermark', icon: 'igreels', title: 'Descargador de Instagram Reels', desc: 'Guarda Instagram Reels sin marca de agua.' }, { href: '/tiktok-video-downloader-without-watermark', icon: 'tiktok', title: 'Descargador de Videos de TikTok', desc: 'Descarga videos de TikTok en HD sin marca de agua.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Descargador de Videos de Facebook', desc: 'Descarga videos completos de Facebook y enlaces de Watch en HD.' }, { href: lp('/facebook-to-mp3'), icon: 'mp3', title: 'Convertidor de Facebook a MP3', desc: 'Extrae audio MP3 de alta calidad de cualquier video o Reel de Facebook.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Descargador de Historias de Facebook', desc: 'Guarda historias de Facebook en HD antes de que desaparezcan en 24 horas.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Descargador de Fotos de Facebook', desc: 'Guarda fotos públicas de Facebook en resolución completa, gratis.' }, { href: lp('/instagram-video-downloader-without-watermark'), icon: 'ig', title: 'Descargador de Videos de Instagram', desc: '¿Necesitas el video completo? Descarga videos de Instagram en HD.' }, { href: lp('/instagram-reels-downloader-without-watermark'), icon: 'igreels', title: 'Descargador de Instagram Reels', desc: 'Guarda Instagram Reels sin marca de agua.' }, { href: lp('/tiktok-video-downloader-without-watermark'), icon: 'tiktok', title: 'Descargador de Videos de TikTok', desc: 'Descarga videos de TikTok en HD sin marca de agua.' } ]}
+    lang="es"
   />
 
   <!-- Related Tools -->

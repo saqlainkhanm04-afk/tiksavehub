@@ -18,6 +18,8 @@ export interface FacebookUrlParseResult {
   albumId: string | null;
   shortCode: string | null;
   sanitizedUrl: string;
+  /** The /stories/{id}/{token} URL, available for story links. */
+  storiesUrl?: string;
   error: string | null;
 }
 
@@ -69,7 +71,7 @@ const PHOTO_VIEW_FULL_RE = /^\/photo\/view_full_size\/?$/;
 const ALBUM_PAGE_RE = /^\/([A-Za-z0-9._-]+)\/albums\/(\d+)(?:\/[^/]+)?\/?$/;
 // Direct album link without user prefix — facebook.com/albums/{albumId}
 const ALBUM_DIRECT_RE = /^\/albums\/(\d+)(?:\/[^/]+)?\/?$/;
-const STORY_PATH_RE = /^\/(stories)\/(\d{5,20})(?:\/([A-Za-z0-9_=%\-]{4,96}))?\/?$/;
+const STORY_PATH_RE = /^\/(stories)\/(\d{5,20})(?:\/([A-Za-z0-9_=%\-+\/]{4,96}))?\/?$/;
 const STORIES_PHP_PROFILE_RE = /^\/stories\.php\/?$/;
 const SHARE_REEL_RE = /^\/share\/r\/([A-Za-z0-9_-]{4,20})\/?$/;
 const SHARE_VIDEO_RE = /^\/share\/v\/([A-Za-z0-9_-]{4,20})\/?$/;
@@ -289,6 +291,12 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
     // story id so we can build the classic story.php permalink, which serves
     // the story media JSON that the extractor knows how to read.
     const storyId = storyToken ? decodeStoryToken(storyToken) : '';
+    // Build both URL formats: the /stories/ path (for direct fetch) and
+    // the story.php query (for the classic extractor).
+    const storiesUrl = `https://www.facebook.com/stories/${userId}${storyToken ? `/${storyToken}` : ''}/`;
+    const storyPhpUrl = storyId
+      ? `https://www.facebook.com/story.php?story_fbid=${storyId}&id=${userId}`
+      : storiesUrl;
     return {
       isValid: true,
       isVideo: true,
@@ -297,9 +305,9 @@ export function parseFacebookUrl(rawUrl: string): FacebookUrlParseResult {
       photoId: null,
       albumId: null,
       shortCode: null,
-      sanitizedUrl: storyId
-        ? `https://www.facebook.com/story.php?story_fbid=${storyId}&id=${userId}`
-        : `https://www.facebook.com/stories/${userId}${storyToken ? `/${storyToken}` : ''}/`,
+      sanitizedUrl: storyPhpUrl,
+      // Keep the /stories/ URL available for fast-path fetching.
+      storiesUrl,
       error: null,
     };
   }

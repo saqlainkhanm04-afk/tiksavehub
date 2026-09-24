@@ -19,6 +19,7 @@
 import type { ApiSource } from '../api-fallback';
 import type { MediaMeta } from './types';
 import { tiktokWebHeaders } from './headers';
+import { probeVideoUrl } from './video-probe';
 
 /* ------------------------------------------------------------------ */
 /*  Video ID extraction                                                */
@@ -81,7 +82,7 @@ async function fetchHydrationData(resolvedUrl: string): Promise<{ json: Hydratio
   console.log(`[TikTokDirect]   UA: ${headers['User-Agent']?.substring(0, 50)}...`);
   const resp = await fetch(resolvedUrl, {
     headers,
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(7_000),
     redirect: 'follow',
   });
 
@@ -243,8 +244,8 @@ function extractItemFromJson(json: HydrationData, videoId: string): any | null {
 
 export const tiktokDirectSource: ApiSource<string, MediaMeta> = {
   name: 'TikTokDirect',
-  timeoutMs: 12_000,
-  retries: 1,
+  timeoutMs: 8_000,
+  retries: 0,
   noRetryStatuses: [403, 404, 451],
   noRetryErrors: ['Cannot extract video ID', 'No hydration data found'],
 
@@ -264,6 +265,20 @@ export const tiktokDirectSource: ApiSource<string, MediaMeta> = {
       throw new Error(`No item found for videoId=${videoId} (method=${hydration.method})`);
     }
     console.log(`[TikTokDirect] ✓ Found item: title="${item.desc?.substring(0, 60)}" hasPlayAddr=${!!item.video?.playAddr} hasDownloadAddr=${!!item.video?.downloadAddr}`);
+
+    // Validate the primary video URL is actually video content
+    const video = item.video ?? {};
+    const playRaw = video.playAddr;
+    const downloadRaw = video.downloadAddr;
+    const primaryUrl = extractUrl(downloadRaw) || extractUrl(playRaw);
+    if (primaryUrl) {
+      const probe = await probeVideoUrl(primaryUrl, 5_000);
+      if (!probe.ok) {
+        console.log(`[TikTokDirect] ✗ Video URL probe FAILED: ${probe.error} (ct=${probe.contentType} cl=${probe.contentLength})`);
+        throw new Error(`Video URL is not valid video content: ${probe.error}`);
+      }
+      console.log(`[TikTokDirect] ✓ Video URL probe OK — ct=${probe.contentType} cl=${probe.contentLength}`);
+    }
 
     return { item, method: hydration.method, videoId };
   },

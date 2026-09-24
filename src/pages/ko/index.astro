@@ -125,6 +125,27 @@ const tools = [
     icon: 'x',
     badge: null,
   },
+  {
+    title: 'Snapchat 다운로더',
+    description: 'Snapchat 비디오를 HD 화질로 저장하세요. 무료, 빠름, 가입 불필요.',
+    href: `${base}/snapchat-downloader`,
+    icon: 'snapchat',
+    badge: null,
+  },
+  {
+    title: 'Snapchat 스토리 다운로더',
+    description: '만료되기 전에 Snapchat 스토리를 다운로드하세요. 무료 및 익명.',
+    href: `${base}/snapchat-story-downloader`,
+    icon: 'snapchat',
+    badge: null,
+  },
+  {
+    title: 'Snapchat to MP3',
+    description: 'Snapchat 비디오에서 고품질 MP3 파일로 오디오를 추출하세요.',
+    href: `${base}/snapchat-to-mp3`,
+    icon: 'snapchat',
+    badge: null,
+  },
 ];
 
 const faqData = [
@@ -203,7 +224,7 @@ const features = [
   keywords="tiktok 다운로더, tiktok 비디오 다운로드, tiktok 워터마크 없이, instagram 다운로더, facebook 다운로더, x 비디오 다운로더, hd 비디오 다운로더, 무료 비디오 다운로드"
   canonical="/"
   ogImage="/og-default.png"
-  jsonLd={JSON.stringify([organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd])}
+   jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
   appName="TikSaveHub"
   lang="ko"
 >
@@ -227,6 +248,8 @@ const features = [
         HD 화질로 워터마크 없이 비디오를 저장하세요. 무료, 빠르며 모든 기기에서 작동 — 앱이나 회원가입 불필요.
       </p>
 
+      <h2 class="home-tools-heading">인기 도구</h2>
+
       <div class="home-tools-grid">
         {tools.map((tool) => (
           <a href={tool.href} class="home-tool-card" aria-label={tool.title}>
@@ -245,6 +268,9 @@ const features = [
               )}
               {tool.icon === 'audio' && (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              )}
+              {tool.icon === 'snapchat' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.37 12.87a1.5 1.5 0 0 0 .13-1.24l-1.5-3A2.5 2.5 0 0 0 13.87 6h-3.74a2.5 2.5 0 0 0-3.13 2.63l-1.5 3a1.5 1.5 0 0 0 .13 1.24c.3.52.83.83 1.15 1.03l-.33.36a7.5 7.5 0 0 0 2.6 1.3c.4.52.9 1.44 1.95.86 0-.94.37-1.35.5-2.2.14.85.5 1.26.5 2.19 1.05.6 1.56-.33 1.95-.86a7.5 7.5 0 0 0 2.6-1.3l-.33-.36c.32-.2.85-.51 1.15-1.03z"/></svg>
               )}
             </div>
             <div class="home-tool-info">
@@ -368,17 +394,17 @@ const features = [
       <span class="section-eyebrow text-caption-mono">블로그</span>
       <h2 id="blog-headline" class="section-headline">가이드, 팁, 튜토리얼</h2>
       <div class="home-blog-grid">
-        <a href={`${base}/blog/facebook-video-downloader-guide`} class="home-blog-card">
+        <a href={`/blog/facebook-video-downloader-guide`} class="home-blog-card">
           <span class="home-blog-tag">Facebook 가이드</span>
           <h3 class="home-blog-title">Facebook 비디오 다운로더: FB 비디오를 HD로 저장 (2026 가이드)</h3>
           <p class="home-blog-excerpt">Facebook 비디오, Reels, Watch 클립을 워터마크 없이 HD 1080p로 다운로드하세요. 아이폰, 안드로이드, PC를 위한 단계별 가이드.</p>
         </a>
-        <a href={`${base}/blog/x-video-downloader-guide`} class="home-blog-card">
+        <a href={`/blog/x-video-downloader-guide`} class="home-blog-card">
           <span class="home-blog-tag">X & Twitter 가이드</span>
           <h3 class="home-blog-title">X 비디오 다운로더: Twitter 비디오를 HD로 저장 (2026 가이드)</h3>
           <p class="home-blog-excerpt">X(Twitter) 비디오, GIF, 오디오를 워터마크 없이 HD 1080p로 다운로드하세요. 무료, 회원가입 불필요.</p>
         </a>
-        <a href={`${base}/blog/tiktok-video-downloader-without-watermark`} class="home-blog-card">
+        <a href={`/blog/tiktok-video-downloader-without-watermark`} class="home-blog-card">
           <span class="home-blog-tag">TikTok 가이드</span>
           <h3 class="home-blog-title">TikTok 비디오 다운로더: 워터마크 없이 (HD & 무료)</h3>
           <p class="home-blog-excerpt">TikTok 비디오를 HD 화질로 워터마크 없이 다운로드하세요. 빠르고 무료이며 아이폰, 안드로이드, PC에서 작동합니다.</p>
@@ -444,6 +470,15 @@ const features = [
     max-width: 600px;
     text-align: center;
     margin: 0;
+  }
+
+  .home-tools-heading {
+    margin: 0;
+    font-size: var(--text-heading-md);
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--color-ink);
+    text-align: center;
   }
 
   /* ─── Tools Grid ─── */

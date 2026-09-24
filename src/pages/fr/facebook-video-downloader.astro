@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Video Downloader — SEO-optimized landing page (FR)
 // URL: /facebook-video-downloader
 export const prerender = true;
@@ -7,6 +7,8 @@ import Layout from '../../layouts/Layout.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'fr' as Lang);
 
 const faqData = [
   {
@@ -275,7 +277,7 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Extrayez l'audio Facebook en MP3</h3>
             <p>
-              Au-delà de l'enregistrement de vidéos, le <a href="/facebook-to-mp3">convertisseur Facebook en MP3</a> de TikSaveHub extrait la piste audio de n'importe quelle vidéo ou Reel et la convertit en MP3 haute qualité en un clin d'œil — parfait pour enregistrer une bande-son de Reel, un clip de podcast ou un segment de diffusion en direct pour l'écoute hors ligne.
+              Au-delà de l'enregistrement de vidéos, le <a href={lp('/facebook-to-mp3')}>convertisseur Facebook en MP3</a> de TikSaveHub extrait la piste audio de n'importe quelle vidéo ou Reel et la convertit en MP3 haute qualité en un clin d'œil — parfait pour enregistrer une bande-son de Reel, un clip de podcast ou un segment de diffusion en direct pour l'écoute hors ligne.
             </p>
 
             <h3 class="text-highlight">Fonctionne sur n'importe quel appareil — Android, iPhone, bureau</h3>
@@ -285,7 +287,7 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Quelle qualité et quels formats obtenez-vous ?</h3>
             <p>
-              Chaque téléchargement est un MP4 dans la meilleure résolution disponible — HD jusqu'à 1080p lorsque le créateur l'a téléchargée en HD, avec une option SD lorsque vous souhaitez un fichier plus petit pour un stockage limité. TikSaveHub n'ajoute jamais de filigrane, ne ré-encode jamais et ne réduit jamais la qualité du téléchargement original, donc le fichier que vous enregistrez est exactement la vidéo que le créateur a partagée — propre, nette et prête à être regardée hors ligne. Besoin du son uniquement ? Utilisez le <a href="/facebook-to-mp3">convertisseur Facebook en MP3</a> pour la piste audio.
+              Chaque téléchargement est un MP4 dans la meilleure résolution disponible — HD jusqu'à 1080p lorsque le créateur l'a téléchargée en HD, avec une option SD lorsque vous souhaitez un fichier plus petit pour un stockage limité. TikSaveHub n'ajoute jamais de filigrane, ne ré-encode jamais et ne réduit jamais la qualité du téléchargement original, donc le fichier que vous enregistrez est exactement la vidéo que le créateur a partagée — propre, nette et prête à être regardée hors ligne. Besoin du son uniquement ? Utilisez le <a href={lp('/facebook-to-mp3')}>convertisseur Facebook en MP3</a> pour la piste audio.
             </p>
 
             <h3 class="text-highlight">Téléchargez des vidéos Facebook sur iPhone, Android ou bureau</h3>
@@ -309,7 +311,7 @@ const combinedJsonLd = JSON.stringify({
             </p>
 
             <p>
-              Vous cherchez plus d'outils ? Vous pouvez également <a href="/tiktok-video-downloader-without-watermark">télécharger des vidéos TikTok sans filigrane</a> ou enregistrer des <a href="/instagram-reels-downloader-without-watermark">Reels Instagram</a> de la même manière.
+              Vous cherchez plus d'outils ? Vous pouvez également <a href={lp('/tiktok-video-downloader-without-watermark')}>télécharger des vidéos TikTok sans filigrane</a> ou enregistrer des <a href={lp('/instagram-reels-downloader-without-watermark')}>Reels Instagram</a> de la même manière.
             </p>
 
             <p>
@@ -403,7 +405,7 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-step-title">Téléchargez en HD ou SD</h3>
           <p class="dl-step-body">
-            Appuyez sur « Télécharger Vidéo HD » ou « Télécharger Vidéo SD » pour enregistrer le MP4 sur votre appareil. Le fichier est enregistré instantanément — pas d'application ni de compte nécessaire. Besoin du son ? Utilisez notre <a href="/facebook-to-mp3">convertisseur Facebook en MP3</a>.
+            Appuyez sur « Télécharger Vidéo HD » ou « Télécharger Vidéo SD » pour enregistrer le MP4 sur votre appareil. Le fichier est enregistré instantanément — pas d'application ni de compte nécessaire. Besoin du son ? Utilisez notre <a href={lp('/facebook-to-mp3')}>convertisseur Facebook en MP3</a>.
           </p>
         </article>
       </div>
@@ -589,7 +591,7 @@ const combinedJsonLd = JSON.stringify({
         Explorez TikSaveHub.
       </h2>
       <div class="dl-internal-grid">
-        <a href="/tiktok-video-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/tiktok-video-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
           </span>
@@ -597,7 +599,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Téléchargez des vidéos TikTok sans filigrane en HD.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/tiktok-to-mp3" class="dl-internal-card">
+        <a href={lp('/tiktok-to-mp3')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           </span>
@@ -605,7 +607,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Convertissez des vidéos TikTok en audio MP3 instantanément.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/instagram-video-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/instagram-video-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           </span>
@@ -613,7 +615,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Enregistrez des vidéos Instagram sans filigrane en HD.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/instagram-reels-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           </span>
@@ -621,7 +623,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Téléchargez des Reels Instagram sans filigrane.</span>
           <span class="dl-internal-arrow" aria-hidden="true">→</span>
         </a>
-        <a href="/facebook-photo-downloader" class="dl-internal-card">
+        <a href={lp('/facebook-photo-downloader')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           </span>

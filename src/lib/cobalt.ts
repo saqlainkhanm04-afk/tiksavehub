@@ -318,19 +318,19 @@ export async function cobaltExtractVideo(
             downloadMode: 'auto',
             videoQuality: '1080',
           }),
-          signal: AbortSignal.timeout(15_000),
+          signal: AbortSignal.timeout(10_000),
         });
 
         if (!resp.ok) {
           console.warn(`[Cobalt] ${base} returned ${resp.status} (attempt ${attempt + 1})`);
-          if (attempt === 0) await new Promise((r) => setTimeout(r, 1_000));
+          if (attempt === 0) await new Promise((r) => setTimeout(r, 500));
           continue;
         }
 
         const data = await resp.json() as CobaltResponse;
         if (data.status === 'error') {
           console.warn(`[Cobalt] ${base} error: ${data.error?.code ?? 'unknown'} (attempt ${attempt + 1})`);
-          if (attempt === 0) await new Promise((r) => setTimeout(r, 1_000));
+          if (attempt === 0) await new Promise((r) => setTimeout(r, 500));
           continue;
         }
 
@@ -341,7 +341,7 @@ export async function cobaltExtractVideo(
         }
       } catch (err: any) {
         console.warn(`[Cobalt] ${base} failed: ${err?.message ?? err} (attempt ${attempt + 1})`);
-        if (attempt === 0) await new Promise((r) => setTimeout(r, 1_000));
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 500));
       }
     }
   }

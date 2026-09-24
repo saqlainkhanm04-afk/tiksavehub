@@ -425,8 +425,9 @@ export const GET: APIRoute = async (ctx) => {
       errorMsg = 'Failed to fetch this content. Please check the link and try again.';
     }
 
+    console.error(`[Instagram Download API] ${new Date().toISOString()} URL=${videoUrl} Error=${msg}`);
     return new Response(
-      JSON.stringify({ success: false, error: errorMsg }),
+      JSON.stringify({ success: false, error: errorMsg, errorType: isTimeout ? 'timeout' : 'api_error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

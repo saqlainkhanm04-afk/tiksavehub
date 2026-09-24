@@ -94,6 +94,7 @@ export const GET: APIRoute = async (ctx) => {
         contentType: 'audio/mpeg',
         accept: 'audio/mpeg,audio/*,*/*',
         referer: 'https://tikwm.com/',
+        audio: true,
       });
     }
 
@@ -142,8 +143,11 @@ export const GET: APIRoute = async (ctx) => {
     const isBusy =
       msg.includes('All TikTok servers are busy') ||
       msg.includes('Upstream API returned') ||
-      msg.includes('Upstream returned') ||
       msg.includes('yt-dlp');
+    const isNotAudio =
+      msg.includes('non-audio') ||
+      msg.includes('not MP3 audio') ||
+      msg.includes('undersized body');
     const isRestricted =
       msg.includes('invalid or expired') ||
       msg.includes('Url parsing is failed') ||
@@ -152,14 +156,17 @@ export const GET: APIRoute = async (ctx) => {
 
     const errorMsg = isTimeout
       ? 'The server took too long to respond. Please try again in a moment.'
-      : isRestricted
-        ? 'This content may be unavailable or restricted. Please try another public link.'
-        : isBusy
-          ? 'This content could not be fetched right now. Please try again in a few seconds or use another link.'
-          : 'Failed to fetch audio. Please check the link and try again.';
+      : isNotAudio
+        ? 'MP3 audio is not available for this video. Try another public TikTok link or download the video instead.'
+        : isRestricted
+          ? 'This content may be unavailable or restricted. Please try another public link.'
+          : isBusy
+            ? 'This content could not be fetched right now. Please try again in a few seconds or use another link.'
+            : 'Failed to fetch audio. Please check the link and try again.';
 
+    console.error(`[TikSaveHub MP3 API] ${new Date().toISOString()} URL=${videoUrl} Error=${msg}`);
     return new Response(
-      JSON.stringify({ success: false, error: errorMsg }),
+      JSON.stringify({ success: false, error: errorMsg, errorType: isTimeout ? 'timeout' : 'api_error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

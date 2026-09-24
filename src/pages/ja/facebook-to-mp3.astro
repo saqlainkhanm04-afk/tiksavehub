@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook to MP3 — SEO-optimized landing page (日本語)
 // URL: /facebook-to-mp3
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'ja' as Lang);
 
 const faqData = [
   { id: 'mp3-how', q: 'FacebookビデオをMP3に変換するにはどうすればいいですか？', a: 'Facebookビデオのリンクをコピーし、TikSaveHubに貼り付けてMP3オプションを選択してダウンロードをクリックします。高品質MP3ファイルが得られます。' },
@@ -71,7 +73,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="その他の無料Facebookツール"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'FacebookビデオをHDでダウンロード。' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reelsをウォーターマークなしで保存。' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebookストーリーを消える前に保存。' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebookの写真をフル解像度で保存。' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'FacebookビデオをHDでダウンロード。' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reelsをウォーターマークなしで保存。' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebookストーリーを消える前に保存。' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebookの写真をフル解像度で保存。' } ]}
+    lang="ja"
   />
 
   <!-- Related Tools -->

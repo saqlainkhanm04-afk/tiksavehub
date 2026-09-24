@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Reels Downloader — SEO-optimized landing page (Korean)
 // URL: /facebook-reels-downloader
 export const prerender = true;
@@ -13,6 +13,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'ko' as Lang);
 
 const faqData = [
   { id: 'reels-hd1080', q: 'Facebook Reels를 HD 1080p로 다운로드하려면 어떻게 하나요?', a: '공개된 Reel 링크를 복사하여 TikSaveHub에 붙여넣고 다운로드를 클릭합니다. 원본 Reel이 1080p로 업로드되었으면 자동으로 풀HD MP4 파일이 저장됩니다.' },
@@ -108,7 +110,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="기타 무료 Facebook 및 소셜 도구"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Facebook 풀레NGTH 비디오와 Watch 링크를 HD로 다운로드.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Facebook 비디오에서 고품질 MP3 오디오 추출.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebook 스토리가 24시간 후 사라지기 전에 HD로 저장.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebook 사진을 전체 해상도로 무료 저장.' }, { href: '/instagram-video-downloader-without-watermark', icon: 'ig', title: 'Instagram Video Downloader', desc: 'Instagram 비디오를 HD로 다운로드.' }, { href: '/instagram-reels-downloader-without-watermark', icon: 'igreels', title: 'Instagram Reels Downloader', desc: 'Instagram Reels를 워터마크 없이 저장.' }, { href: '/tiktok-video-downloader-without-watermark', icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'TikTok 비디오를 HD로 워터마크 없이 다운로드.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Facebook 풀레NGTH 비디오와 Watch 링크를 HD로 다운로드.' }, { href: lp('/facebook-to-mp3'), icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Facebook 비디오에서 고품질 MP3 오디오 추출.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebook 스토리가 24시간 후 사라지기 전에 HD로 저장.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebook 사진을 전체 해상도로 무료 저장.' }, { href: lp('/instagram-video-downloader-without-watermark'), icon: 'ig', title: 'Instagram Video Downloader', desc: 'Instagram 비디오를 HD로 다운로드.' }, { href: lp('/instagram-reels-downloader-without-watermark'), icon: 'igreels', title: 'Instagram Reels Downloader', desc: 'Instagram Reels를 워터마크 없이 저장.' }, { href: lp('/tiktok-video-downloader-without-watermark'), icon: 'tiktok', title: 'TikTok Video Downloader', desc: 'TikTok 비디오를 HD로 워터마크 없이 다운로드.' } ]}
+    lang="ko"
   />
 
   <!-- Related Tools -->

@@ -324,7 +324,7 @@ export function detectLoginWall(text: string): boolean {
   return false;
 }
 
-function detectUnavailable(html: string, finalUrl: string): string | null {
+export function detectUnavailable(html: string, finalUrl: string): string | null {
   if (/\/login(\/|$)/.test(finalUrl)) return FB_ERR.LOGIN_REQUIRED;
   const lower = html.toLowerCase();
   if (
@@ -1076,7 +1076,7 @@ const MAX_PHOTO_HTML_BYTES = 2_500_000;
  * Read a response body as text but stop early once `maxBytes` have been
  * consumed — FB photo pages can be several MB and we only need the first
  * portion (og:image lives in <head>, the JSON image blobs follow shortly
- * after). Cancelling the stream keeps the fetch fast and memory-light.
+ * after). Canceling the stream keeps the fetch fast and memory-light.
  */
 async function readBoundedText(
   body: ReadableStream<Uint8Array> | null,

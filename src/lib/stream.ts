@@ -4,17 +4,13 @@ export interface StreamOptions {
   accept?: string;
   referer?: string;
   timeoutMs?: number;
+  /** Stream audio instead of video: accepts audio/* content-types and
+   * validates ID3 / MPEG-sync magic bytes instead of video containers. */
+  audio?: boolean;
 }
 
 const CONNECT_TIMEOUT_MS = 30_000;
 const IDLE_TIMEOUT_MS = 60_000;
-
-// Parallel chunked mode (multiplies throughput vs a single throttled CDN
-// connection):
-const PARALLEL_MIN_SIZE = 1024 * 1024; // 1 MB
-const PARALLEL_CHUNK_SIZE = 2 * 1024 * 1024; // 2 MB per range request
-const PARALLEL_WINDOW = 4; // concurrent in-flight chunks
-const CHUNK_RETRIES = 2; // re-request a failed range before giving up
 
 function buildHeaders(opts: StreamOptions): Record<string, string> {
   return {
@@ -38,6 +34,8 @@ async function fetchWithConnectTimeout(
     clearTimeout(timer);
   }
 }
+
+import { isValidAudioBytes, isValidVideoBytes } from './platforms/video-probe';
 
 // CDNs sometimes answer HTTP 200 with a tiny error page (e.g. expired
 // TikTok signed URLs) instead of a proper error status. Anything smaller
@@ -71,145 +69,6 @@ async function pumpReaderInto(
   }
 }
 
-function parseContentRange(value: string | null): number | null {
-  if (!value) return null;
-  const m = /bytes\s+\d+-\d+\/(\d+)/.exec(value);
-  if (!m) return null;
-  const total = Number(m[1]);
-  return Number.isFinite(total) && total > 0 ? total : null;
-}
-
-// Streaming body that downloads `total` bytes in ordered parallel chunks.
-// Each chunk is pumped sequentially (so bytes stay ordered), but multiple
-// chunks are open in flight at once. If a chunk's connection dies, the
-// range is re-requested from the resume offset instead of killing the
-// whole download.
-async function parallelBody(
-  sourceUrl: string,
-  headers: Record<string, string>,
-  total: number
-): Promise<{ body: ReadableStream<Uint8Array>; contentType: string | null }> {
-  const n = Math.max(2, Math.min(PARALLEL_WINDOW, Math.ceil(total / PARALLEL_CHUNK_SIZE)));
-  const chunkSize = Math.ceil(total / n);
-  const window = Math.min(PARALLEL_WINDOW, n);
-
-  let contentType: string | null = null;
-  const readers: Array<Promise<ReadableStreamDefaultReader<Uint8Array> | null>> = new Array(n);
-  // Bytes already enqueued to the client for each chunk. Retries must
-  // resume from this offset or the client would receive duplicated bytes.
-  const chunkProgress: number[] = new Array(n).fill(0);
-  let failed = false;
-
-  const openChunk = (i: number): Promise<ReadableStreamDefaultReader<Uint8Array> | null> =>
-    (async () => {
-      const start = i * chunkSize;
-      const end = i === n - 1 ? total - 1 : start + chunkSize - 1;
-      let res: Response;
-      try {
-        res = await fetchWithConnectTimeout(
-          sourceUrl,
-          { headers: { ...headers, Range: `bytes=${start}-${end}` } },
-          CONNECT_TIMEOUT_MS
-        );
-      } catch {
-        return null;
-      }
-      if (res.status !== 206 || !res.body) {
-        await res.body?.cancel().catch(() => {});
-        return null;
-      }
-      if (!contentType) contentType = res.headers.get('content-type');
-      return res.body.getReader();
-    })();
-
-  // Pump chunk `i` from its current progress to the end, retrying the
-  // range request up to CHUNK_RETRIES times. Returns false if it gave up.
-  const pumpChunkWithRetry = async (
-    i: number,
-    c: ReadableStreamDefaultController<Uint8Array>
-  ): Promise<boolean> => {
-    const start = i * chunkSize;
-    const end = i === n - 1 ? total - 1 : start + chunkSize - 1;
-    for (let attempt = 0; ; attempt++) {
-      const from = start + chunkProgress[i];
-      try {
-        const res = await fetchWithConnectTimeout(
-          sourceUrl,
-          { headers: { ...headers, Range: `bytes=${from}-${end}` } },
-          CONNECT_TIMEOUT_MS
-        );
-        if (res.status !== 206 || !res.body) {
-          await res.body?.cancel().catch(() => {});
-          throw new Error(`bad chunk response (${res.status})`);
-        }
-        if (!contentType) contentType = res.headers.get('content-type');
-        await pumpReaderInto(
-          res.body.getReader(),
-          (v) => {
-            chunkProgress[i] += v.length;
-            c.enqueue(v);
-          },
-          IDLE_TIMEOUT_MS
-        );
-        return true;
-      } catch (err) {
-        if (attempt >= CHUNK_RETRIES) {
-          console.error(`[stream] chunk ${i} (${start}-${end}) gave up after ${attempt} retries`);
-          return false;
-        }
-        console.error(
-          `[stream] chunk ${i} interrupted at byte ${start + chunkProgress[i]}, retry ${attempt + 1} (${err instanceof Error ? err.message : err})`
-        );
-        await new Promise((r) => setTimeout(r, 500));
-      }
-    }
-  };
-
-  const startChunk = (i: number) => {
-    readers[i] = openChunk(i);
-  };
-  for (let i = 0; i < window && i < n; i++) startChunk(i);
-
-  const body = new ReadableStream<Uint8Array>({
-    async start(c) {
-      for (let i = 0; i < n; i++) {
-        if (i + window < n) startChunk(i + window);
-        if (failed) return;
-        const reader = await readers[i];
-        const ok = await (async () => {
-          if (!reader) return pumpChunkWithRetry(i, c);
-          try {
-            await pumpReaderInto(
-              reader,
-              (v) => {
-                chunkProgress[i] += v.length;
-                c.enqueue(v);
-              },
-              IDLE_TIMEOUT_MS
-            );
-            return true;
-          } catch {
-            // Reader died mid-chunk: resume this chunk from its progress.
-            return pumpChunkWithRetry(i, c);
-          }
-        })();
-        if (!ok) {
-          failed = true;
-          try {
-            c.error(new Error('Upstream connection interrupted'));
-          } catch {}
-          return;
-        }
-      }
-      try {
-        c.close();
-      } catch {}
-    },
-  });
-
-  return { body, contentType };
-}
-
 export async function streamFromUpstream(
   sourceUrl: string,
   opts: StreamOptions
@@ -226,6 +85,17 @@ export async function streamFromUpstream(
       if (!upstream.ok) {
         await upstream.body?.cancel();
         throw new Error(`Upstream returned ${upstream.status}`);
+      }
+
+      // Defense-in-depth: reject non-media content-types (error pages, login walls, placeholder images)
+      const audioMode = opts.audio === true;
+      const upstreamCt = (upstream.headers.get('content-type') || '').toLowerCase();
+      const ctOk = audioMode
+        ? upstreamCt.includes('audio/') || upstreamCt.includes('application/octet-stream')
+        : upstreamCt.includes('video/') || upstreamCt.includes('application/octet-stream');
+      if (upstreamCt && !ctOk) {
+        await upstream.body?.cancel();
+        throw new Error(`Upstream returned non-${audioMode ? 'audio' : 'video'} content-type: ${upstreamCt}`);
       }
 
       const responseHeaders = new Headers();
@@ -248,10 +118,28 @@ export async function streamFromUpstream(
         return new Response(null, { status: 502, headers: { 'Content-Type': 'application/json' } });
       }
 
+      // Magic bytes validation: read first 12 bytes to confirm this is actually media
+      const reader = upstream.body.getReader();
+      const firstChunk = await reader.read();
+      if (!firstChunk.done && firstChunk.value) {
+        const headerBytes = firstChunk.value.slice(0, 12);
+        const bytesOk = audioMode ? isValidAudioBytes(headerBytes) : isValidVideoBytes(headerBytes);
+        if (!bytesOk) {
+          const hex = Array.from(headerBytes).map((b) => b.toString(16).padStart(2, '0')).join(' ');
+          const ascii = Array.from(headerBytes).map((b) => (b >= 0x20 && b < 0x7F ? String.fromCharCode(b) : '.')).join('');
+          console.error(`[stream] REJECTING upstream — invalid magic bytes: hex=${hex} ascii=${ascii} ct=${upstreamCt}`);
+          await reader.cancel();
+          throw new Error(`Upstream returned non-${audioMode ? 'audio' : 'video'} content (magic bytes: ${hex} / ${ascii})`);
+        }
+        console.log(`[stream] ✓ Magic bytes OK for upstream — ct=${upstreamCt}`);
+      }
+
       const body = new ReadableStream<Uint8Array>({
         async start(c) {
           try {
-            await pumpReaderInto(upstream.body!.getReader(), (v) => c.enqueue(v), IDLE_TIMEOUT_MS);
+            // Enqueue the first chunk we already read
+            if (firstChunk.value?.length) c.enqueue(firstChunk.value);
+            await pumpReaderInto(reader, (v) => c.enqueue(v), IDLE_TIMEOUT_MS);
             try {
               c.close();
             } catch {}
@@ -264,45 +152,6 @@ export async function streamFromUpstream(
       });
       return new Response(body, { status: 200, headers: responseHeaders });
     })();
-
-  // Probe range support. If the CDN answers 206 with a total size, we can
-  // download it in parallel chunks (much faster on throttled connections).
-  let probe: Response | null = null;
-  try {
-    probe = await fetchWithConnectTimeout(
-      sourceUrl,
-      { headers: { ...headers, Range: 'bytes=0-1' } },
-      connectTimeout
-    );
-  } catch {
-    probe = null;
-  }
-
-  if (probe) {
-    const total = probe.status === 206 ? parseContentRange(probe.headers.get('content-range')) : null;
-    probe.body?.cancel().catch(() => {});
-    if (total && total >= PARALLEL_MIN_SIZE) {
-      const t0 = Date.now();
-      console.error(`[stream] PARALLEL mode: total=${total}`);
-      try {
-        const { body, contentType } = await parallelBody(sourceUrl, headers, total);
-        const responseHeaders = new Headers();
-        responseHeaders.set('Content-Type', opts.contentType || contentType || 'application/octet-stream');
-        responseHeaders.set('Content-Disposition', `attachment; filename="${opts.filename}"`);
-        responseHeaders.set('Cache-Control', 'no-store');
-        responseHeaders.set('X-Accel-Buffering', 'no');
-        responseHeaders.set('Content-Length', String(total));
-        return new Response(body, { status: 200, headers: responseHeaders });
-      } catch {
-        console.error(`[stream] parallel FAILED after ${Date.now() - t0}ms, falling back to sequential`);
-        // fall back to the sequential download
-      }
-    } else {
-      console.error(`[stream] SEQUENTIAL mode (probe=${probe.status}, total=${total})`);
-    }
-  } else {
-    console.error('[stream] SEQUENTIAL mode (probe request failed)');
-  }
 
   return sequential();
 }

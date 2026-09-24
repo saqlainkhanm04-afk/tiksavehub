@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook to MP3 — SEO-optimized landing page (Portuguese)
 // URL: /facebook-to-mp3
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'pt' as Lang);
 
 const faqData = [
   { id: 'mp3-how', q: 'Como converter vídeo do Facebook para MP3?', a: 'Copie o link de um vídeo do Facebook, cole no TikSaveHub, selecione a opção MP3 e clique em baixar. Você receberá um arquivo MP3 de alta qualidade.' },
@@ -71,7 +73,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Outras ferramentas gratuitas do Facebook"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Baixe vídeos do Facebook em HD.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Salve Facebook Reels sem marca d\'água.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Salve stories do Facebook antes de desaparecerem.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Salve fotos do Facebook em resolução total.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Baixe vídeos do Facebook em HD.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Salve Facebook Reels sem marca d\'água.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Salve stories do Facebook antes de desaparecerem.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Salve fotos do Facebook em resolução total.' } ]}
+    lang="pt"
   />
 
   <!-- Related Tools -->

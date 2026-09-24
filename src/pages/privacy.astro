@@ -3,6 +3,10 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 
 const lastUpdated = '2025-01-01';
+const usDate = (iso: string) => {
+ const [y, m, d] = iso.split('-');
+ return `${m}/${d}/${y}`;
+};
 ---
 
 <Layout
@@ -30,7 +34,7 @@ const lastUpdated = '2025-01-01';
  <div class="legal-header">
  <span class="section-eyebrow text-caption-mono">Legal</span>
  <h1 id="legal-headline" class="legal-title">Privacy Policy</h1>
- <p class="legal-meta">Last updated: {lastUpdated} &middot; Effective: {lastUpdated}</p>
+ <p class="legal-meta">Last updated: {usDate(lastUpdated)} &middot; Effective: {usDate(lastUpdated)}</p>
  </div>
 
  <div class="legal-card">

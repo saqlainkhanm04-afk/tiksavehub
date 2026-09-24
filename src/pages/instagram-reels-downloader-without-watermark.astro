@@ -1,4 +1,4 @@
----
+﻿---
 // Instagram Reels Downloader -- SEO-optimized landing page
 // URL: /instagram-reels-downloader-without-watermark
 export const prerender = true;
@@ -123,15 +123,16 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
- title="Instagram Reels Downloader Without Watermark -- Free HD | TikSaveHub"
- description="Download Instagram Reels without watermark in HD 1080p. Free, fast, no sign-up. Works on iPhone, Android, and PC."
+  title="Instagram Reels Downloader - HD, No Watermark"
+ description="Download Instagram Reels without watermark in HD 1080p. Fast, no sign-up. Works on iPhone, Android, and PC."
  keywords="instagram reels downloader, download instagram reels, instagram reels download without watermark, save instagram reels, instagram reels video download, reels downloader HD"
  canonical="/instagram-reels-downloader-without-watermark"
  ogImage="/og-downloader.png"
  ogType="website"
  platform="instagram"
  jsonLd={combinedJsonLd}
- appName="TikSaveHub -- Instagram Reels Downloader"
+ appName="TikSaveHub: Instagram Reels Downloader"
+ heroImage="/images/instagram-reels/instagram-reels-hero.webp"
 >
  <!-- JSON-LD Structured Data -->
  <script is:inline type="application/ld+json" set:html={JSON.stringify({
@@ -167,7 +168,7 @@ const combinedJsonLd = JSON.stringify({
  </div>
 
  <h1 id="dl-hero-headline" class="dl-hero-headline">
- Instagram Reels Downloader Without Watermark -- Save HD Reels in Seconds
+ Instagram Reels Downloader: Save HD Reels Without Watermark
  </h1>
 
  <p class="dl-hero-subline headline-gradient">
@@ -253,6 +254,11 @@ const combinedJsonLd = JSON.stringify({
  <p>
  Ready to try it? Paste a Reel link into the input field above and download the video in seconds. For regular Instagram videos (not Reels), the <a href="/instagram-video-downloader-without-watermark">Instagram video downloader</a> handles those. Need the audio track instead? The <a href="/instagram-audio-downloader">Instagram audio downloader</a> extracts sound as MP3. Stories expire in 24 hours -- save them before they're gone with the <a href="/instagram-story-downloader-without-watermark">Instagram Story downloader</a>. Looking for Facebook Reels? The <a href="/facebook-reels-downloader">Facebook Reels downloader</a> works the same way. TikTok videos? The <a href="/tiktok-video-downloader-without-watermark">TikTok video downloader</a> handles those without watermark too.
  </p>
+
+ <figure class="tool-screenshot">
+   <img src="/images/instagram-reels/instagram-reels-hero.webp" alt="TikSaveHub Instagram Reels downloader interface showing input field with HD and SD download options" width="1200" height="675" loading="eager" fetchpriority="high" />
+  <figcaption>Paste an Instagram Reel link and get HD download options instantly</figcaption>
+ </figure>
  </div>
  </div>
 
@@ -344,6 +350,11 @@ const combinedJsonLd = JSON.stringify({
  </p>
  </article>
  </div>
+
+ <figure class="tool-screenshot">
+  <img src="/images/instagram-reels/instagram-reels-steps.webp" alt="Three-step guide showing how to copy an Instagram Reel link, paste it into TikSaveHub, and download the HD video" width="1000" height="800" loading="lazy" />
+  <figcaption>The complete 3-step download flow</figcaption>
+ </figure>
  </div>
  </section>
 
@@ -418,6 +429,11 @@ const combinedJsonLd = JSON.stringify({
  </p>
  </article>
  </div>
+
+ <figure class="tool-screenshot">
+  <img src="/images/instagram-reels/instagram-reels-devices.webp" alt="TikSaveHub Instagram Reels downloader working on iPhone, Android, and desktop browsers" width="1200" height="600" loading="lazy" />
+  <figcaption>Works identically on phone, tablet, and desktop</figcaption>
+ </figure>
  </div>
  </section>
 
@@ -604,6 +620,11 @@ const combinedJsonLd = JSON.stringify({
  </p>
  </article>
  </div>
+
+ <figure class="tool-screenshot">
+  <img src="/images/instagram-reels/instagram-reels-problems.webp" alt="Infographic showing 5 common Instagram Reels downloader problems and their solutions" width="1200" height="675" loading="lazy" />
+  <figcaption>Quick reference: 5 common issues and how to fix them</figcaption>
+ </figure>
  </div>
  </section>
 
@@ -702,9 +723,14 @@ const combinedJsonLd = JSON.stringify({
  <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
  Start Downloading
  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
- </a>
+  </a>
  </div>
  </section>
+
+ <figure class="tool-screenshot">
+  <img src="/images/instagram-reels/instagram-reels-final.webp" alt="TikSaveHub Instagram Reels downloader working across phone, tablet, and laptop devices" width="1200" height="675" loading="lazy" />
+  <figcaption>One tool, every device -- paste a link and download</figcaption>
+ </figure>
 
  <!-- Internal Links Section -->
  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
@@ -744,6 +770,33 @@ const combinedJsonLd = JSON.stringify({
 </Layout>
 
 <style>
+ .tool-screenshot {
+  display: block;
+  margin: 2rem auto;
+  max-width: 1100px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+ }
+
+ .tool-screenshot figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+ }
+
+ @media (max-width: 768px) {
+  .tool-screenshot {
+   margin: 1.5rem auto;
+  }
+  .tool-screenshot figcaption {
+   font-size: 0.8rem;
+  }
+ }
  /* ─── Hero ─── */
  .dl-hero {
  position: relative;

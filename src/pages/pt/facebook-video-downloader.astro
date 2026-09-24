@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Video Downloader — SEO-optimized landing page (Portuguese)
 // URL: /pt/facebook-video-downloader
 export const prerender = true;
@@ -7,6 +7,8 @@ import Layout from '../../layouts/Layout.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'pt' as Lang);
 
 const faqData = [
   {
@@ -158,7 +160,7 @@ const combinedJsonLd = JSON.stringify({
       <nav aria-label="Breadcrumb" class="dl-breadcrumb">
         <ol class="breadcrumb-list">
           <li>
-            <a href="/pt"><span>In—cio</span></a>
+            <a href={lp('/pt')}><span>In—cio</span></a>
                   </li>
           <li aria-current="page">
             <span>Facebook Video Downloader</span>
@@ -275,7 +277,7 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Extraia —udio do Facebook como MP3</h3>
             <p>
-              Al—m de salvar v—deos, o <a href="/facebook-to-mp3">Facebook MP3 Converter</a> do TikSaveHub extrai a trilha de —udio de qualquer v—deo ou Reel e a converte em MP3 de alta qualidade — perfeita para ouvir offline trilhas sonoras de Reels, trechos de podcasts e segmentos de transmiss—es ao vivo.
+              Al—m de salvar v—deos, o <a href={lp('/facebook-to-mp3')}>Facebook MP3 Converter</a> do TikSaveHub extrai a trilha de —udio de qualquer v—deo ou Reel e a converte em MP3 de alta qualidade — perfeita para ouvir offline trilhas sonoras de Reels, trechos de podcasts e segmentos de transmiss—es ao vivo.
             </p>
 
             <h3 class="text-highlight">Funciona em todos os dispositivos — Android, iPhone, desktop</h3>
@@ -285,7 +287,7 @@ const combinedJsonLd = JSON.stringify({
 
             <h3 class="text-highlight">Que qualidade e formato voc— recebe?</h3>
             <p>
-              Todos os downloads s—o MP4 na maior resolu——o dispon—vel — HD at— 1080p se o criador enviou em HD, com op——o SD tamb—m dispon—vel quando o armazenamento — limitado. O TikSaveHub n—o adiciona marca d'—gua, n—o faz reencoding e n—o degrada a qualidade do upload original. Se voc— s— precisa do —udio, use o <a href="/facebook-to-mp3">Facebook MP3 Converter</a>.
+              Todos os downloads s—o MP4 na maior resolu——o dispon—vel — HD at— 1080p se o criador enviou em HD, com op——o SD tamb—m dispon—vel quando o armazenamento — limitado. O TikSaveHub n—o adiciona marca d'—gua, n—o faz reencoding e n—o degrada a qualidade do upload original. Se voc— s— precisa do —udio, use o <a href={lp('/facebook-to-mp3')}>Facebook MP3 Converter</a>.
             </p>
 
             <h3 class="text-highlight">Baixe v—deos do Facebook no iPhone, Android e desktop</h3>
@@ -309,7 +311,7 @@ const combinedJsonLd = JSON.stringify({
             </p>
 
             <p>
-              Procurando outras ferramentas? <a href="/tiktok-video-downloader-without-watermark">Baixe v—deos do TikTok sem marca d'—gua</a> ou salve <a href="/instagram-reels-downloader-without-watermark">Reels do Instagram</a> da mesma maneira.
+              Procurando outras ferramentas? <a href={lp('/tiktok-video-downloader-without-watermark')}>Baixe v—deos do TikTok sem marca d'—gua</a> ou salve <a href={lp('/instagram-reels-downloader-without-watermark')}>Reels do Instagram</a> da mesma maneira.
             </p>
 
             <p>
@@ -403,7 +405,7 @@ const combinedJsonLd = JSON.stringify({
           </div>
           <h3 class="dl-step-title">Baixe em HD ou SD</h3>
           <p class="dl-step-body">
-            Toque em "Baixar v—deo em HD" ou "Baixar v—deo em SD" para salvar o MP4 no seu dispositivo. O arquivo — salvo instantaneamente — sem apps ou contas necess—rias. Se voc— s— precisa do —udio, use o <a href="/facebook-to-mp3">Facebook MP3 Converter</a>.
+            Toque em "Baixar v—deo em HD" ou "Baixar v—deo em SD" para salvar o MP4 no seu dispositivo. O arquivo — salvo instantaneamente — sem apps ou contas necess—rias. Se voc— s— precisa do —udio, use o <a href={lp('/facebook-to-mp3')}>Facebook MP3 Converter</a>.
           </p>
         </article>
       </div>
@@ -589,7 +591,7 @@ const combinedJsonLd = JSON.stringify({
         Explore o TikSaveHub.
       </h2>
       <div class="dl-internal-grid">
-        <a href="/tiktok-video-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/tiktok-video-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
           </span>
@@ -597,7 +599,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Baixe v—deos do TikTok em HD sem marca d'—gua.</span>
           <span class="dl-internal-arrow" aria-hidden="true">?</span>
         </a>
-        <a href="/tiktok-to-mp3" class="dl-internal-card">
+        <a href={lp('/tiktok-to-mp3')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           </span>
@@ -605,7 +607,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Converta v—deos do TikTok para —udio MP3 instantaneamente.</span>
           <span class="dl-internal-arrow" aria-hidden="true">?</span>
         </a>
-        <a href="/instagram-video-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/instagram-video-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           </span>
@@ -613,7 +615,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Salve v—deos do Instagram em HD sem marca d'—gua.</span>
           <span class="dl-internal-arrow" aria-hidden="true">?</span>
         </a>
-        <a href="/instagram-reels-downloader-without-watermark" class="dl-internal-card">
+        <a href={lp('/instagram-reels-downloader-without-watermark')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           </span>
@@ -621,7 +623,7 @@ const combinedJsonLd = JSON.stringify({
           <span class="dl-internal-desc">Baixe Instagram Reels sem marca d'—gua.</span>
           <span class="dl-internal-arrow" aria-hidden="true">?</span>
         </a>
-        <a href="/facebook-photo-downloader" class="dl-internal-card">
+        <a href={lp('/facebook-photo-downloader')} class="dl-internal-card">
           <span class="dl-internal-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           </span>

@@ -125,6 +125,27 @@ const tools = [
     icon: 'x',
     badge: null,
   },
+  {
+    title: 'Descargador de Videos de Snapchat',
+    description: 'Guarda videos de Snapchat en calidad HD. Gratis, rápido, sin registro.',
+    href: `${base}/snapchat-downloader`,
+    icon: 'snapchat',
+    badge: null,
+  },
+  {
+    title: 'Descargador de Historias de Snapchat',
+    description: 'Descarga Historias de Snapchat antes de que expiren. Gratis y anónimo.',
+    href: `${base}/snapchat-story-downloader`,
+    icon: 'snapchat',
+    badge: null,
+  },
+  {
+    title: 'Snapchat a MP3',
+    description: 'Extrae audio de videos de Snapchat como archivos MP3 de alta calidad.',
+    href: `${base}/snapchat-to-mp3`,
+    icon: 'snapchat',
+    badge: null,
+  },
 ];
 
 const faqData = [
@@ -203,7 +224,7 @@ const features = [
   keywords="descargador tiktok, descargar videos tiktok sin marca de agua, tiktok mp3, descargar reels instagram, descargar videos facebook, hd video downloader, gratis"
   canonical="/"
   ogImage="/og-default.png"
-  jsonLd={JSON.stringify([organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd])}
+   jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
   appName="TikSaveHub"
   lang="es"
 >
@@ -227,6 +248,8 @@ const features = [
         Guarda videos en calidad HD sin marcas de agua. Gratis, rápido y funciona en cualquier dispositivo — sin app ni registro.
       </p>
 
+      <h2 class="home-tools-heading">Herramientas Populares</h2>
+
       <div class="home-tools-grid">
         {tools.map((tool) => (
           <a href={tool.href} class="home-tool-card" aria-label={tool.title}>
@@ -245,6 +268,9 @@ const features = [
               )}
               {tool.icon === 'audio' && (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              )}
+              {tool.icon === 'snapchat' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.37 12.87a1.5 1.5 0 0 0 .13-1.24l-1.5-3A2.5 2.5 0 0 0 13.87 6h-3.74a2.5 2.5 0 0 0-3.13 2.63l-1.5 3a1.5 1.5 0 0 0 .13 1.24c.3.52.83.83 1.15 1.03l-.33.36a7.5 7.5 0 0 0 2.6 1.3c.4.52.9 1.44 1.95.86 0-.94.37-1.35.5-2.2.14.85.5 1.26.5 2.19 1.05.6 1.56-.33 1.95-.86a7.5 7.5 0 0 0 2.6-1.3l-.33-.36c.32-.2.85-.51 1.15-1.03z"/></svg>
               )}
             </div>
             <div class="home-tool-info">
@@ -368,17 +394,17 @@ const features = [
       <span class="section-eyebrow text-caption-mono">Del Blog</span>
       <h2 id="blog-headline" class="section-headline">Guías, consejos y tutoriales</h2>
       <div class="home-blog-grid">
-        <a href={`${base}/blog/facebook-video-downloader-guide`} class="home-blog-card">
+        <a href={`/blog/facebook-video-downloader-guide`} class="home-blog-card">
           <span class="home-blog-tag">Guías de Facebook</span>
           <h3 class="home-blog-title">Descargador de Videos de Facebook: Guarda Videos de FB en HD (Guía 2026)</h3>
           <p class="home-blog-excerpt">Descarga videos, Reels y clips de Watch de Facebook en HD 1080p sin marca de agua. Paso a paso para iPhone, Android y PC.</p>
         </a>
-        <a href={`${base}/blog/x-video-downloader-guide`} class="home-blog-card">
+        <a href={`/blog/x-video-downloader-guide`} class="home-blog-card">
           <span class="home-blog-tag">Guías de X y Twitter</span>
           <h3 class="home-blog-title">Descargador de Videos de X: Guarda Videos de Twitter en HD (Guía 2026)</h3>
           <p class="home-blog-excerpt">Descarga videos, GIFs y audio de X (Twitter) en HD 1080p sin marca de agua. Gratis, sin registro.</p>
         </a>
-        <a href={`${base}/blog/tiktok-video-downloader-without-watermark`} class="home-blog-card">
+        <a href={`/blog/tiktok-video-downloader-without-watermark`} class="home-blog-card">
           <span class="home-blog-tag">Guías de TikTok</span>
           <h3 class="home-blog-title">Descargador de Videos de TikTok Sin Marca de Agua (HD y Gratis)</h3>
           <p class="home-blog-excerpt">Descarga videos de TikTok sin marca de agua en calidad HD. Rápido, gratis y funciona en iPhone, Android y PC.</p>
@@ -444,6 +470,15 @@ const features = [
     max-width: 600px;
     text-align: center;
     margin: 0;
+  }
+
+  .home-tools-heading {
+    margin: 0;
+    font-size: var(--text-heading-md);
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--color-ink);
+    text-align: center;
   }
 
   /* ─── Tools Grid ─── */

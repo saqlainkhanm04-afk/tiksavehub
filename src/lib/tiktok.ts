@@ -1,7 +1,15 @@
 import { memo, memoSWR } from './cache';
 import { resolveTikTokShortLink } from './normalize';
-import { runWithFallback } from './api-fallback';
-import { tiktokSources } from './platforms/tiktok';
+import { runWithFallback, runWithRace } from './api-fallback';
+import {
+  tikwmSource,
+  cobaltSource,
+  tiktokDownbloderSource,
+  tiktokItemDetailSource,
+  tiktokCdnDirectSource,
+} from './platforms/tiktok';
+import { tiktokDirectSource } from './platforms/tiktok-direct';
+import { thirdPartyApiHeaders } from './platforms/headers';
 
 const DESKTOP_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
@@ -110,6 +118,39 @@ async function fetchOembedMeta(pageUrl: string): Promise<{ title: string; author
   }
 }
 
+const TIKWM_HOSTS = ['https://tikwm.com/api/', 'https://www.tikwm.com/api/'];
+
+async function fetchAudioFromTikwm(videoUrl: string): Promise<TikTokMusicInfo | null> {
+  for (const host of TIKWM_HOSTS) {
+    try {
+      const headers = thirdPartyApiHeaders('https://tikwm.com/');
+      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      const body = `url=${encodeURIComponent(videoUrl)}&hd=1`;
+      const resp = await fetch(host, {
+        method: 'POST',
+        headers,
+        body,
+        signal: AbortSignal.timeout(4_000),
+      });
+      if (!resp.ok) continue;
+      const data: any = await resp.json();
+      if (data.code !== 0 || !data.data) continue;
+      const musicSource = data.data.music_info ?? data.data.music;
+      const playUrl = musicSource?.play ?? musicSource?.play_url ?? null;
+      if (playUrl) {
+        console.log(`[TikTok AudioFallback] Got audio from TikWM: ${host}`);
+        return {
+          play: playUrl,
+          title: musicSource?.title ?? data.data.title ?? undefined,
+          author: musicSource?.author ?? undefined,
+          album: musicSource?.album ?? null,
+        };
+      }
+    } catch {}
+  }
+  return null;
+}
+
 /**
  * Core resolution pipeline — uses the generic fallback runner via
  * src/lib/platforms/tiktok.ts source definitions.
@@ -160,9 +201,30 @@ async function resolveTikTok(videoUrl: string, turnstileToken?: string): Promise
   // Fetch oEmbed metadata in parallel with the fallback chain
   const oembedP = fetchOembedMeta(canonicalUrl);
 
-  // ─── Run API sources via failover runner ───
-  // The platform module sources produce MediaMeta — we adapt to TikTokVideoMeta.
-  const mediaResult = await runWithFallback(candidate, tiktokSources(turnstileToken));
+  // ─── Phase 1: Race fast sources in PARALLEL (first success wins) ───
+  // TikCDN Direct (multi-pattern, 8s), TikWM (4s), TikTok ItemDetail (5s), TikTok Direct (8s)
+  // First one to return a valid result wins. On a fast IP this takes 1-3s.
+  let mediaResult: { data: import('./platforms/types').MediaMeta; source: string; attemptMs: number };
+  const phase1Start = Date.now();
+  try {
+    mediaResult = await runWithRace(candidate, [
+      tiktokCdnDirectSource,       // Direct CDN probe with fallback patterns (~2-5s)
+      tikwmSource,                 // 3rd-party CDN API (~2-4s)
+      tiktokItemDetailSource,      // TikTok's own web API (~3-5s)
+      tiktokDirectSource,          // Direct page HTML parse (~5-8s)
+    ]);
+    console.log(`[TikTok] Phase 1 RACE WINNER: ${mediaResult.data.resolvedBy} in ${mediaResult.attemptMs}ms (total ${Date.now() - phase1Start}ms)`);
+  } catch (raceErr) {
+    // ─── Phase 2: Sequential fallback — slower but more thorough sources ───
+    // Only reached when all 4 fast sources fail (rare on production IPs).
+    console.log(`[TikTok] Phase 1 race failed (${Date.now() - phase1Start}ms), trying Phase 2 fallback sources...`);
+    mediaResult = await runWithFallback(candidate, [
+      cobaltSource(turnstileToken),  // cobalt.tools (~10-15s)
+      tiktokDownbloderSource,       // Vercel wrapper (~8-10s)
+    ]);
+    console.log(`[TikTok] Phase 2 FALLBACK WINNER: ${mediaResult.data.resolvedBy} in ${mediaResult.attemptMs}ms`);
+  }
+
   const meta: TikTokVideoMeta = {
     play: mediaResult.data.sdUrl,
     hdplay: mediaResult.data.hdUrl,
@@ -195,6 +257,15 @@ async function resolveTikTok(videoUrl: string, turnstileToken?: string): Promise
       meta.author.unique_id = meta.author.unique_id || oembed.author;
     }
     if (!meta.cover && oembed.cover) meta.cover = oembed.cover;
+  }
+
+  // Audio fallback: if the winning source didn't provide audio, try TikWM directly
+  if (!meta.music) {
+    console.log(`[TikTok] No audio from ${mediaResult.data.resolvedBy} — trying TikWM audio fallback`);
+    const audioFallback = await fetchAudioFromTikwm(canonicalUrl);
+    if (audioFallback) {
+      meta.music = audioFallback;
+    }
   }
 
   return meta;

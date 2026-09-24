@@ -122,8 +122,8 @@ export const POST: APIRoute = async (ctx) => {
 
     return json({ success: true, type: 'x-video', video: payload }, 200, true);
   } catch (err: any) {
-    console.error('[X API] Error:', err?.message ?? err);
-    return json({ success: false, error: userMessageFor(err) }, 500);
+    console.error(`[X API] ${new Date().toISOString()} POST error: ${err?.message ?? err}`);
+    return json({ success: false, error: userMessageFor(err), errorType: 'api_error' }, 200);
   }
 };
 
@@ -214,7 +214,7 @@ export const GET: APIRoute = async (ctx) => {
       referer: X_REFERER,
     });
   } catch (err: any) {
-    console.error('[X API] Download error:', err?.message ?? err);
-    return json({ success: false, error: userMessageFor(err) }, 500);
+    console.error(`[X API] ${new Date().toISOString()} GET error: ${err?.message ?? err}`);
+    return json({ success: false, error: userMessageFor(err), errorType: 'api_error' }, 500);
   }
 };

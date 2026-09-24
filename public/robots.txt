@@ -29,23 +29,26 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-# Block AI scrapers from consuming resources (optional — remove if you want AI indexing)
+# Allow AI crawlers for answer engine optimization
 User-agent: GPTBot
-Disallow: /
+Allow: /
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
 
 User-agent: CCBot
-Disallow: /
+Allow: /
 
 User-agent: Google-Extended
-Disallow: /
+Allow: /
 
 User-agent: anthropic-ai
-Disallow: /
+Allow: /
 
 User-agent: ClaudeBot
-Disallow: /
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
 
 Sitemap: https://tiksavehub.com/sitemap-index.xml

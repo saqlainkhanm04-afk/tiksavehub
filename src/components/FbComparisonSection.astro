@@ -1,0 +1,151 @@
+---
+// FbComparisonSection — comparison table (dl-steps-section background pattern)
+interface Props {
+  eyebrow?: string;
+  headline: string;
+  sub?: string;
+  columns: string[];
+  rows: { feature: string; values: string[]; highlight?: number }[];
+  note?: string;
+}
+
+const { eyebrow = 'Comparison', headline, sub, columns, rows, note } = Astro.props;
+
+function cellClass(highlight: boolean): string {
+  return highlight
+    ? 'padding:var(--spacing-md);color:var(--color-ink);font-weight:600;'
+    : 'padding:var(--spacing-md);color:var(--color-body);';
+}
+---
+
+<section class="cmp-section" aria-labelledby="cmp-headline">
+  <div class="cmp-inner container-page">
+    <div class="cmp-header">
+      <span class="section-eyebrow text-caption-mono">{eyebrow}</span>
+      <h2 id="cmp-headline" class="section-headline">{headline}</h2>
+      {sub && <p class="section-sub text-body-lg">{sub}</p>}
+    </div>
+
+    <div class="cmp-table-wrap">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            {columns.map((col) => (
+              <th scope="col">{col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr>
+              <th scope="row">{row.feature}</th>
+              {row.values.map((value, i) => {
+                const highlight = row.highlight === i || (row.highlight === undefined && i === 0);
+                return <td style={cellClass(highlight)}>{value}</td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {note && <p class="cmp-note" set:html={note}></p>}
+  </div>
+</section>
+
+<style>
+  .cmp-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .section-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 480px;
+  }
+
+  .cmp-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4xl);
+  }
+
+  .cmp-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .cmp-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-body-sm);
+    text-align: left;
+    min-width: 560px;
+  }
+
+  .cmp-table thead th {
+    border-bottom: 2px solid var(--color-hairline-strong);
+    padding: var(--spacing-md);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .cmp-table tbody tr {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .cmp-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .cmp-table th[scope='row'] {
+    padding: var(--spacing-md);
+    color: var(--color-body);
+    font-weight: 500;
+    text-align: left;
+  }
+
+  .cmp-note {
+    color: var(--color-body);
+    font-size: var(--text-body-sm);
+    margin: 0;
+    line-height: 1.7;
+    max-width: 760px;
+  }
+
+  .cmp-note a {
+    color: var(--color-link);
+    text-decoration-color: #007cf040;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 600px) {
+    .cmp-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+</style>

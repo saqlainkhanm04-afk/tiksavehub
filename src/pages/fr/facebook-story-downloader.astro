@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Story Downloader — SEO-optimized landing page (FR)
 // URL: /facebook-story-downloader
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'fr' as Lang);
 
 const faqData = [
   { id: 'story-hd', q: 'Comment puis-je télécharger une story Facebook en HD ?', a: 'Copiez le lien de la story Facebook publique, collez-le sur TikSaveHub et cliquez sur télécharger. Si la story est disponible, elle sera enregistrée en MP4 qualité originale.' },
@@ -72,7 +74,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Autres outils Facebook gratuits"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Téléchargez des vidéos Facebook en HD.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Enregistrez des Reels Facebook sans filigrane.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Extrayez l\'audio MP3 de vidéos Facebook.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Enregistrez des photos Facebook en résolution complète.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Téléchargez des vidéos Facebook en HD.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Enregistrez des Reels Facebook sans filigrane.' }, { href: lp('/facebook-to-mp3'), icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'Extrayez l\'audio MP3 de vidéos Facebook.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Enregistrez des photos Facebook en résolution complète.' } ]}
+    lang="fr"
   />
 
   <!-- Related Tools -->

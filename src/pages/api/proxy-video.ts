@@ -32,7 +32,7 @@ export const GET: APIRoute = async (ctx) => {
   const clientIp = clientIpFrom(request);
   if (isRateLimited(clientIp)) {
     return new Response(
-      JSON.stringify({ error: 'Rate limit exceeded. Try again later.' }),
+      JSON.stringify({ success: false, error: 'Rate limit exceeded. Try again later.' }),
       { status: 429, headers: { 'Content-Type': 'application/json' } }
     );
   }
@@ -41,14 +41,14 @@ export const GET: APIRoute = async (ctx) => {
 
   if (!videoUrl) {
     return new Response(
-      JSON.stringify({ error: 'Missing "url" query parameter.' }),
+      JSON.stringify({ success: false, error: 'Missing "url" query parameter.' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
   if (!isAllowedUrl(videoUrl)) {
     return new Response(
-      JSON.stringify({ error: 'URL host is not allowed.' }),
+      JSON.stringify({ success: false, error: 'URL host is not allowed.' }),
       { status: 403, headers: { 'Content-Type': 'application/json' } }
     );
   }
@@ -80,10 +80,11 @@ export const GET: APIRoute = async (ctx) => {
       headers,
     });
   } catch (err: any) {
-    console.error('[TikSaveHub Proxy-Video] Error:', err?.message ?? String(err));
+    const isTimeout = err?.name === 'TimeoutError' || err?.name === 'AbortError';
+    console.error(`[TikSaveHub Proxy-Video] ${new Date().toISOString()} URL=${videoUrl} Error=${err?.message ?? String(err)}`);
     return new Response(
-      JSON.stringify({ error: 'Failed to fetch video.' }),
-      { status: 502, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ success: false, error: isTimeout ? 'Request timed out.' : 'Failed to fetch video.', errorType: isTimeout ? 'timeout' : 'api_error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 };

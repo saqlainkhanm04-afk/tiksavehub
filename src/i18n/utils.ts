@@ -1,5 +1,7 @@
 import { ui, defaultLang, type Lang, type TranslationKey } from './ui';
 
+export type { Lang } from './ui';
+
 export function getLangFromUrl(url: URL): Lang {
   const [, lang] = url.pathname.split('/');
   if (lang && lang in ui) return lang as Lang;
@@ -15,6 +17,10 @@ export function useTranslations(lang: Lang) {
 
 export function getLocalizedPath(path: string, lang: Lang): string {
   if (lang === defaultLang) return path;
+  // Never double-prefix an already-localized path
+  // (e.g. "/de/facebook-story-downloader" with lang "de" stays unchanged,
+  // instead of becoming "/de/de/facebook-story-downloader").
+  if (path.startsWith(`/${lang}/`) || path === `/${lang}`) return path;
   return `/${lang}${path}`;
 }
 

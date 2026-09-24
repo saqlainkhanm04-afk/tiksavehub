@@ -3,6 +3,11 @@ import Layout from '../../layouts/Layout.astro';
 import SocialShare from '../../components/SocialShare.astro';
 import { posts } from '../../data/blog-posts';
 
+const usDate = (iso: string) => {
+  const [y, m, d] = iso.split('-');
+  return `${m}/${d}/${y}`;
+};
+
 export const prerender = true;
 
 export function getStaticPaths() {
@@ -61,6 +66,20 @@ const faqSchema = post.faq && post.faq.length
     }
   : undefined;
 
+const howToSchema = post.howTo
+  ? {
+      '@type': 'HowTo',
+      name: post.howTo.name,
+      description: post.howTo.description,
+      step: post.howTo.steps.map((step, i) => ({
+        '@type': 'HowToStep',
+        position: i + 1,
+        name: step.name,
+        text: step.text,
+      })),
+    }
+  : undefined;
+
 const breadcrumbJsonLd = {
   '@type': 'BreadcrumbList',
   itemListElement: [
@@ -87,7 +106,7 @@ const breadcrumbJsonLd = {
 
 const pageJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@graph': [articleJsonLd, faqSchema, breadcrumbJsonLd].filter(Boolean),
+  '@graph': [articleJsonLd, faqSchema, howToSchema, breadcrumbJsonLd].filter(Boolean),
 });
 
 function renderContent(md: string): string {
@@ -228,6 +247,7 @@ const tagTextColors = [
   ogImage={post.cover}
   jsonLd={pageJsonLd}
   skipSoftwareApp
+  localizedHreflang={false}
 >
   <!-- Hero -->
   <section class="post-hero" aria-labelledby="post-title">
@@ -253,7 +273,7 @@ const tagTextColors = [
         <div class="post-meta">
           <span class="post-author">{post.author}</span>
           <span class="post-meta-sep">·</span>
-          <time datetime={post.date}>{post.date}</time>
+          <time datetime={post.date}>{usDate(post.date)}</time>
           <span class="post-meta-sep">·</span>
           <span>{post.readingTime}</span>
         </div>

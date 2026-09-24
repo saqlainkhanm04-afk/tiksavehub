@@ -37,7 +37,7 @@ const faqData = [
  {
  id: 'story-multiple',
  q: 'Can I download multiple Instagram stories or Highlights at once?',
- a: 'Yes! When you paste a public profile link or story URL into TikSaveHub, our tool fetches all active stories and available Highlights for that user, allowing you to download each slide individually.',
+ a: 'Yes. When you paste a public profile link or story URL into TikSaveHub, our tool fetches all active stories and available Highlights for that user, allowing you to download each slide individually.',
  },
  {
  id: 'story-private',
@@ -86,6 +86,10 @@ const faqData = [
  },
 ];
 
+function stripHtml(text: string): string {
+  return text.replace(/<[^>]*>/g, '').trim();
+}
+
 const faqJsonLd = JSON.stringify({
  '@context': 'https://schema.org',
  '@type': 'FAQPage',
@@ -94,15 +98,15 @@ const faqJsonLd = JSON.stringify({
  name: faq.q,
  acceptedAnswer: {
  '@type': 'Answer',
- text: faq.a,
+ text: stripHtml(faq.a),
  },
  })),
 });
 ---
 
 <Layout
- title="Instagram Story Video Downloader Without Watermark | TikSaveHub"
- description="Download Instagram Story video without watermark before they expire. Free story saver. save as HD MP4 or JPG on iPhone, Android. Anonymous, no login needed."
+ title="Instagram Story Downloader | TikSaveHub"
+ description="Download Instagram Story video without watermark before they expire. Story saver. save as HD MP4 or JPG on iPhone, Android. Anonymous, no login needed."
  keywords="instagram story video, instagram story downloader, story downloader without watermark, instagram story downloader no watermark, save instagram stories, download ig stories, instagram story saver, instagram video watermark remover, instagram reels video"
  canonical="/instagram-story-downloader-without-watermark"
  ogImage="/og-downloader.png"

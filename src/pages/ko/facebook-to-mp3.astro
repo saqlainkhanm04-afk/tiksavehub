@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook to MP3 — SEO-optimized landing page (Korean)
 // URL: /facebook-to-mp3
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'ko' as Lang);
 
 const faqData = [
   { id: 'mp3-how', q: 'Facebook 비디오를 MP3로 변환하려면 어떻게 하나요?', a: 'Facebook 비디오 링크를 복사하여 TikSaveHub에 붙여넣고 MP3 옵션을 선택한 후 다운로드를 클릭합니다. 고품질 MP3 파일을 얻을 수 있습니다.' },
@@ -71,7 +73,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="기타 무료 Facebook 도구"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Facebook 비디오를 HD로 다운로드.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reels를 워터마크 없이 저장.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebook 스토리가 사라지기 전에 저장.' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebook 사진을 전체 해상도로 저장.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Facebook 비디오를 HD로 다운로드.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reels를 워터마크 없이 저장.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebook 스토리가 사라지기 전에 저장.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebook 사진을 전체 해상도로 저장.' } ]}
+    lang="ko"
   />
 
   <!-- Related Tools -->

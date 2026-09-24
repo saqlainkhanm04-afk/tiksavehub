@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Photo Downloader — SEO-optimized landing page (Deutsch)
 // URL: /facebook-photo-downloader
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'de' as Lang);
 
 const faqData = [
   { id: 'photo-hd', q: 'Wie kann ich Facebook-Fotos in voller Auflösung herunterladen?', a: 'Kopiere den Link des Facebook-Beitrags, füge ihn bei TikSaveHub ein und klicke auf Herunterladen. Alle Fotos des Beitrags werden in Originalauflösung heruntergeladen.' },
@@ -73,7 +75,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="Weitere kostenlose Facebook-Tools"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos in HD herunter.' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Speichere Facebook Reels ohne Wasserzeichen.' }, { href: '/facebook-story-downloader', icon: 'story', title: 'Facebook Story Downloader', desc: 'Speichere Facebook-Stories, bevor sie verschwinden.' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook-zu-MP3-Konverter', desc: 'Extrahiere MP3-Audio aus Facebook-Videos.' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Lade Facebook-Videos in HD herunter.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Speichere Facebook Reels ohne Wasserzeichen.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Speichere Facebook-Stories, bevor sie verschwinden.' }, { href: lp('/facebook-to-mp3'), icon: 'mp3', title: 'Facebook-zu-MP3-Konverter', desc: 'Extrahiere MP3-Audio aus Facebook-Videos.' } ]}
+    lang="de"
   />
 
   <!-- Related Tools -->

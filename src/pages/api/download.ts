@@ -9,7 +9,7 @@ import { getEnv, initRequestEnv } from '../../lib/init-env';
 export const prerender = false;
 
 const DEFAULT_STREAM_TIMEOUT_MS = 60_000;
-const HD_ATTEMPT_TIMEOUT_MS = 20_000;
+const HD_ATTEMPT_TIMEOUT_MS = 8_000;
 
 interface StreamConfig {
   filename: string;
@@ -29,6 +29,8 @@ function refererForUrl(videoUrl: string): string {
     const host = new URL(videoUrl).hostname;
     if (host.includes('tiktok')) return 'https://www.tiktok.com/';
     if (host.includes('tikwm')) return 'https://tikwm.com/';
+    if (host.includes('tikcdn')) return 'https://www.tiktok.com/';
+    if (host.includes('cobalt')) return 'https://cobalt.tools/';
   } catch {}
   return 'https://www.tiktok.com/';
 }
@@ -51,14 +53,18 @@ async function streamFirstReachable(
     let attempts = 0;
     while (attempts < Math.max(2, candidates.length)) {
       const url = candidates[attempts % candidates.length];
+      console.log(`[TikDownload] ▶ Attempting stream from: ${url.substring(0, 120)}...`);
       try {
-        return await streamFromUpstream(url, {
+        const resp = await streamFromUpstream(url, {
           ...STREAM_CONFIG,
           referer: refererForUrl(url),
           timeoutMs: attempts === 0 && isHd ? HD_ATTEMPT_TIMEOUT_MS : DEFAULT_STREAM_TIMEOUT_MS,
         });
+        console.log(`[TikDownload] ✓ Stream success from: ${url.substring(0, 120)} — status=${resp.status} ct=${resp.headers.get('content-type')} cl=${resp.headers.get('content-length')}`);
+        return resp;
       } catch (err) {
         lastError = err;
+        console.log(`[TikDownload] ✗ Stream failed from: ${url.substring(0, 120)} — error=${err instanceof Error ? err.message : err}`);
         attempts++;
       }
     }
@@ -228,8 +234,9 @@ export const GET: APIRoute = async (ctx) => {
       errorMsg = 'Failed to fetch video. Please check the link and try again.';
     }
 
+    console.error(`[TikSaveHub API] ${new Date().toISOString()} URL=${videoUrl} Error=${msg}`);
     return new Response(
-      JSON.stringify({ success: false, error: errorMsg }),
+      JSON.stringify({ success: false, error: errorMsg, errorType: isTimeout ? 'timeout' : 'api_error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

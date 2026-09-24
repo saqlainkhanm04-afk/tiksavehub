@@ -1,4 +1,4 @@
----
+﻿---
 // Facebook Story Downloader — SEO-optimized landing page (日本語)
 // URL: /facebook-story-downloader
 export const prerender = true;
@@ -12,6 +12,8 @@ import FbCtaBand from '../../components/FbCtaBand.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
+import { getLocalizedPath, type Lang } from '../../i18n/utils';
+const lp = (p: string) => getLocalizedPath(p, 'ja' as Lang);
 
 const faqData = [
   { id: 'story-hd', q: 'FacebookストーリーをHDでダウンロードするにはどうすればいいですか？', a: '公開されているFacebookストーリーのリンクをコピーし、TikSaveHubに貼り付けてダウンロードをクリックします。ストーリーが利用可能な場合は、元の品質のMP4として保存されます。' },
@@ -72,7 +74,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <FbInternalLinks
     headline="その他の無料Facebookツール"
-    links={[ { href: '/facebook-video-downloader', icon: 'fb', title: 'Facebook Video Downloader', desc: 'FacebookのフルレングスビデオをHDでダウンロード。' }, { href: '/facebook-reels-downloader', icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reelsをウォーターマークなしで保存。' }, { href: '/facebook-to-mp3', icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'FacebookビデオからMP3音声を抽出。' }, { href: '/facebook-photo-downloader', icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebookの写真をフル解像度で保存。' } ]}
+    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'FacebookのフルレングスビデオをHDでダウンロード。' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reelsをウォーターマークなしで保存。' }, { href: lp('/facebook-to-mp3'), icon: 'mp3', title: 'Facebook to MP3 Converter', desc: 'FacebookビデオからMP3音声を抽出。' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebookの写真をフル解像度で保存。' } ]}
+    lang="ja"
   />
 
   <!-- Related Tools -->

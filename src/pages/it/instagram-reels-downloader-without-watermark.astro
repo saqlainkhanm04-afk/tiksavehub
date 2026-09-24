@@ -1,6 +1,6 @@
----
-// Instagram Reels Downloader — SEO-optimized landing page (Italian)
-// URL: /instagram-reels-downloader-without-watermark
+﻿---
+// Instagram Reels Downloader -- SEO-optimized landing page (Italian)
+// URL: /it/instagram-reels-downloader-without-watermark
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
@@ -9,106 +9,1837 @@ import StatsSection from '../../components/StatsSection.astro';
 import SocialShare from '../../components/SocialShare.astro';
 
 const faqData = [
-  { id: 'reels-how', q: 'Come scaricare i Reels di Instagram?', a: 'Incolla il link del Reels di Instagram su TikSaveHub e clicca Scarica.' },
-  { id: 'reels-watermark', q: 'Posso scaricare senza filigrana?', a: 'S—, TikSaveHub supporta il download di Reels Instagram senza filigrana.' },
-  { id: 'reels-free', q: 'Il download — gratuito?', a: 'S—, TikSaveHub — al 100% gratuito.' },
-  { id: 'reels-private', q: 'Posso scaricare Reels privati?', a: 'No, supportiamo solo i Reels pubblici.' },
+ {
+  id: 'reels-how',
+  q: 'Come scaricare un Reel di Instagram senza filigrana?',
+  a: 'Copia il link del Reel dall\'app (tocca Condividi, poi Copia Link), incollalo nel campo qui sopra e premi Scarica. TikSaveHub estrae il video e ti serve un MP4 pulito: niente filigrana, niente sovrapposizioni. In due o tre secondi hai finito.',
+ },
+ {
+  id: 'reels-hd',
+  q: 'Posso salvare i Reels in qualità HD 1080p?',
+  a: 'Sì. TikSaveHub prende la risoluzione più alta che Instagram serve per quel Reel, fino a 1080x1920, senza ricodificare. Il file scaricato è identico a quello che il creatore ha caricato. Niente compressione extra, niente perdita di qualità durante il fetch.\n\nUna cosa da sapere: TikSaveHub non può migliorare una qualità che Instagram ha già compresso. Se il creatore ha caricato a 720p, lo scaricherai a 720p. Ma non sarà peggio di così. Il processo di fetch è lossless: quello che Instagram ha è quello che viene salvato.',
+ },
+ {
+  id: 'reels-iphone',
+  q: 'Funziona su iPhone e Android per i Reels?',
+  a: 'Funziona su qualsiasi dispositivo con un browser moderno: iPhone (Safari, iOS 13+), Android (Chrome, Firefox, qualsiasi browser), Windows, Mac, Linux. Niente app da installare, niente estensione da configurare. Lo strumento funziona interamente nel browser.\n\nPer gli utenti iPhone: il file MP4 finisce nel gestore download di Safari. Scorri verso il basso per vederlo, poi tocca la lente d\'ingrandimento per aprirllo nell\'app File. Gli utenti Android: il file va direttamente nella cartella Download, e la maggior parte delle app galleria lo rileva automaticamente.',
+ },
+ {
+  id: 'reels-formats',
+  q: 'Quali formati di link Reel supporta TikSaveHub?',
+  a: 'Tutti. instagram.com/reel/..., instagram.com/reels/..., instagram.com/share/..., e i link abbreviati tipo vm.tiktok.com che Instagram genera quando tocchi Copia Link. Prendi l\'URL da qualsiasi luogo: un messaggio, la barra degli indirizzi, un post social. Funziona.',
+ },
+ {
+  id: 'reels-free',
+  q: 'TikSaveHub è gratuito per scaricare Reels?',
+  a: 'Completamente gratuito. Niente registrazione, niente raccolta email, niente abbonamento nascosto. Incolla il link, scarica il Reel, fatto.\n\nLa maggior parte dei "gratuiti" iniziano a spingere un piano a pagamento dopo cinque o sei download. TikSaveHub no. Download illimitati, zero costi. L\'elaborazione gira lato server, quindi niente estensione del browser e niente app da scaricare.',
+ },
+ {
+  id: 'reels-account',
+  q: 'Mi serve un account Instagram per scaricare Reels?',
+  a: 'No. Basta che il Reel sia pubblicamente accessibile. Copia il link via Condividi, incollalo nello strumento e il download parte. I Reels privati o con restrizioni non funzionano, ma TikSaveHub te lo dice onestamente invece di mostrarti un errore incomprensibile.',
+ },
+ {
+  id: 'reels-legal',
+  q: 'È legale scaricare i Reels di Instagram?',
+  a: 'Salvare Reels per visione offline personale rientra in un\'area grigia che è generalmente tollerata. I Termini di Servizio di Instagram tecnicamente vietano il download fuori dall\'app, ma quella clausola mira ai bot che fanno scraping automatico e alla redistribuzione massiva, non a una persona che salva un Reel.\n\nL\'uso commerciale è un\'altra storia. Usare un Reel scaricato in una pubblicità, un video YouTube, un podcast o qualsiasi contenuto monetizzato richiede il permesso esplicito del creatore originale. Il copyright si applica al video stesso, non solo all\'audio. Dai credito al creatore, non monetizzare il suo lavoro senza permesso.',
+ },
+ {
+  id: 'reels-watermark',
+  q: 'Come rimuove TikSaveHub la filigrana di Instagram?',
+  a: 'TikSaveHub preleva il file video originale direttamente dal CDN di Instagram, la fonte pulita senza sovrapposizioni. Il tag flottante del nome utente che Instagram aggiunge durante la riproduzione è un effetto lato client, non incorporato nel file. Quindi l\'MP4 scaricato non ha filigrana di default.',
+ },
+ {
+  id: 'reels-private',
+  q: 'Posso scaricare Reels da account Instagram privati?',
+  a: 'No. TikSaveHub funziona solo con Reels pubblici. I contenuti privati o con restrizioni non sono accessibili tramite l\'API pubblica di Instagram. Nessun downloader legittimo può aggirare questo: è un muro tecnico, non una scelta di policy.',
+ },
+ {
+  id: 'reels-format',
+  q: 'In che formato saranno i Reels scaricati?',
+  a: 'MP4. Punto. Funziona su ogni dispositivo, ogni lettore multimediale, ogni sistema operativo. L\'estensione del file è .mp4. Niente conversione necessaria: Instagram serve i Reels come MP4 e TikSaveHub li passa invariate.',
+ },
+ {
+  id: 'reels-limits',
+  q: 'Ci sono limiti al download?',
+  a: 'Nessun limite giornaliero, nessuna quota, nessun tetto premium. Scarica quanti Reels vuoi. Ogni download processa in circa due o tre secondi, indipendentemente da quanti ne hai già fatti oggi.',
+ },
+ {
+  id: 'reels-why',
+  q: 'Perché usare TikSaveHub invece di altri scaricatori Reels?',
+  a: 'Guarda, la verità è che la maggior parte degli scaricatori Instagram Reels è frustrante da usare. IGram seppellisce i download sotto popup pubblicitari e a volte fallisce in silenzio sui Reels. ReelsDownloader limita la qualità a 720p e ricodifica il video. SaveFrom vuole la creazione dell\'account prima che qualcosa funzioni. Questi non sono rumor: sono schemi costanti che gli utenti riportano nei forum e nei siti di recensioni.\n\nTikSaveHub prende un approccio diverso: incolla un link, ottieni il Reel, fatto. Niente pubblicità che interrompono il flusso, niente muri di registrazione, niente limiti di qualità. Il download gira lato server, più veloce degli strumenti basati sul browser, e il risultato è un MP4 pulito che si riproduce ovunque. Non è complicato: è semplicemente onesto su cosa dovrebbe fare un downloader.',
+ },
 ];
 
 const faqJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') },
-  })),
+ '@context': 'https://schema.org',
+ '@type': 'FAQPage',
+ mainEntity: faqData.map((faq) => ({
+  '@type': 'Question',
+  name: faq.q,
+  acceptedAnswer: {
+   '@type': 'Answer',
+   text: faq.a.replace(/<[^>]*>/g, ''),
+  },
+ })),
+});
+
+const howToJsonLd = JSON.stringify({
+ '@context': 'https://schema.org',
+ '@type': 'HowTo',
+ name: 'Come scaricare Instagram Reels senza filigrana',
+ description: 'Guida passo-passo per scaricare Instagram Reels in qualità HD senza filigrana usando TikSaveHub.',
+ totalTime: 'PT2M',
+ step: [
+  {
+   '@type': 'HowToStep',
+   name: 'Copia il link del Reel Instagram',
+   text: 'Apri l\'app Instagram, trova il Reel che vuoi salvare, tocca l\'icona di condivisione e seleziona Copia Link.',
+   position: 1,
+  },
+  {
+   '@type': 'HowToStep',
+   name: 'Incolla il link in TikSaveHub',
+   text: 'Visita TikSaveHub.com e incolla il link del Reel copiato nel campo di download.',
+   position: 2,
+  },
+  {
+   '@type': 'HowToStep',
+   name: 'Scarica il video HD',
+   text: 'Clicca il pulsante Scarica e salva il file MP4 pulito sul tuo dispositivo.',
+   position: 3,
+  },
+ ],
+ tool: {
+  '@type': 'HowToTool',
+  name: 'TikSaveHub',
+ },
+});
+
+const combinedJsonLd = JSON.stringify({
+ '@context': 'https://schema.org',
+ '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
 });
 ---
 
 <Layout
-  title="Scarica Instagram Reels Senza Filigrana | TikSaveHub"
-  description="Scarica Instagram Reels senza filigrana in qualità HD. Gratis, veloce e senza login. Salva Reels come MP4 su iPhone, Android e PC."
-  keywords="instagram reels downloader, scaricare reels instagram, reels senza filigrana"
-  canonical="/instagram-reels-downloader-without-watermark"
-  ogImage="/og-downloader.png"
-  ogType="website"
-  platform="instagram"
-  jsonLd={faqJsonLd}
-  appName="TikSaveHub — Instagram Reels Downloader"
-  lang="it"
+ title="Instagram Reels Downloader Senza Filigrana -- Gratis HD | TikSaveHub"
+ description="Scarica Instagram Reels senza filigrana in qualità HD 1080p. Gratis, veloce, senza registrazione. Funziona su iPhone, Android e PC."
+ keywords="instagram reels downloader, scaricare reels instagram, reels senza filigrana, salvare reels instagram, download video reels instagram, reels downloader HD"
+ canonical="/it/instagram-reels-downloader-without-watermark"
+ ogImage="/og-downloader.png"
+ ogType="website"
+ platform="instagram"
+ jsonLd={combinedJsonLd}
+ lang="it"
+ appName="TikSaveHub -- Instagram Reels Downloader"
 >
-  <section class="dl-hero" aria-labelledby="dl-hero-headline">
-    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
-    <div class="dl-hero-inner container-page">
-      <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> Gratis — Senza filigrana — HD</span></div>
-      <h1 id="dl-hero-headline" class="dl-hero-headline">Instagram Reels Downloader</h1>
-      <p class="dl-hero-sub text-body-lg">Scarica Reels Instagram senza filigrana in qualit— HD. Gratis e veloce.</p>
-      <div class="dl-hero-form" id="download-tool"><InstagramDownloadForm mode="reels" /></div>
-      <div class="dl-hero-trust">
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100% Gratis</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Senza filigrana</span>
-        <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Qualit— HD</span>
-      </div>
+ <!-- JSON-LD Structured Data -->
+ <script is:inline type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+   { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com/it" },
+   { "@type": "ListItem", "position": 2, "name": "Instagram Reels Downloader", "item": "https://tiksavehub.com/it/instagram-reels-downloader-without-watermark" }
+  ]
+ })} />
+
+ <!-- Hero Section -->
+ <section class="dl-hero" aria-labelledby="dl-hero-headline">
+  <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+  <div class="dl-hero-inner container-page">
+   <!-- Breadcrumb -->
+   <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+    <ol class="breadcrumb-list">
+     <li>
+      <a href="/it"><span>Home</span></a>
+     </li>
+     <li aria-current="page">
+      <span>Instagram Reels Downloader</span>
+     </li>
+    </ol>
+   </nav>
+
+   <div class="dl-badge-row">
+    <span class="badge-pill dl-badge">
+     <span class="badge-dot" aria-hidden="true"></span>
+     Gratis. Senza filigrana. Reels HD
+    </span>
+   </div>
+
+   <h1 id="dl-hero-headline" class="dl-hero-headline">
+    Instagram Reels Downloader Senza Filigrana. Salva Reels HD in Secondi
+   </h1>
+
+   <p class="dl-hero-subline headline-gradient">
+    Salva qualsiasi Reel di Instagram in HD. Senza filigrana. Senza registrazione.
+   </p>
+
+   <p class="dl-hero-sub text-body-lg">
+    Scarica i Reels Instagram direttamente sul tuo dispositivo: MP4 pulito, fino a 1080p, senza sovrapposizioni. Basta incollare il link del Reel e salvarlo in pochi secondi.
+   </p>
+
+   <div class="dl-hero-form-wrap">
+    <InstagramDownloadForm type="reels" />
+   </div>
+
+   <div class="dl-hero-trust">
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     100% Gratis
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     Senza Filigrana
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     Qualità HD
+    </span>
+    <span class="trust-chip">
+     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+     Funziona su Mobile
+    </span>
+   </div>
+
+   <div class="dl-hero-share">
+    <SocialShare
+     url="/it/instagram-reels-downloader-without-watermark"
+     title="Instagram Reels Downloader Senza Filigrana | TikSaveHub"
+     description="Scarica Instagram Reels senza filigrana in HD. Gratis, veloce, senza registrazione."
+     image="/og-downloader.png"
+    />
+   </div>
+  </div>
+ </section>
+
+ <!-- Stats -->
+ <StatsSection platform="Instagram" />
+
+ <!-- Why This Tool Exists -->
+ <section class="seo-content-section" aria-labelledby="seo-about-headline">
+  <div class="seo-content-inner container-page">
+   <div class="seo-content-grid">
+    <div class="seo-content-main">
+     <span class="section-eyebrow text-caption-mono">Informazioni sullo strumento</span>
+     <h2 id="seo-about-headline" class="section-headline">
+      Perché esiste questo strumento.
+     </h2>
+
+     <div class="seo-article">
+      <p>
+       Instagram non permette a nessuno di salvare i Reels direttamente dall\'app. L\'opzione "Salva" integrata funziona per i tuoi bozze, ma scaricare il Reel di qualcun altro? Non succede. L\'app mostra un foglio di condivisione, non un pulsante di download. E l\'alternativa della registrazione dello schermo produce un file con la filigrana del nome utente del creatore che fluttua sopra il video.
+      </p>
+
+      <p>
+       TikSaveHub prende un approccio diverso. Incolla il link di un Reel, ottieni un MP4 pulito. È tutta l\'interazione. Lo strumento preleva il file video originale dai server di Instagram, lo stesso file che il creatore ha caricato, senza alcuna sovrapposizione, e lo serve direttamente. Due o tre secondi, dall\'inizio alla fine. Niente app da installare, niente account da creare, niente perdita di qualità durante il fetch.
+      </p>
+
+      <p>
+       La verità è che la qualità dei Reels dipende da Instagram. Instagram compressa i video durante l\'upload e la risoluzione massima dipende da cosa il dispositivo del creatore ha catturato. TikSaveHub non può magicamente portare un Reel a 720p a 1080p: nessuno può. Ma il processo di fetch è lossless. Quello che Instagram ha è quello che viene salvato, allo stesso bitrate, stessa risoluzione, stesso frame rate. Il risultato è identico a ciò che viene riprodotto nell\'app Instagram. La maggior parte dei downloader ricodifica a un bitrate più basso e lo chiama "HD". Questo no.
+      </p>
+
+      <p>
+       Lo strumento funziona su qualsiasi dispositivo con un browser: iPhone, Android, Windows, Mac, Linux. Niente app da installare, niente estensione del browser da configurare. Il download gila lato server, quindi la potenza di elaborazione del dispositivo non conta. Anche un telefono di cinque anni lo gestisce alla stessa velocità di un portatile nuovo.
+      </p>
+
+      <p>
+       La privacy conta anche. TikSaveHub non chiede un indirizzo email, non memorizza la cronologia dei download e non traccia il comportamento di navigazione. L\'unica cosa che finisce sul dispositivo è il file MP4 finale. E a differenza dei competitor che introducono silenziosamente tier a pagamento dopo qualche download, TikSaveHub resta gratuito senza limiti d\'uso.
+      </p>
+
+      <p>
+       Un\'onesta limitazione: questo strumento funziona solo con Reels pubblici. I contenuti privati o con restrizioni non sono accessibili tramite l\'API pubblica di Instagram. Nessun downloader legittimo può aggirare questo: è un muro tecnico, non una scelta di policy. Se il Reel è pubblico, il download funziona. Se è privato, non funziona.
+      </p>
+
+      <p>
+       Pronto a provarlo? Incolla il link di un Reel nel campo qui sopra e scarica il video in pochi secondi. Per i video Instagram normali, non Reels, lo <a href="/it/instagram-video-downloader-without-watermark">scaricatore di video Instagram</a> fa al caso tuo. Ti serve la traccia audio? Lo <a href="/it/instagram-audio-downloader">scaricatore audio Instagram</a> estrae il suono come MP3. Le Story scadono dopo 24 ore: salvale prima che scompaiano con lo <a href="/it/instagram-story-downloader-without-watermark">scaricatore di Story Instagram</a>. Cerchi Facebook Reels? Il <a href="/it/facebook-reels-downloader">scaricatore Facebook Reels</a> funziona allo stesso modo. Video TikTok? Il <a href="/it/tiktok-video-downloader-without-watermark">scaricatore video TikTok</a> li gestisce senza filigrana.
+      </p>
+
+      <figure class="tool-screenshot">
+        <img src="/images/instagram-reels/instagram-reels-hero.webp" alt="Interfaccia di TikSaveHub per scaricare Instagram Reels con campo di input e opzioni download HD e SD" width="1200" height="675" loading="eager" />
+        <figcaption>Incolla il link di un Reel Instagram e ottieni opzioni download HD istantaneamente</figcaption>
+      </figure>
+     </div>
     </div>
-  </section>
 
-  <StatsSection stats={[ { value: '100% Gratuito', label: 'Scarica Instagram Reels istantaneamente senza filigrana', icon: 'download' }, { value: 'Senza Registrazione', label: 'Funziona su qualsiasi dispositivo, da qualsiasi luogo', icon: 'globe' }, { value: 'Qualità HD', label: 'Risoluzione originale, senza filigrana, senza login', icon: 'star' } ]} />
+    <aside class="seo-content-sidebar">
+     <div class="seo-sidebar-card">
+      <h3 class="seo-sidebar-title">Link Rapidi</h3>
+      <ul class="seo-sidebar-list">
+       <li><a href="/it/tiktok-video-downloader-without-watermark">Scaricatore Video TikTok</a></li>
+       <li><a href="/it/tiktok-to-mp3">TikTok a MP3</a></li>
+       <li><a href="/it/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
+       <li><a href="/it/instagram-video-downloader-without-watermark">Scaricatore Video Instagram</a></li>
+       <li><a href="/it/instagram-story-downloader-without-watermark">Scaricatore Story Instagram</a></li>
+       <li><a href="/it/instagram-audio-downloader">Scaricatore Audio Instagram</a></li>
+       <li><a href="/it/facebook-video-downloader">Scaricatore Video Facebook</a></li>
+       <li><a href="/it/facebook-reels-downloader">Scaricatore Facebook Reels</a></li>
+       <li><a href="/it/facebook-story-downloader">Scaricatore Story Facebook</a></li>
+       <li><a href="/it/facebook-to-mp3">Facebook a MP3</a></li>
+       <li><a href="/it/facebook-photo-downloader">Scaricatore Foto Facebook</a></li>
+       <li><a href="/it/snapchat-downloader">Scaricatore Snapchat</a></li>
+       <li><a href="/it/snapchat-story-downloader">Scaricatore Story Snapchat</a></li>
+       <li><a href="/it/snapchat-to-mp3">Snapchat a MP3</a></li>
+       <li><a href="/it/x-video-downloader">Scaricatore Video X/Twitter</a></li>
+      </ul>
+     </div>
 
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
-    <div class="dl-faq-inner container-page">
-      <span class="section-eyebrow text-caption-mono">Domande Frequenti</span>
-      <h2 id="dl-faq-headline" class="section-headline">Domande sull'Instagram Reels Downloader</h2>
-      <div class="dl-faq-grid">
-        {faqData.map((faq) => (
-          <details class="dl-faq-item"><summary class="dl-faq-q">{faq.q}</summary><p class="dl-faq-a">{faq.a}</p></details>
-        ))}
-      </div>
+     <div class="seo-sidebar-card">
+      <h3 class="seo-sidebar-title">Link Supportati</h3>
+      <ul class="seo-sidebar-list seo-sidebar-mono">
+       <li>instagram.com/reel/...</li>
+       <li>instagram.com/reels/...</li>
+       <li>instagram.com/share/...</li>
+      </ul>
+     </div>
+
+     <div class="seo-sidebar-card seo-sidebar-highlight">
+      <h3 class="seo-sidebar-title">Inizia a Scaricare</h3>
+      <p class="seo-sidebar-text">Incolla il link di un Reel Instagram qui sopra e ottieni il tuo Reel in pochi secondi.</p>
+      <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Prova Ora</a>
+     </div>
+    </aside>
+   </div>
+  </div>
+ </section>
+
+ <!-- How It Works -->
+ <section id="how-it-works" class="dl-steps-section" aria-labelledby="dl-steps-headline">
+  <div class="dl-steps-inner container-page">
+   <div class="dl-steps-header">
+    <span class="section-eyebrow text-caption-mono">Guida Passo-Passo</span>
+    <h2 id="dl-steps-headline" class="section-headline">
+     Come scaricare i Reels di Instagram.
+    </h2>
+    <p class="section-sub text-body-lg">
+     Tre passaggi. Nessuna competenza tecnica richiesta.
+    </p>
+   </div>
+
+   <div class="dl-steps-grid">
+    <article class="dl-step-card">
+     <div class="dl-step-num text-caption-mono" aria-hidden="true">01</div>
+     <div class="dl-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+     </div>
+     <h3 class="dl-step-title">Copia il link del Reel Instagram</h3>
+     <p class="dl-step-body">
+      Apri l\'app Instagram o il sito web, trova il Reel che vuoi salvare. Tocca Condividi, premi "Copia Link". Funziona su qualsiasi Reel pubblico: dalla pagina Esplora, dal profilo del creatore, dal tab Reels, da un link condiviso. Due secondi e hai finito.
+     </p>
+    </article>
+
+    <article class="dl-step-card">
+     <div class="dl-step-num text-caption-mono" aria-hidden="true">02</div>
+     <div class="dl-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+     </div>
+     <h3 class="dl-step-title">Incolla il link in TikSaveHub</h3>
+     <p class="dl-step-body">
+      Incolla il link copiato nel campo di input qui sopra. L\'elaborazione parte subito: due o tre secondi con una connessione decente, forse cinque su dati mobili più lenti.
+     </p>
+    </article>
+
+    <article class="dl-step-card">
+     <div class="dl-step-num text-caption-mono" aria-hidden="true">03</div>
+     <div class="dl-step-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+     </div>
+     <h3 class="dl-step-title">Scarica il Reel HD</h3>
+     <p class="dl-step-body">
+      Premi "Scarica" per prendere il file MP4. Si salva direttamente sul dispositivo: pronto per la visione offline, la condivisione su altre piattaforme o la modifica nel tuo software preferito. Niente passaggi extra.
+     </p>
+    </article>
+   </div>
+
+   <figure class="tool-screenshot">
+     <img src="/images/instagram-reels/instagram-reels-steps.webp" alt="Guida in tre passaggi che mostra come copiare il link di un Reel Instagram, incollarlo in TikSaveHub e scaricare il video HD" width="1000" height="800" loading="lazy" />
+     <figcaption>Il flusso di download completo in 3 passaggi</figcaption>
+   </figure>
+  </div>
+ </section>
+
+ <!-- Features -->
+ <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
+  <div class="dl-features-inner container-page">
+   <div class="dl-features-header">
+    <span class="section-eyebrow text-caption-mono">Caratteristiche</span>
+    <h2 id="dl-features-headline" class="section-headline">
+     Cosa rende TikSaveHub diverso.
+    </h2>
+   </div>
+
+   <div class="dl-features-grid">
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+     </div>
+     <h3 class="dl-feature-title">Nessuna Filigrana</h3>
+     <p class="dl-feature-body">
+      MP4 pulito ogni volta: niente nome utente flottante, niente logo sovrapposto. Condividi ovunque senza confusione visiva.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+     </div>
+     <h3 class="dl-feature-title">Qualità HD Fino a 1080p</h3>
+     <p class="dl-feature-body">
+      Prende la risoluzione più alta che Instagram serve, fino a 1080x1920. Niente ricodifica, niente compressione. Il Reel che scarichi è esattamente quello che il creatore ha caricato.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+     </div>
+     <h3 class="dl-feature-title">Elaborazione Lato Server</h3>
+     <p class="dl-feature-body">
+      I download girano sul server, non nel browser. Due o tre secondi indipendentemente dal dispositivo. Niente attesa, niente code.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-develop" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+     </div>
+     <h3 class="dl-feature-title">Funziona su Tutti i Dispositivi</h3>
+     <p class="dl-feature-body">
+      iPhone, Android, tablet, desktop: se ha un browser, TikSaveHub funziona. Niente installazione di app, niente estensioni, niente problemi di compatibilità.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-preview" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+     </div>
+     <h3 class="dl-feature-title">Nessuna Registrazione</h3>
+     <p class="dl-feature-body">
+      Niente email, niente password, niente creazione account. Basta incollare il link e scaricare. La privacy conta: niente dati personali vengono memorizzati.
+     </p>
+    </article>
+
+    <article class="dl-feature-card">
+     <div class="dl-feature-icon feat-accent-ship" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+     </div>
+     <h3 class="dl-feature-title">Download Illimitati</h3>
+     <p class="dl-feature-body">
+      Niente limiti giornalieri, niente tetti, niente tier premium. Scarica quanti Reels vuoi. Ogni giorno, per sempre. Gratis.
+     </p>
+    </article>
+   </div>
+
+   <figure class="tool-screenshot">
+     <img src="/images/instagram-reels/instagram-reels-devices.webp" alt="TikSaveHub per scaricare Instagram Reels che funziona su iPhone, Android e browser desktop" width="1200" height="600" loading="lazy" />
+     <figcaption>Funziona allo stesso modo su telefono, tablet e desktop</figcaption>
+   </figure>
+  </div>
+ </section>
+
+ <!-- Use Cases -->
+ <section class="dl-usecases-section" aria-labelledby="dl-usecases-headline">
+  <div class="dl-usecases-inner container-page">
+   <div class="dl-usecases-header">
+    <span class="section-eyebrow text-caption-mono">Casi d\'Uso</span>
+    <h2 id="dl-usecases-headline" class="section-headline">
+     Chi usa TikSaveHub?
+    </h2>
+   </div>
+
+   <div class="dl-usecases-grid">
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">Creator di Contenuti</h3>
+     <p class="dl-usecase-body">
+      Fai un backup dei tuoi Reels prima che l\'algoritmo di Instagram li seppellisca. Modificali in software esterni, riutilizzali su TikTok, YouTube Shorts o altre piattaforme. Tieni i tuoi migliori lavori al sicuro e accessibili alle tue condizioni.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">Social Media Manager</h3>
+     <p class="dl-usecase-body">
+      Gestisci account di brand? Salva i Reels di tendenza per ispirazione, analisi della concorrenza o calendari editoriali. Scarica e organizza i Reels di riferimento in una cartella, molto più utile che metterli nei preferiti di Instagram dove potrebbero sparire.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">Marketer</h3>
+     <p class="dl-usecase-body">
+      Raccogli contenuti virali per l\'ispirazione delle campagne? Scarica Reels che dimostrano uno stile di modifica, una transizione o un formato di contenuto specifico. Fai riferimento durante le riunioni di strategia invece di cercarli di nuovo nel feed Esplora.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">Studenti ed Educatori</h3>
+     <p class="dl-usecase-body">
+      I Reels educativi, lezioni di lingua, spiegazioni di storia, breakdown scientifici, funzionano meglio come video offline per studiare in mobilità. Scarica, trasferisci su un telefono, guarda durante il viaggio. Meglio che contare sul Wi-Fi del campus che va e viene.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">Spettatori Occasionali</h3>
+     <p class="dl-usecase-body">
+      Hai trovato un Reel che ti piace ma non hai tempo per guardarlo adesso? Salvalo per dopo. Scaricalo per guardarlo offline durante il viaggio, in treno o ovunque senza accesso a internet. Niente flusso complicato: incolla, scarica, fatto.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">Brand che Riutilizzano Contenuti</h3>
+     <p class="dl-usecase-body">
+      Trasforma un Reel Instagram in un TikTok, uno YouTube Short o un clip di Twitter. Scarica l\'MP4 pulito senza filigrana, modificalo per la piattaforma di destinazione e pubblica. Stesso contenuto, pubblico diverso, massima portata.
+     </p>
+    </article>
+   </div>
+  </div>
+ </section>
+
+ <!-- Comparison -->
+ <section class="dl-steps-section" aria-labelledby="dl-comparison-headline">
+  <div class="dl-steps-inner container-page">
+   <div class="dl-steps-header">
+    <span class="section-eyebrow text-caption-mono">Confronto</span>
+    <h2 id="dl-comparison-headline" class="section-headline">
+     TikSaveHub rispetto ad altri scaricatori Reels.
+    </h2>
+    <p class="section-sub text-body-lg">
+     Come si confronta con la concorrenza.
+    </p>
+   </div>
+
+   <div style="width:100%;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:var(--text-body-sm);text-align:left;">
+     <thead>
+      <tr style="border-bottom:2px solid var(--color-hairline-strong);">
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">Caratteristica</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">TikSaveHub</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">iGram</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">ReelsDownloader</th>
+       <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SaveFrom</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Qualità video</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Fino a 1080p</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Fino a 720p</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Limitato a 720p</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Variabile</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Filigrana</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Nessuna</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Nessuna</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Nessuna</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Nessuna</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Velocità download</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">~2-3 secondi</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">~5-8 secondi</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">~4-6 secondi</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">~5-7 secondi</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Pubblicità</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Nessuna</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Pesante (popup)</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Moderata</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Pesante</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--color-hairline);">
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Registrazione richiesta</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">No</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Sì (alcune funzionalità)</td>
+      </tr>
+      <tr>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Limiti giornalieri</td>
+       <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Illimitati</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Limiti segnalati</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Limiti segnalati</td>
+       <td style="padding:var(--spacing-md);color:var(--color-body);">Tier gratuito limitato</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+
+   <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;line-height:1.7;">
+    Parliamoci chiaro: le pubblicità popup di iGram sono genuinamente fastidiose, tre livelli profondi, e una è una finta notifica di "download completato". ReelsDownloader ricodifica silenziosamente a 720p anche quando la fonte è a 1080p. SaveFrom vuole la creazione dell\'account prima che qualcosa funzioni. Questi non sono rumor: sono schemi costanti che gli utenti riportano nei forum. TikSaveHub era l\'unico strumento in questo confronto che resta gratuito, senza pubblicità e senza limiti.
+   </p>
+
+   <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-md) 0 0 0;line-height:1.7;">
+    Funziona anche per <a href="/it/tiktok-video-downloader-without-watermark" style="color:var(--color-link);">video TikTok</a>, <a href="/it/facebook-reels-downloader" style="color:var(--color-link);">Facebook Reels</a> e <a href="/it/snapchat-downloader" style="color:var(--color-link);">video Snapchat</a>.
+   </p>
+  </div>
+ </section>
+
+ <!-- Troubleshooting -->
+ <section class="dl-usecases-section" aria-labelledby="dl-troubleshoot-headline">
+  <div class="dl-usecases-inner container-page">
+   <div class="dl-usecases-header">
+    <span class="section-eyebrow text-caption-mono">Risoluzione Problemi</span>
+    <h2 id="dl-troubleshoot-headline" class="section-headline">
+     Problemi comuni e soluzioni.
+    </h2>
+   </div>
+
+   <div class="dl-usecases-grid">
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"Il Reel non si scarica."</h3>
+     <p class="dl-usecase-body">
+      Nove volte su dieci il link è sbagliato. Qualcuno ha copiato un link da un commento invece che dal Reel vero e proprio, o l\'URL si è rovinato durante la copia. Torna su Instagram, apri il Reel stesso, tocca Condividi, Copia Link e incolla quello fresco. Se il Reel è stato cancellato dal creatore, nessun downloader può recuperarlo: non TikSaveHub, non nessun altro.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"La qualità è bassa."</h3>
+     <p class="dl-usecase-body">
+      La qualità dipende da cosa il creatore ha caricato. La maggior parte dei Reels è filmata con telefoni a 1080p, ma alcuni creator caricano a 720p o meno. TikSaveHub prende la risoluzione che Instagram ha: non può migliorare quello che è già stato compresso. Se il Reel appare sfocato su Instagram, sarà uguale una volta scaricato. Questo è un problema della qualità della fonte, non una limitazione dello strumento.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"Il link non funziona."</h3>
+     <p class="dl-usecase-body">
+      TikSaveHub gestisce tutti i formati standard di link Reel Instagram: instagram.com/reel/..., instagram.com/reels/..., instagram.com/share/..., e i link abbreviati dall\'app. Le pagine di profilo, le pagine hashtag e i risultati di ricerca non sono scaricabili: non puntano a un Reel specifico. Il link deve contenere /reel/, /reels/ o /share/.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"Il download ci mette troppo."</h3>
+     <p class="dl-usecase-body">
+      Il download in sé è veloce, meno di tre secondi. Il collo di bottiglia è il trasferimento del file. Un Reel tipico è di 5 a 15 MB come MP4. Su una connessione a 10 Mbps, ci vogliono meno di dodici secondi. Su dati mobili più lenti, ci vuole di più. Passa al Wi-Fi se va troppo piano.
+     </p>
+    </article>
+
+    <article class="dl-usecase-card">
+     <h3 class="dl-usecase-title">"La filigrana è ancora lì."</h3>
+     <p class="dl-usecase-body">
+      Con TikSaveHub non dovrebbe succedere. Se vedi una filigrana, probabilmente stai usando un altro strumento: alcuni downloader aggiungono la loro firma. TikSaveHub prende il file originale dal CDN di Instagram senza sovrapposizioni. Prova a svuotare la cache del browser e a scaricare di nuovo.
+     </p>
+    </article>
+   </div>
+
+   <figure class="tool-screenshot">
+     <img src="/images/instagram-reels/instagram-reels-problems.webp" alt="Infografica che mostra 5 problemi comuni degli scaricatori Instagram Reels e le relative soluzioni" width="1200" height="675" loading="lazy" />
+     <figcaption>Riferimento rapido: 5 problemi comuni e come risolverli</figcaption>
+   </figure>
+  </div>
+ </section>
+
+ <!-- Legal -->
+ <section class="dl-steps-section" aria-labelledby="dl-legal-headline">
+  <div class="dl-steps-inner container-page">
+   <div class="dl-steps-header">
+    <span class="section-eyebrow text-caption-mono">Legale</span>
+    <h2 id="dl-legal-headline" class="section-headline">
+     È legale scaricare i Reels di Instagram?
+    </h2>
+   </div>
+
+   <div style="max-width:680px;width:100%;display:flex;flex-direction:column;gap:var(--spacing-lg);text-align:left;">
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">L\'uso personale è generalmente accettabile.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      Salvare Reels per la visione offline, tenere un clip preferito o un riferimento personale rientra nell\'uso personale ed è generalmente tollerato. I Termini di Servizio di Instagram tecnicamente vietano il download fuori dall\'app, ma quella clausola mira ai bot che fanno scraping automatico e alla redistribuzione massiva, non a una persona che salva un Reel. La realtà legale è più sfumata di quanto il testo dei ToS suggerisce.
+     </p>
     </div>
-  </section>
 
-  <SocialShare url="/instagram-reels-downloader-without-watermark" title="Instagram Reels Downloader — Senza Filigrana HD" description="Scarica Reels Instagram senza filigrana in qualit— HD." />
-
-  <!-- Related Tools -->
-  <section class="related-tools-section">
-    <div class="container-page" style="max-width:900px;margin-inline:auto;padding:var(--spacing-3xl) var(--spacing-lg);">
-      <h2 class="related-tools-headline">Altri Strumenti</h2>
-      <div class="related-tools-grid">
-            <a href="/it/tiktok-video-downloader-without-watermark" class="related-tool-link">TikTok Video Downloader</a>
-            <a href="/it/tiktok-to-mp3" class="related-tool-link">TikTok a MP3</a>
-            <a href="/it/facebook-video-downloader" class="related-tool-link">Facebook Video Downloader</a>
-            <a href="/it/facebook-reels-downloader" class="related-tool-link">Facebook Reels Downloader</a>
-      </div>
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">L\'uso commerciale richiede permesso.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      Usare un Reel scaricato in una pubblicità, una compilation YouTube, un podcast o qualsiasi contenuto monetizzato richiede il permesso esplicito del creatore originale. Il copyright si applica al video stesso, non solo all\'audio. Ottieni un permesso scritto o rischia un takedown.
+     </p>
     </div>
-  </section>
+
+    <div style="padding:var(--spacing-xl);border-radius:var(--radius-lg);border:1px solid var(--color-hairline);background-color:var(--color-canvas);">
+     <h3 style="font-size:var(--text-display-sm);font-weight:600;letter-spacing:-0.6px;color:var(--color-ink);margin:0 0 var(--spacing-sm) 0;">Dai credito al creatore.</h3>
+     <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+      Anche per la condivisione personale, dare credito al creatore originale è la cosa giusta da fare. Tagga il creatore, menziona il suo nome utente, link al post originale. Cinque secondi e dai il merito a chi lo merita.
+     </p>
+    </div>
+
+    <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:var(--spacing-md) 0 0 0;font-style:italic;">
+     Questo articolo ha scopo informativo e non costituisce consulenza legale. Consulta un avvocato qualificato per la tua situazione specifica.
+    </p>
+
+    <p style="font-size:var(--text-body-sm);color:var(--color-body);line-height:1.65;margin:0;">
+     Riferimenti esterni: <a href="https://help.instagram.com/599049842998320" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">Linee Guida della Community di Instagram</a> . <a href="https://www.copyright.gov/fair-use/" target="_blank" rel="noopener noreferrer" style="color:var(--color-link);">U.S. Copyright Office -- Fair Use</a>
+    </p>
+   </div>
+  </div>
+ </section>
+
+ <!-- FAQ -->
+ <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+  <div class="dl-faq-inner container-page">
+   <div class="dl-faq-header">
+    <span class="section-eyebrow text-caption-mono">FAQ</span>
+    <h2 id="dl-faq-headline" class="section-headline">
+     Domande frequenti.
+    </h2>
+   </div>
+
+   <div class="dl-faq-list" role="list">
+    {faqData.map((faq) => (
+     <div class="dl-faq-item" id={faq.id} role="listitem">
+      <button
+       class="dl-faq-trigger"
+       id={`${faq.id}-btn`}
+       aria-expanded="false"
+       aria-controls={`${faq.id}-panel`}
+       type="button"
+      >
+       <span class="dl-faq-q">{faq.q}</span>
+       <span class="dl-faq-chevron" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+       </span>
+      </button>
+      <div
+       id={`${faq.id}-panel`}
+       class="dl-faq-panel"
+       role="region"
+       aria-labelledby={`${faq.id}-btn`}
+       hidden
+      >
+       <p class="dl-faq-a" set:html={faq.a}></p>
+      </div>
+     </div>
+    ))}
+   </div>
+  </div>
+ </section>
+
+ <!-- CTA Band -->
+ <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
+  <div class="dl-cta-inner container-page">
+   <h2 id="dl-cta-headline" class="dl-cta-headline">
+    Pronto a scaricare Reels?
+   </h2>
+   <p class="dl-cta-sub">
+    Incolla il link di un Reel Instagram qui sopra e ottieni il tuo Reel in pochi secondi. Niente account necessario.
+   </p>
+   <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
+    Inizia a Scaricare
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+   </a>
+  </div>
+ </section>
+
+ <figure class="tool-screenshot">
+  <img src="/images/instagram-reels/instagram-reels-final.webp" alt="TikSaveHub per scaricare Instagram Reels che funziona su telefono, tablet e portatile" width="1200" height="675" loading="lazy" />
+  <figcaption>Un solo strumento, ogni dispositivo: incolla un link e scarica</figcaption>
+ </figure>
+
+ <!-- Internal Links Section -->
+ <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+  <div class="dl-internal-inner container-page">
+   <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+    Scopri TikSaveHub.
+   </h2>
+   <div class="dl-internal-grid">
+    <a href="/it/instagram-video-downloader-without-watermark" class="dl-internal-card">
+     <span class="dl-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+     </span>
+     <span class="dl-internal-title">Scaricatore Video Instagram</span>
+     <span class="dl-internal-desc">Salva video e Reels Instagram, stesso strumento, MP4 pulito.</span>
+     <span class="dl-internal-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="/it/instagram-audio-downloader" class="dl-internal-card">
+     <span class="dl-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+     </span>
+     <span class="dl-internal-title">Scaricatore Audio Instagram</span>
+     <span class="dl-internal-desc">Estrai l\'audio da Reels e video come MP3.</span>
+     <span class="dl-internal-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="/it/instagram-story-downloader-without-watermark" class="dl-internal-card">
+     <span class="dl-internal-icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+     </span>
+     <span class="dl-internal-title">Scaricatore Story Instagram</span>
+     <span class="dl-internal-desc">Salva qualsiasi Story prima che scada dopo 24 ore.</span>
+     <span class="dl-internal-arrow" aria-hidden="true">→</span>
+    </a>
+   </div>
+  </div>
+ </section>
 
 </Layout>
 
 <style>
-  .dl-hero { position: relative; padding: var(--spacing-5xl) var(--spacing-lg) var(--spacing-4xl); overflow: hidden; text-align: center; }
-  .dl-hero-gradient { position: absolute; inset: 0; z-index: 0; }
-  .dl-hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); max-width: 800px; margin-inline: auto; }
-  .dl-badge-row { display: flex; justify-content: center; }
-  .dl-badge { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.25); color: #7c3aed; }
-  .dl-hero-headline { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -2px; color: var(--color-ink); margin: 0; }
-  .dl-hero-sub { max-width: 600px; text-align: center; margin: 0; }
-  .dl-hero-form { width: 100%; max-width: 640px; }
-  .dl-hero-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-sm); }
-  .dl-faq-section { padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-faq-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-3xl); }
-  .dl-faq-grid { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; max-width: 700px; }
-  .dl-faq-item { border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); overflow: hidden; }
-  .dl-faq-q { padding: var(--spacing-lg) var(--spacing-xl); font-size: 16px; font-weight: 600; color: var(--color-ink); cursor: pointer; list-style: none; }
-  .dl-faq-q::-webkit-details-marker { display: none; }
-  .dl-faq-a { padding: 0 var(--spacing-xl) var(--spacing-lg); font-size: 15px; color: var(--color-body); line-height: 1.7; margin: 0; }
-  .section-eyebrow { color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; }
-  .section-headline { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; color: var(--color-ink); margin: 0; text-align: center; }
-  @media (max-width: 600px) { .dl-hero-headline { font-size: 30px; } .section-headline { font-size: 24px; } }
+ .tool-screenshot {
+  display: block;
+  margin: 2rem auto;
+  max-width: 1100px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+ }
 
-  .related-tools-section { padding: var(--spacing-2xl) 0; }
-  .related-tools-headline { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-ink); margin: 0 0 var(--spacing-lg); text-align: center; }
-  .related-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); }
-  .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-  .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
-  @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+ .tool-screenshot figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+ }
+
+ @media (max-width: 768px) {
+  .tool-screenshot {
+   margin: 1.5rem auto;
+  }
+  .tool-screenshot figcaption {
+   font-size: 0.8rem;
+  }
+ }
+ /* ─── Hero ─── */
+ .dl-hero {
+  position: relative;
+  padding: var(--spacing-section) var(--spacing-lg) var(--spacing-5xl);
+  overflow: hidden;
+  background-color: var(--color-canvas);
+  text-align: center;
+ }
+
+ .dl-hero-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+ }
+
+ .dl-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+ }
+
+ /* Breadcrumb */
+ .dl-breadcrumb {
+  margin-bottom: var(--spacing-sm);
+ }
+
+ .breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-mute);
+ }
+
+ .breadcrumb-list li + li::before {
+  content: '/';
+  margin-right: 6px;
+  color: var(--color-hairline-strong);
+ }
+
+ .breadcrumb-list a {
+  color: var(--color-body);
+  text-decoration: none;
+  transition: color 0.15s ease;
+ }
+
+ .breadcrumb-list a:hover {
+  color: var(--color-ink);
+ }
+
+ .dl-badge-row {
+  display: flex;
+  justify-content: center;
+ }
+
+ .dl-badge {
+  animation: fadeInUp 0.5s ease 0.1s both;
+ }
+
+ .badge-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+ }
+
+ .dl-hero-headline {
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  color: var(--color-ink);
+  margin: 0;
+  max-width: 700px;
+  animation: fadeInUp 0.5s ease 0.2s both;
+ }
+
+ .headline-gradient {
+  background: linear-gradient(
+   135deg,
+   var(--color-grad-develop-start) 0%,
+   var(--color-grad-preview-start) 40%,
+   var(--color-grad-preview-end) 70%,
+   var(--color-grad-ship-end) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+ }
+
+ .dl-hero-subline {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin: 0;
+  max-width: 560px;
+  animation: fadeInUp 0.5s ease 0.25s both;
+ }
+
+ .dl-hero-sub {
+  color: var(--color-body);
+  margin: 0;
+  max-width: 560px;
+  animation: fadeInUp 0.5s ease 0.3s both;
+ }
+
+ .dl-hero-form-wrap {
+  width: 100%;
+  max-width: 760px;
+  animation: fadeInUp 0.5s ease 0.4s both;
+ }
+
+ .dl-hero-trust {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.5s ease 0.5s both;
+ }
+
+ .dl-hero-share {
+  animation: fadeInUp 0.5s ease 0.55s both;
+ }
+
+ .trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--color-body);
+  padding: 0 var(--spacing-md);
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .trust-chip svg {
+  color: var(--color-cyan-deep);
+ }
+
+ .trust-chip:hover {
+  border-color: var(--color-hairline-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+ }
+
+ @media (hover: hover) {
+  .trust-chip:hover {
+   border-color: var(--color-hairline-strong);
+   transform: translateY(-2px);
+   box-shadow: 0 4px 12px -2px rgba(0, 124, 240, 0.12);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-hero {
+   padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl);
+  }
+
+  .dl-hero-headline {
+   font-size: clamp(22px, 5vw, 32px);
+   letter-spacing: -1px;
+  }
+
+  .trust-chip {
+   font-size: var(--text-caption);
+   height: 36px;
+   padding: 0 var(--spacing-sm);
+  }
+
+  .breadcrumb-list {
+   font-size: 11px;
+  }
+ }
+
+ /* ─── Content Section ─── */
+ .dl-content-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-content-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--spacing-3xl);
+  align-items: start;
+ }
+
+ .dl-content-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+ }
+
+ .dl-content-lead {
+  font-size: var(--text-body-lg);
+  color: var(--color-ink);
+  line-height: 1.7;
+  margin: 0;
+ }
+
+ .dl-content-body {
+  font-size: var(--text-body-md);
+  color: var(--color-body);
+  line-height: 1.7;
+  margin: 0;
+ }
+
+ .dl-content-card-wrap {
+  position: sticky;
+  top: 80px;
+ }
+
+ .dl-content-card {
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-content-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #007cf015, #00dfd820);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf025;
+  margin-bottom: var(--spacing-md);
+ }
+
+ .dl-content-card-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-md) 0;
+ }
+
+ .dl-content-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+ }
+
+ .dl-content-card-list li {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+ }
+
+ .dl-content-card-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-grad-develop-start), var(--color-cyan));
+ }
+
+ @media (max-width: 960px) {
+  .dl-content-grid {
+   grid-template-columns: 1fr;
+  }
+
+  .dl-content-card-wrap {
+   position: static;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-content-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Steps Section ─── */
+ .dl-steps-section {
+  background-color: var(--color-canvas);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-steps-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-steps-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .dl-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  width: 100%;
+ }
+
+ .dl-step-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .dl-step-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-step-num {
+  color: var(--color-mute);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+ }
+
+ .dl-step-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #007cf010, #00dfd818);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf020;
+ }
+
+ .dl-step-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0;
+ }
+
+ .dl-step-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+ }
+
+ @media (max-width: 960px) {
+  .dl-steps-grid {
+   grid-template-columns: 1fr;
+   max-width: 480px;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-steps-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Features Section ─── */
+ .dl-features-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-features-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-features-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .dl-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+ }
+
+ .dl-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background-color: var(--color-canvas);
+  box-shadow:
+   inset 0 0 0 1px #0000000a,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .dl-feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+   inset 0 0 0 1px #00000014,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ }
+
+ .feat-accent-develop {
+  background: linear-gradient(135deg, #007cf015, #00dfd820);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf025;
+ }
+
+ .feat-accent-preview {
+  background: linear-gradient(135deg, #7928ca15, #ff008020);
+  color: var(--color-grad-preview-start);
+  box-shadow: inset 0 0 0 1px #7928ca25;
+ }
+
+ .feat-accent-ship {
+  background: linear-gradient(135deg, #ff4d4d15, #f9cb2820);
+  color: var(--color-grad-ship-start);
+  box-shadow: inset 0 0 0 1px #ff4d4d25;
+ }
+
+ .dl-feature-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+ }
+
+ .dl-feature-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  margin: 0;
+  line-height: 1.6;
+ }
+
+ @media (max-width: 960px) {
+  .dl-features-grid {
+   grid-template-columns: repeat(2, 1fr);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-features-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .dl-features-grid {
+   grid-template-columns: 1fr;
+  }
+ }
+
+ /* ─── Use Cases Section ─── */
+ .dl-usecases-section {
+  background-color: var(--color-canvas);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-usecases-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .dl-usecases-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+ }
+
+ .dl-usecases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+ }
+
+ .dl-usecase-card {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+ }
+
+ .dl-usecase-card:hover {
+  border-color: var(--color-hairline-strong);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .dl-usecase-title {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-sm) 0;
+ }
+
+ .dl-usecase-body {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+ }
+
+ @media (max-width: 600px) {
+  .dl-usecases-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .dl-usecases-grid {
+   grid-template-columns: 1fr;
+  }
+ }
+
+ /* ─── FAQ Section ─── */
+ .dl-faq-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .dl-faq-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4xl);
+  max-width: 760px;
+  margin-inline: auto;
+ }
+
+ .dl-faq-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+ }
+
+ .dl-faq-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-canvas);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .dl-faq-item {
+  border-bottom: 1px solid var(--color-hairline);
+ }
+
+ .dl-faq-item:last-child {
+  border-bottom: none;
+ }
+
+ .dl-faq-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+  transition: background-color 0.15s ease;
+ }
+
+ .dl-faq-trigger:hover {
+  background-color: var(--color-canvas-soft);
+ }
+
+ .dl-faq-trigger[aria-expanded="true"] {
+  background-color: var(--color-canvas-soft);
+ }
+
+ .dl-faq-q {
+  font-size: var(--text-body-md);
+  font-weight: 500;
+  color: var(--color-ink);
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+  flex: 1;
+ }
+
+ .dl-faq-chevron {
+  flex-shrink: 0;
+  color: var(--color-mute);
+  display: flex;
+  align-items: center;
+  transition: transform 0.25s ease;
+ }
+
+ .dl-faq-trigger[aria-expanded="true"] .dl-faq-chevron {
+  transform: rotate(180deg);
+ }
+
+ .dl-faq-panel {
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
+  animation: fadeInUp 0.25s ease forwards;
+ }
+
+ .dl-faq-a {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.65;
+  margin: 0;
+  letter-spacing: -0.1px;
+ }
+
+ @media (max-width: 600px) {
+  .dl-faq-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .dl-faq-trigger {
+   padding: var(--spacing-md);
+   min-height: 48px;
+  }
+
+  .dl-faq-panel {
+   padding: 0 var(--spacing-md) var(--spacing-md);
+  }
+
+  .dl-faq-q {
+   font-size: var(--text-body-sm);
+  }
+ }
+
+ /* ─── CTA Band ─── */
+ .dl-cta-band {
+  background-color: var(--color-ink);
+  color: var(--color-on-primary);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+  text-align: center;
+ }
+
+ .dl-cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+ }
+
+ .dl-cta-headline {
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  letter-spacing: -1.28px;
+  color: var(--color-on-primary);
+  margin: 0;
+ }
+
+ .dl-cta-sub {
+  font-size: var(--text-body-lg);
+  color: color-mix(in srgb, var(--color-on-primary), transparent 40%);
+  margin: 0;
+  max-width: 480px;
+ }
+
+ .dl-cta-btn {
+  gap: 8px;
+  background-color: var(--color-canvas) !important;
+  color: var(--color-ink) !important;
+ }
+
+ .dl-cta-btn:hover {
+  background-color: var(--color-canvas-soft) !important;
+  transform: translateY(-2px);
+ }
+
+ @media (max-width: 600px) {
+  .dl-cta-band {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── Shared Section Styles ─── */
+ .section-eyebrow {
+  color: var(--color-mute);
+ }
+
+ .section-headline {
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -1.28px;
+  color: var(--color-ink);
+  margin: 0;
+  max-width: 540px;
+ }
+
+ .section-sub {
+  color: var(--color-body);
+  margin: 0;
+  max-width: 480px;
+ }
+
+ /* ─── Internal Links Section ─── */
+ .dl-internal-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+  border-top: 1px solid var(--color-hairline);
+ }
+
+ .dl-internal-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3xl);
+ }
+
+ .dl-internal-headline {
+  text-align: center;
+  max-width: 400px;
+ }
+
+ .dl-internal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  width: 100%;
+ }
+
+ .dl-internal-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-canvas);
+  text-decoration: none;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+ }
+
+ .dl-internal-card:hover {
+  border-color: var(--color-hairline-strong);
+  transform: translateY(-3px);
+  box-shadow:
+   inset 0 0 0 1px #00000008,
+   0px 2px 2px #0000000a,
+   0px 8px 16px -4px #0000001a;
+ }
+
+ .dl-internal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #007cf012, #00dfd818);
+  color: var(--color-grad-develop-start);
+  box-shadow: inset 0 0 0 1px #007cf020;
+ }
+
+ .dl-internal-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.3px;
+ }
+
+ .dl-internal-desc {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.5;
+  margin: 0;
+ }
+
+ .dl-internal-arrow {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  color: var(--color-mute);
+  font-size: 18px;
+  transition: color 0.15s ease, transform 0.25s ease;
+ }
+
+ .dl-internal-card:hover .dl-internal-arrow {
+  color: var(--color-ink);
+  transform: translateX(4px);
+ }
+
+ @media (max-width: 960px) {
+  .dl-internal-grid {
+   grid-template-columns: 1fr;
+   max-width: 480px;
+  }
+ }
+
+ @media (max-width: 600px) {
+  .dl-internal-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+ }
+
+ /* ─── SEO Content Section ─── */
+ .seo-content-section {
+  background-color: var(--color-canvas-soft);
+  padding: var(--spacing-5xl) var(--spacing-lg);
+ }
+
+ .seo-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+ }
+
+ .seo-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--spacing-3xl);
+  align-items: start;
+ }
+
+ .seo-content-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+ }
+
+ .seo-article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+ }
+
+ .seo-article p {
+  font-size: var(--text-body-md);
+  color: var(--color-body);
+  line-height: 1.75;
+  margin: 0;
+  letter-spacing: -0.1px;
+ }
+
+ .text-highlight {
+  background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+ }
+
+ .seo-article h3 {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--color-ink);
+  margin: var(--spacing-sm) 0 0 0;
+  line-height: 1.35;
+ }
+
+ .seo-content-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  position: sticky;
+  top: 80px;
+ }
+
+ .seo-sidebar-card {
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow:
+   inset 0 0 0 1px #0000000a,
+   0px 1px 1px #00000005,
+   0px 4px 8px #0000000a;
+ }
+
+ .seo-sidebar-highlight {
+  background: linear-gradient(135deg, #007cf008, #00dfd808);
+  border: 1px solid #007cf020;
+ }
+
+ .seo-sidebar-title {
+  font-size: var(--text-body-md-strong);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 var(--spacing-md) 0;
+ }
+
+ .seo-sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+ }
+
+ .seo-sidebar-list li {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  line-height: 1.5;
+ }
+
+ .seo-sidebar-list a {
+  color: var(--color-body);
+  text-decoration: none;
+  transition: color 0.15s ease;
+ }
+
+ .seo-sidebar-list a:hover {
+  color: var(--color-ink);
+ }
+
+ .seo-sidebar-mono li {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--color-mute);
+ }
+
+ .seo-sidebar-text {
+  font-size: var(--text-body-sm);
+  color: var(--color-body);
+  margin: 0 0 var(--spacing-md) 0;
+  line-height: 1.5;
+ }
+
+ .seo-sidebar-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+ }
+
+ @media (max-width: 960px) {
+  .seo-content-grid {
+   grid-template-columns: 1fr;
+  }
+
+  .seo-content-sidebar {
+   position: static;
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+  }
+ }
+
+ @media (max-width: 600px) {
+  .seo-content-section {
+   padding: var(--spacing-3xl) var(--spacing-md);
+  }
+
+  .seo-content-sidebar {
+   grid-template-columns: 1fr;
+  }
+ }
 </style>
+
+<script>
+ const dlTriggers = document.querySelectorAll<HTMLButtonElement>('.dl-faq-trigger');
+
+ dlTriggers.forEach((btn) => {
+  btn.addEventListener('click', () => {
+   const isOpen = btn.getAttribute('aria-expanded') === 'true';
+   const panelId = btn.getAttribute('aria-controls')!;
+   const panel = document.getElementById(panelId);
+
+   dlTriggers.forEach((otherBtn) => {
+    if (otherBtn !== btn) {
+     otherBtn.setAttribute('aria-expanded', 'false');
+     const otherId = otherBtn.getAttribute('aria-controls')!;
+     document.getElementById(otherId)?.setAttribute('hidden', '');
+    }
+   });
+
+   if (isOpen) {
+    btn.setAttribute('aria-expanded', 'false');
+    panel?.setAttribute('hidden', '');
+   } else {
+    btn.setAttribute('aria-expanded', 'true');
+    panel?.removeAttribute('hidden');
+   }
+  });
+ });
+</script>

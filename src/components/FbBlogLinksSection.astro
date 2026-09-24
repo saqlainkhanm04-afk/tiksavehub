@@ -1,0 +1,143 @@
+---
+// FbBlogLinksSection — internal links to blog guides (dl-internal-card pattern, inline)
+interface Link {
+  href: string;
+  title: string;
+  desc: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  links: Link[];
+}
+
+const { eyebrow = 'Guides and Tutorials', headline = 'Learn more from our guides', links } = Astro.props;
+---
+
+<section class="blog-section" aria-labelledby="blog-links-headline">
+  <div class="blog-inner container-page">
+    <p class="blog-eyebrow">{eyebrow}</p>
+    <h2 id="blog-links-headline" class="section-headline blog-headline">{headline}</h2>
+
+    <div class="blog-grid">
+      {links.map((link) => (
+        <a href={link.href} class="blog-card">
+          <span class="blog-card-title">{link.title}</span>
+          <span class="blog-card-desc">{link.desc}</span>
+          <span class="blog-card-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .blog-section {
+    background-color: var(--color-canvas);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .section-headline {
+    font-size: var(--text-display-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 540px;
+  }
+
+  .blog-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3xl);
+  }
+
+  .blog-headline {
+    text-align: center;
+    max-width: 520px;
+  }
+
+  .blog-eyebrow {
+    margin: 0;
+    color: var(--color-mute);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 340px));
+    gap: var(--spacing-md);
+    width: 100%;
+    justify-content: center;
+  }
+
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    text-decoration: none;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .blog-card:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px #00000008,
+      0px 2px 2px #0000000a,
+      0px 8px 16px -4px #0000001a;
+  }
+
+  .blog-card-title {
+    font-size: var(--text-body-md-strong);
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: -0.3px;
+  }
+
+  .blog-card-desc {
+    font-size: var(--text-body-sm);
+    color: var(--color-body);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .blog-card-arrow {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    color: var(--color-mute);
+    font-size: 18px;
+    transition: color 0.15s ease, transform 0.25s ease;
+  }
+
+  .blog-card:hover .blog-card-arrow {
+    color: var(--color-ink);
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 960px) {
+    .blog-grid {
+      grid-template-columns: 1fr;
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .blog-section {
+      padding: var(--spacing-3xl) var(--spacing-md);
+    }
+  }
+</style>

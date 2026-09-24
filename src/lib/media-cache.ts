@@ -99,7 +99,13 @@ async function probeUrl(url: string): Promise<boolean> {
       redirect: 'follow',
       signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
     });
-    return resp.ok || resp.status === 206;
+    if (!resp.ok && resp.status !== 206) return false;
+    // Reject non-video content-types (error pages, login walls, placeholder images)
+    const ct = (resp.headers.get('content-type') || '').toLowerCase();
+    if (ct && !ct.includes('video/') && !ct.includes('application/octet-stream')) {
+      return false;
+    }
+    return true;
   } catch {
     return false;
   }

@@ -86,8 +86,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   const isHttp =
     ctx.request.headers.get('x-forwarded-proto') === 'http' || ctx.url.protocol === 'http:';
   const hostname = ctx.url.hostname;
-  // TEMP-VERIFY: local plain-HTTP testing bypass, reverted immediately after.
-  const needsHttps = process.env.TMP_ALLOW_HTTP === '1' ? false : isHttp;
+  const needsHttps = isHttp;
   const needsWwwStrip = hostname === 'www.tiksavehub.com';
 
   if (needsHttps || needsWwwStrip) {

@@ -713,11 +713,23 @@ export const POST: APIRoute = async (ctx) => {
         origin
       );
     }
+    if (code === FB_ERR.NO_MEDIA || code === FB_ERR.INVALID_RESPONSE) {
+      // Every tier ran and Facebook gave us a response with no story media in
+      // it. Upstream words this as "expired or require login", so report the
+      // content truth rather than blaming the link or the service.
+      return errorResponse(
+        'This story is private or expired. Only public, unexpired stories can be downloaded.',
+        'expired',
+        404,
+        origin
+      );
+    }
 
+    // Anything else is a genuine unexpected failure.
     console.error(`[fb-story] ${new Date().toISOString()} Error: ${err?.message ?? err}`);
     return errorResponse(
       'Service temporarily unavailable. Please try again in a minute.',
-      'invalid',
+      'timeout',
       500,
       origin
     );

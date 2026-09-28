@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node -e \"const f='dist/server/wrangler.json',j=JSON.parse(require('fs').readFileSync(f,'utf8'));j.workers_dev=false;require('fs').writeFileSync(f,JSON.stringify(j))\"",
+    "build": "astro build && node -e \"const f='dist/server/wrangler.json',j=JSON.parse(require('fs').readFileSync(f,'utf8'));j.workers_dev=false;j.assets=j.assets||{};j.assets.html_handling='drop-trailing-slash';require('fs').writeFileSync(f,JSON.stringify(j))\"",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check"

@@ -1,3 +1,7 @@
+# The sitemap integration emits sitemap-index.xml + sitemap-0.xml (never /sitemap.xml).
+# External tools and old GSC properties assume /sitemap.xml, so point them at the real index.
+/sitemap.xml /sitemap-index.xml 301
+
 /tiktok-video-downloader /tiktok-video-downloader-without-watermark 301
 /instagram-reels-downloader /instagram-reels-downloader-without-watermark 301
 /instagram-video-downloader /instagram-video-downloader-without-watermark 301

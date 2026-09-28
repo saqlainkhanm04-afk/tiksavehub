@@ -31,9 +31,10 @@ const seoPages = [
 const customPages = [
   ...seoPages.map((p) => site + p),
   ...posts.map((p) => `${site}/blog/${p.slug}`),
-  // Localized pages for all languages
+  // Localized pages for all languages.
+  // Locale homepages must be emitted as /de (not /de/) to match trailingSlash: 'never'.
   ...['es', 'ja', 'fr', 'de', 'pt', 'ko', 'it'].flatMap((lang) =>
-    seoPages.map((p) => `${site}/${lang}${p}`)
+    seoPages.map((p) => `${site}/${lang}${p === '/' ? '' : p}`)
   ),
 ];
 
@@ -42,6 +43,7 @@ const isProd = process.argv.includes('build') || process.argv.includes('preview'
 export default defineConfig({
   site,
   output: 'server',
+  trailingSlash: 'never',
   adapter: isProd ? cloudflare({ imageService: 'compile' }) : node({ mode: 'standalone' }),
   server: { port: 3000 },
   integrations: [
@@ -50,7 +52,13 @@ export default defineConfig({
       filter: (page) => {
         const { pathname } = new URL(page);
         if (pathname === '/404' || pathname === '/500') return false;
-        return pathname === '/' || !pathname.endsWith('/');
+        if (pathname === '/') return true;
+        if (pathname.endsWith('/')) {
+          // Locale homepages like /de/ are a single segment ending in a slash.
+          const segments = pathname.split('/').filter(Boolean);
+          return segments.length === 1;
+        }
+        return true;
       },
     }),
   ],

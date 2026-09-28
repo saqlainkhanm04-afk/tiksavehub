@@ -80,6 +80,7 @@ const musicIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" s
 
 const MODE = (document.getElementById('download-form') as HTMLElement | null)?.dataset.mode || 'video';
 const isMp3Mode = MODE === 'mp3';
+const isStoryMode = MODE === 'story';
 
 // --- Cloudflare Turnstile for cobalt API auth ---
 const COBALT_TURNSTILE_SITEKEY = '0x4AAAAAAEl-ZmiorHhgs7jw';
@@ -137,20 +138,23 @@ function getTurnstileToken(): Promise<string | null> {
 
 function renderResult(video: any, _inputUrl: string) {
   if (!video) {
-    showError('No video data found. Please check the link and try again.');
+    showError('No Snapchat media data found. Please check the link and try again.');
     return;
   }
 
-  const { thumbnail, duration, title, videoHd, videoSd, videoUrl } = video || {};
-  const hdUrl: string = videoHd || videoUrl || '';
-  const sdUrl: string = videoSd || videoHd || videoUrl || '';
-  const videoTitle: string = title || 'Snapchat Video';
+  const { thumbnail, duration, title, videoHd, videoSd, videoUrl, mediaUrl, mediaType, isImage: imageFlag } = video || {};
+  const isImage = mediaType === 'image' || imageFlag === true;
+  const imageUrl: string = isImage ? (mediaUrl || videoHd || videoUrl || '') : '';
+  const hdUrl: string = isImage ? '' : (videoHd || videoUrl || '');
+  const sdUrl: string = isImage ? '' : (videoSd || videoHd || videoUrl || '');
+  const videoTitle: string = title || (isImage ? 'Snapchat Story Photo' : 'Snapchat Video');
+  const thumbSource = thumbnail || (isImage ? imageUrl : null);
 
-  const thumbHtml = thumbnail
-    ? '<img src="' + thumbnail + '" alt="Snapchat media" class="sc-result-thumb" loading="lazy" width="120" height="160" referrerpolicy="no-referrer" onerror="this.closest(\'.sc-result-thumb-wrap\').classList.add(\'thumb-failed\')" />'
+  const thumbHtml = thumbSource
+    ? '<img src="' + thumbSource + '" alt="Snapchat media" class="sc-result-thumb" loading="lazy" width="120" height="160" referrerpolicy="no-referrer" onerror="this.closest(\'.sc-result-thumb-wrap\').classList.add(\'thumb-failed\')" />'
     : '<div class="sc-result-thumb-fallback" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div>';
 
-  const durationBadge = duration
+  const durationBadge = !isImage && duration
     ? '<span class="sc-result-duration-badge">' + formatDuration(duration) + '</span>'
     : '';
 
@@ -165,11 +169,29 @@ function renderResult(video: any, _inputUrl: string) {
     ? '<button class="sc-dl-tile" id="sc-btn-dl-sd" type="button" data-dl="sd" aria-label="Download SD video"><span class="sc-dl-tile-icon" aria-hidden="true">' + dlIcon + '</span><span class="sc-dl-tile-label">Download <strong>SD Video</strong></span><span class="sc-dl-proc-bar"></span></button>'
     : '';
 
+  const imageTile = isImage && imageUrl
+    ? '<button class="sc-dl-tile sc-dl-tile-image" id="sc-btn-dl-image" type="button" data-dl="image" aria-label="Download Snapchat story photo"><span class="sc-dl-tile-icon" aria-hidden="true">' + dlIcon + '</span><span class="sc-dl-tile-label">Download <strong>Story Photo</strong></span><span class="sc-dl-badge" aria-hidden="true">JPG</span><span class="sc-dl-proc-bar"></span></button>'
+    : '';
+
   const audioTile = '<button class="sc-dl-tile sc-dl-tile-audio' + (isMp3Mode ? ' sc-dl-tile-prime' : '') + '" id="sc-btn-dl-audio" type="button" data-dl="audio" aria-label="Download audio as MP3"><span class="sc-dl-tile-icon" aria-hidden="true">' + musicIcon + '</span><span class="sc-dl-tile-label">Download <strong>Audio (MP3)</strong></span>' + (isMp3Mode ? '<span class="sc-dl-tile-badge">Recommended</span>' : '') + '<span class="sc-dl-proc-bar"></span></button>';
 
-  const tiles = isMp3Mode
-    ? [audioTile]
-    : [hdTile, sdTile, audioTile].filter(Boolean).join('');
+  if (isMp3Mode && isImage) {
+    showError('This Snapchat story is a photo, so there is no MP3 audio to download. Use the Story tab to save the photo.');
+    return;
+  }
+
+  const tiles = isImage
+    ? imageTile
+    : isMp3Mode
+      ? audioTile
+      : isStoryMode
+        ? [hdTile, hasHd ? '' : sdTile].filter(Boolean).join('')
+        : [hdTile, sdTile].filter(Boolean).join('');
+
+  if (!tiles) {
+    showError('No downloadable Snapchat media found. Please try another link.');
+    return;
+  }
 
   resultMount.innerHTML =
     '<div class="sc-result-card animate-fade-in-up" role="region" aria-label="Download result">' +
@@ -189,13 +211,18 @@ function renderResult(video: any, _inputUrl: string) {
       '</div>' +
     '</div>';
 
-  if (!hasHd && !hasSd) {
-    showError('No downloadable video found. Please try another link.');
-  }
-
   resultMount.querySelectorAll<HTMLButtonElement>('.sc-dl-tile').forEach((btn) => {
     btn.addEventListener('click', () => startDownload(btn));
   });
+}
+
+function isExpectedBlob(blob: Blob, dlType: string): boolean {
+  if (blob.size < 512) return false;
+  const type = blob.type.toLowerCase();
+  if (type.includes('application/json') || type.startsWith('text/')) return false;
+  if (dlType === 'image') return !type || type.includes('image/') || type.includes('application/octet-stream');
+  if (dlType === 'audio') return !type || type.includes('audio/') || type.includes('application/octet-stream');
+  return !type || type.includes('video/') || type.includes('application/octet-stream');
 }
 
 function startDownload(btn: HTMLButtonElement) {
@@ -232,12 +259,16 @@ function startDownload(btn: HTMLButtonElement) {
 
   xhr.onload = function () {
     sim.stop(xhr.status === 200 ? 100 : undefined);
-    if (xhr.status === 200) {
-      const blob = xhr.response;
+    const blob = xhr.response instanceof Blob ? xhr.response : null;
+    if (xhr.status === 200 && blob && isExpectedBlob(blob, dlType)) {
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = blobUrl;
-      a.download = dlType === 'audio' ? 'tiksavehub-snapchat-audio.mp3' : 'tiksavehub-snapchat-video.mp4';
+      a.download = dlType === 'audio'
+        ? 'tiksavehub-snapchat-audio.mp3'
+        : dlType === 'image'
+          ? 'tiksavehub-snapchat-story.jpg'
+          : 'tiksavehub-snapchat-video.mp4';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -247,7 +278,7 @@ function startDownload(btn: HTMLButtonElement) {
       setTimeout(() => btn.classList.remove('sc-dl-tile-done'), 1500);
     } else {
       btn.classList.add('sc-dl-tile-error');
-      if (labelEl) labelEl.textContent = 'Download failed — try again';
+      if (labelEl) labelEl.textContent = 'Download failed, try again';
       setTimeout(() => {
         btn.classList.remove('sc-dl-tile-error');
         if (labelEl) labelEl.innerHTML = origLabel;
@@ -261,7 +292,7 @@ function startDownload(btn: HTMLButtonElement) {
   xhr.onerror = function () {
     sim.stop();
     btn.classList.add('sc-dl-tile-error');
-    if (labelEl) labelEl.textContent = 'Download failed — try again';
+    if (labelEl) labelEl.textContent = 'Download failed, try again';
     setTimeout(() => {
       btn.classList.remove('sc-dl-tile-error');
       if (labelEl) labelEl.innerHTML = origLabel;
@@ -274,7 +305,7 @@ function startDownload(btn: HTMLButtonElement) {
   xhr.ontimeout = function () {
     sim.stop();
     btn.classList.add('sc-dl-tile-error');
-    if (labelEl) labelEl.textContent = 'Timed out — try again';
+    if (labelEl) labelEl.textContent = 'Timed out, try again';
     setTimeout(() => {
       btn.classList.remove('sc-dl-tile-error');
       if (labelEl) labelEl.innerHTML = origLabel;
@@ -294,12 +325,12 @@ form?.addEventListener('submit', async (e) => {
   const url = urlInput.value.trim();
 
   if (!url) {
-    showError('Please paste a Snapchat video URL.');
+    showError(isStoryMode ? 'Please paste a Snapchat story or public profile URL.' : 'Please paste a Snapchat video URL.');
     return;
   }
 
   if (!URL_PATTERN.test(url)) {
-    showError('Please enter a valid Snapchat link (e.g. snapchat.com/spotlight/..., story.snapchat.com/s/..., snapchat.com/p/..., snapchat.com/@user/highlight/..., or snapchat.com/@username for stories).');
+    showError('Please enter a valid Snapchat link (e.g. snapchat.com/spotlight/..., story.snapchat.com/s/..., story.snapchat.com/p/..., snapchat.com/p/..., or snapchat.com/@username).');
     return;
   }
 
@@ -325,7 +356,7 @@ form?.addEventListener('submit', async (e) => {
       throw new Error(json.error || 'Failed to fetch the video. Please try again.');
     }
 
-    renderResult(json.video, url);
+    renderResult(json.media || json.video, url);
   } catch (err: any) {
     showError(err.message || 'Something went wrong. Please try again.');
   } finally {

@@ -3,9 +3,17 @@ import type { CfEnv } from './env';
 import { envStr } from './env';
 import { runWithFallback } from './api-fallback';
 import { instagramSources } from './platforms/instagram';
+import { setMultiApiAuth } from './ig-multi-api';
+
+export { IG_ERR_UNAVAILABLE, IG_ERR_BROWSER_BUSY } from './ig-browser';
 
 let _env: CfEnv = {};
-export function setInstagramEnv(env: CfEnv) { _env = env; }
+export function setInstagramEnv(env: CfEnv) {
+  _env = env;
+  // The Reels pipeline leans on the SaveFromIns fallback, so let the owner
+  // rotate that provider's key from the environment.
+  setMultiApiAuth(envStr(env, 'IG_SAVEFROMINS_AUTH'));
+}
 function readSession(): string { return envStr(_env, 'IG_SESSIONID'); }
 
 const STORY_TTL_MS = 6 * 60 * 60 * 1000;
@@ -415,6 +423,9 @@ function mediaMetaToIgRaw(m: import('./platforms/types').MediaMeta): any {
       : [];
   return {
     video_versions: videoVersions,
+    // Carry the resolved audio track through so the MP3 tool uses the native
+    // audio instead of falling back to a re-extraction service.
+    ...(m.audioUrl ? { audio_versions: [{ url: m.audioUrl, bitrate: Number.MAX_SAFE_INTEGER }] } : {}),
     image_versions2: m.cover ? { candidates: [{ url: m.cover }] } : undefined,
     display_url: m.cover || '',
     display_title: m.title || '',
@@ -434,7 +445,18 @@ async function fetchShortcodeWithFallbacks(shortcode: string, _type: string = 'v
   const { token: csrfToken, cookies } = await getCsrfToken();
   const igUrl = `https://www.instagram.com/${_type === 'reels' ? 'reel' : _type === 'story' ? 'stories' : 'p'}/${shortcode}/`;
 
-  const result = await runWithFallback(igUrl, instagramSources(shortcode, _type, csrfToken, cookies, sessionCookie));
+  const result = await runWithFallback(
+    igUrl,
+    instagramSources(
+      shortcode,
+      _type,
+      csrfToken,
+      cookies,
+      sessionCookie,
+      _env,
+      envStr(_env, 'IG_HIKERAPI_KEY')
+    )
+  );
   console.log(`[Instagram] Resolved via ${result.source} in ${result.attemptMs}ms`);
   return mediaMetaToIgRaw(result.data);
 }

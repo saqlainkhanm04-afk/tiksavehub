@@ -154,6 +154,8 @@ function renderResult(data: any, inputUrl: string) {
             alt="Video thumbnail"
             class="result-thumb"
             loading="lazy"
+            referrerpolicy="no-referrer"
+            onerror="this.parentElement.classList.add('thumb-failed')"
             width="120"
             height="160" />
           <span class="result-duration-badge text-caption-mono">${formatDuration(duration || 0)}</span>

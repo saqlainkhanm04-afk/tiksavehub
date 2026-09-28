@@ -152,7 +152,7 @@ export const GET: APIRoute = async (ctx) => {
       const audioFilename = `tiksavehub-x-audio-${parsed.tweetId}`;
       const audio = await cobaltExtractAudio(parsed.sanitizedUrl, turnstileToken);
       if (audio?.url) {
-        return streamFromUpstream(audio.url, {
+        return await streamFromUpstream(audio.url, {
           filename: `${audioFilename}.mp3`,
           contentType: 'audio/mpeg',
           accept: 'audio/*,*/*',
@@ -207,7 +207,7 @@ export const GET: APIRoute = async (ctx) => {
 
     const filename = `tiksavehub-x-video-${parsed.tweetId}.mp4`;
 
-    return streamFromUpstream(videoUrl, {
+    return await streamFromUpstream(videoUrl, {
       filename,
       contentType: 'video/mp4',
       accept: 'video/mp4,video/*,*/*',

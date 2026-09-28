@@ -3,13 +3,20 @@
  *
  * Sources (in order):
  *  1. Multi-API — third-party downloader APIs (bypasses IG IP blocks)
- *  2. GraphQL shortcode — public GraphQL with fresh CSRF
- *  3. Embed page — lightweight OG meta extraction
- *  4. __a=1 — legacy endpoint with session cookies
- *  5. GraphQL anonymous — session-free CSRF fallback
+ *  2. HikerAPI — token-based IG API (only when IG_HIKERAPI_KEY is set)
+ *  3. GraphQL shortcode — public GraphQL with fresh CSRF
+ *  4. Embed page — lightweight OG meta extraction
+ *  5. __a=1 — legacy endpoint with session cookies
+ *  6. Browser Rendering — real Chromium. Last because it costs browser minutes;
+ *     it is the ONLY source that still works for public reels (verified 2026).
  */
 import type { ApiSource } from '../api-fallback';
+import type { CfEnv } from '../env';
 import type { MediaMeta } from './types';
+import { IG_ERR_UNAVAILABLE, IG_ERR_BROWSER_BUSY } from '../ig-browser';
+
+export { IG_ERR_UNAVAILABLE, IG_ERR_BROWSER_BUSY };
+
 
 const DESKTOP_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -77,7 +84,97 @@ export function igMultiApiSource(shortcode: string, type: string): ApiSource<str
 }
 
 /* ------------------------------------------------------------------ */
-/*  Source 2 — GraphQL shortcode                                       */
+/*  Source 2 — HikerAPI (token-based, optional)                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * HikerAPI is a token-gated Instagram API that runs its own logged-in backend,
+ * so it is not affected by our IP being flagged. Two response shapes exist in
+ * the wild: a flat object with `video_url`, and the standard IG media object
+ * with a `video_versions` array. Accept both, prefer the widest progressive.
+ *
+ * Skipped entirely (not "fails") when no key is configured, so a site without a
+ * HikerAPI account pays nothing for it.
+ */
+export function igHikerApiSource(apiKey: string, shortcode: string, type: string): ApiSource<string, MediaMeta> {
+  return {
+    name: 'IG-HikerAPI',
+    timeoutMs: 12_000,
+    retries: 1,
+    noRetryStatuses: [404],
+    async fetch(_inputUrl: string) {
+      const resp = await fetch(
+        `https://api.hikerapi.com/v1/media/by/code?code=${encodeURIComponent(shortcode)}`,
+        {
+          headers: { 'x-access-key': apiKey, Accept: 'application/json' },
+          signal: AbortSignal.timeout(11_000),
+        }
+      );
+      if (!resp.ok) {
+        const body = await resp.text().catch(() => '');
+        const detail = body.slice(0, 120).replace(/\s+/g, ' ');
+        // 429 = this HikerAPI token is out of quota. Surfaced as its own
+        // sentinel so the user gets "temporarily unavailable" instead of being
+        // told their Reel is private.
+        if (resp.status === 429) {
+          throw new Error(`IG_ERR_HIKER_QUOTA: HikerAPI returned 429 (quota or rate limit)${detail ? ` (${detail})` : ''}`);
+        }
+        // 401/403 = bad or rotated token. Log it loudly: it is a config problem
+        // on our side, never a problem with the user's link.
+        if (resp.status === 401 || resp.status === 403) {
+          throw new Error(`HikerAPI rejected our access key (${resp.status}). Check the IG_HIKERAPI_KEY secret.`);
+        }
+        throw new Error(`HikerAPI returned ${resp.status}${detail ? ` (${detail})` : ''}`);
+      }
+      const json: any = await resp.json();
+      // Some HikerAPI deployments wrap the media in items[] / data.
+      return json?.items?.[0] || json?.data || json;
+    },
+    normalize(raw: any, inputUrl: string): MediaMeta | null {
+      if (!raw || typeof raw !== 'object') return null;
+      const versions: any[] = Array.isArray(raw.video_versions)
+        ? raw.video_versions.filter((v: any) => v?.url && v?.type !== 102)
+        : [];
+      const widest = [...versions].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
+      const videoUrl: string | null = raw.video_url || widest?.url || null;
+      const cover: string | null =
+        raw.thumbnail_url ||
+        raw.thumbnail ||
+        raw.image_versions2?.candidates?.[0]?.url ||
+        raw.display_url ||
+        null;
+      if (!videoUrl && !cover) return null;
+      const audioVersions: any[] = Array.isArray(raw.audio_versions) ? raw.audio_versions : [];
+      const audio = [...audioVersions].sort((a: any, b: any) => (b.bitrate || 0) - (a.bitrate || 0))[0]?.url || null;
+      return {
+        platform: 'instagram',
+        type: type === 'reels' ? 'reels' : type === 'story' ? 'story' : 'video',
+        hdUrl: videoUrl,
+        sdUrl: null,
+        wmUrl: null,
+        audioUrl: audio,
+        cover,
+        title: raw.title || raw.caption?.text || raw.display_title || '',
+        duration: raw.duration || raw.video_duration || 0,
+        authorName: raw.owner?.full_name || raw.user?.full_name || '',
+        authorAvatar: raw.owner?.profile_pic_url || raw.user?.profile_pic_url || null,
+        authorUsername: raw.owner?.username || raw.user?.username || null,
+        stats: {
+          likes: raw.like_count ?? null,
+          comments: raw.comment_count ?? null,
+          shares: raw.share_count ?? null,
+          views: raw.play_count ?? null,
+        },
+        sourceUrl: inputUrl,
+        resolvedBy: 'IG-HikerAPI',
+        resolvedMs: 0,
+      };
+    },
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Source 3 — GraphQL shortcode                                       */
 /* ------------------------------------------------------------------ */
 export function igGraphqlSource(shortcode: string, csrfToken?: string, cookies?: string): ApiSource<string, MediaMeta> {
   return {
@@ -273,12 +370,62 @@ export function igLegacySource(sessionCookie?: string): ApiSource<string, MediaM
   };
 }
 
+/* ------------------------------------------------------------------ */
+/*  Source 6 — Cloudflare Browser Rendering (real Chromium)            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Last resort, and the only source that still resolves public reels in 2026.
+ * Every plain-HTTP Instagram endpoint now answers with a JavaScript shell, so
+ * the page has to be rendered by a real browser to expose its media bootstrap.
+ *
+ * Kept last on purpose: it is the most expensive call (Cloudflare browser
+ * minutes), so the free sources always get a shot first. `retries: 0` because
+ * a retry costs another browser minute for the same page.
+ */
+export function igBrowserSource(env: CfEnv, shortcode: string, type: string): ApiSource<string, MediaMeta> {
+  return {
+    name: 'IG-Browser',
+    timeoutMs: 55_000,
+    retries: 0,
+    // A missing binding or the kill switch will not fix themselves on a retry,
+    // and a browser that is already at the account rate limit would only make
+    // the rate limit worse.
+    noRetryErrors: ['binding', 'MYBROWSER', 'IG_BROWSER_DISABLED', 'SDK unavailable', IG_ERR_BROWSER_BUSY],
+    async fetch(inputUrl: string) {
+      const { fetchInstagramViaBrowser } = await import('../ig-browser');
+      const result = await fetchInstagramViaBrowser(env, inputUrl, type);
+      if (result.unavailable) throw new Error(IG_ERR_UNAVAILABLE);
+      return result.meta;
+    },
+    normalize(raw: any): MediaMeta | null {
+      // fetchInstagramViaBrowser already returns a normalized MediaMeta.
+      return raw && raw.hdUrl ? (raw as MediaMeta) : null;
+    },
+  };
+}
+
 /** Ordered source list for Instagram resolution. */
-export function instagramSources(shortcode: string, type: string, csrfToken?: string, cookies?: string, sessionCookie?: string): ApiSource<string, MediaMeta>[] {
-  return [
+export function instagramSources(
+  shortcode: string,
+  type: string,
+  csrfToken?: string,
+  cookies?: string,
+  sessionCookie?: string,
+  env: CfEnv = {},
+  hikerApiKey?: string
+): ApiSource<string, MediaMeta>[] {
+  const sources: ApiSource<string, MediaMeta>[] = [
     igMultiApiSource(shortcode, type),
+    // Token-based providers only cost a request when the owner configured one.
+    ...(hikerApiKey?.trim() ? [igHikerApiSource(hikerApiKey.trim(), shortcode, type)] : []),
     igGraphqlSource(shortcode, csrfToken, cookies),
     igEmbedSource,
     igLegacySource(sessionCookie),
+    // Stories are session-gated, not browser-gated: a real browser without our
+    // cookie jar hits the same login wall, and rendering "not available" for a
+    // story would replace the accurate "expired" message with a wrong one.
+    ...(type === 'story' ? [] : [igBrowserSource(env, shortcode, type)]),
   ];
+  return sources;
 }

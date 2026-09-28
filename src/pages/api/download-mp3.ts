@@ -89,7 +89,7 @@ export const GET: APIRoute = async (ctx) => {
         );
       }
 
-      return streamFromUpstream(audioUrl, {
+      return await streamFromUpstream(audioUrl, {
         filename: `${safeTitle || 'tiksavehub-audio'}.mp3`,
         contentType: 'audio/mpeg',
         accept: 'audio/mpeg,audio/*,*/*',

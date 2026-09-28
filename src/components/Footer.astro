@@ -40,6 +40,9 @@ function localPath(path: string): string {
         {t(`footer.tagline.${platform}`)}
       </p>
       <p class="footer-copy">{t('footer.copyright').replace('{year}', String(year))}</p>
+      <div class="footer-marketingdb-badge">
+        <a href="https://marketingdb.live" target="_blank" rel="noopener noreferrer nofollow sponsored"><img src="https://marketingdb.live/badge.svg" alt="Listed on MarketingDB" width="190" height="44"/></a>
+      </div>
     </div>
 
     <!-- Quick Links -->
@@ -160,6 +163,20 @@ function localPath(path: string): string {
     font-size: var(--text-caption);
     color: var(--color-mute);
     margin: 0;
+  }
+
+  .footer-marketingdb-badge {
+    display: inline-flex;
+    margin-top: var(--spacing-md);
+  }
+
+  .footer-marketingdb-badge a {
+    display: inline-flex;
+    line-height: 0;
+  }
+
+  .footer-marketingdb-badge a:hover {
+    opacity: 0.85;
   }
 
   .footer-col-label {

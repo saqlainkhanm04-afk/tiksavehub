@@ -13,6 +13,7 @@ export interface MediaCacheValue {
   thumb: string | null;
   title: string;
   data: unknown;
+  mediaType?: 'video' | 'image' | 'audio';
   extractedAt: number;
   expiresAt: number;
   provider?: 'primary' | 'fallback' | 'ytdlp' | 'from_cache';
@@ -87,7 +88,7 @@ export async function invalidateCache(
   await kvDel(mediaKey(prefix, canonical, mode));
 }
 
-async function probeUrl(url: string): Promise<boolean> {
+async function probeUrl(url: string, expectedType: 'video' | 'image' = 'video'): Promise<boolean> {
   try {
     const resp = await fetch(url, {
       headers: {
@@ -100,11 +101,11 @@ async function probeUrl(url: string): Promise<boolean> {
       signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
     });
     if (!resp.ok && resp.status !== 206) return false;
-    // Reject non-video content-types (error pages, login walls, placeholder images)
     const ct = (resp.headers.get('content-type') || '').toLowerCase();
-    if (ct && !ct.includes('video/') && !ct.includes('application/octet-stream')) {
-      return false;
-    }
+    const validType = expectedType === 'image'
+      ? ct.includes('image/') || ct.includes('application/octet-stream')
+      : ct.includes('video/') || ct.includes('application/octet-stream');
+    if (ct && !validType) return false;
     return true;
   } catch {
     return false;
@@ -121,7 +122,7 @@ export async function lazilyValidate(
   if (Date.now() - value.extractedAt < VALIDATE_THRESHOLD_MS) return;
 
   try {
-    const ok = await probeUrl(value.mediaUrl);
+    const ok = await probeUrl(value.mediaUrl, value.mediaType === 'image' ? 'image' : 'video');
     if (!ok) await invalidateCache(prefix, canonical, mode);
   } catch {
     // best-effort

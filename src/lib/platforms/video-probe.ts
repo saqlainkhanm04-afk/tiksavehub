@@ -15,6 +15,9 @@
 
 const PROBE_TIMEOUT_MS = 5_000;
 const PROBE_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
+// Signature window for audio: 4 bytes is enough for ID3 / MPEG-sync, 8 gives
+// room for the range header's leading slack on some CDNs.
+const AUDIO_PROBE_BYTES = 8;
 
 export interface ProbeResult {
   ok: boolean;
@@ -32,12 +35,29 @@ export interface ProbeResult {
 export function isValidAudioBytes(bytes: Uint8Array): boolean {
   if (bytes.length < 2) return false;
 
-  // ID3v2 tag: 49 44 33 ("ID3") — most MP3s carry this header.
   if (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) return true;
 
-  // Raw MPEG audio frame sync: 0xFF Ex — the classic "FF FB..." MP3 signature.
   if (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0) return true;
 
+  return false;
+}
+
+export function isValidImageBytes(bytes: Uint8Array): boolean {
+  if (bytes.length < 4) return false;
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return true;
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return true;
+  if (
+    bytes.length >= 12 &&
+    bytes[0] === 0x52 &&
+    bytes[1] === 0x49 &&
+    bytes[2] === 0x46 &&
+    bytes[3] === 0x46 &&
+    bytes[8] === 0x57 &&
+    bytes[9] === 0x45 &&
+    bytes[10] === 0x42 &&
+    bytes[11] === 0x50
+  ) return true;
+  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return true;
   return false;
 }
 
@@ -225,15 +245,27 @@ export async function probeAudioUrl(url: string, timeoutMs = PROBE_TIMEOUT_MS): 
     const totalMatch = /\/(\d+)$/.exec(contentRange);
     const cl = totalMatch ? Number(totalMatch[1]) : Number(resp.headers.get('content-length') || '0');
 
-    // Read only the head chunk — never buffer the whole file during a probe.
+    // Read only the head window — never buffer the whole file during a probe.
+    // Chunks arrive in arbitrary sizes (a valid stream can start with 1 byte),
+    // so accumulate until the signature window is full or the body ends.
     if (!resp.body) return { ok: false, contentType: ct, contentLength: cl, error: 'Empty response body' };
     const reader = resp.body.getReader();
-    const head = await reader.read();
-    await reader.cancel().catch(() => {});
-    const buf = head.value ?? new Uint8Array(0);
-    if (buf.byteLength < 4) {
-      return { ok: false, contentType: ct, contentLength: cl, error: `Too few bytes: ${buf.byteLength}` };
+    const head = new Uint8Array(AUDIO_PROBE_BYTES);
+    let filled = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value?.length) continue;
+      const take = Math.min(value.length, AUDIO_PROBE_BYTES - filled);
+      head.set(value.subarray(0, take), filled);
+      filled += take;
+      if (filled >= AUDIO_PROBE_BYTES) break;
     }
+    await reader.cancel().catch(() => {});
+    if (filled < 4) {
+      return { ok: false, contentType: ct, contentLength: cl, error: `Too few bytes: ${filled}` };
+    }
+    const buf = head.subarray(0, filled);
 
     if (!isAudioContentType(ct)) {
       return { ok: false, contentType: ct, contentLength: cl, error: `Non-audio content-type: ${ct || '(empty)'}` };

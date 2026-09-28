@@ -51,13 +51,14 @@ const streamPhoto = async (primary: string, alt: string | null) => {
     contentType: 'image/jpeg',
     accept: 'image/jpeg,image/png,image/webp,image/*,*/*',
     referer: FACEBOOK_REFERER,
+    image: true,
   };
   try {
     return await streamFromUpstream(primary, opts);
   } catch (err) {
     // Promoted rendition may be signed/locked → fall back to the raw original.
     if (alt && alt !== primary) {
-      return streamFromUpstream(alt, opts);
+      return await streamFromUpstream(alt, opts);
     }
     throw err;
   }
@@ -525,7 +526,7 @@ export const GET: APIRoute = async (ctx) => {
         return json({ success: false, error: 'No media URL available for this story video.' }, 422);
       }
 
-      return streamFromUpstream(mediaUrl, {
+      return await streamFromUpstream(mediaUrl, {
         filename: `tiksavehub-facebook-story-${String(idx + 1).padStart(2, '0')}.mp4`,
         contentType: 'video/mp4',
         accept: 'video/mp4,video/*,*/*',
@@ -611,7 +612,7 @@ export const GET: APIRoute = async (ctx) => {
           filename: 'tiksavehub-facebook-audio.mp3',
         });
       }
-      return streamFromUpstream(mediaUrl, {
+      return await streamFromUpstream(mediaUrl, {
         filename: `tiksavehub-facebook-audio.${audioExt || 'mp3'}`,
         contentType: 'audio/mpeg',
         accept: 'audio/mpeg,audio/mp4,audio/*,*/*',
@@ -619,7 +620,7 @@ export const GET: APIRoute = async (ctx) => {
       });
     }
 
-    return streamFromUpstream(mediaUrl, {
+    return await streamFromUpstream(mediaUrl, {
       filename: 'tiksavehub-facebook-video.mp4',
       contentType: 'video/mp4',
       accept: 'video/mp4,video/*,*/*',

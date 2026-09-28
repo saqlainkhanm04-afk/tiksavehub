@@ -756,6 +756,12 @@ const meta = typeMeta[type];
     inset: 0;
   }
 
+  /* Cover hosts can block hotlinking or go down — hide the broken image
+     instead of showing a torn-image icon over the result card. */
+  .result-thumb-wrap.thumb-failed .result-thumb {
+    display: none;
+  }
+
   .result-info {
     flex: 1;
     min-width: 0;

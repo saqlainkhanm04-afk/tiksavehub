@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { resolvePathRedirect } from './lib/path-redirects';
+import { primeCfEnv } from './lib/env';
 
 /* ─── HTTPS redirect + Security headers middleware ──────────────────────────
  *
@@ -16,7 +17,10 @@ import { resolvePathRedirect } from './lib/path-redirects';
  * CSP allowlist (browser-enforced, server-side fetches excluded):
  *   script-src: self, unsafe-inline, googletagmanager.com (GA), google-analytics.com, challenges.cloudflare.com (Turnstile)
  *   style-src:  self, unsafe-inline, fonts.googleapis.com (Tailwind + component <style>)
- *   img-src:    self, data:, blob:, *.fbcdn.net, scontent.*, pbs.twimg.com, video.twimg.com
+ *   img-src:    self, data:, blob:, *.fbcdn.net, scontent.*, *.cdninstagram.com,
+ *               *.tiktokcdn.com, *.tiktokcdn-us.com, pbs.twimg.com, video.twimg.com,
+ *               *.twimg.com, *.snapcdn.com, *.sc-cdn.net, *.savefromins.com
+ *               (savefromins serves the IG cover thumbnails)
  *   connect-src: self, google-analytics.com, challenges.cloudflare.com
  *   font-src:   self, fonts.gstatic.com
  *   frame-src:  self, challenges.cloudflare.com (Turnstile iframe)
@@ -37,7 +41,7 @@ const SECURITY_HEADERS: Record<string, string> = {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://*.fbcdn.net https://scontent.* https://*.cdninstagram.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://pbs.twimg.com https://video.twimg.com https://*.twimg.com https://*.snapcdn.com",
+    "img-src 'self' data: blob: https://*.fbcdn.net https://scontent.* https://*.cdninstagram.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://pbs.twimg.com https://video.twimg.com https://*.twimg.com https://*.snapcdn.com https://*.sc-cdn.net https://api-ak.savefromins.com https://*.savefromins.com",
     "connect-src 'self' https://www.google-analytics.com https://challenges.cloudflare.com",
     "font-src 'self' https://fonts.gstatic.com",
     "frame-src 'self' https://challenges.cloudflare.com",
@@ -50,6 +54,24 @@ const SECURITY_HEADERS: Record<string, string> = {
 };
 
 export const onRequest = defineMiddleware(async (ctx, next) => {
+  /* ── 0. Resolve Cloudflare bindings once per cold start ────────────────────
+   *
+   * Astro v6 dropped `Astro.locals.runtime.env`, so the Worker binding bag now
+   * comes from `cloudflare:workers`. Prime it here (before any route handler
+   * runs) so the synchronous getEnv(ctx) used by every API route sees the real
+   * secrets, KV and the MYBROWSER binding instead of falling back to
+   * process.env. On the Node dev server the import simply fails and the
+   * process.env fallback stays in charge.
+   *
+   * `ctx.isPrerendered` is the important part: the Cloudflare adapter runs the
+   * BUILD inside workerd, where `cloudflare:workers` resolves, so importing it
+   * while Astro prerenders a page re-resolves (and re-logs) for every one of
+   * the ~300 prerendered pages and stalls the build. Prerendered pages never
+   * need bindings, and API routes are never prerendered, so we skip it. */
+  if (ctx.isPrerendered !== true) {
+    await primeCfEnv();
+  }
+
   /* ── 1. Canonical URL redirects — single-hop, preserves path + query ──────
    *
    * Collapses every protocol/host variant into ONE 301 so no request ever
@@ -64,7 +86,8 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   const isHttp =
     ctx.request.headers.get('x-forwarded-proto') === 'http' || ctx.url.protocol === 'http:';
   const hostname = ctx.url.hostname;
-  const needsHttps = isHttp;
+  // TEMP-VERIFY: local plain-HTTP testing bypass, reverted immediately after.
+  const needsHttps = process.env.TMP_ALLOW_HTTP === '1' ? false : isHttp;
   const needsWwwStrip = hostname === 'www.tiksavehub.com';
 
   if (needsHttps || needsWwwStrip) {

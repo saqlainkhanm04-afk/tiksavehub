@@ -7,6 +7,7 @@ export interface StreamOptions {
   /** Stream audio instead of video: accepts audio/* content-types and
    * validates ID3 / MPEG-sync magic bytes instead of video containers. */
   audio?: boolean;
+  image?: boolean;
 }
 
 const CONNECT_TIMEOUT_MS = 30_000;
@@ -35,12 +36,65 @@ async function fetchWithConnectTimeout(
   }
 }
 
-import { isValidAudioBytes, isValidVideoBytes } from './platforms/video-probe';
+import { isValidAudioBytes, isValidImageBytes, isValidVideoBytes } from './platforms/video-probe';
 
 // CDNs sometimes answer HTTP 200 with a tiny error page (e.g. expired
 // TikTok signed URLs) instead of a proper error status. Anything smaller
 // than this is treated as a failed attempt so the next candidate is tried.
 const MIN_VALID_CONTENT_LENGTH = 512;
+
+// Magic-byte signatures need up to 12 bytes. Upstreams deliver the body in
+// arbitrary chunks and a valid MP4 regularly arrives as a 1-byte first chunk
+// (verified live 2026 on scontent-*.cdninstagram.com: a 6.4MB reel streamed
+// `00` first, every time). Validating only the first chunk therefore rejected
+// perfectly good media, so read until the probe window is full (or the stream
+// ends) and validate the accumulated buffer.
+const MAGIC_PROBE_BYTES = 12;
+// Upper bound on bytes buffered purely for validation. A source that sends
+// megabytes before yielding anything usable is broken, not slow.
+const MAGIC_PROBE_MAX_BYTES = 64 * 1024;
+
+/**
+ * Read chunks until `wanted` bytes are buffered, the stream ends, or
+ * `maxBytes` is exceeded. Returns the buffered head plus every chunk read
+ * along the way (in order) so the caller can replay them into the response.
+ */
+async function readProbeHead(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+  wanted: number
+): Promise<{ head: Uint8Array; buffered: Uint8Array[]; ended: boolean }> {
+  const buffered: Uint8Array[] = [];
+  let length = 0;
+  let ended = false;
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) {
+      ended = true;
+      break;
+    }
+    if (value?.length) {
+      buffered.push(value);
+      length += value.length;
+    }
+    if (length >= wanted) break;
+    if (length >= MAGIC_PROBE_MAX_BYTES) break;
+  }
+
+  let head: Uint8Array;
+  if (buffered.length === 1) {
+    head = buffered[0];
+  } else {
+    head = new Uint8Array(length);
+    let offset = 0;
+    for (const chunk of buffered) {
+      head.set(chunk, offset);
+      offset += chunk.length;
+    }
+  }
+
+  return { head: head.slice(0, wanted), buffered, ended };
+}
 
 // Read loop with an inactivity watchdog: aborts if no data arrives for
 // `idleMs`. The watchdog resets on every chunk, so slow-but-flowing
@@ -89,13 +143,17 @@ export async function streamFromUpstream(
 
       // Defense-in-depth: reject non-media content-types (error pages, login walls, placeholder images)
       const audioMode = opts.audio === true;
+      const imageMode = opts.image === true;
+      const expectedKind = imageMode ? 'image' : audioMode ? 'audio' : 'video';
       const upstreamCt = (upstream.headers.get('content-type') || '').toLowerCase();
-      const ctOk = audioMode
-        ? upstreamCt.includes('audio/') || upstreamCt.includes('application/octet-stream')
-        : upstreamCt.includes('video/') || upstreamCt.includes('application/octet-stream');
+      const ctOk = imageMode
+        ? upstreamCt.includes('image/') || upstreamCt.includes('application/octet-stream')
+        : audioMode
+          ? upstreamCt.includes('audio/') || upstreamCt.includes('application/octet-stream')
+          : upstreamCt.includes('video/') || upstreamCt.includes('application/octet-stream');
       if (upstreamCt && !ctOk) {
         await upstream.body?.cancel();
-        throw new Error(`Upstream returned non-${audioMode ? 'audio' : 'video'} content-type: ${upstreamCt}`);
+        throw new Error(`Upstream returned non-${expectedKind} content-type: ${upstreamCt}`);
       }
 
       const responseHeaders = new Headers();
@@ -118,27 +176,41 @@ export async function streamFromUpstream(
         return new Response(null, { status: 502, headers: { 'Content-Type': 'application/json' } });
       }
 
-      // Magic bytes validation: read first 12 bytes to confirm this is actually media
+      // Magic bytes validation: buffer the probe window, then confirm this is
+      // actually media. Validating a single chunk is not safe — see
+      // readProbeHead for the 1-byte-chunk case.
       const reader = upstream.body.getReader();
-      const firstChunk = await reader.read();
-      if (!firstChunk.done && firstChunk.value) {
-        const headerBytes = firstChunk.value.slice(0, 12);
-        const bytesOk = audioMode ? isValidAudioBytes(headerBytes) : isValidVideoBytes(headerBytes);
-        if (!bytesOk) {
-          const hex = Array.from(headerBytes).map((b) => b.toString(16).padStart(2, '0')).join(' ');
-          const ascii = Array.from(headerBytes).map((b) => (b >= 0x20 && b < 0x7F ? String.fromCharCode(b) : '.')).join('');
-          console.error(`[stream] REJECTING upstream — invalid magic bytes: hex=${hex} ascii=${ascii} ct=${upstreamCt}`);
-          await reader.cancel();
-          throw new Error(`Upstream returned non-${audioMode ? 'audio' : 'video'} content (magic bytes: ${hex} / ${ascii})`);
-        }
-        console.log(`[stream] ✓ Magic bytes OK for upstream — ct=${upstreamCt}`);
+      const probe = await readProbeHead(reader, MAGIC_PROBE_BYTES);
+      const headerBytes = probe.head;
+      const bytesOk =
+        headerBytes.length >= MAGIC_PROBE_BYTES &&
+        (imageMode
+          ? isValidImageBytes(headerBytes)
+          : audioMode
+            ? isValidAudioBytes(headerBytes)
+            : isValidVideoBytes(headerBytes));
+      if (!bytesOk) {
+        const hex = Array.from(headerBytes).map((b) => b.toString(16).padStart(2, '0')).join(' ');
+        const ascii = Array.from(headerBytes)
+          .map((b) => (b >= 0x20 && b < 0x7F ? String.fromCharCode(b) : '.'))
+          .join('');
+        console.error(
+          `[stream] REJECTING upstream — invalid magic bytes: got=${headerBytes.length}B hex=${hex} ascii=${ascii} ct=${upstreamCt} url=${sourceUrl.slice(0, 120)}`
+        );
+        await reader.cancel().catch(() => {});
+        throw new Error(
+          `Upstream returned non-${expectedKind} content (magic bytes: ${hex || '(empty)'}${ascii ? ' / ' + ascii : ''})`
+        );
       }
+      console.log(
+        `[stream] ✓ Magic bytes OK for upstream — ct=${upstreamCt} probeBytes=${headerBytes.length}`
+      );
 
       const body = new ReadableStream<Uint8Array>({
         async start(c) {
           try {
-            // Enqueue the first chunk we already read
-            if (firstChunk.value?.length) c.enqueue(firstChunk.value);
+            // Replay everything already buffered during the probe window
+            for (const chunk of probe.buffered) c.enqueue(chunk);
             await pumpReaderInto(reader, (v) => c.enqueue(v), IDLE_TIMEOUT_MS);
             try {
               c.close();

@@ -185,13 +185,26 @@ function extractStoryId(url: string): string | null {
 }
 
 /**
- * Build a clean /stories/ URL using only the numeric user ID.
- * Strips the Uzpf ticket entirely so Facebook serves the public story page.
+ * Build the URL we actually fetch, PRESERVING the story-specific token.
+ *
+ * /stories/{id}/{token}/ serves the permalink for one specific story and
+ * carries its media. /stories/{id}/ is only the profile-level story tray,
+ * which Facebook serves as a JS shell with no per-item media data, so
+ * building a tray URL here made every fast-path fetch a guaranteed miss.
+ * The token is percent-decoded because FB's share links double-encode it.
  */
-function buildCleanStoryUrl(url: string): string | null {
+function buildFetchStoryUrl(url: string): string | null {
   const id = extractStoryId(url);
   if (!id) return null;
-  return `https://www.facebook.com/stories/${id}/`;
+  const m = url.match(/\/stories\/(\d{5,20})\/([^/?#]+)/);
+  if (!m) return `https://www.facebook.com/stories/${id}/`;
+  let token = m[2];
+  try {
+    token = decodeURIComponent(token);
+  } catch {
+    // Keep the raw token if it is not valid percent-encoding.
+  }
+  return `https://www.facebook.com/stories/${id}/${token}/`;
 }
 
 /**
@@ -280,7 +293,25 @@ async function hitubeExtract(
   }
 
   if (resp.status !== 200) {
-    console.error(`[fb-story] Hitube.io status ${resp.status} (${Date.now() - start}ms)`);
+    // 401 = signature rejected (stale FB_RSA_PUBLIC_KEY), 429 = upstream rate
+    // limit. Both are third-party problems, never surfaced to the user; the
+    // request simply continues down the pipeline.
+    let detail = '';
+    try {
+      const body = (await resp.text()).slice(0, 200);
+      detail = body ? ` body=${body}` : '';
+    } catch {
+      // Body already consumed or unreadable.
+    }
+    const hint =
+      resp.status === 401
+        ? ' hint=x-secure-message rejected, FB_RSA_PUBLIC_KEY may be stale'
+        : resp.status === 429
+          ? ' hint=hitube rate limit, this path is unavailable right now'
+          : '';
+    console.error(
+      `[fb-story] Hitube.io status ${resp.status} (${Date.now() - start}ms)${hint}${detail}`
+    );
     return { error: true, errorType: 'fallback' };
   }
 
@@ -356,10 +387,11 @@ async function hitubeExtract(
 async function fastExtract(
   inputUrl: string
 ): Promise<{ data?: any; error?: boolean; errorType?: string }> {
-  // Always build a clean /stories/{id}/ URL for the fast path.
-  // This strips the Uzpf ticket and uses only the numeric story ID.
-  const cleanUrl = buildCleanStoryUrl(inputUrl) || inputUrl;
+  // Fetch the story-specific permalink (token preserved) so Facebook serves
+  // the actual story instead of the profile story tray shell.
+  const cleanUrl = buildFetchStoryUrl(inputUrl) || inputUrl;
   const webUrl = cleanUrl.replace(/^https:\/\/[^/]+/, 'https://web.facebook.com');
+  console.error(`[fb-story] fastExtract target: ${webUrl}`);
 
   let resp: Response;
   try {
@@ -483,8 +515,29 @@ export const POST: APIRoute = async (ctx) => {
   // Validate URL format
   const parsed = parseFacebookUrl(rawUrl);
   if (!parsed.isValid || parsed.linkType !== 'story') {
+    // Log exactly which shape was rejected and why, so a mis-parse is
+    // diagnosable from the logs instead of guessing from the user report.
+    let host = '(unparseable)';
+    let pathname = rawUrl;
+    try {
+      host = new URL(rawUrl.includes('://') ? rawUrl : `https://${rawUrl}`).host;
+      pathname = new URL(rawUrl.includes('://') ? rawUrl : `https://${rawUrl}`).pathname;
+    } catch {
+      // Leave the raw values in place.
+    }
+    const numericStoryId = extractStoryId(rawUrl);
+    console.error(
+      `[fb-story] URL REJECTED host=${host} pathname=${pathname} ` +
+        `isValid=${parsed.isValid} linkType=${String(parsed.linkType)} ` +
+        `numericStoryId=${numericStoryId ?? 'none'} ` +
+        `reason=${
+          !parsed.isValid
+            ? 'not a recognized Facebook link shape'
+            : `recognized as linkType=${parsed.linkType}, which is not a story link`
+        }`
+    );
     return errorResponse(
-      'That does not look like a Facebook story link. Please use a direct story link like facebook.com/stories/...',
+      'Invalid URL format. Use a direct story link like facebook.com/stories/USER_ID/STORY_ID',
       'invalid',
       422,
       origin
@@ -494,8 +547,8 @@ export const POST: APIRoute = async (ctx) => {
   // Build the cleanest possible /stories/ URL for fetching.
   const storyUrl =
     parsed.storiesUrl ||
-    buildCleanStoryUrl(rawUrl) ||
-    buildCleanStoryUrl(parsed.sanitizedUrl) ||
+    buildFetchStoryUrl(rawUrl) ||
+    buildFetchStoryUrl(parsed.sanitizedUrl) ||
     parsed.sanitizedUrl;
   console.error(`[fb-story] Processing: ${storyUrl} (original: ${rawUrl})`);
 
@@ -561,25 +614,30 @@ export const POST: APIRoute = async (ctx) => {
       return json({ success: true, data: fast.data }, 200, cacheStatus, origin);
     }
 
-    // Fast path returned a specific error (not fallback)
-    if (fast.error && fast.errorType && fast.errorType !== 'fallback') {
+    // Fast path returned a specific, trustworthy error.
+    //
+    // 'invalid' is deliberately NOT terminal: it only means this one fetch
+    // could not read media out of the page (shell, login wall, throttled
+    // response). Returning 422 there skipped the full extraction pipeline
+    // below, which is the path that actually recovers those cases. Only
+    // private / expired / timeout end the request early.
+    if (fast.error && fast.errorType && fast.errorType !== 'fallback' && fast.errorType !== 'invalid') {
       const messages: Record<string, string> = {
-        private:
-          'This story is private. Only public stories can be downloaded. Try a different public story link.',
-        expired:
-          'This story has expired. Facebook stories disappear after 24 hours. Check if the user saved it to their Highlights.',
-        invalid:
-          'Could not read story data from that link. Please use a direct story link like facebook.com/stories/USER_ID/STORY_ID.',
-        timeout:
-          'The request took too long to complete. Facebook may be slow right now. Please try again in a few seconds.',
+        private: 'This story is private or expired. Only public, unexpired stories can be downloaded.',
+        expired: 'This story is private or expired. Only public, unexpired stories can be downloaded.',
+        timeout: 'Service temporarily unavailable. Please try again in a minute.',
       };
       // Never cache errors
       return errorResponse(
         messages[fast.errorType] || 'Something went wrong. Please try again.',
         fast.errorType,
-        fast.errorType === 'private' ? 403 : fast.errorType === 'expired' ? 404 : 422,
+        fast.errorType === 'private' ? 403 : fast.errorType === 'expired' ? 404 : 504,
         origin
       );
+    }
+
+    if (fast.errorType === 'invalid') {
+      console.error('[fb-story] Fast path found no readable media, escalating to full pipeline');
     }
   } catch (err: any) {
     console.error('[fb-story] Fast path exception:', err?.message);
@@ -594,11 +652,13 @@ export const POST: APIRoute = async (ctx) => {
     clearTimeout(timer);
 
     if (!set.segments.length) {
+      // Every tier ran and none produced media. The URL parsed fine, so this
+      // is a content/availability problem, not a format problem.
       // Never cache errors
       return errorResponse(
-        'Could not find any downloadable media in this story. It may be private, expired, or the link may be incorrect.',
+        'This story is private or expired. Only public, unexpired stories can be downloaded.',
         'invalid',
-        422,
+        404,
         origin
       );
     }
@@ -631,7 +691,7 @@ export const POST: APIRoute = async (ctx) => {
     const code = err?.code ?? '';
     if (code === FB_ERR.LOGIN_REQUIRED) {
       return errorResponse(
-        'This story requires a Facebook login to view. It may be from a private or restricted account. Try another public story link.',
+        'This story is private or expired. Only public, unexpired stories can be downloaded.',
         'private',
         403,
         origin
@@ -639,7 +699,7 @@ export const POST: APIRoute = async (ctx) => {
     }
     if (code === FB_ERR.NOT_AVAILABLE) {
       return errorResponse(
-        'This story is no longer available. It may have been deleted or expired. Facebook stories disappear after 24 hours.',
+        'This story is private or expired. Only public, unexpired stories can be downloaded.',
         'expired',
         404,
         origin
@@ -647,7 +707,7 @@ export const POST: APIRoute = async (ctx) => {
     }
     if (code === FB_ERR.TIMEOUT || err?.name === 'AbortError') {
       return errorResponse(
-        'The request timed out. Facebook may be slow right now. Please try again.',
+        'Service temporarily unavailable. Please try again in a minute.',
         'timeout',
         504,
         origin
@@ -656,7 +716,7 @@ export const POST: APIRoute = async (ctx) => {
 
     console.error(`[fb-story] ${new Date().toISOString()} Error: ${err?.message ?? err}`);
     return errorResponse(
-      'Could not load this Facebook story. Please check the link and try again.',
+      'Service temporarily unavailable. Please try again in a minute.',
       'invalid',
       500,
       origin

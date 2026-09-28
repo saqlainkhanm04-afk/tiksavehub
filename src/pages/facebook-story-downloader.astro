@@ -158,7 +158,7 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
- title="Facebook Story Downloader - Save HD | TikSaveHub"
+ title="Facebook Story Video Downloader - Save FB Stories in HD"
  description="Facebook story downloader to save FB stories before they expire. HD, no watermark, no login. Works on iPhone and Android."
  keywords="download facebook story video in hd, facebook story downloader 1080p free, save facebook stories to device online, facebook story downloader, download fb stories, save facebook story video, facebook story saver, fb story downloader hd"
  canonical="/facebook-story-downloader"
@@ -251,12 +251,12 @@ const combinedJsonLd = JSON.stringify({
  </p>
 
 <h3 class="text-highlight">Photos too, and audio when you need it</h3>
- <p>
- Video stories download as MP4 in HD, and if you only want the soundtrack, you can extract it as a
- high-quality MP3 file. For photo-only stories, the platform does not expose a downloadable media stream,
- so a quick screenshot from your device remains the reliable route there. Everything
- else, every video story, is one link away.
- </p>
+<p>
+Video stories download as MP4 in HD, and photo stories download as full-resolution JPG or PNG images, so
+you never need to screenshot a frame and lose quality. If you only want the soundtrack, you can extract it
+as a high-quality MP3 file. One link handles every media type a story can contain, which matters when a
+single story mixes a photo, a video, and a text card.
+</p>
 
  <h3 class="text-highlight">Private, free, and unlimited</h3>
  <p>
@@ -273,11 +273,46 @@ const combinedJsonLd = JSON.stringify({
  </p>
 
  <p>
- Need to download a longer video instead? Try our <a href="/facebook-video-downloader">Facebook video downloader</a>
- for full-length Watch videos, video posts, and fb.watch links. If you are looking for short-form content,
- the <a href="/facebook-reels-downloader">Facebook Reels downloader</a> saves Reels in HD 1080p with no
- watermark. Both tools work with the same simple paste-and-download flow.
- </p>
+  Need to download a longer video instead? Try our <a href="/facebook-video-downloader">Facebook video downloader</a>
+  for full-length Watch videos, video posts, and fb.watch links. If you are looking for short-form content,
+  the <a href="/facebook-reels-downloader">Facebook Reels downloader</a> saves Reels in HD 1080p with no
+  watermark. Both tools work with the same simple paste-and-download flow.
+  </p>
+
+  <p>
+  Saving highlights? The same rule applies. Highlights are permanent, so there is no expiry pressure, but
+  they also sit behind the profile privacy setting of whoever created them. A public profile's highlights
+  download normally; a private profile's do not, for the same reason private stories do not.
+  </p>
+
+<h3 class="text-highlight">Which Facebook link should you paste?</h3>
+<p>
+Most failed downloads come down to grabbing the wrong kind of link. Facebook hands out several URL shapes
+for the same piece of content, and they are not interchangeable. Knowing which one you have saves a wasted
+attempt every time.
+</p>
+<p>
+A <strong>story permalink</strong> looks like <code>facebook.com/stories/1234567890/9876543210/</code> and
+is the best link to use. It points at one specific story item, so the tool knows exactly which segment to
+fetch. This is what the Share menu gives you when you open a story and choose Copy Link.
+</p>
+<p>
+A <strong>profile story tray link</strong> looks like <code>facebook.com/stories/username/</code> with no
+trailing ID. This points at someone's whole story page rather than one item, and it frequently resolves to
+a login wall, which is why it tends to fail. Open the individual story first, then copy the link from inside
+it.
+</p>
+<p>
+A <strong>fb.watch or Watch link</strong> is a full-length video, not a story. Pasting one here returns a
+clipped or empty result. Send those to the <a href="/facebook-video-downloader">Facebook video
+downloader</a> instead, which handles them properly. Reel links have the same problem, and the
+<a href="/facebook-reels-downloader">Reels downloader</a> is the right home for them.
+</p>
+<p>
+In short: stories go to this page, Reels and Watch videos go to their own tools, and if you are unsure,
+start with the share button on the specific item rather than copying whatever URL happens to be in the
+address bar. That single habit resolves the majority of download errors people run into.
+</p>
  </FbSeoArticle>
 
  <!-- How It Works -->
@@ -385,7 +420,7 @@ const combinedJsonLd = JSON.stringify({
  <FbTroubleshootingSection
  headline="Common problems and solutions."
  problems={[
- { title: 'The story already expired.', body: 'Facebook deletes stories 24 hours after posting, and no downloader can recover them after that, not TikSaveHub, not anyone. Download stories the same day you see them, and always paste the direct public story link, not your own profile' },
+  { title: 'The story already expired.', body: 'Facebook deletes stories 24 hours after posting, and no downloader can recover them after that, not TikSaveHub, not anyone. Download stories the same day you see them, and always paste the direct public story link rather than a link to your own story tray or a profile page.' },
  { title: "It says the story can't be downloaded.", body: 'Private stories, stories from friends-only accounts, and story links that require login cannot be fetched anonymously. Public stories from personal profiles and public pages will work.' },
  { title: 'I only got the first segment.', body: 'Facebook splits longer stories into multiple segments called story parts. Each part is its own short clip, so download the link for each segment you want rather than expecting one combined file.' },
  { title: 'The quality is lower than expected.', body: 'Stories are optimized for quick mobile viewing, so creators often upload compressed versions. TikSaveHub delivers whatever quality the uploader published, it cannot invent a higher-resolution source.' },

@@ -5,10 +5,15 @@ export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
 import FbHeroSection from '../../components/FbHeroSection.astro';
+import FbSeoArticle from '../../components/FbSeoArticle.astro';
 import FbStepsSection from '../../components/FbStepsSection.astro';
 import FbFeaturesSection from '../../components/FbFeaturesSection.astro';
+import FbUseCasesSection from '../../components/FbUseCasesSection.astro';
+import FbComparisonSection from '../../components/FbComparisonSection.astro';
+import FbTroubleshootingSection from '../../components/FbTroubleshootingSection.astro';
 import FbFaqSection from '../../components/FbFaqSection.astro';
 import FbCtaBand from '../../components/FbCtaBand.astro';
+import FbBlogLinksSection from '../../components/FbBlogLinksSection.astro';
 import FbInternalLinks from '../../components/FbInternalLinks.astro';
 import FacebookDownloadForm from '../../components/FacebookDownloadForm.astro';
 import StatsSection from '../../components/StatsSection.astro';
@@ -16,11 +21,20 @@ import { getLocalizedPath, type Lang } from '../../i18n/utils';
 const lp = (p: string) => getLocalizedPath(p, 'ko' as Lang);
 
 const faqData = [
-  { id: 'mp3-how', q: 'Facebook 비디오를 MP3로 변환하려면 어떻게 하나요?', a: 'Facebook 비디오 링크를 복사하여 TikSaveHub에 붙여넣고 MP3 옵션을 선택한 후 다운로드를 클릭합니다. 고품질 MP3 파일을 얻을 수 있습니다.' },
-  { id: 'mp3-quality', q: 'MP3 품질은 어떤가요?', a: '최대 320kbps의 최고 품질로 오디오를 추출합니다. 깨끗한 고품질 MP3 파일을 얻을 수 있습니다.' },
-  { id: 'mp3-reels', q: 'Facebook Reel을 MP3로 변환할 수 있나요?', a: '네, 모든 Facebook Reel을 MP3로 변환할 수 있습니다.' },
-  { id: 'mp3-free', q: 'Facebook을 MP3로 변환이 무료인가요?', a: '네, TikSaveHub는 100% 무료입니다.' },
-  { id: 'mp3-no-login', q: 'Facebook에 로그인이 필요한가요?', a: '아니요, 로그인은 불필요합니다. 공개된 비디오 링크만 있으면 됩니다.' },
+  { id: 'mp3-how', q: 'Facebook 비디오를 MP3로 변환하려면 어떻게 하나요?', a: 'Facebook 공개 영상의 링크를 복사해 TikSaveHub에 붙여넣고 다운로드를 누르기만 하면 됩니다. 도구가 오디오 트랙을 즉시 추출해 별도의 영상 없이 고품질 MP3 파일로 저장합니다.' },
+  { id: 'mp3-reel', q: 'Facebook Reel에서 오디오를 다운로드할 수 있나요?', a: '네, Facebook Reel 오디오를 쉽게 다운로드할 수 있습니다. Reel URL을 TikSaveHub에 붙여넣으면 배경 음악, 내레이션 또는 원본 사운드를 그대로 추출해 MP3로 저장합니다.' },
+  { id: 'mp3-what-is', q: '온라인 Facebook 사운드 다운로더란 무엇인가요?', a: '온라인 Facebook 사운드 다운로더는 TikSaveHub처럼 모든 공개 Facebook 영상이나 Reel에서 오디오 트랙을 추출하는 웹 도구입니다. 브라우저에서 바로 미디어를 변환해 무거운 영상 파일 없이 깔끔한 MP3 파일로 저장합니다.' },
+  { id: 'mp3-audio-only', q: '영상을 다운로드하지 않고 FB 영상에서 오디오만 추출할 수 있나요?', a: '물론입니다. 저희 FB 영상 오디오 추출 도구는 미디어 스트림을 서버에서 처리하고 MP3 파일만 전달합니다. 용량이 큰 MP4 영상 파일을 기기에 다운로드하거나 저장할 필요가 없습니다.' },
+  { id: 'mp3-320', q: 'Facebook 오디오를 320kbps MP3 품질로 다운로드할 수 있나요?', a: '네, TikSaveHub는 최대 320kbps의 고음질 오디오 추출을 지원합니다. 원본 Facebook 영상이나 Reel이 고음질 오디오로 업로드된 경우, 변환기가 그대로 선명한 320kbps 사운드를 보장합니다.' },
+  { id: 'mp3-128-vs-320', q: 'Facebook MP3 다운로드에 128kbps와 320kbps 중 무엇을 선택해야 하나요?', a: '음악이나 전문적인 용도로 가장 선명한 최고 음질을 원한다면 320kbps를 선택하세요. 더 빠르게 다운로드하고 기기 저장 공간을 절약해야 한다면 더 작은 파일 크기의 128kbps를 선택하세요.' },
+  { id: 'mp3-iphone', q: 'iPhone Safari에서 Facebook to MP3 변환기를 사용할 수 있나요?', a: '네, iPhone용 Facebook to MP3 변환기는 Safari에서 완벽하게 작동합니다. 링크를 붙여넣고 다운로드를 탭하면 MP3 파일이 iPhone의 파일 앱에 즉시 저장됩니다. 별도의 서드파티 앱이 필요 없습니다.' },
+  { id: 'mp3-android', q: 'Facebook MP3 오디오를 Android에 저장하려면 어떻게 하나요?', a: 'Android에 Facebook MP3 오디오를 저장하려면 Chrome을 열고 TikSaveHub에 영상 링크를 붙여넣은 뒤 다운로드를 누르세요. MP3 파일이 기기의 다운로드 폴더에 자동으로 저장되어 음악 앱에서 바로 재생됩니다.' },
+  { id: 'mp3-private', q: '비공개 Facebook 영상을 MP3로 변환할 수 있나요?', a: '아니요, TikSaveHub는 비공개 Facebook 영상을 MP3로 변환할 수 없습니다. 엄격한 사용자 개인 정보 보호를 위해 저희 도구는 공개된 Facebook 영상과 Reel의 오디오만 추출하도록 설계되었습니다.' },
+  { id: 'mp3-no-login', q: 'MP3 오디오를 다운로드하려면 Facebook 로그인이 필요한가요?', a: '로그인은 필요하지 않습니다. TikSaveHub를 사용하면 계정 정보나 비밀번호를 제공하지 않고도 공개 Facebook 영상을 완전히 익명으로 MP3로 변환할 수 있습니다.' },
+  { id: 'mp3-no-limit', q: 'TikSaveHub에 Facebook MP3 다운로드 일일 한도가 있나요?', a: '아니요. TikSaveHub는 100% 무료이며 일일 다운로드 한도가 전혀 없습니다. 결제 장벽이나 제한 없이 원하는 만큼 Facebook MP3를 변환하고 다운로드할 수 있습니다.' },
+  { id: 'mp3-whyfail', q: 'Facebook 영상이 MP3로 변환되지 않는 이유는 무엇인가요?', a: '변환이 실패하는 가장 흔한 원인은 잘못된 링크입니다. 댓글이 아닌 공개 게시물의 공유 메뉴에서 URL을 새로 복사한 뒤 다시 붙여넣어 보세요. 비공개, 삭제된 또는 친구 공개 콘텐츠는 어떤 도구로도 변환할 수 없습니다.' },
+  { id: 'mp3-podcast', q: 'Facebook 팟캐스트 클립에서 오디오를 추출할 수 있나요?', a: '네. 팟캐스트 클립이 Facebook의 공개 영상이나 Reel이라면 링크를 TikSaveHub에 붙여넣고 오디오를 MP3로 추출할 수 있습니다. 인터뷰, 강연이나 팟캐스트 구간을 저장하기에 완벽합니다.' },
+  { id: 'mp3-live-replay', q: 'Facebook Live 재방송에서 오디오를 추출할 수 있나요?', a: '네. Facebook Live 방송이 끝나고 공개 재방송이 되면 링크를 TikSaveHub에 붙여넣어 전체 오디오 트랙을 MP3 파일로 추출할 수 있습니다.' },
 ];
 
 const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
@@ -56,24 +70,167 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <StatsSection stats={[ { value: '100% 무료', label: '워터마크 없이 Facebook 동영상을 즉시 다운로드', icon: 'download' }, { value: '가입 불필요', label: '모든 기기에서, 전 세계 어디에서든 작동', icon: 'globe' }, { value: 'HD 품질', label: '원본 해상도, 워터마크 없음, 로그인 불필요', icon: 'star' } ]} />
 
+  <FbSeoArticle
+    headline="Facebook 영상을 MP3로, 무료로, 고품질로 즉시 변환하세요."
+    quickLinks={[
+      { label: 'TikTok 비디오 다운로더', href: '/ko/tiktok-video-downloader-without-watermark' },
+      { label: 'TikTok to MP3', href: '/ko/tiktok-to-mp3' },
+      { label: 'Instagram Reels 다운로더', href: '/ko/instagram-reels-downloader-without-watermark' },
+      { label: 'Instagram 비디오 다운로더', href: '/ko/instagram-video-downloader-without-watermark' },
+      { label: 'Instagram 스토리 다운로더', href: '/ko/instagram-story-downloader-without-watermark' },
+      { label: 'Instagram 오디오 다운로더', href: '/ko/instagram-audio-downloader' },
+      { label: 'Facebook 비디오 다운로더', href: '/ko/facebook-video-downloader' },
+      { label: 'Facebook Reels 다운로더', href: '/ko/facebook-reels-downloader' },
+      { label: 'Facebook 스토리 다운로더', href: '/ko/facebook-story-downloader' },
+      { label: 'Facebook to MP3', href: '#download-tool' },
+      { label: 'Facebook 사진 다운로더', href: '/ko/facebook-photo-downloader' },
+      { label: 'Snapchat 다운로더', href: '/ko/snapchat-downloader' },
+      { label: 'Snapchat 스토리 다운로더', href: '/ko/snapchat-story-downloader' },
+      { label: 'Snapchat to MP3', href: '/ko/snapchat-to-mp3' },
+      { label: 'X/Twitter 비디오 다운로더', href: '/ko/x-video-downloader' },
+    ]}
+    supportedLinks={['facebook.com/reel/…', 'facebook.com/watch/?v=…', 'facebook.com/user/videos/…', 'fb.watch/…']}
+  >
+    <p>
+      TikSaveHub를 사용하면 <strong>Facebook 영상을 고품질 MP3로 1분 만에 변환</strong>할 수 있습니다.
+      무료이고, 제한이 없으며, 가입도 필요 없습니다. 계속 흥얼거리게 되는 Reel의 배경 음악,
+      낭독 클립, 강의 구간, 또는 나만의 Facebook Live 재방송 음악이든 상관없이 저희 변환기는
+      오디오 트랙을 깔끔한 MP3 파일로 추출해 휴대폰, 자동차, 음악 플레이어에 바로 쓸 수 있는
+      형태로 만들어 줍니다. 소프트웨어 설치도, 브라우저 확장 프로그램도, 계정도 필요하지 않고
+      링크를 붙여넣어 다운로드하기만 하면 됩니다.
+    </p>
+
+    <h3 class="text-highlight">Facebook to MP3 변환기의 작동 방식</h3>
+    <p>
+      Facebook을 열어 오디오를 원하는 영상이나 Reel을 찾고, 공유를 탭한 뒤 "링크 복사"를
+      선택하세요. TikSaveHub로 돌아와 입력창에 URL을 붙여넣습니다. 저희 서버가 몇 초 만에 영상
+      메타데이터를 가져오고, 오디오 트랙을 스트리밍해 사용 가능한 최고 품질, 즉 <strong>320kbps
+      MP3</strong>에 준하는 수준으로 실시간 변환합니다. 이 페이지에서는 MP3 타일이 자동으로
+      선택되어 "추천" 표시가 되므로 변환까지 단 한 번의 탭이면 충분합니다.
+    </p>
+
+    <h3 class="text-highlight">Facebook 오디오 추출에 TikSaveHub를 선택해야 하는 이유</h3>
+    <p>
+      많은 Facebook to MP3 도구들은 대역폭을 제한하거나, 하루 몇 개로 변환 횟수를 묶거나,
+      광고로 가득 찬 리다이렉트에 빠뜨립니다. TikSaveHub는 다릅니다. 무제한 변환, 프리미엄
+      요금제 없음, 이메일 수집 없음, 느린 CDN 응답을 자동으로 감지하고 처리하는 스트리밍
+      파이프라인이 특징입니다. 그 결과는 언제나 빠르게 전달되는 고품질 MP3입니다.
+      <strong>Facebook 영상을 무료로 MP3로 다운로드</strong>하는 경험을 매번 누리세요.
+    </p>
+
+    <h3 class="text-highlight">필요한 만큼의 고품질 MP3</h3>
+    <p>
+      반복 재생할 노래라면 품질이 무엇보다 중요합니다. 저희는 영상이 제공하는 최고 품질의
+      오디오 트랙을 추출해 화면 녹화 방식 변환기에서 흔한 잡음과 왜곡 없이 MP3로 변환합니다.
+      이어폰, 스피커, 차량 오디오 어디서 들어도 깨끗하고 제대로 들리는 파일을 받게 됩니다.
+    </p>
+
+    <h3 class="text-highlight">Reel, Watch 영상, 영상 게시물 전환 지원</h3>
+    <p>
+      변환기는 모든 공개 Facebook 형식을 지원합니다. Reel(facebook.com/reel/…), Watch
+      링크(facebook.com/watch/?v=…), 영상 게시물, fb.watch 짧은 링크 모두 가능합니다. 짧은
+      링크는 자동으로 해석되고 ?mibextid= 같은 추적 파라미터는 제거되므로 매번 깔끔하고
+      안정적인 변환이 이뤄집니다. 방송이 끝난 Live 재방송도 변환할 수 있습니다.
+    </p>
+
+    <h3 class="text-highlight">iPhone, Android, 데스크톱 어디서나 작동</h3>
+    <p>
+      iPhone에서는 Safari에 링크를 붙여넣으면 MP3가 파일 앱에 저장되고, 이후 Apple Music이나
+      좋아하는 플레이어에 추가할 수 있습니다. Android에서는 MP3가 다운로드 폴더에 들어가
+      어떤 음악 앱으로든 재생됩니다. PC나 Mac에서는 브라우저의 다운로드 바로 바로 들어옵니다.
+      전체 흐름은 큰 탭 영역의 터치 중심 설계로 어디서나 자연스럽게 느껴집니다.
+    </p>
+
+    <h3 class="text-highlight">설계부터 프라이버시 중심</h3>
+    <p>
+      저희는 이메일을 요구하지 않고, 변환 기록을 저장하지 않으며, 브라우징을 추적하지
+      않습니다. 오디오 추출은 전적으로 서버 사이드에서 이뤄지고, 기기에 닿는 파일은 오직
+      MP3뿐입니다. 자유롭게 사용하세요. 그것이 TikSaveHub의 약속입니다.
+    </p>
+
+    <p>
+      소리뿐 아니라 화면도 필요하신가요? <a href="/ko/facebook-video-downloader">Facebook
+      비디오 다운로더</a>로 HD MP4를 저장하거나, <a href="/ko/facebook-reels-downloader">Facebook
+      Reels</a>를 1080p로 받거나, <a href="/ko/facebook-story-downloader">Facebook 스토리</a>가
+      사라지기 전에 저장하세요.
+    </p>
+  </FbSeoArticle>
+
   <FbStepsSection
     eyebrow="단계별 가이드"
     headline="Facebook을 MP3로 변환하는 방법."
-    sub="간단한 3단계."
-    steps={[ { num: '01', icon: 'copy', title: '비디오 링크 복사', body: 'Facebook을 열고 오디오를 추출할 비디오를 찾아 공유를 탭한 후 "링크 복사"를 선택합니다.' }, { num: '02', icon: 'paste', title: 'TikSaveHub에 붙여넣기', body: '여기로 돌아와 링크를 입력 필드에 붙여넣고 MP3 옵션을 선택합니다.' }, { num: '03', icon: 'download', title: 'MP3 다운로드', body: '다운로드를 클릭하여 고품질 MP3 파일을 즉시 받으세요.' } ]} />
+    sub="간단한 3단계. 기술 지식이 필요 없습니다."
+    steps={[ { num: '01', icon: 'copy', title: '비디오 링크 복사', body: 'Facebook 앱이나 사이트를 열고 비디오나 Reel을 찾아 공유를 탭한 뒤 "링크 복사"를 선택합니다. Reel, Watch 링크, 영상 게시물, fb.watch 짧은 링크 모두 지원됩니다.' }, { num: '02', icon: 'paste', title: 'TikSaveHub에 붙여넣기', body: '여기로 돌아와 입력창에 링크를 붙여넣으면 영상을 감지하고 수 초 안에 최고 품질 오디오 트랙 추출을 시작합니다.' }, { num: '03', icon: 'download', title: 'MP3 다운로드', body: 'MP3 타일이 자동으로 선택되어 "추천" 표시가 되니 그대로 탭하기만 하면 됩니다. 앱도 계정도 필요 없이 고품질 파일이 즉시 저장됩니다.' } ]} />
 
   <FbFeaturesSection
     eyebrow="기능"
     headline="Facebook to MP3에 TikSaveHub를 선택하는 이유."
     features={[ { icon: 'music', accent: 'develop', title: '고품질 최대 320kbps', body: '최고 품질로 오디오 추출 — 최대 320kbps, 손실 없음.' }, { icon: 'zap', accent: 'preview', title: '초고속 변환', body: '서버 사이드 처리 — 수 초 만에 MP3를 받으세요.' }, { icon: 'shield', accent: 'ship', title: '워터마크 없음', body: '깨끗한 오디오 — 워터마크, 로고, 광고 없음.' }, { icon: 'list', accent: 'develop', title: '모든 형식 지원', body: 'Watch 비디오, Reel, 게시물, fb.watch 링크 — 모두 지원.' }, { icon: 'device', accent: 'preview', title: '모든 기기에서 작동', body: 'iPhone, Android, PC, Mac — 모든 브라우저에서 작동.' }, { icon: 'globe', accent: 'ship', title: '무료 무제한', body: '일일 제한 없음, 비용 없음. 원하는 만큼 변환.' } ]} />
 
+  <FbUseCasesSection
+    headline="누가 Facebook을 MP3로 변환하나요?"
+    sub="오디오를 추출하는 실제 사용자와 실제 이유."
+    uses={[
+      { title: 'Reel 사운드 수집가', body: 'Reel에는 트렌드 음악과 리믹스가 가득합니다. 공개 Reel을 MP3로 변환해 사운드트랙을 비공개 플레이리스트에 보관하고 어디서든 오프라인으로 들으세요.' },
+      { title: '언어·음악 학습자', body: '대사, 가사, 발음이 담긴 공개 영상을 오디오로 저장해 차 안에서, 요리하면서, 걸을 때 반복 재생하세요. 반복 학습이 그 어느 때보다 쉬워집니다.' },
+      { title: '팟캐스트·쇼 노트 클립', body: '공개 토크 형식과 Live 재방송에는 좋은 오디오 순간이 많습니다. MP3를 추출해 직접 편집하고 팟캐스트 에피소드, 수업, 프레젠테이션에 활용하세요.' },
+      { title: '크리에이터 내레이션 아카이브', body: '콘텐츠 크리에이터는 다시 게시하지 않을 게시물과 Reel에 목소리를 입힙니다. 자신의 내레이션을 MP3 마스터로 남겨 영상, 팟캐스트, 공지에 재사용하세요.' },
+      { title: '벨소리·알림음', body: '좋아하는 공개 Reel 사운드나 대사를 커스텀 벨소리나 알림음으로 바꾸세요. MP3를 다운로드해 벨소리 길이로 자르고 어떤 휴대폰에든 설정하세요.' },
+      { title: '오프라인 학습·검토', body: '공개 정보 클립을 오디오 전용 버전으로 저장하면 영상 없이 검토할 수 있어 이동 중 데이터와 배터리를 아끼고, 나중에 수정될 수 있는 게시물의 기록도 남길 수 있습니다.' },
+    ]}
+  />
+
+  <FbComparisonSection
+    headline="TikSaveHub vs 다른 Facebook to MP3 변환기."
+    sub="경쟁 서비스와의 비교."
+    columns={['기능', 'TikSaveHub', '일반적인 대안']}
+    rows={[
+      { feature: '오디오 품질', values: ['최대 320kbps MP3', '종종 128kbps로 제한'] },
+      { feature: '원본 충실도', values: ['원본 오디오에서 추출', '때로 재녹음'] },
+      { feature: '워터마크·속도 변화', values: ['없음', '일부 사이트의 과거 문제'] },
+      { feature: '앱 또는 확장 프로그램', values: ['불필요', '종종 필요'] },
+      { feature: '계정 또는 로그인', values: ['불필요', '때로 필요'] },
+      { feature: 'iPhone / Android / PC', values: ['예, 세 플랫폼 모두', '서비스마다 다름'] },
+    ]}
+    note="솔직한 말: 많은 MP3 사이트는 유료 플랜으로 유도하기 위해 128kbps로 리샘플링하거나 자체 워터마크를 추가합니다. TikSaveHub는 원본 사운드트랙에서 변환해 깨끗한 320kbps MP3를 제공합니다. 계정도, 설치도, 제한도 없습니다."
+  />
+
+  <FbTroubleshootingSection
+    headline="흔한 문제와 해결 방법."
+    problems={[
+      { title: '변환이 실패해요.', body: '가장 흔한 원인은 잘못된 링크입니다. 댓글이 아닌 영상이나 Reel의 공유 메뉴에서 URL을 새로 복사하세요. 비공개, 삭제된, 친구 공개 콘텐츠는 어떤 도구로도 변환할 수 없습니다.' },
+      { title: 'MP3가 기대보다 낮은 품질로 들려요.', body: '출력은 크리에이터가 업로드한 오디오를 절대 넘을 수 없습니다. 압축되거나 볼륨이 작은 사운드트랙으로 게시된 영상은 압축된 MP3를 낳습니다. TikSaveHub는 원본이 허용하는 한 최대 320kbps로 추출합니다.' },
+      { title: '오디오 대신 영상 파일이 나왔어요.', body: '다운로드 전에 결과 카드에서 오디오 타일이 선택되어 있는지 확인하세요. 이 페이지에서는 MP3 타일이 미리 선택되지만, 비디오 페이지에서는 MP3 타일을 직접 선택해야 합니다.' },
+      { title: '오디오가 무음이에요.', body: '일부 영상은 실제로 오디오 트랙이 없습니다. 무음 반복 Reel이나 텍스트 전용 업로드가 그렇습니다. 원본이 무음이라면 어떤 변환기든 무음을 반환합니다. 소리가 있는 다른 공개 영상을 시도해 보세요.' },
+      { title: '변환에 시간이 너무 오래 걸려요.', body: '서버 처리는 수 초지만, 다운로드하려면 긴 영상이 완전히 MP3로 변환되어야 합니다. 매우 긴 영상이나 고비트레이트 영상은 조금 더 걸릴 수 있고, 느린 연결은 MP3 다운로드 자체를 느리게 합니다.' },
+    ]}
+  />
+
   <FbFaqSection eyebrow="자주 묻는 질문" headline="Facebook to MP3 관련 질문." prefix="mp3" faqs={faqData} />
 
-  <FbCtaBand headline="좋아하는 Facebook 비디오에서 오디오를 추출하세요." sub="무료, 빠르고 고품질 — 링크를 붙여넣어 MP3를 받으세요." ctaHref="#download-tool" ctaLabel="지금 MP3로 변환" />
+  <FbCtaBand headline="어떤 Facebook 영상이든 MP3로." sub="무료, 빠르고 무제한 — MP3 타일이 미리 선택되어 준비되어 있습니다." ctaHref="#download-tool" ctaLabel="지금 MP3로 변환" />
+
+  <FbBlogLinksSection
+    eyebrow="가이드와 튜토리얼"
+    headline="가이드에서 더 알아보기"
+    links={[
+      { href: '/blog/facebook-video-downloader-guide', title: 'Facebook Video Downloader Guide', desc: '영상, Reel, 스토리를 최고 품질로 저장하는 단계별 팁.' },
+      { href: '/blog/tiktok-to-mp3-extract-audio-guide', title: 'TikTok to MP3 Audio Guide', desc: 'TikTok 영상과 사운드에 적용하는 동일한 오디오 추출 워크플로.' },
+      { href: '/blog/is-it-safe-to-download-videos-online', title: 'Is It Safe to Download Videos Online?', desc: '안전한 다운로더를 식별하고, 가짜 앱을 피하며, 기기를 보호하는 방법.' },
+    ]}
+  />
 
   <FbInternalLinks
-    headline="기타 무료 Facebook 도구"
-    links={[ { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Facebook 비디오를 HD로 다운로드.' }, { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reels를 워터마크 없이 저장.' }, { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebook 스토리가 사라지기 전에 저장.' }, { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebook 사진을 전체 해상도로 저장.' } ]}
+    headline="TikSaveHub의 기타 무료 도구"
+    links={[
+      { href: lp('/facebook-video-downloader'), icon: 'fb', title: 'Facebook Video Downloader', desc: 'Facebook 비디오를 HD로 다운로드.' },
+      { href: lp('/facebook-reels-downloader'), icon: 'fb', title: 'Facebook Reels Downloader', desc: 'Facebook Reels를 워터마크 없이 저장.' },
+      { href: lp('/facebook-story-downloader'), icon: 'story', title: 'Facebook Story Downloader', desc: 'Facebook 스토리가 사라지기 전에 저장.' },
+      { href: lp('/facebook-photo-downloader'), icon: 'photo', title: 'Facebook Photo Downloader', desc: 'Facebook 사진을 전체 해상도로 저장.' },
+      { href: lp('/instagram-audio-downloader'), icon: 'ig', title: 'Instagram Audio Downloader', desc: 'Instagram Reel과 영상에서 MP3 오디오 추출.' },
+      { href: lp('/tiktok-to-mp3'), icon: 'tiktok', title: 'TikTok to MP3 Converter', desc: 'TikTok 영상을 고품질 MP3 오디오로 변환.' },
+      { href: lp('/instagram-reels-downloader-without-watermark'), icon: 'igreels', title: 'Instagram Reels Downloader', desc: '워터마크 없이 Instagram Reel 다운로드.' },
+    ]}
     lang="ko"
   />
 

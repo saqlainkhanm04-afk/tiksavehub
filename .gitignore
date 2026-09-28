@@ -25,7 +25,8 @@ dev*.log
 dev*.err
 
 # runtime media cache (signed CDN URLs, expiring)
-data/
+# root-anchored so src/data/ (blog content) stays tracked
+/data/
 
 # environment variables
 .env

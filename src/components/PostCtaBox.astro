@@ -1,0 +1,173 @@
+---
+// PostCtaBox — "skip the reading" CTA box linking a blog post to its matching tool page.
+// Rendered twice per post: variant="top" directly under the H1 (above the fold),
+// variant="end" after the last paragraph.
+interface Props {
+  headline: string;
+  text: string;
+  href: string;
+  label: string;
+  variant?: 'top' | 'end';
+}
+
+const { headline, text, href, label, variant = 'top' } = Astro.props;
+---
+
+<div class={`post-cta-box post-cta-box--${variant}`}>
+  <div class="post-cta-box-body">
+    <p class="post-cta-box-headline">{headline}</p>
+    <p class="post-cta-box-text">{text}</p>
+  </div>
+  <a href={href} class="post-cta-box-btn">
+    {label}
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+  </a>
+</div>
+
+<style>
+  .post-cta-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xl);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.07), rgba(0, 124, 240, 0.07));
+    border: 1px solid rgba(124, 58, 237, 0.22);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .post-cta-box:hover {
+    border-color: rgba(124, 58, 237, 0.38);
+    box-shadow: 0 0 24px rgba(124, 58, 237, 0.1);
+  }
+
+  /* Top variant sits inside the post hero, so it reads as part of the header block. */
+  .post-cta-box--top {
+    margin-top: var(--spacing-lg);
+    background-color: var(--color-canvas);
+  }
+
+  .post-cta-box--end {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-3xl);
+    border-radius: var(--radius-xl);
+  }
+
+  .post-cta-box-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .post-cta-box-headline {
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.5px;
+    line-height: 1.35;
+    color: var(--color-ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .post-cta-box--top .post-cta-box-headline {
+    font-size: 16px;
+  }
+
+  .post-cta-box--end .post-cta-box-headline {
+    font-size: 24px;
+    letter-spacing: -1px;
+  }
+
+  .post-cta-box-text {
+    font-size: 15px;
+    color: var(--color-body);
+    line-height: 1.6;
+    letter-spacing: -0.15px;
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  .post-cta-box--end .post-cta-box-text {
+    font-size: var(--text-body-md);
+  }
+
+  .post-cta-box-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    /* 48px min tap target */
+    min-height: 48px;
+    padding: 12px 28px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: #fff;
+    font-size: var(--text-body-md);
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    text-align: center;
+    text-decoration: none;
+    touch-action: manipulation;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .post-cta-box-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 24px rgba(124, 58, 237, 0.35);
+  }
+
+  .post-cta-box-btn:active {
+    transform: scale(0.96);
+  }
+
+  .post-cta-box-btn:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 3px;
+  }
+
+  /* ─── Dark Mode ─── */
+  :global(.dark) .post-cta-box {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.16), rgba(0, 124, 240, 0.12));
+    border-color: rgba(124, 58, 237, 0.32);
+  }
+
+  :global(.dark) .post-cta-box--top {
+    background-color: var(--color-canvas);
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 600px) {
+    .post-cta-box,
+    .post-cta-box--end {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: left;
+      padding: var(--spacing-lg);
+    }
+
+    .post-cta-box--end .post-cta-box-headline {
+      font-size: 20px;
+    }
+
+    .post-cta-box-btn {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-cta-box,
+    .post-cta-box-btn {
+      transition: none;
+    }
+
+    .post-cta-box-btn:hover,
+    .post-cta-box-btn:active {
+      transform: none;
+    }
+  }
+</style>

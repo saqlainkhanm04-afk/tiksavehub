@@ -15,9 +15,11 @@ import {
   ERR_LOGIN_REQUIRED,
   ERR_STORY_EXPIRED,
   ERR_HIGHLIGHTS_UNSUPPORTED,
+  IG_ERR_UNAVAILABLE,
+  IG_ERR_BROWSER_BUSY,
   setInstagramEnv,
 } from '../../lib/instagram';
-import { cacheHit, cacheWrite } from '../../lib/media-cache';
+import { cacheHit, cacheWrite, invalidateCache } from '../../lib/media-cache';
 import { isRateLimited, clientIpFrom } from '../../lib/rate-limit';
 import { getEnv, initRequestEnv } from '../../lib/init-env';
 
@@ -42,16 +44,33 @@ export const GET: APIRoute = async (ctx) => {
   const turnstileToken = url.searchParams.get('turnstileToken') || undefined;
 
   // Fast path: stream directly from a pre-resolved CDN URL (used by multi-story downloads).
+  // Guarded so an expired/throttled signed URL returns the same honest JSON as the
+  // main path instead of escaping as an Astro HTML 500.
   if (dl && streamUrl) {
     const isPhoto = streamUrl.includes('.jpg') || streamUrl.includes('image');
-    return streamFromUpstream(streamUrl, {
-      filename: isPhoto ? 'tiksavehub-story.jpg' : 'tiksavehub-story.mp4',
-      contentType: isPhoto ? 'image/jpeg' : 'video/mp4',
-      accept: isPhoto
-        ? 'image/jpeg,image/webp,image/*,*/*'
-        : 'video/mp4,video/*,*/*',
-      referer: 'https://www.instagram.com/',
-    });
+    try {
+      return await streamFromUpstream(streamUrl, {
+        filename: isPhoto ? 'tiksavehub-story.jpg' : 'tiksavehub-story.mp4',
+        contentType: isPhoto ? 'image/jpeg' : 'video/mp4',
+        accept: isPhoto
+          ? 'image/jpeg,image/webp,image/*,*/*'
+          : 'video/mp4,video/*,*/*',
+        referer: 'https://www.instagram.com/',
+        image: isPhoto,
+      });
+    } catch (err: any) {
+      const msg = err?.message ?? String(err);
+      console.error('[Instagram Download API] Direct stream failed:', msg);
+      const upstreamStatus = Number(msg.match(/Upstream returned (\d{3})/)?.[1] || 0);
+      const errorMsg =
+        upstreamStatus === 429 || upstreamStatus === 403
+          ? "Instagram's media server is throttling our requests right now. Please try again in a minute."
+          : "Instagram's download link expired before the transfer started. Please try again.";
+      return new Response(
+        JSON.stringify({ success: false, error: errorMsg, errorType: 'api_error' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
   }
 
   if (!videoUrl) {
@@ -121,28 +140,41 @@ export const GET: APIRoute = async (ctx) => {
           const audioExt = (video.audio_format as string) || null;
           const isAudio = mode === 'audio' && Boolean(audioExt);
           const isImage = !isAudio && (video.isPhoto as boolean) === true;
-          return streamFromUpstream(streamUrl, {
-            filename: isAudio ? `tiksavehub-audio.${audioExt}` : isImage ? 'tiksavehub-story.jpg' : 'tiksavehub-video.mp4',
-            contentType: isAudio ? 'audio/mp4' : isImage ? 'image/jpeg' : 'video/mp4',
-            accept: isAudio
-              ? 'audio/mp4,audio/mpeg,audio/*,*/*'
-              : isImage
-                ? 'image/jpeg,image/webp,image/*,*/*'
-                : 'video/mp4,video/*,*/*',
-            referer: 'https://www.instagram.com/',
-          });
-        }
-
-        return new Response(
-          JSON.stringify({ success: true, type: parsed.type, video, fromCache: true }),
-          {
-            status: 200,
-            headers: {
-              'Content-Type': 'application/json',
-              'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
-            },
+          try {
+            return await streamFromUpstream(streamUrl, {
+              filename: isAudio ? `tiksavehub-audio.${audioExt}` : isImage ? 'tiksavehub-story.jpg' : 'tiksavehub-video.mp4',
+              contentType: isAudio ? 'audio/mp4' : isImage ? 'image/jpeg' : 'video/mp4',
+              accept: isAudio
+                ? 'audio/mp4,audio/mpeg,audio/*,*/*'
+                : isImage
+                  ? 'image/jpeg,image/webp,image/*,*/*'
+                  : 'video/mp4,video/*,*/*',
+              referer: 'https://www.instagram.com/',
+              image: isImage,
+            });
+          } catch (streamErr: any) {
+            // Instagram CDN links are signed and expire long before our 24h
+            // media cache. Retrying would replay the same dead URL from cache
+            // all day, so drop the entry and fall through to a fresh resolve.
+            const why = streamErr?.message ?? String(streamErr);
+            if (!/Upstream returned/.test(why)) throw streamErr;
+            console.warn(
+              `[Instagram Download API] Cached media URL is no longer usable (${why}) — re-resolving.`
+            );
+            await invalidateCache('ig', id, mode);
           }
-        );
+        } else {
+          return new Response(
+            JSON.stringify({ success: true, type: parsed.type, video, fromCache: true }),
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+              },
+            }
+          );
+        }
       }
     }
 
@@ -338,7 +370,7 @@ export const GET: APIRoute = async (ctx) => {
       const isAudio = contentType === 'audio';
       const isImage = contentType === 'image';
       const fileExt = isAudio ? audioExt || 'm4a' : isImage ? 'jpg' : 'mp4';
-      return streamFromUpstream(downloadUrl, {
+      return await streamFromUpstream(downloadUrl, {
         filename: isAudio
           ? `tiksavehub-audio.${fileExt}`
           : isImage
@@ -351,6 +383,7 @@ export const GET: APIRoute = async (ctx) => {
             ? 'image/jpeg,image/webp,image/*,*/*'
             : 'video/mp4,video/*,*/*',
         referer: 'https://www.instagram.com/',
+        image: isImage,
       });
     }
 
@@ -372,6 +405,26 @@ export const GET: APIRoute = async (ctx) => {
 
     const isYtDlpMissing = msg.includes('yt-dlp is not installed') || msg.includes('yt-dlp is disabled');
     const isYtDlpMediaErr = msg.startsWith('ERROR:') && !isYtDlpMissing;
+
+    // Every extraction source failed. The per-source summary contains
+    // "returned no media", so this MUST be checked before `noMedia` — otherwise
+    // a server-side fetch problem is reported as "this Reel is restricted",
+    // which blames the user's link for our upstream outage.
+    const allSourcesFailed = /All \d+ API sources failed/.test(msg);
+
+    // Instagram itself reported the media as unavailable (rendered "Post isn't
+    // available" in a real browser). That is the ONE case where we know the
+    // user's link is the problem, so it must not be reported as our outage.
+    const mediaUnavailable = msg.includes(IG_ERR_UNAVAILABLE);
+    // HikerAPI quota + browser capacity are OUR limits, not the user's link, so
+    // they get an honest "try again" instead of a failure verdict.
+    const capacityLimited = msg.includes('IG_ERR_HIKER_QUOTA') || msg.includes(IG_ERR_BROWSER_BUSY);
+
+    // The CDN answered but not with media: a signed Instagram URL expires, or
+    // the CDN served an error page. Re-resolving gets a fresh signed URL.
+    const streamRejected = /Upstream returned non-|Upstream returned undersized body/.test(msg);
+    const upstreamStatus = Number(msg.match(/Upstream returned (\d{3})/)?.[1] || 0);
+    const isRateLimitedUpstream = upstreamStatus === 429 || upstreamStatus === 403;
 
     const isFetchFailed =
       msg.includes('fetch failed') ||
@@ -415,10 +468,37 @@ export const GET: APIRoute = async (ctx) => {
       );
     } else if (isTimeout) {
       errorMsg = 'The server took too long to respond. Please try again in a moment.';
+    } else if (streamRejected) {
+      // We DID resolve a media URL, so the Reel is public and fine — the signed
+      // CDN link had expired or was throttled. Say that instead of blaming the Reel.
+      errorMsg = isRateLimitedUpstream
+        ? "Instagram's media server is throttling our requests right now. Please try again in a minute."
+        : "Instagram's download link expired before the transfer started. Please try again.";
+    } else if (mediaUnavailable) {
+      errorMsg =
+        'This Reel is private or deleted. Instagram itself reported it as unavailable, so it cannot be downloaded. Please try another public Reel link.';
+      console.error(
+        '[Instagram Download API] Instagram reported the media as unavailable (private/deleted). ' +
+          'Per-source detail:\n' + msg
+      );
+    } else if (capacityLimited) {
+      errorMsg =
+        'Service temporarily unavailable. Our Instagram extraction is at capacity right now. Please try again in a few minutes.';
+      console.error('[Instagram Download API] Extraction capacity exhausted. Per-source detail:\n' + msg);
+    } else if (allSourcesFailed) {
+      // We cannot tell "private/deleted" apart from "Instagram throttled us" —
+      // every source reports the same generic miss, so the copy names both
+      // instead of guessing (and blaming the user's link for our outage).
+      errorMsg =
+        'Instagram would not serve this Reel to our server. It may be private, deleted, or region restricted, or Instagram may be temporarily throttling our requests. Please try another public Reel link, or try again in a few minutes.';
+      console.error(
+        '[Instagram Download API] All Instagram extraction sources failed. Per-source detail:\n' + msg
+      );
     } else if (isYtDlpMissing) {
       errorMsg = 'This content could not be fetched right now. Please try again later.';
     } else if (isYtDlpMediaErr || noMedia) {
-      errorMsg = 'This content may be unavailable or restricted. Please try another public link.';
+      errorMsg =
+        'This Reel is private, deleted, or age/region restricted. Please try another public Reel link.';
     } else if (isFetchFailed) {
       errorMsg = 'This content could not be fetched right now. Please try again later.';
     } else {
@@ -428,7 +508,10 @@ export const GET: APIRoute = async (ctx) => {
     console.error(`[Instagram Download API] ${new Date().toISOString()} URL=${videoUrl} Error=${msg}`);
     return new Response(
       JSON.stringify({ success: false, error: errorMsg, errorType: isTimeout ? 'timeout' : 'api_error' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      // 404 when Instagram itself confirmed the media is gone and 429 when we
+      // are at capacity, so the client can tell "retry later" apart from "this
+      // link will never work".
+      { status: mediaUnavailable ? 404 : capacityLimited ? 429 : 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 };

@@ -15,8 +15,9 @@ const SPOTLIGHT_RE = /^\/(?:@[\w.-]+\/)?spotlight\/([A-Za-z0-9_-]{4,80})\/?$/;
 // /p/{id} or /@user/p/{id} (public posts)
 const POST_RE = /^\/(?:@[\w.-]+\/)?p\/([A-Za-z0-9_-]{4,80})\/?$/;
 
-// story.snapchat.com/s/{username}/{id}
 const STORY_RE = /^\/s\/([A-Za-z0-9_.-]{1,30})\/([A-Za-z0-9_-]{4,80})\/?$/;
+const STORY_PUBLIC_RE = /^\/p\/([A-Za-z0-9_-]{8,80})\/?$/;
+const STORY_PROFILE_RE = /^\/(?:u\/|@)([A-Za-z0-9_.-]{1,30})\/?$/;
 
 // /add/{username} (profile)
 const ADD_RE = /^\/add\/([A-Za-z0-9_.-]{1,30})\/?$/;
@@ -54,6 +55,31 @@ export function parseSnapchatUrl(raw: string): SnapchatUrlParseResult {
         error: null,
       };
     }
+
+    const publicStoryMatch = url.pathname.match(STORY_PUBLIC_RE);
+    if (publicStoryMatch) {
+      return {
+        isValid: true,
+        linkType: 'story',
+        mediaId: publicStoryMatch[1],
+        username: null,
+        sanitizedUrl: `https://story.snapchat.com/p/${publicStoryMatch[1]}`,
+        error: null,
+      };
+    }
+
+    const storyProfileMatch = url.pathname.match(STORY_PROFILE_RE);
+    if (storyProfileMatch) {
+      return {
+        isValid: true,
+        linkType: 'playlist',
+        mediaId: null,
+        username: storyProfileMatch[1],
+        sanitizedUrl: `https://www.snapchat.com/@${storyProfileMatch[1]}`,
+        error: null,
+      };
+    }
+
     return invalid('Invalid Snapchat story URL');
   }
 
@@ -128,5 +154,5 @@ export function parseSnapchatUrl(raw: string): SnapchatUrlParseResult {
     };
   }
 
-  return invalid('Could not find a valid Snapchat video link. Supported: snapchat.com/spotlight/..., story.snapchat.com/s/..., snapchat.com/p/...');
+  return invalid('Could not find a valid Snapchat link. Supported: snapchat.com/spotlight/..., story.snapchat.com/s/..., story.snapchat.com/p/..., snapchat.com/p/..., or snapchat.com/@username.');
 }

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import SocialShare from '../../components/SocialShare.astro';
+import PostCtaBox from '../../components/PostCtaBox.astro';
 import { posts } from '../../data/blog-posts';
 
 const usDate = (iso: string) => {
@@ -18,6 +19,8 @@ export function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+
+const postCta = 'cta' in post ? post.cta : undefined;
 
 const site = Astro.site?.toString().replace(/\/+$/, '') ?? 'https://tiksavehub.com';
 const pageUrl = `${site}/blog/${post.slug}`;
@@ -240,7 +243,7 @@ const tagTextColors = [
 ---
 
 <Layout
-  title={`${post.title} — TikSaveHub Blog`}
+  title={post.metaTitle ?? `${post.title} — TikSaveHub Blog`}
   description={post.excerpt}
   keywords={`tiksavehub, tiktok downloader, ${post.tags.join(', ')}`}
   canonical={`/blog/${post.slug}`}
@@ -277,6 +280,15 @@ const tagTextColors = [
           <span class="post-meta-sep">·</span>
           <span>{post.readingTime}</span>
         </div>
+        {postCta && (
+          <PostCtaBox
+            variant="top"
+            headline={postCta.headline}
+            text={postCta.text}
+            href={postCta.href}
+            label={postCta.label}
+          />
+        )}
         <!-- Featured Banner -->
         <div class="post-featured-banner" aria-hidden="true">
           <div class="banner-row">
@@ -301,13 +313,23 @@ const tagTextColors = [
       </article>
 
       <!-- CTA -->
-      <div class="post-cta-card">
-        <div class="post-cta-content">
-          <h2 class="post-cta-title">Ready to download your first clean video?</h2>
-          <p class="post-cta-text">Remove watermarks from TikTok videos in seconds. Free, fast, and no account needed.</p>
-          <a href="/" class="post-cta-btn">Try TikSaveHub Now</a>
+      {postCta ? (
+        <PostCtaBox
+          variant="end"
+          headline={postCta.headline}
+          text={postCta.text}
+          href={postCta.href}
+          label={postCta.label}
+        />
+      ) : (
+        <div class="post-cta-card">
+          <div class="post-cta-content">
+            <h2 class="post-cta-title">Ready to download your first clean video?</h2>
+            <p class="post-cta-text">Remove watermarks from TikTok videos in seconds. Free, fast, and no account needed.</p>
+            <a href="/" class="post-cta-btn">Try TikSaveHub Now</a>
+          </div>
         </div>
-      </div>
+      )}
 
       <!-- Share -->
       <div class="post-share">
@@ -1010,6 +1032,7 @@ const tagTextColors = [
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-xs);
+    min-height: 48px;
     padding: 12px 28px;
     border-radius: var(--radius-full);
     background: linear-gradient(135deg, #7c3aed, #ec4899);
@@ -1017,8 +1040,25 @@ const tagTextColors = [
     font-size: var(--text-body-md);
     font-weight: 600;
     text-decoration: none;
+    touch-action: manipulation;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     letter-spacing: -0.2px;
+  }
+
+  .post-cta-btn:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-cta-btn {
+      transition: none;
+    }
+
+    .post-cta-btn:hover,
+    .post-cta-btn:active {
+      transform: none;
+    }
   }
 
   .post-cta-btn:hover {

@@ -143,9 +143,9 @@ function renderContent(md: string): string {
       } else {
         out.push(`<h3>${headingText}</h3>`);
       }
-    } else if (line.startsWith('![')) {
+    } else if (line.trimStart().startsWith('![')) {
       closeList();
-      const imgMatch = line.match(/^!\[(.+?)\]\((.+?)\)$/);
+      const imgMatch = line.trim().match(/^!\[(.+?)\]\((.+?)\)$/);
       if (imgMatch) {
         out.push(
           `<figure class="post-figure"><img src="${imgMatch[2]}" alt="${imgMatch[1]}" loading="lazy" decoding="async" width="800" height="450" /></figure>`
@@ -363,6 +363,21 @@ const tagTextColors = [
       </div>
     </div>
   </section>
+
+  <script>
+    // Inline content image fallback: if a markdown image fails to load,
+    // swap it to the default placeholder so the article never shows a broken box.
+    const POST_IMG_FALLBACK = '/blog/cover-default.svg';
+    const applyPostImgFallback = (img: HTMLImageElement) => {
+      if (img.dataset.imgFallback) return;
+      img.dataset.imgFallback = '1';
+      img.src = POST_IMG_FALLBACK;
+    };
+    document.querySelectorAll<HTMLImageElement>('.post-content-inner img').forEach((img) => {
+      img.addEventListener('error', () => applyPostImgFallback(img));
+      if (img.complete && img.naturalWidth === 0) applyPostImgFallback(img);
+    });
+  </script>
 </Layout>
 
 <style is:global>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Save Snapchat Spotlight videos guide cover">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#141418"/>
+      <stop offset="0.55" stop-color="#0d0d12"/>
+      <stop offset="1" stop-color="#1a1608"/>
+    </linearGradient>
+    <linearGradient id="mesh" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFC00" stop-opacity="0.16"/>
+      <stop offset="0.5" stop-color="#FFC800" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0.12"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFC00"/>
+      <stop offset="1" stop-color="#FFC800"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" rx="28" fill="url(#base)"/>
+  <rect width="800" height="450" rx="28" fill="url(#mesh)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="710" cy="70" r="76" fill="none" stroke="#FFFC00" stroke-opacity="0.16" stroke-width="2"/>
+  <circle cx="70" cy="390" r="62" fill="none" stroke="#7c3aed" stroke-opacity="0.16" stroke-width="2"/>
+  <circle cx="690" cy="380" r="40" fill="none" stroke="#FFC800" stroke-opacity="0.12" stroke-width="2"/>
+
+  <!-- Left icon tile -->
+  <g transform="translate(96,131)">
+    <rect width="188" height="188" rx="44" fill="url(#tile)"/>
+    <g stroke="#141418" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M94 52v62"/>
+      <path d="M66 88l28 28 28-28"/>
+      <path d="M52 136h84"/>
+    </g>
+    <text x="94" y="172" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#141418" text-anchor="middle" letter-spacing="-0.5">SPOT</text>
+  </g>
+
+  <!-- Right text column -->
+  <text x="336" y="164" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#ffffff" letter-spacing="-1.4">Save Snapchat</text>
+  <text x="336" y="204" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#ffffff" letter-spacing="-1.4">Spotlight Videos</text>
+  <text x="336" y="238" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="500" fill="#d4d4d8">HD MP4 · Original audio · Any device</text>
+
+  <!-- Feature badges -->
+  <rect x="336" y="266" width="176" height="42" rx="13" fill="#ffffff" fill-opacity="0.95"/>
+  <circle cx="364" cy="287" r="10" fill="#FFFC00"/>
+  <path d="M359 287l4 4 6-7" stroke="#141418" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="384" y="292" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#18181b">HD 1080p</text>
+
+  <rect x="524" y="266" width="188" height="42" rx="13" fill="#ffffff" fill-opacity="0.95"/>
+  <circle cx="552" cy="287" r="10" fill="#7c3aed"/>
+  <path d="M547 287l4 4 6-7" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="572" y="292" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#18181b">No Sign-Up</text>
+
+  <!-- Bottom pill -->
+  <rect x="336" y="330" width="376" height="44" rx="22" fill="#FFFC00"/>
+  <text x="524" y="358" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#141418" text-anchor="middle">Free in your browser &#8594;</text>
+</svg>

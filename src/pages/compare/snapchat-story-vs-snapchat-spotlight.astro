@@ -1,0 +1,139 @@
+---
+export const prerender = true;
+
+import ComparePage from '../../components/ComparePage.astro';
+---
+
+<ComparePage
+  canonical="/compare/snapchat-story-vs-snapchat-spotlight"
+  title="Snapchat Story vs Spotlight: Differences and How to Save Either"
+  description="Snapchat Story vs Spotlight explained: audience, lifetime, content type, links, and which downloader saves each one. Free, no account, no watermark."
+  keywords="snapchat story vs spotlight, difference between snapchat story and spotlight, snapchat story download, snapchat spotlight download"
+  eyebrow="Snapchat formats"
+  headline="Snapchat Story vs Spotlight."
+  lede="Stories and Spotlight are two different feeds wearing the same app. Stories are 24-hour posts from people you know, while Spotlight is a public feed of clips anyone can watch. Each format has its own link style, and each one saves through a different tool."
+  a={{
+    name: 'Snapchat Story Downloader',
+    href: '/snapchat-story-downloader',
+    tagline: 'Photo and video Stories from public profiles, saved while they are still live.',
+  }}
+  b={{
+    name: 'Snapchat Downloader',
+    href: '/snapchat-downloader',
+    tagline: 'Spotlight clips and regular snap videos from any public Snapchat link.',
+  }}
+  tableHeadline="Story and Spotlight side by side."
+  tableSub="Where they live, who watches them, and how you save each one."
+  rows={[
+    { label: 'What it is', a: '24-hour posts by friends and creators', b: 'Public clips in the Spotlight feed' },
+    { label: 'Where you find it', a: 'Story rings on profiles and the camera screen', b: 'Spotlight tab with a swipe-only feed' },
+    { label: 'Who can watch', a: 'Followers and friends of the poster', b: 'Any Snapchat user' },
+    { label: 'How long it lasts', a: 'Expires after 24 hours', b: 'Stays up until the creator removes it', winner: 'b' },
+    { label: 'Content mix', a: 'Photos and short videos', b: 'Short videos only', winner: 'a' },
+    { label: 'Link format', a: 'Story links ending in a story code', b: 'Spotlight and share links from the app' },
+    { label: 'Right tool', a: 'Snapchat Story Downloader', b: 'Snapchat Downloader' },
+    { label: 'Watermark', a: 'None on the saved file', b: 'None on the saved file' },
+    { label: 'Top quality', a: 'As posted, up to 1080p', b: 'As posted, up to 1080p' },
+    { label: 'Audio extraction', a: 'MP3 via the Snapchat to MP3 page', b: 'MP3 via the Snapchat to MP3 page' },
+    { label: 'Price and sign-up', a: 'Free, no account needed', b: 'Free, no account needed' },
+  ]}
+  tableNote="Honest take: Story and Spotlight are not competing features, they are different jobs. Stories keep your private circle updated for a day, and Spotlight pushes clips to the whole platform. Saving them works the same way: copy the link, paste it into the matching tool, keep the original file."
+  blocks={[
+    {
+      id: 'story-explained',
+      eyebrow: 'Format one',
+      headline: 'What a Snapchat Story is.',
+      body: [
+        "A Story is a post that lives for 24 hours. The poster shares a photo or a short video, it appears at the top of their profile inside a colored ring, and their friends watch it in order until the timer runs out. After that, Snapchat removes it for everyone, unless the creator saves it to a highlight.",
+        'Stories mix photos and video, which is why downloads come back as JPG and MP4 files. The audience stays closed: only people the poster accepted as friends or followers can open the Story. That also means the download link has to point at a public Story page while it is still within the 24-hour window.',
+      ],
+      points: [
+        { term: 'Lifetime', text: 'Exactly 24 hours, then the Story disappears from every profile.' },
+        { term: 'Audience', text: 'Friends and followers chosen by the poster, not the general feed.' },
+        { term: 'Content', text: 'Photo snaps and video snaps in one sequence, saved as JPG and MP4.' },
+        { term: 'Urgency', text: 'Downloads work only while the Story is live, so save early.' },
+      ],
+    },
+    {
+      id: 'spotlight-explained',
+      eyebrow: 'Format two',
+      headline: 'What Spotlight is.',
+      body: [
+        "Spotlight is Snapchat's take on the short video feed. Swipe up in the Spotlight tab and you get a stream of public clips ranked for you, similar to other vertical video feeds. Anyone on the platform can watch them, not just the friends of the creator.",
+        'Because Spotlight posts are public and permanent until deleted, their links keep working long after the original upload. Clips arrive as vertical MP4 files with sound, usually at 1080p for anything shot on a recent phone. There is no watermark to remove, so the saved file looks exactly like the live version.',
+      ],
+      points: [
+        { term: 'Lifetime', text: 'Permanent by default, removed only when the creator deletes it.' },
+        { term: 'Audience', text: 'Open to every Snapchat user, which is how clips go viral.' },
+        { term: 'Content', text: 'Vertical video with sound, up to 1080p on modern uploads.' },
+        { term: 'Discovery', text: 'Ranked feed, so today saves keep working tomorrow.' },
+      ],
+    },
+    {
+      id: 'links-and-tools',
+      eyebrow: 'Links',
+      headline: 'Matching each link to the right tool.',
+      body: [
+        'Both formats start the same way: copy the link from inside the app. On a Story, open the profile or the viewer, use the share menu, and take the link. On a Spotlight clip, tap the share arrow on the right side of the screen and copy what it hands back. Each link carries the format inside its path, which tells the tool what it is about to fetch.',
+        'Story links belong on the Story Downloader page, which is built for profile stories and media IDs from the 24-hour feed. Spotlight links and regular snap video links belong on the general Snapchat Downloader. Paste a link into the wrong page and it fails with a clear message instead of returning a broken file.',
+      ],
+      points: [
+        { term: 'Story link', text: 'Copy from the profile or viewer, paste into the Story Downloader.' },
+        { term: 'Spotlight link', text: 'Copy from the share arrow, paste into the Snapchat Downloader.' },
+        { term: 'Expired Story', text: 'A link past its 24 hours returns an honest expiry error.' },
+        { term: 'Private source', text: 'Private profiles fail cleanly and never produce a broken file.' },
+      ],
+    },
+    {
+      id: 'when-to-use',
+      eyebrow: 'Choosing',
+      headline: 'When each format shines.',
+      body: [
+        'Stories suit the personal side of the app. Friends post a night out, a trip, or a quick update, and the audience stays small on purpose. If you want to keep one of those moments, download it before the timer ends, because the platform removes the source at 24 hours regardless of who saved what.',
+        'Spotlight suits reach. Creators post there to be found by strangers, and the clips stay up for as long as they want them online. Keeping a favorite costs nothing, and the file you save can be reposted or archived without hunting for a screen recorder. Both habits work from the same phone in under a minute.',
+      ],
+      points: [
+        { term: 'Keep a memory', text: 'Save a friend Story before expiry, no screen recording needed.' },
+        { term: 'Keep a favorite', text: 'Spotlight links still work next week, so saving can wait.' },
+        { term: 'Creator workflow', text: 'Grab your own public posts for reposts and backups.' },
+        { term: 'Audio only', text: 'The Snapchat to MP3 page pulls just the soundtrack from either.' },
+      ],
+    },
+  ]}
+  verdictEyebrow="Verdict"
+  verdictHeadline="Same app, different feeds, different tools."
+  verdict={[
+    'Stories are private, temporary, and mixed-format. Spotlight is public, permanent, and video-only. Neither is better, they simply serve different goals: one keeps your circle updated, the other puts your clip in front of everyone.',
+    'Match the link to the format. Stories go through the <a href="/snapchat-story-downloader">Snapchat Story Downloader</a>, and Spotlight clips go through the <a href="/snapchat-downloader">Snapchat Downloader</a>. Both are free, run in the browser, and return the original file with no watermark and no account.',
+  ]}
+  faqs={[
+    {
+      id: 'cmp2-main-difference',
+      q: 'What is the main difference between a Snapchat Story and Spotlight?',
+      a: 'Audience and lifetime. Stories are 24-hour posts visible only to the friends and followers of the poster, and they can contain photos or video. Spotlight is a public feed of video clips that stay online until the creator deletes them, and anyone on the platform can watch.',
+    },
+    {
+      id: 'cmp2-expire-after-download',
+      q: 'Does a Story stop expiring once I download it?',
+      a: 'No. Downloading creates an independent copy on your device, but the original Story still follows the 24-hour timer on Snapchat servers. That is exactly why you should save the Story while it is live: after expiry the source link returns an expiry error, and only your saved file remains.',
+    },
+    {
+      id: 'cmp2-which-tool-spotlight',
+      q: 'Which tool saves Spotlight videos?',
+      a: 'The <a href="/snapchat-downloader">Snapchat Downloader</a> takes Spotlight share links and regular snap video links. It returns a watermark-free MP4 file at the quality the creator uploaded, usually up to 1080p with sound included.',
+    },
+    {
+      id: 'cmp2-story-tool-spotlight-links',
+      q: 'Can the Story Downloader handle Spotlight links too?',
+      a: 'The <a href="/snapchat-story-downloader">Story Downloader</a> is built for Story links and profile stories from the 24-hour feed. Spotlight links belong on the <a href="/snapchat-downloader">Snapchat Downloader</a> page. Feeding a link to the wrong page fails with a clear message instead of a broken file.',
+    },
+    {
+      id: 'cmp2-watermark-free',
+      q: 'Are downloads from both formats watermark-free and free?',
+      a: 'Yes to both. Snapchat does not stamp a watermark on Stories or Spotlight clips, so saved files arrive exactly as posted. Both tools are free with no download limits, no sign-up, and no app install, on iPhone, Android, and desktop.',
+    },
+  ]}
+  ctaHeadline="Keep a Story before the timer runs out."
+  ctaText="Paste a public Story or Spotlight link and get the original file back. Free, no account, no watermark."
+  ctaLabel="Open the Snapchat Downloader"
+/>

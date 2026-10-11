@@ -127,14 +127,13 @@ const toolCards = [
 
       <a class="featured-card" href={`/blog/${featured.slug}`} data-featured>
         <div class="featured-cover">
-          <img
-            src={featured.cover}
+          <img src={featured.cover || '/blog/cover-default.svg'}
             alt={featured.title}
             loading="eager"
             decoding="async"
             width="800"
             height="450"
-          />
+         />
           <span class="featured-badge">Beliebte Anleitung</span>
         </div>
 
@@ -172,7 +171,7 @@ const toolCards = [
               return (
                 <a class="article-card" href={`/blog/${post.slug}`} data-title={post.title.toLowerCase()} data-cat={post.category}>
                   <div class="article-cover">
-                    <img src={post.cover} alt={post.title} loading="lazy" decoding="async" width="800" height="450" />
+                    <img src={post.cover || '/blog/cover-default.svg'} alt={post.title} loading="lazy" decoding="async" width="800" height="450"  />
                     <span class="article-tag">{cat.label}</span>
                   </div>
                   <div class="article-body">
@@ -272,6 +271,24 @@ const toolCards = [
       </div>
     </div>
   </section>
+
+<script>
+  // Cover fallback: if a card image is missing/empty or fails to load,
+  // swap it to the default placeholder instead of showing a broken box.
+  const COVER_FALLBACK = '/blog/cover-default.svg';
+  const applyCoverFallback = (img: HTMLImageElement) => {
+    if (img.dataset.coverFallback) return;
+    img.dataset.coverFallback = '1';
+    img.src = COVER_FALLBACK;
+  };
+  const coverImages = document.querySelectorAll<HTMLImageElement>(
+    '.featured-cover img, .article-cover img'
+  );
+  coverImages.forEach((img) => {
+    img.addEventListener('error', () => applyCoverFallback(img));
+    if (img.complete && img.naturalWidth === 0) applyCoverFallback(img);
+  });
+</script>
 </Layout>
 
 <style>

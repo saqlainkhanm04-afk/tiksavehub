@@ -101,8 +101,15 @@ export function randomUaProfile(): UaProfile {
 /* ------------------------------------------------------------------ */
 
 /** TikTok-specific web headers with rotated UA. */
-export function tiktokWebHeaders(opts?: { referer?: string; extra?: Record<string, string> }): Record<string, string> {
-  const p = pickUaProfile();
+export function tiktokWebHeaders(opts?: { referer?: string; extra?: Record<string, string>; mobile?: boolean }): Record<string, string> {
+  let p: UaProfile;
+  if (opts?.mobile) {
+    // Pick a mobile profile (Android or iOS)
+    const mobileProfiles = UA_PROFILES.filter((u) => u.secChUaMobile === '?1');
+    p = mobileProfiles[Math.floor(Math.random() * mobileProfiles.length)];
+  } else {
+    p = pickUaProfile();
+  }
   const headers: Record<string, string> = {
     'User-Agent': p.userAgent,
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',

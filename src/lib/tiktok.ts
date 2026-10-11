@@ -3,10 +3,7 @@ import { resolveTikTokShortLink } from './normalize';
 import { runWithFallback, runWithRace } from './api-fallback';
 import {
   tikwmSource,
-  cobaltSource,
   tiktokDownbloderSource,
-  tiktokItemDetailSource,
-  tiktokCdnDirectSource,
 } from './platforms/tiktok';
 import { tiktokDirectSource } from './platforms/tiktok-direct';
 import { thirdPartyApiHeaders } from './platforms/headers';
@@ -153,9 +150,9 @@ async function fetchAudioFromTikwm(videoUrl: string): Promise<TikTokMusicInfo | 
 
 /**
  * Core resolution pipeline — uses the generic fallback runner via
- * src/lib/platforms/tiktok.ts source definitions.
+ * src/lib/platforms/tikok.ts source definitions.
  *  1. Resolve short links → canonical URL
- *  2. Run sources: TikWM → Cobalt → TikTok item-detail
+ *  2. Run sources in order: TikWM (primary) → TikTokDownbloder + TikTokDirect (parallel fallback)
  *  3. Enrich with oEmbed metadata (title, cover, author)
  */
 async function resolveTikTok(videoUrl: string, turnstileToken?: string): Promise<TikTokVideoMeta> {
@@ -201,28 +198,21 @@ async function resolveTikTok(videoUrl: string, turnstileToken?: string): Promise
   // Fetch oEmbed metadata in parallel with the fallback chain
   const oembedP = fetchOembedMeta(canonicalUrl);
 
-  // ─── Phase 1: Race fast sources in PARALLEL (first success wins) ───
-  // TikCDN Direct (multi-pattern, 8s), TikWM (4s), TikTok ItemDetail (5s), TikTok Direct (8s)
-  // First one to return a valid result wins. On a fast IP this takes 1-3s.
+  // ─── Phase 1: TikWM alone (most reliable, 8s timeout) ───
   let mediaResult: { data: import('./platforms/types').MediaMeta; source: string; attemptMs: number };
   const phase1Start = Date.now();
   try {
+    mediaResult = await runWithFallback(candidate, [tikwmSource]);
+    console.log(`[TikTok] Phase 1 TikWM SUCCESS: ${mediaResult.data.resolvedBy} in ${mediaResult.attemptMs}ms (total ${Date.now() - phase1Start}ms)`);
+  } catch (phase1Err) {
+    // ─── Phase 2: Parallel fallback — TikTokDownbloder + TikTokDirect ───
+    console.log(`[TikTok] Phase 1 TikWM failed (${Date.now() - phase1Start}ms), trying Phase 2 parallel fallback...`);
+    const phase2Start = Date.now();
     mediaResult = await runWithRace(candidate, [
-      tiktokCdnDirectSource,       // Direct CDN probe with fallback patterns (~2-5s)
-      tikwmSource,                 // 3rd-party CDN API (~2-4s)
-      tiktokItemDetailSource,      // TikTok's own web API (~3-5s)
-      tiktokDirectSource,          // Direct page HTML parse (~5-8s)
+      tiktokDownbloderSource,  // Vercel wrapper (~8-10s)
+      tiktokDirectSource,      // Direct page HTML parse (~8-12s)
     ]);
-    console.log(`[TikTok] Phase 1 RACE WINNER: ${mediaResult.data.resolvedBy} in ${mediaResult.attemptMs}ms (total ${Date.now() - phase1Start}ms)`);
-  } catch (raceErr) {
-    // ─── Phase 2: Sequential fallback — slower but more thorough sources ───
-    // Only reached when all 4 fast sources fail (rare on production IPs).
-    console.log(`[TikTok] Phase 1 race failed (${Date.now() - phase1Start}ms), trying Phase 2 fallback sources...`);
-    mediaResult = await runWithFallback(candidate, [
-      cobaltSource(turnstileToken),  // cobalt.tools (~10-15s)
-      tiktokDownbloderSource,       // Vercel wrapper (~8-10s)
-    ]);
-    console.log(`[TikTok] Phase 2 FALLBACK WINNER: ${mediaResult.data.resolvedBy} in ${mediaResult.attemptMs}ms`);
+    console.log(`[TikTok] Phase 2 RACE WINNER: ${mediaResult.data.resolvedBy} in ${mediaResult.attemptMs}ms (total ${Date.now() - phase2Start}ms)`);
   }
 
   const meta: TikTokVideoMeta = {

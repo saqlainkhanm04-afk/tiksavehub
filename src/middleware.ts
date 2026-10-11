@@ -84,7 +84,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
    * Cloudflare proxies set `x-forwarded-proto`; the ctx.url.protocol check is
    * the local-dev fallback (non-Cloudflare). */
   const isHttp =
-    ctx.request.headers.get('x-forwarded-proto') === 'http' || ctx.url.protocol === 'http:';
+    ctx.request.headers.get('x-forwarded-proto') === 'http' || (ctx.url.protocol === 'http:' && !ctx.url.hostname.includes('localhost'));
   const hostname = ctx.url.hostname;
   const needsHttps = isHttp;
   const needsWwwStrip = hostname === 'www.tiksavehub.com';

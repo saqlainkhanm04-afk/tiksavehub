@@ -16,6 +16,8 @@ const ALLOWED_HOST_PATTERNS = [
   // TikTok
   /(^|\.)tikwm\.com$/,
   /(^|\.)tiktokcdn\.com$/,
+  /(^|\.)tiktokcdn-[a-z]{2}\.com$/,
+  /(^|\.)tiktokcdn-us\.com$/,
   /(^|\.)z-m\.scontent\.tiktokcdn\.com$/,
   // X / Twitter
   /(^|\.)twimg\.com$/,

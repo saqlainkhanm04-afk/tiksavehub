@@ -161,7 +161,7 @@ export const POST: APIRoute = async (ctx) => {
     return json({ success: true, type: payload.mediaType === 'image' ? 'snapchat-image' : 'snapchat-video', media: payload, video: payload }, 200, true);
   } catch (err: any) {
     console.error(`[Snapchat API] ${new Date().toISOString()} POST error: ${err?.message ?? err}`);
-    return json({ success: false, error: userMessageFor(err), errorType: 'api_error' }, 200);
+    return json({ success: false, error: userMessageFor(err), errorType: 'api_error' }, 500);
   }
 };
 

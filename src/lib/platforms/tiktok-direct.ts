@@ -2,27 +2,21 @@
  * TikTok Direct HTML Extractor
  *
  * Fetches the actual TikTok web page and extracts video data from the
- * embedded JSON payload (`__UNIVERSAL_DATA_FOR_REHYDRATION__` or SIGI_STATE).
- *
- * This is the most resilient extraction method because it uses TikTok's own
- * page — no third-party wrapper to break. TikTok cannot remove this JSON
- * without breaking their own SPA hydration.
+ * embedded JSON payload. Handles multiple page structures as TikTok evolves.
  *
  * Flow:
- *  1. GET https://www.tiktok.com/@user/video/{id} with realistic browser headers
- *  2. Scan HTML for `__UNIVERSAL_DATA_FOR_REHYDRATION__` script tag
- *  3. Fallback: scan for `SIGI_STATE` or `__NEXT_DATA__` script tags
- *  4. Extract video playAddr/downloadAddr from the JSON tree
- *  5. Map to MediaMeta
+ *  1. Try embed page first (simpler structure, less JS)
+ *  2. Fall back to video page with mobile headers
+ *  3. Scan HTML for known script tags: api-data, __UNIVERSAL_DATA_FOR_REHYDRATION__, SIGI_STATE, __NEXT_DATA__
+ *  4. Regex fallback for playAddr/downloadAddr in any script content
  */
 
 import type { ApiSource } from '../api-fallback';
 import type { MediaMeta } from './types';
 import { tiktokWebHeaders } from './headers';
-import { probeVideoUrl } from './video-probe';
 
 /* ------------------------------------------------------------------ */
-/*  Video ID extraction                                                */
+/*  Video ID extraction                                               */
 /* ------------------------------------------------------------------ */
 
 function extractVideoId(url: string): string | null {
@@ -44,7 +38,7 @@ function extractVideoId(url: string): string | null {
 /*  JSON payload extraction from HTML                                  */
 /* ------------------------------------------------------------------ */
 
-/** Maximum bytes to read from the HTML response (enough to capture <head> + first scripts) */
+/** Maximum bytes to read from the HTML response */
 const MAX_HTML_BYTES = 512_000;
 
 interface HydrationData {
@@ -73,129 +67,211 @@ interface HydrationData {
 }
 
 /**
- * Fetch the TikTok page and extract the embedded JSON hydration data.
- * Uses bounded read to avoid downloading multi-MB of JS bundles.
+ * Fetch a TikTok page (embed or video) and extract embedded JSON hydration data.
+ * Tries embed page first (simpler), then video page.
  */
-async function fetchHydrationData(resolvedUrl: string): Promise<{ json: HydrationData; method: string } | null> {
-  const headers = tiktokWebHeaders({ referer: 'https://www.tiktok.com/' });
-  console.log(`[TikTokDirect] ▶ Fetching page: ${resolvedUrl}`);
-  console.log(`[TikTokDirect]   UA: ${headers['User-Agent']?.substring(0, 50)}...`);
-  const resp = await fetch(resolvedUrl, {
-    headers,
-    signal: AbortSignal.timeout(7_000),
-    redirect: 'follow',
-  });
+async function fetchHydrationData(resolvedUrl: string): Promise<{ json: HydrationData; method: string; url: string } | null> {
+  const videoId = extractVideoId(resolvedUrl);
+  if (!videoId) return null;
 
-  console.log(`[TikTokDirect] ← status=${resp.status} type=${resp.headers.get('content-type')} url=${resp.url}`);
-  if (!resp.ok) {
-    const errBody = await resp.text().catch(() => '<unreadable>');
-    console.log(`[TikTokDirect] ✗ Error body(1000)=${errBody.substring(0, 1000)}`);
-    throw new Error(`TikTok page returned ${resp.status}`);
-  }
+  // Try embed page first — simpler HTML, less JS, more reliable
+  const embedUrl = `https://www.tiktok.com/embed/v2/${videoId}`;
+  const urlsToTry = [embedUrl, resolvedUrl];
 
-  // Read bounded stream — hydration JSON lives in <head>, no need for full page
-  const reader = resp.body?.getReader();
-  if (!reader) throw new Error('No response body');
+  for (const url of urlsToTry) {
+    const isEmbed = url.includes('/embed/');
+    const headers = tiktokWebHeaders({
+      referer: 'https://www.tiktok.com/',
+      mobile: !isEmbed, // embed works better with desktop UA
+    });
+    console.log(`[TikTokDirect] ▶ Fetching ${isEmbed ? 'embed' : 'video'} page: ${url}`);
+    console.log(`[TikTokDirect]   UA: ${headers['User-Agent']?.substring(0, 50)}...`);
 
-  const decoder = new TextDecoder();
-  let buffered = '';
-  let bytesRead = 0;
-
-  try {
-    while (bytesRead < MAX_HTML_BYTES) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      bytesRead += value.length;
-      buffered += decoder.decode(value, { stream: true });
-
-      // Check if we've captured enough to find the script tags
-      // The hydration script is always in <head> or early <body>
-      if (buffered.includes('</head>') || buffered.includes('SIGI_STATE') || buffered.includes('__NEXT_DATA__')) {
-        break;
-      }
+    let resp: Response;
+    try {
+      resp = await fetch(url, {
+        headers,
+        signal: AbortSignal.timeout(isEmbed ? 8_000 : 10_000),
+        redirect: 'follow',
+      });
+    } catch (err) {
+      console.log(`[TikTokDirect] ✗ Fetch failed for ${url}: ${err instanceof Error ? err.message : err}`);
+      continue;
     }
-  } finally {
-    reader.cancel().catch(() => {});
+
+    console.log(`[TikTokDirect] ← status=${resp.status} type=${resp.headers.get('content-type')} finalUrl=${resp.url}`);
+    if (!resp.ok) {
+      const errBody = await resp.text().catch(() => '<unreadable>');
+      console.log(`[TikTokDirect] ✗ Error body(1000)=${errBody.substring(0, 1000)}`);
+      continue;
+    }
+
+    // Read bounded stream
+    const reader = resp.body?.getReader();
+    if (!reader) continue;
+
+    const decoder = new TextDecoder();
+    let buffered = '';
+    let bytesRead = 0;
+
+    try {
+      while (bytesRead < MAX_HTML_BYTES) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        bytesRead += value.length;
+        buffered += decoder.decode(value, { stream: true });
+
+        // Stop early if we have enough data
+        if (buffered.includes('id="api-data"') ||
+            buffered.includes('id="__UNIVERSAL_DATA_FOR_REHYDRATION__"') ||
+            buffered.includes('id="SIGI_STATE"') ||
+            buffered.includes('id="__NEXT_DATA__"') ||
+            buffered.includes('"playAddr"') ||
+            buffered.includes('"downloadAddr"') ||
+            buffered.includes('</html>')) {
+          break;
+        }
+      }
+    } finally {
+      reader.cancel().catch(() => {});
+    }
+
+    console.log(`[TikTokDirect]   Buffered ${bytesRead} bytes from ${isEmbed ? 'embed' : 'video'} page`);
+
+    const hydration = extractHydrationFromHtml(buffered, videoId);
+    if (hydration) {
+      console.log(`[TikTokDirect] ✓ Found hydration data via ${hydration.method} on ${isEmbed ? 'embed' : 'video'} page`);
+      return { json: hydration.json, method: hydration.method, url };
+    }
+
+    console.log(`[TikTokDirect] ✗ No hydration data found on ${isEmbed ? 'embed' : 'video'} page`);
   }
 
-  console.log(`[TikTokDirect]   Buffered ${bytesRead} bytes, has </head>=${buffered.includes('</head>')} has UNIVERSAL_DATA=${buffered.includes('__UNIVERSAL_DATA_FOR_REHYDRATION__')} has SIGI_STATE=${buffered.includes('SIGI_STATE')} has NEXT_DATA=${buffered.includes('__NEXT_DATA__')}`);
+  return null;
+}
 
-  // Try __UNIVERSAL_DATA_FOR_REHYDRATION__ (current TikTok, 2024+)
-  let match = buffered.match(
-    /<script\s+id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>\s*({[\s\S]*?})\s*<\/script>/
-  );
+/**
+ * Extract hydration data from HTML buffer using multiple strategies.
+ */
+function extractHydrationFromHtml(html: string, videoId: string): { json: HydrationData; method: string } | null {
+  // Strategy 1: api-data script tag (mobile video page, 2024+)
+  let match = html.match(/<script\s+id="api-data"[^>]*>\s*({[\s\S]*?})\s*<\/script>/);
   if (match?.[1]) {
     try {
       const data = JSON.parse(match[1]);
-      // Navigate the hydration tree to find the video item
+      if (data?.videoDetail?.itemInfo?.itemStruct) {
+        console.log(`[TikTokDirect] ✓ Found api-data with videoDetail.itemInfo.itemStruct`);
+        return { json: data.videoDetail as HydrationData, method: 'API_DATA' };
+      }
+      if (data?.itemInfo?.itemStruct) {
+        console.log(`[TikTokDirect] ✓ Found api-data with itemInfo.itemStruct`);
+        return { json: data as HydrationData, method: 'API_DATA' };
+      }
+      // Check for embed page structure
+      if (data?.itemModule) {
+        console.log(`[TikTokDirect] ✓ Found api-data with itemModule`);
+        return { json: data as HydrationData, method: 'API_DATA' };
+      }
+    } catch { /* parse error — try next method */ }
+  }
+
+  // Strategy 2: __UNIVERSAL_DATA_FOR_REHYDRATION__ (desktop video page, legacy)
+  match = html.match(/<script\s+id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>\s*({[\s\S]*?})\s*<\/script>/);
+  if (match?.[1]) {
+    try {
+      const data = JSON.parse(match[1]);
       const defaultScope = data?.__DEFAULT_SCOPE__;
       if (defaultScope) {
-        // New format: __DEFAULT_SCOPE__["webapp.video-detail"]["itemInfo"]["itemStruct"]
-        const videoDetail = defaultScope['webapp.video-detail'] || defaultScope['webapp.video-page'];
-        if (videoDetail?.itemInfo?.itemStruct) {
-          return { json: videoDetail as HydrationData, method: 'UNIVERSAL_DATA' };
-        }
-        // Alternate path: itemModule
-        if (videoDetail?.itemModule) {
-          return { json: videoDetail as HydrationData, method: 'UNIVERSAL_DATA' };
+        // Check multiple possible keys for video data
+        const videoKeys = [
+          'webapp.video-detail',
+          'webapp.video-page',
+          'webapp.video-detail-page',
+          'video-detail',
+          'video-page',
+        ];
+        for (const key of videoKeys) {
+          const videoDetail = defaultScope[key];
+          if (videoDetail?.itemInfo?.itemStruct) {
+            console.log(`[TikTokDirect] ✓ Found UNIVERSAL_DATA with ${key}.itemInfo.itemStruct`);
+            return { json: videoDetail as HydrationData, method: 'UNIVERSAL_DATA' };
+          }
+          if (videoDetail?.itemModule) {
+            console.log(`[TikTokDirect] ✓ Found UNIVERSAL_DATA with ${key}.itemModule`);
+            return { json: videoDetail as HydrationData, method: 'UNIVERSAL_DATA' };
+          }
         }
       }
-      // Fallback: search entire parsed object for itemInfo
+      // Direct itemInfo at root
       if (data?.itemInfo?.itemStruct) {
+        console.log(`[TikTokDirect] ✓ Found UNIVERSAL_DATA with root itemInfo.itemStruct`);
+        return { json: data as HydrationData, method: 'UNIVERSAL_DATA' };
+      }
+      if (data?.itemModule) {
+        console.log(`[TikTokDirect] ✓ Found UNIVERSAL_DATA with root itemModule`);
         return { json: data as HydrationData, method: 'UNIVERSAL_DATA' };
       }
     } catch { /* parse error — try next method */ }
   }
 
-  // Try SIGI_STATE (older TikTok, some regions)
-  match = buffered.match(
-    /<script\s+id="SIGI_STATE"[^>]*>\s*({[\s\S]*?})\s*<\/script>/
-  );
+  // Strategy 3: SIGI_STATE (older TikTok, some regions)
+  match = html.match(/<script\s+id="SIGI_STATE"[^>]*>\s*({[\s\S]*?})\s*<\/script>/);
   if (match?.[1]) {
     try {
       const data = JSON.parse(match[1]);
-      // SIGI_STATE stores items in itemModule
       if (data?.ItemModule) {
+        console.log(`[TikTokDirect] ✓ Found SIGI_STATE with ItemModule`);
         return { json: { itemModule: data.ItemModule } as HydrationData, method: 'SIGI_STATE' };
       }
     } catch { /* parse error — try next method */ }
   }
 
-  // Try __NEXT_DATA__ (server-rendered pages, some regions)
-  match = buffered.match(
-    /<script\s+id="__NEXT_DATA__"[^>]*>\s*({[\s\S]*?})\s*<\/script>/
-  );
+  // Strategy 4: __NEXT_DATA__ (server-rendered pages, some regions)
+  match = html.match(/<script\s+id="__NEXT_DATA__"[^>]*>\s*({[\s\S]*?})\s*<\/script>/);
   if (match?.[1]) {
     try {
       const data = JSON.parse(match[1]);
       const props = data?.props?.pageProps;
       if (props?.itemInfo?.itemStruct) {
+        console.log(`[TikTokDirect] ✓ Found NEXT_DATA with pageProps.itemInfo.itemStruct`);
+        return { json: props as HydrationData, method: 'NEXT_DATA' };
+      }
+      if (props?.itemModule) {
+        console.log(`[TikTokDirect] ✓ Found NEXT_DATA with pageProps.itemModule`);
         return { json: props as HydrationData, method: 'NEXT_DATA' };
       }
     } catch { /* parse error */ }
   }
 
-  // Last resort: scan for any JSON blob containing video info patterns
-  // Look for playAddr or downloadAddr URLs in script content
-  const playAddrMatch = buffered.match(/"playAddr"\s*:\s*"(https?:[^"]+)"/);
-  const downloadAddrMatch = buffered.match(/"downloadAddr"\s*:\s*"(https?:[^"]+)"/);
+  // Strategy 5: Embed page often has simpler structure - check for itemModule directly in api-data
+  // This is a more aggressive search for embed pages
+  match = html.match(/<script\s+id="api-data"[^>]*>\s*({[\s\S]*?})\s*<\/script>/);
+  if (match?.[1]) {
+    try {
+      const data = JSON.parse(match[1]);
+      // Embed page might have itemModule directly
+      if (data?.itemModule) {
+        console.log(`[TikTokDirect] ✓ Found embed api-data with itemModule`);
+        return { json: data as HydrationData, method: 'API_DATA_EMBED' };
+      }
+    } catch { /* parse error */ }
+  }
+
+  // Strategy 6: Regex fallback — scan for playAddr/downloadAddr anywhere in scripts
+  const playAddrMatch = html.match(/"playAddr"\s*:\s*"(https?:[^"]+)"/);
+  const downloadAddrMatch = html.match(/"downloadAddr"\s*:\s*"(https?:[^"]+)"/);
   console.log(`[TikTokDirect]   Regex fallback: playAddr=${!!playAddrMatch} downloadAddr=${!!downloadAddrMatch}`);
   if (playAddrMatch?.[1] || downloadAddrMatch?.[1]) {
-    // Construct a minimal HydrationData from regex matches
     const video: any = {};
     if (playAddrMatch?.[1]) video.playAddr = [{ src: playAddrMatch[1].replace(/\\u002F/g, '/') }];
     if (downloadAddrMatch?.[1]) video.downloadAddr = [{ src: downloadAddrMatch[1].replace(/\\u002F/g, '/') }];
 
-    // Try to extract cover
-    const coverMatch = buffered.match(/"cover"\s*:\s*"(https?:[^"]+)"/);
+    const coverMatch = html.match(/"cover"\s*:\s*"(https?:[^"]+)"/);
     if (coverMatch?.[1]) video.cover = coverMatch[1].replace(/\\u002F/g, '/');
 
-    // Try to extract author
-    const authorMatch = buffered.match(/"uniqueId"\s*:\s*"([^"]+)"/);
-    const nicknameMatch = buffered.match(/"nickname"\s*:\s*"([^"]+)"/);
-
-    // Try to extract desc
-    const descMatch = buffered.match(/"desc"\s*:\s*"([^"]{1,500})"/);
+    const authorMatch = html.match(/"uniqueId"\s*:\s*"([^"]+)"/);
+    const nicknameMatch = html.match(/"nickname"\s*:\s*"([^"]+)"/);
+    const descMatch = html.match(/"desc"\s*:\s*"([^"]{1,500})"/);
 
     return {
       json: {
@@ -244,7 +320,7 @@ function extractItemFromJson(json: HydrationData, videoId: string): any | null {
 
 export const tiktokDirectSource: ApiSource<string, MediaMeta> = {
   name: 'TikTokDirect',
-  timeoutMs: 8_000,
+  timeoutMs: 18_000, // Increased to allow embed + video page attempts
   retries: 0,
   noRetryStatuses: [403, 404, 451],
   noRetryErrors: ['Cannot extract video ID', 'No hydration data found'],
@@ -255,9 +331,9 @@ export const tiktokDirectSource: ApiSource<string, MediaMeta> = {
     console.log(`[TikTokDirect] ▶ Starting fetch for videoId=${videoId}`);
 
     const hydration = await fetchHydrationData(resolvedUrl);
-    if (!hydration) throw new Error('No hydration data found in TikTok page');
+    if (!hydration) throw new Error('No hydration data found in TikTok page (tried embed and video pages)');
 
-    console.log(`[TikTokDirect]   Hydration method=${hydration.method}, extracting item...`);
+    console.log(`[TikTokDirect]   Hydration method=${hydration.method} from ${hydration.url}, extracting item...`);
     const item = extractItemFromJson(hydration.json, videoId);
     if (!item) {
       const scope = (hydration.json as any)?.__DEFAULT_SCOPE__ ?? {};
@@ -265,20 +341,6 @@ export const tiktokDirectSource: ApiSource<string, MediaMeta> = {
       throw new Error(`No item found for videoId=${videoId} (method=${hydration.method})`);
     }
     console.log(`[TikTokDirect] ✓ Found item: title="${item.desc?.substring(0, 60)}" hasPlayAddr=${!!item.video?.playAddr} hasDownloadAddr=${!!item.video?.downloadAddr}`);
-
-    // Validate the primary video URL is actually video content
-    const video = item.video ?? {};
-    const playRaw = video.playAddr;
-    const downloadRaw = video.downloadAddr;
-    const primaryUrl = extractUrl(downloadRaw) || extractUrl(playRaw);
-    if (primaryUrl) {
-      const probe = await probeVideoUrl(primaryUrl, 5_000);
-      if (!probe.ok) {
-        console.log(`[TikTokDirect] ✗ Video URL probe FAILED: ${probe.error} (ct=${probe.contentType} cl=${probe.contentLength})`);
-        throw new Error(`Video URL is not valid video content: ${probe.error}`);
-      }
-      console.log(`[TikTokDirect] ✓ Video URL probe OK — ct=${probe.contentType} cl=${probe.contentLength}`);
-    }
 
     return { item, method: hydration.method, videoId };
   },
@@ -294,7 +356,6 @@ export const tiktokDirectSource: ApiSource<string, MediaMeta> = {
     const playAddrRaw = video.playAddr;
     const downloadAddrRaw = video.downloadAddr;
 
-    // playAddr can be string | Array<{src, type, ...}> | {src, type} | null
     const playAddr = extractUrl(playAddrRaw);
     const downloadAddr = extractUrl(downloadAddrRaw);
 

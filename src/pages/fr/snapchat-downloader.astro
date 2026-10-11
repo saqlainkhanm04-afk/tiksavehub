@@ -13,6 +13,12 @@ const faqData = [
   { id: 'snap-free', q: 'Le téléchargement de vidéos Snapchat est-il gratuit ?', a: 'Oui, TikSaveHub est 100% gratuit.' },
   { id: 'snap-private', q: 'Puis-je télécharger des vidéos Snapchat privées ?', a: 'Non, seules les vidéos publiques sont prises en charge.' },
   { id: 'snap-no-login', q: 'Dois-je me connecter à Snapchat ?', a: 'Non, aucune connexion n\'est requise.' },
+
+  { id: 'sc-fr-spotlight', q: "Puis-je télécharger des vidéos Spotlight de Snapchat ?", a: "Oui. TikSaveHub est un téléchargeur Spotlight dédié. Copiez le lien via le menu de partage, collez-le ici et enregistrez le clip complet en MP4 HD sans filigrane." },
+  { id: 'sc-fr-legal', q: "Est-il légal de télécharger des vidéos Snapchat ?", a: "Télécharger des vidéos Snapchat publiques pour un usage personnel est généralement autorisé. Les partager ou les redistribuer sans permission ne l'est pas. TikSaveHub est conçu pour un usage personnel uniquement." },
+  { id: 'sc-fr-devices', q: "Fonctionne-t-il sur iPhone et Android ?", a: "Oui. TikSaveHub fonctionne dans tout navigateur moderne sur iPhone, Android, Windows, Mac et Linux. Rien à installer, il suffit de coller le lien et de télécharger." },
+  { id: 'sc-fr-limits', q: "Y a-t-il des limites de téléchargement ?", a: "Non. TikSaveHub n'a aucune limite quotidienne, aucun palier premium et aucun frais caché. Téléchargez autant de vidéos que vous voulez." },
+  { id: 'sc-fr-notify', q: "Snapchat prévient-il le créateur quand je télécharge sa vidéo ?", a: "Non. TikSaveHub récupère le fichier depuis le CDN de Snapchat, comme le lecteur web. Le créateur ne reçoit aucune notification et votre téléchargement reste privé." },
 ];
 
 const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
@@ -47,7 +53,25 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <StatsSection stats={[ { value: '100% Gratuit', label: 'Téléchargez des vidéos TikTok instantanément sans filigrane', icon: 'download' }, { value: 'Sans Inscription', label: 'Fonctionne sur tous les appareils, du monde entier', icon: 'globe' }, { value: 'Qualité HD', label: 'Résolution originale, sans filigrane, sans connexion', icon: 'star' } ]} />
 
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <section class="sc-about-section" aria-labelledby="sc-about-headline">
+    <div class="sc-about-inner container-page">
+      <span class="section-eyebrow text-caption-mono">À PROPOS DE TIKSAVEHUB</span>
+      <h2 id="sc-about-headline" class="section-headline">Enregistrez des vidéos et des Spotlight Snapchat en ligne, gratuit, HD, sans filigrane</h2>
+      <div class="sc-about-body">
+        <p>TikSaveHub est un téléchargeur de vidéos Snapchat gratuit qui vous permet d'enregistrer n'importe quelle vidéo publique de Snapchat directement sur votre appareil, en haute qualité et sans filigrane. Que vous trouviez un Spotlight viral, un Snap créatif que vous souhaitez conserver ou la vidéo d'un créateur que vous suivez, TikSaveHub vous livre un fichier MP4 optimisé en quelques secondes. Aucune installation d'application, aucune extension de navigateur, aucun compte. L'outil fonctionne entièrement en ligne, il suffit de coller le lien et de télécharger.</p>
+        <h3>Comment fonctionne le téléchargeur de vidéos Snapchat</h3>
+        <p>Ouvrez Snapchat et retrouvez la vidéo à enregistrer. Appuyez sur le bouton de partage ou copiez l'adresse URL pour récupérer le lien. Les liens Spotlight, les publications publiques et les Stories fonctionnent tous. Revenez ensuite sur TikSaveHub, collez le lien dans le champ en haut de la page et cliquez sur Télécharger. Nos serveurs récupèrent les métadonnées en quelques secondes. Une préviation s'affiche avec le titre, la miniature et les options HD ou SD. Cliquez sur votre choix et le fichier s'enregistre sur votre appareil.</p>
+        <h3>Téléchargez des vidéos Snapchat en HD, sans filigrane</h3>
+        <p>TikSaveHub est le téléchargeur de vidéos Snapchat sans filigrane que vous cherchiez. Il récupère les vidéos à la résolution la plus élevée disponible, jusqu'en 1080p, sans superposition ni logo. Collez un lien snapchat.com/spotlight/… ou snapchat.com/p/… et appuyez sur Télécharger la vidéo HD. La qualité d'origine est préservée, sans réencodage ni compression, pour regarder hors ligne, partager sur vos propres chaînes ou conserver vos contenus préférés.</p>
+        <h3>Sur tous les appareils : iPhone, Android, ordinateur</h3>
+        <p>TikSaveHub fonctionnant entièrement dans le navigateur, rien à installer. Un téléchargeur Snapchat pour iPhone, un pour Android et un outil sur ordinateur sont en réalité le même outil. Sur Android, le MP4 apparaît directement dans la galerie ; sur iPhone, le dossier de téléchargement de Safari s'en charge. Sur ordinateur, le fichier se trouve dans votre dossier de téléchargements. Vous économisez de l'espace et évitez les risques liés aux applications tierces.</p>
+        <p>Chaque téléchargement est un MP4 dans la meilleure résolution disponible, en HD si le créateur a uploadé en HD, avec une option SD pour un fichier plus léger. L'audio d'origine est conservé, sans réencodage. TikSaveHub est gratuit pour toujours, sans limite quotidienne, sans palier premium et sans frais cachés.</p>
+        <p>Ce guide est aussi disponible en anglais : <a href="/snapchat-downloader">Snapchat Downloader (anglais)</a>. Changez de langue avec le sélecteur du menu.</p>
+      </div>
+    </div>
+  </section>
+
+<section class="dl-faq-section" aria-labelledby="dl-faq-headline">
     <div class="dl-faq-inner container-page">
       <span class="section-eyebrow text-caption-mono">FAQ</span>
       <h2 id="dl-faq-headline" class="section-headline">Questions sur le téléchargement Snapchat</h2>
@@ -103,4 +127,12 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
   .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
   .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
   @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+
+  .sc-about-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .sc-about-inner { max-width: 760px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); }
+  .sc-about-body { width: 100%; }
+  .sc-about-body p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0 0 var(--spacing-lg) 0; }
+  .sc-about-body h3 { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-xl) 0 var(--spacing-sm) 0; }
+  .sc-about-body a { color: #7c3aed; font-weight: 600; }
+  @media (max-width: 600px) { .sc-about-section { padding: var(--spacing-3xl) var(--spacing-md); } }
 </style>

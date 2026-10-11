@@ -13,6 +13,12 @@ const faqData = [
   { id: 'snap-free', q: 'O download de vídeos do Snapchat é gratuito?', a: 'Sim, o TikSaveHub é 100% gratuito.' },
   { id: 'snap-private', q: 'Posso baixar vídeos privados do Snapchat?', a: 'Não, apenas vídeos públicos são suportados.' },
   { id: 'snap-no-login', q: 'Preciso fazer login no Snapchat?', a: 'Não, login desnecessário.' },
+
+  { id: 'sc-pt-spotlight', q: "Posso baixar vídeos do Spotlight do Snapchat?", a: "Sim. O TikSaveHub é um downloader dedicado ao Spotlight. Copie o link pelo menu de compartilhamento, cole aqui e salve o clipe completo como MP4 em HD sem marca d’água." },
+  { id: 'sc-pt-legal', q: "É legal baixar vídeos do Snapchat?", a: "Baixar vídeos públicos do Snapchat para uso pessoal geralmente é permitido. Compartilhar ou redistribuir sem permissão não é. O TikSaveHub foi feito apenas para uso pessoal." },
+  { id: 'sc-pt-devices', q: "Funciona no iPhone e no Android?", a: "Sim. O TikSaveHub funciona em qualquer navegador moderno no iPhone, Android, Windows, Mac e Linux. Nada para instalar, basta colar o link e baixar." },
+  { id: 'sc-pt-limits', q: "Existem limites de download?", a: "Não. O TikSaveHub não tem limites diários, nível premium nem taxas ocultas. Você pode baixar quantos vídeos quiser." },
+  { id: 'sc-pt-notify', q: "O Snapchat avisa o criador quando eu baixo o vídeo dele?", a: "Não. O TikSaveHub busca o arquivo no CDN do Snapchat, igual ao player web. O criador não recebe nenhuma notificação e seu download fica privado." },
 ];
 
 const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
@@ -47,7 +53,25 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <StatsSection stats={[ { value: '100% Gratuito', label: 'Baixe vídeos do TikTok instantaneamente sem marca d\'água', icon: 'download' }, { value: 'Sem Cadastro', label: 'Funciona em qualquer dispositivo, de qualquer lugar', icon: 'globe' }, { value: 'Qualidade HD', label: 'Resolução original, sem marca d\'água, sem login', icon: 'star' } ]} />
 
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <section class="sc-about-section" aria-labelledby="sc-about-headline">
+    <div class="sc-about-inner container-page">
+      <span class="section-eyebrow text-caption-mono">SOBRE A TIKSAVEHUB</span>
+      <h2 id="sc-about-headline" class="section-headline">Salve vídeos e clipes do Spotlight do Snapchat online, grátis, HD, sem marca d'água</h2>
+      <div class="sc-about-body">
+        <p>O TikSaveHub é um downloader de vídeos do Snapchat que permite salvar qualquer vídeo público do Snapchat diretamente no seu dispositivo, em alta qualidade e sem marca d'água. Seja um clipe viral do Spotlight, um Snap criativo que você quer guardar ou o vídeo de um criador que você acompanha, o TikSaveHub entrega um arquivo MP4 otimizado em segundos. Nenhuma instalação de app, nenhuma extensão de navegador, nenhuma conta. A ferramenta funciona inteiramente online, basta colar o link e baixar.</p>
+        <h3>Como o downloader de vídeos do Snapchat funciona</h3>
+        <p>Abra o Snapchat e encontre o vídeo que deseja salvar. Toque no botão de compartilhamento ou copie a URL para pegar o link. Links do Spotlight, posts públicos e Stories funcionam todos. Depois volte ao TikSaveHub, cole o link no campo no topo da página e clique em Baixar. Nossos servidores buscam os metadados em poucos segundos e você verá uma pré-visualização com título, miniatura e opções HD ou SD. Clique na sua preferência e o arquivo é salvo no seu dispositivo.</p>
+        <h3>Baixe vídeos do Snapchat em HD, sem marca d'água</h3>
+        <p>O TikSaveHub é o downloader de vídeos do Snapchat sem marca d'água que você procurava. Ele busca os vídeos na maior resolução disponível, até 1080p, sem sobreposição ou marca. Cole um link snapchat.com/spotlight/… ou snapchat.com/p/… e toque em Baixar vídeo HD. A qualidade original é preservada, sem recodificação nem compressão, para você assistir offline, compartilhar nos seus canais ou guardar seus conteúdos favoritos para sempre.</p>
+        <h3>Funciona em qualquer dispositivo: iPhone, Android e computador</h3>
+        <p>Como o TikSaveHub roda inteiramente no navegador, você não instala nada. Um downloader de Snapchat para iPhone, outro para Android e uma ferramenta para computador são o mesmo produto. No Android o MP4 aparece na galeria automaticamente; no iPhone a pasta de Downloads do Safari cuida disso. No computador você encontra o arquivo na pasta de Downloads. Você economiza espaço e evita os riscos de segurança de aplicativos de terceiros.</p>
+        <p>Cada download é um MP4 na melhor resolução disponível, em HD se o criador enviou em HD, com opção SD para um arquivo menor. O áudio original fica intacto e nada é recodificado. O TikSaveHub é gratuito para sempre, sem limites diários, sem nível premium e sem taxas ocultas.</p>
+        <p>Este guia também está disponível em inglês: <a href="/snapchat-downloader">Snapchat Downloader (inglês)</a>. Para trocar de idioma, use o seletor do menu.</p>
+      </div>
+    </div>
+  </section>
+
+<section class="dl-faq-section" aria-labelledby="dl-faq-headline">
     <div class="dl-faq-inner container-page">
       <span class="section-eyebrow text-caption-mono">Perguntas Frequentes</span>
       <h2 id="dl-faq-headline" class="section-headline">Perguntas sobre Snapchat Downloader</h2>
@@ -103,4 +127,12 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
   .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
   .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
   @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+
+  .sc-about-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .sc-about-inner { max-width: 760px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); }
+  .sc-about-body { width: 100%; }
+  .sc-about-body p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0 0 var(--spacing-lg) 0; }
+  .sc-about-body h3 { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-xl) 0 var(--spacing-sm) 0; }
+  .sc-about-body a { color: #7c3aed; font-weight: 600; }
+  @media (max-width: 600px) { .sc-about-section { padding: var(--spacing-3xl) var(--spacing-md); } }
 </style>

@@ -13,6 +13,16 @@ const faqData = [
   { id: 'snap-free', q: 'Snapchatビデオのダウンロードは無料ですか？', a: 'はい、TikSaveHubは100%無料です。' },
   { id: 'snap-private', q: '非公開のSnapchatビデオをダウンロードできますか？', a: 'いいえ、公開されているビデオのみ対応しています。' },
   { id: 'snap-no-login', q: 'Snapchatにログインする必要がありますか？', a: 'いいえ、ログインは不要です。' },
+
+  { id: 'sc-ja-spotlight', q: "Snapchat の Spotlight 動画はダウンロードできますか？", a: "はい。TikSaveHub は Spotlight 専用のダウンローダーです。共有メニューから Spotlight のリンクをコピーして貼り付けると、透かしなしの HD MP4 としてクリップ全体を保存できます。" },
+  { id: 'sc-ja-legal', q: "Snapchat の動画をダウンロードするのは合法ですか？", a: "公開されている Snapchat の動画を個人的な利用のためダウンロードすることは、通常問題ありません。ただし、許可なく再共有や再配布は避けてください。TikSaveHub は個人利用を想定したツールです。" },
+  { id: 'sc-ja-devices', q: "iPhone と Android で使えますか？", a: "はい。TikSaveHub は iPhone、Android、Windows、Mac、Linux の最新ブラウザーで動作します。インストールは不要で、リンクを貼り付けるだけで使えます。" },
+  { id: 'sc-ja-limits', q: "ダウンロードに回数制限はありますか？", a: "ありません。TikSaveHub には毎日の上限、プレミアムプラン、隠れた料金が一切ないため、必要な本数だけ自由に保存できます。" },
+  { id: 'sc-ja-notify', q: "動画をダウンロードすると Snapchat が投稿者に通知しますか？", a: "いいえ。TikSaveHub は通常の Web プレイヤーと同じように Snapchat の CDN からファイルを取得するため、投稿者に通知は送られません。ダウンロードは完全にプライベートです。" },
+  { id: 'sc-ja-expired', q: 'Snapchat のストーリーが消えた後でもダウンロードできますか？', a: 'できません。ストーリーは 24 時間後に Snapchat のサーバーから削除され、復元はできません。公開されている間に story.snapchat.com/… のリンクをコピーして保存してください。' },
+  { id: 'sc-ja-extension', q: 'TikSaveHub には Chrome の拡張機能が必要ですか？', a: '不要です。TikSaveHub はブラウザー上で完結する無料のオンラインツールで、拡張機能もアプリもインストールしません。Chrome、Safari、Firefox、Edge のどのブラウザーでも使えます。' },
+  { id: 'sc-ja-commercial', q: '保存した動画を商用利用できますか？', a: 'ダウンロードした動画は個人の非商用利用を想定しています。他者のコンテンツを広告や収益化された動画で使うには、投稿者からの明確な許可が必要です。' },
+  { id: 'sc-ja-1080p', q: 'Snapchat の動画を 1080p で保存できますか？', a: 'はい。TikSaveHub は投稿者がアップロードした最高解像度、最大 1080p（1920×1080）で保存します。再エンコードや圧縮をしないため、画質は元のアップロードとまったく同じです。' },
 ];
 
 const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqData.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a.replace(/<[^>]*>/g, '') } })) });
@@ -47,7 +57,31 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 
   <StatsSection stats={[ { value: '100% 無料', label: 'TikTok動画をウォーターマークなしで即座にダウンロード', icon: 'download' }, { value: '登録不要', label: 'あらゆるデバイス、世界中どこでも動作します', icon: 'globe' }, { value: 'HD画質', label: '元の解像度、ウォーターマークなし、ログイン不要', icon: 'star' } ]} />
 
-  <section class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <section class="sc-about-section" aria-labelledby="sc-about-headline">
+    <div class="sc-about-inner container-page">
+      <span class="section-eyebrow text-caption-mono">TikSaveHub について</span>
+      <h2 id="sc-about-headline" class="section-headline">Snapchat の動画とスポットライトをオンラインで保存、無料、HD、透かしなし</h2>
+      <div class="sc-about-body">
+        <p>TikSaveHub は、公開されている Snapchat の動画を高画質のまま、透かしなしで端末に直接保存できる無料の Snapchat 動画 ダウンローダー です。話題の Spotlight クリップでも、残しておきたいクリエイターのスナップでも、数秒で最適化された MP4 ファイルとして手に入ります。アプリのインストールも、ブラウザー拡張機能も、アカウント登録も必要ありません。すべてブラウザー上で動作するため、リンクを貼り付けてダウンロードするだけです。</p>
+        <h3>Snapchat 動画 ダウンローダー の 使い方</h3>
+        <p>Snapchat アプリを開き、保存したい動画を探します。共有アイコンをタップするか URL をコピーしてリンクを取得します。Spotlight の動画、公開投稿、Story のリンクはどれも対応しています。その後 TikSaveHub に戻り、ページ上部の入力欄にリンクを貼り付けてダウンロードボタンを押します。サーバーが数秒で動画の情報を取得し、タイトル、サムネイル、HD 版と SD 版の選択肢が表示されます。好みのほうを選ぶと、ファイルは端末に直接保存されます。</p>
+        <h3>透かしなしで Snapchat の動画を HD 画質でダウンロード</h3>
+        <p>TikSaveHub は、お探しの透かしなし Snapchat 動画 ダウンローダー です。最高で 1080p までの解像度で、透かしやロゴを一切加えずに動画を取得します。snapchat.com/spotlight/… や snapchat.com/p/… 形式のリンクを貼り付けて「HD 動画をダウンロード」をタップするだけです。元の画質はそのまま保持され、再エンコードも圧縮もされないため、オフラインで視聴したり、自分のチャンネルで共有したり、お気に入りのコンテンツをずっと保存したりできます。</p>
+        <h3>iPhone、Android、PC、Mac どの端末でも使えます</h3>
+        <p>TikSaveHub はブラウザーだけで完結するため、別のアプリをインストールする必要はありません。iPhone 用の Snapchat ダウンローダー、Android 用の Snapchat ダウンローダー、デスクトップ用のツールは、実はどれも同じものです。Android では MP4 が自動的にギャラリーに表示され、iPhone では Safari のダウンロード一覧から「ビデオを保存」を選ぶと写真に追加されます。パソコンではダウンロードフォルダに保存されます。空き容量を節約でき、サードパーティ製アプリのリスクも避けられます。</p>
+        <p>ダウンロードされるのは、利用可能な最高解像度の MP4 ファイルです。クリエイターが HD でアップロードしていれば HD、容量を抑えたい場合は SD を選べます。音声はオリジナルのまま保持され、何も上書きされません。TikSaveHub は無料で、毎日の利用上限やプレミアムプラン、隠れた料金は一切ありません。</p>
+        <h3>対応しているリンク形式は 4 種類です</h3>
+        <p>TikSaveHub が受け付けるリンクは、snapchat.com/spotlight/…、snapchat.com/p/…、story.snapchat.com/…、snapchat.com/add/… の 4 種類です。Spotlight の共有リンク、公開投稿、Story、プロフィールのリンクをそのまま貼りつけるだけで、コンテンツの種類は自動で判定されます。iPhone の Safari、Android の Chrome、Windows、Mac、Linux のどの環境でも、同じ手順で動作します。</p>
+        <h3>音声だけを MP3 で取り出すこともできます</h3>
+        <p>動画を保存するだけでなく、Snapchat の動画から音声トラックだけを抜き出して高音質な MP3 に変換できます。場面の BGM、声の録音、面白いセリフを音声だけ残したいときに便利です。MP3 は 128kbps で書き出され、ファイルサイズと音質のバランスに優れています。保存した MP4 にも音声がそのまま入っているため、あとから何度でも取り出せます。</p>
+        <h3>ストーリーは 24 時間で消える前に保存しよう</h3>
+        <p>Snapchat のストーリーは投稿から 24 時間でサーバーから消え、その後はいかなるツールでも復元できません。気になったストーリーは、story.snapchat.com/… 形式のリンクをすぐにコピーして TikSaveHub に貼りつけて保存してください。Spotlight の動画は削除されないため、いつでも後から保存できます。プライベートなアカウントのコンテンツは取得できず、対象は公開されている動画と Spotlight クリップだけです。</p>
+        <p>このガイドは英語でも読めます: <a href="/snapchat-downloader">Snapchat Downloader（英語版）</a>。その他の言語はメニューの言語セレクターから切り替えられます。</p>
+      </div>
+    </div>
+  </section>
+
+<section class="dl-faq-section" aria-labelledby="dl-faq-headline">
     <div class="dl-faq-inner container-page">
       <span class="section-eyebrow text-caption-mono">よくある質問</span>
       <h2 id="dl-faq-headline" class="section-headline">Snapchat Downloaderに関する質問</h2>
@@ -103,4 +137,12 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
   .related-tool-link { display: block; padding: var(--spacing-md) var(--spacing-lg); border-radius: var(--radius-lg); background: var(--color-canvas); border: 1px solid var(--color-hairline); text-decoration: none; font-size: 14px; font-weight: 600; color: var(--color-ink); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
   .related-tool-link:hover { border-color: rgba(124, 58, 237, 0.3); box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15); }
   @media (max-width: 600px) { .related-tools-grid { grid-template-columns: 1fr; } }
+
+  .sc-about-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
+  .sc-about-inner { max-width: 760px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xl); }
+  .sc-about-body { width: 100%; }
+  .sc-about-body p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0 0 var(--spacing-lg) 0; }
+  .sc-about-body h3 { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-xl) 0 var(--spacing-sm) 0; }
+  .sc-about-body a { color: #7c3aed; font-weight: 600; }
+  @media (max-width: 600px) { .sc-about-section { padding: var(--spacing-3xl) var(--spacing-md); } }
 </style>

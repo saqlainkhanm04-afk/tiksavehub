@@ -26,7 +26,7 @@ function cellClass(highlight: boolean): string {
       {sub && <p class="section-sub text-body-lg">{sub}</p>}
     </div>
 
-    <div class="cmp-table-wrap">
+    <div class="cmp-table-wrap overflow-x-auto -mx-10 px-4 w-[calc(100%_+_5rem)] sm:mx-0 sm:px-0 sm:w-full">
       <table class="cmp-table">
         <thead>
           <tr>
@@ -95,7 +95,8 @@ function cellClass(highlight: boolean): string {
   }
 
   .cmp-table-wrap {
-    width: 100%;
+    /* width comes from the Tailwind utilities on the element
+       (w-[calc(100%+5rem)] on mobile, sm:w-full >=640px) */
     overflow-x: auto;
   }
 

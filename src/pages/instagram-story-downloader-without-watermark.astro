@@ -1463,6 +1463,10 @@ const faqJsonLd = JSON.stringify({
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    /* grid item: never let a long unbreakable example URL inflate the
+       track and push the article past the viewport */
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .seo-article {
@@ -1503,6 +1507,9 @@ const faqJsonLd = JSON.stringify({
     gap: var(--spacing-md);
     position: sticky;
     top: 80px;
+    /* grid item: the sidebar's own min-content sets the 1fr track's floor */
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .seo-sidebar-card {

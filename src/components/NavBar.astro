@@ -1389,8 +1389,8 @@ function localPath(path: string): string {
     flex-shrink: 0;
   }
 
-  /* ─── Medium screens: tighter spacing ─── */
-  @media (max-width: 1399px) and (min-width: 601px) {
+  /* ─── Medium screens: tighter spacing (desktop links only at >=1280px) ─── */
+  @media (max-width: 1399px) and (min-width: 1280px) {
     .nav-links {
       gap: 4px;
     }
@@ -1399,7 +1399,11 @@ function localPath(path: string): string {
     }
   }
 
-  @media (max-width: 600px) {
+  /* Desktop links need 157px (logo) + 670px (links, intrinsic) + 24px gap
+     + 30px page padding + up to 341px (lang/theme/CTA cluster, German) = 1222px.
+     Below that the links row is clipped by .nav-links { overflow: auto hidden },
+     so tablets/small laptops get the hamburger menu instead. */
+  @media (max-width: 1279px) {
     .nav-links,
     .nav-ctas {
       display: none;

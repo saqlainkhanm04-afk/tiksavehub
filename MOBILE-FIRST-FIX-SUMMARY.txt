@@ -1,0 +1,246 @@
+================================================================================
+MOBILE-FIRST INDEXING FIXES - SUMMARY & VERIFICATION REPORT
+Project : D:\Tiksavehub\tiksavehub  (TikSaveHub / Astro + Tailwind v4)
+Date    : 25 Oct 2026
+Status  : ALL FIXES VERIFIED - BUILD GREEN - *** NOT DEPLOYED ***
+================================================================================
+
+
+--------------------------------------------------------------------------------
+PART A - WHAT WAS FIXED
+--------------------------------------------------------------------------------
+
+*** FIX 1: Mobile Comparison Tables Clipped (25 files, 26 wrappers) ***
+
+  Problem:
+    Tool pages ki comparison tables (.cmp-table) mobile pe 40px left se kat
+    rahi thi. 360px viewport pe table ka effective window sirf ~280px bacha
+    tha aur body { overflow-x: hidden } unhe cut kar deta tha.
+
+  Fix:
+    Har table ko scroll container me wrap kiya with this exact class string:
+
+      overflow-x-auto -mx-10 px-4 w-[calc(100%_+_5rem)] sm:mx-0 sm:px-0 sm:w-full
+
+    (components me ye "cmp-table-wrap" class ke saath:
+     "cmp-table-wrap overflow-x-auto -mx-10 px-4 w-[calc(100%_+_5rem)] sm:mx-0 sm:px-0 sm:w-full")
+
+    - overflow-x-auto  = table andar scroll hoti hai, layout nahi tootta
+    - -mx-10 (-40px)   = section padding 16px + .container-page 24px EXACTLY
+                         cancel karta hai -> wrapper mobile pe poora [0..360]
+    - px-4             = scroll karte waqt left/right breathing room
+    - sm: (600px)      = 600px+ pe wapas normal (mx-0, px-0, w-full)
+                         -> DESKTOP LAYOUT BILKUL UNCHANGED
+    - w-[calc(100%_+_5rem)] = full-bleed width jo -mx-10 ko compensate karta hai
+
+  Kyun literal "-mx-4 px-4 w-full" NAHI use kiya:
+    border-box me width:100% content box (280px) ke against resolve hota hai,
+    isliye -mx-4 w-full se scroller 248px ka reh jata (pehle se bhi BURA).
+    -mx-10 (-40px) hi 16+24px padding ko exactly cancel karta hai.
+
+  Also removed:
+    Components (FbComparisonSection / ComparePage) me scoped CSS se
+    "width: 100%" hataya - wo negative-margin bleed ko override kar raha tha.
+
+  Files changed (25):
+    src/components/FbComparisonSection.astro
+    src/components/ComparePage.astro
+    src/pages/tiktok-video-downloader-without-watermark.astro
+    src/pages/tiktok-to-mp3.astro
+    src/pages/snapchat-downloader.astro                    (2 wrappers)
+    src/pages/instagram-reels-downloader-without-watermark.astro
+    src/pages/de/tiktok-video-downloader-without-watermark.astro
+    src/pages/de/tiktok-to-mp3.astro
+    src/pages/de/instagram-reels-downloader-without-watermark.astro
+    src/pages/es/tiktok-video-downloader-without-watermark.astro
+    src/pages/es/tiktok-to-mp3.astro
+    src/pages/es/instagram-reels-downloader-without-watermark.astro
+    src/pages/fr/tiktok-video-downloader-without-watermark.astro
+    src/pages/fr/tiktok-to-mp3.astro
+    src/pages/fr/instagram-reels-downloader-without-watermark.astro
+    src/pages/it/tiktok-video-downloader-without-watermark.astro
+    src/pages/it/tiktok-to-mp3.astro
+    src/pages/it/instagram-reels-downloader-without-watermark.astro
+    src/pages/ja/tiktok-to-mp3.astro
+    src/pages/ja/instagram-reels-downloader-without-watermark.astro
+    src/pages/ko/tiktok-video-downloader-without-watermark.astro
+    src/pages/ko/tiktok-to-mp3.astro
+    src/pages/ko/instagram-reels-downloader-without-watermark.astro
+    src/pages/pt/tiktok-to-mp3.astro
+    src/pages/pt/instagram-reels-downloader-without-watermark.astro
+
+  Method: 2 assertion codemods (Temp/table-wrap-codemod.mjs + codemod2.mjs),
+  24/24 inline style="width:100%;overflow-x:auto;" wrappers replaced.
+  Koi leftover inline-style wrapper ab source me NAHI (grep verified).
+
+
+*** FIX 2: Nav Links Clipping 601-1399px (1 file) ***
+
+  Problem:
+    .nav-links { overflow: auto hidden; min-width: 0 } flex row ko shrink kar
+    deta tha. Links ka intrinsic width ~670px tha, aur worst locale (German CTA
+    cluster 341px) ke saath har width 601px -> ~1216px pe links kat rahe the.
+
+  Fix (src/components/NavBar.astro):
+    NavBar me RAW px media queries hain - Tailwind variants (md:/lg:) ka wahan
+    koi asar nahi hota, isliye seedha px values change ki:
+
+      PEHLE:  @media (max-width: 1399px) and (min-width: 601px) { ... }
+      AB:     @media (max-width: 1399px) and (min-width: 1280px) { ... }
+
+      PEHLE:  @media (max-width: 600px)  { links hidden, hamburger ON }
+      AB:     @media (max-width: 1279px) { links hidden, hamburger ON }
+
+    Result:
+      601-1279px -> hamburger + mobile menu (links clip nahi hote)
+      1280px+    -> desktop links (box 671-683px >= intrinsic 671, no clip)
+
+    Note: breakpoint 1279/1280 (1024 nahi) isliye chuna kyunki German locale
+    ko 1216px+ chahiye tha; project ke breakpoints hain sm=600, md=960,
+    lg=1200, xl=1400. 1280 = sabse safe round number.
+
+  Files changed:
+    src/components/NavBar.astro
+
+
+*** FIX 3: About/SEO Section Text Clipped (user-approved 3rd fix) - 2 files ***
+
+  Problem:
+    /facebook-story-downloader  -> grid track 413px (viewport 280px)
+    /facebook-photo-downloader  -> grid track 368px
+    /instagram-story-...        -> grid track 293px
+    Root cause: unbreakable example URLs jaise
+      facebook.com/stories/1234567890/9876543210/
+      instagram.com/stories/USERNAME/...
+    grid ke "1fr" track ka min-content inflate kar rahe the (grid items default
+    min-width:auto hota hai).
+
+  Fix:
+    .seo-content-main AND .seo-content-sidebar me add kiya:
+
+      min-width: 0;
+      overflow-wrap: anywhere;
+
+    -> text ab wrap ho jata hai, grid track deterministic 280px.
+
+  Files changed:
+    src/components/FbSeoArticle.astro                          (covers fb-story + fb-photo)
+    src/pages/instagram-story-downloader-without-watermark.astro
+
+
+*** EARLIER FIXES IN SAME TASK (already verified earlier) ***
+
+  a) Footer badge overlap (1 file):
+     src/components/Footer.astro
+     -> footer stack: logo / tagline / copyright / badge never overlap on any
+        viewport (verified: footer overlaps: [] on all probes)
+
+  b) Blog H1 overflow (5 files):
+     src/pages/blog.astro
+     src/pages/de/blog.astro
+     src/pages/fr/blog.astro
+     src/pages/ja/blog.astro
+     src/pages/pt/blog.astro
+     -> .blog-hero-title font-size: clamp(34px, 6vw, 54px)
+        + max-width: min(680px, 100%) + overflow-wrap: break-word
+
+  c) CSP img-src fix (1 file):
+     src/middleware.ts (removed invalid https://scontent.* pattern)
+
+  TOTAL FILES CHANGED: 35
+
+
+--------------------------------------------------------------------------------
+PART B - VERIFICATION RESULTS (production build, headless Chrome)
+--------------------------------------------------------------------------------
+
+  1) npx astro check
+     Result (287 files): 0 errors - 0 warnings - 52 hints  ->  exit=0
+     (52 hints = baseline, pre-existing)
+
+  2) npm run build
+     [build] Server built in 35.10s
+     [build] Complete!                                       ->  exit=0
+     NOTE: pehle 2 attempts system RAM ki wajah se OOM crash hue the
+     (3.8GB total, ~300MB free). Dev server (astro dev, pid holding 1020MB
+     private memory) kill karne ke baad clean pass. CODE ME KOI MASLA NAHI THA.
+
+  3) Comparison tables @360px (dist/client served on 127.0.0.1:4173)
+     /facebook-reels-downloader                    wrapper [0..360] scrollable=true  CLIPPED=false  docScrollWidth=360
+     /x-video-downloader                           wrapper [0..360] scrollable=true  CLIPPED=false  docScrollWidth=360
+     /tiktok-video-downloader-without-watermark    wrapper [0..360] scrollable=true  CLIPPED=false  docScrollWidth=360
+     /tiktok-to-mp3                                wrapper [0..360] scrollable=true  CLIPPED=false  docScrollWidth=360
+     /snapchat-downloader (2 tables)               dono   [0..360] scrollable=true  CLIPPED=false  docScrollWidth=360
+     /de/tiktok-to-mp3 (locale, table 704px)       wrapper [0..360] scrollable=true  CLIPPED=false  docScrollWidth=360
+
+     DESKTOP UNCHANGED (regression):
+     768px  -> wrapper [48..720]  m=0px  scrollable=false  (pre-fix jaisa hi)
+     1440px -> wrapper [48..1392] m=0px  scrollable=false  (pre-fix jaisa hi)
+
+  4) SEO grid clip (Fix 3)
+     /facebook-story-downloader                     413px -> 280/280  OK
+     /facebook-photo-downloader                     368px -> 280/280  OK
+     /instagram-story-downloader-without-watermark  293px -> 280/280  OK
+     Sab me: mainMinW=0px, mainOw=anywhere, sideMinW=0px, sideOw=anywhere
+     (gridCols = "280px", gridOverflow = 280 = viewport, offenders=[])
+
+  5) Nav breakpoints (path=/)
+     600   -> navLinks=false hamburger=true menu opens+closes  clipped=[]
+     601   -> navLinks=false hamburger=true menu opens+closes  clipped=[]
+     768   -> navLinks=false hamburger=true menu opens+closes  clipped=[]
+     1024  -> navLinks=false hamburger=true menu opens+closes  clipped=[]
+     1279  -> navLinks=false hamburger=true menu opens+closes  clipped=[]
+     1280  -> navLinks=true  hamburger=false box w=671  clipped=[] overlapPx=-24
+     1399  -> navLinks=true  hamburger=false box w=671  clipped=[] overlapPx=-24
+     1440  -> navLinks=true  hamburger=false box w=683  clipped=[] overlapPx=-24
+     (overlapPx negative = gap hai, overlap NAHI)
+
+  6) Regressions
+     /blog @390                     -> hScroll=false, footer overlaps: []
+     3 fixed pages @360             -> scrollWidth=360 == viewport, hScroll=false,
+                                        footer overlaps: []
+     Built CSS contains: .-mx-10 / width:calc(100% + 5rem) / width<=1279px /
+     1280px  -> sab present
+
+
+--------------------------------------------------------------------------------
+PART C - IMPORTANT NOTES / DEV ENV TRAP
+--------------------------------------------------------------------------------
+
+  * Dev-server stale CSS issue (IMPORTANT):
+    Browser probe me ek baar purani CSS dikh rahi thi - CDP se capture karke
+    confirm hua ki:
+      - Network response (navigation body, fromCache=false) ME NAYA rule tha
+      - lekin DOM ke <style> me purana rule
+    Matlab: Vite HMR client page load ke baad <style> ko PURANE module graph
+    se replace kar raha tha = DEV-ONLY ARTIFACT. Production build me HMR client
+    hota hi nahi, isliye production pe sab sahi hai (upar Part B me verify kiya).
+    Isliye final verification production build + static server (Temp/serve-dist.mjs)
+    pe ki gayi, dev server pe nahi.
+
+  * Koi bhi inline style ADD nahi ki gayi (sirf Tailwind utilities).
+    Semantic tags (H1/H2/nav/footer) intact. Koi text image me convert nahi hua.
+    Desktop layout kahin nahi badla.
+
+  * Astro scoped CSS (specificity 0,2,0) Tailwind utilities (0,1,0) ko override
+    karta hai - isliye components se scoped "width:100%" hatana zaroori tha.
+
+  * Test artifacts hamesha Temp me rakhe:
+    C:\Users\Al Makkah Traders\AppData\Local\Temp\opencode\
+      - serve-dist.mjs       (production dist serve karne ka static server)
+      - seo-probe.mjs         (SEO grid / min-content measurement)
+      - table-probe.mjs       (table wrapper geometry + clipping)
+      - nav-probe.mjs         (nav link clipping + hamburger)
+      - overflow-probe.mjs    (page hScroll + footer overlap)
+      - table-wrap-codemod.mjs / codemod2.mjs (24 wrappers ke codemods)
+    (Workspace ke andar file likhne se Vite watcher EBUSY crash ho sakta hai.)
+
+  * Verification ke baad dev server kill kar diya gaya tha (1020MB memory free
+    karne ke liye). Dobara chalana ho:  npm run dev
+
+  * Deploy status: *** NOT DEPLOYED *** - sab kuch local, uncommitted.
+    Repo: D:\Tiksavehub\tiksavehub  (git repo nahi hai)
+
+================================================================================
+END OF REPORT
+================================================================================

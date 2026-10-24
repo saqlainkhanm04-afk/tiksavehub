@@ -17,10 +17,10 @@ import { primeCfEnv } from './lib/env';
  * CSP allowlist (browser-enforced, server-side fetches excluded):
  *   script-src: self, unsafe-inline, googletagmanager.com (GA), google-analytics.com, challenges.cloudflare.com (Turnstile)
  *   style-src:  self, unsafe-inline, fonts.googleapis.com (Tailwind + component <style>)
- *   img-src:    self, data:, blob:, *.fbcdn.net, scontent.*, *.cdninstagram.com,
+ *   img-src:    self, data:, blob:, *.fbcdn.net, *.cdninstagram.com,
  *               *.tiktokcdn.com, *.tiktokcdn-us.com, pbs.twimg.com, video.twimg.com,
- *               *.twimg.com, *.snapcdn.com, *.sc-cdn.net, *.savefromins.com
- *               (savefromins serves the IG cover thumbnails)
+ *               *.twimg.com, *.snapcdn.com, *.sc-cdn.net, *.savefromins.com,
+ *               marketingdb.live (footer badge; savefromins serves IG covers)
  *   connect-src: self, google-analytics.com, challenges.cloudflare.com
  *   font-src:   self, fonts.gstatic.com
  *   frame-src:  self, challenges.cloudflare.com (Turnstile iframe)
@@ -41,7 +41,7 @@ const SECURITY_HEADERS: Record<string, string> = {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://*.fbcdn.net https://scontent.* https://*.cdninstagram.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://pbs.twimg.com https://video.twimg.com https://*.twimg.com https://*.snapcdn.com https://*.sc-cdn.net https://api-ak.savefromins.com https://*.savefromins.com",
+    "img-src 'self' data: blob: https://*.fbcdn.net https://*.cdninstagram.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://pbs.twimg.com https://video.twimg.com https://*.twimg.com https://*.snapcdn.com https://*.sc-cdn.net https://api-ak.savefromins.com https://*.savefromins.com https://marketingdb.live",
     "connect-src 'self' https://www.google-analytics.com https://challenges.cloudflare.com",
     "font-src 'self' https://fonts.gstatic.com",
     "frame-src 'self' https://challenges.cloudflare.com",

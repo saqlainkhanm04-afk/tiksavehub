@@ -70,23 +70,23 @@ const toolCards = [
   <!-- ══════════ HERO ══════════ -->
   <section class="blog-hero" aria-labelledby="blog-headline">
     <div class="blog-hero-bg gradient-mesh" aria-hidden="true"></div>
-    <div class="blog-hero-inner container-page">
-      <div class="blog-hero-content">
+    <div class="blog-hero-inner container-page w-full min-w-0">
+      <div class="blog-hero-content w-full min-w-0">
         <span class="blog-hero-badge">
           <span class="blog-hero-badge-dot" aria-hidden="true"></span>
           ナレッジベース＆ガイド
         </span>
 
-        <h1 id="blog-headline" class="blog-hero-title">
+        <h1 id="blog-headline" class="blog-hero-title w-full break-words text-balance">
           スマートな保存 Tips でコンテンツを成長させよう。
         </h1>
 
-        <p class="blog-hero-sub text-body-lg">
+        <p class="blog-hero-sub text-body-lg w-full">
           TikTok、Instagram、Facebook、Xの動画、リール、音声をウォーターマークなしで保存するガイド — 推測なしで簡単に。
         </p>
 
         <!-- Search -->
-        <div class="blog-search" role="search">
+        <div class="blog-search w-full min-w-0" role="search">
           <svg class="blog-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input
             id="blog-search-input"
@@ -100,7 +100,7 @@ const toolCards = [
         </div>
 
         <!-- Category pills -->
-        <nav class="blog-cat-row" aria-label="カテゴリーでフィルター">
+        <nav class="blog-cat-row w-full max-w-full min-w-0 flex-wrap" aria-label="カテゴリーでフィルター">
           {categories.map((cat) => (
             <button
               type="button"
@@ -334,7 +334,9 @@ const toolCards = [
     align-items: center;
     gap: var(--spacing-lg);
     text-align: center;
-    max-width: 720px;
+    width: 100%;
+    min-width: 0;
+    max-width: min(720px, 100%);
   }
 
   .blog-hero-badge {
@@ -376,7 +378,10 @@ const toolCards = [
     letter-spacing: -2.4px;
     color: var(--color-ink);
     margin: 0;
-    max-width: 680px;
+    width: 100%;
+    max-width: min(680px, 100%);
+    overflow-wrap: break-word;
+    word-break: normal;
     background: linear-gradient(135deg, #007cf0 0%, #7928ca 48%, #ff0080 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -394,14 +399,16 @@ const toolCards = [
   .blog-hero-sub {
     color: var(--color-body);
     margin: 0;
-    max-width: 560px;
+    width: 100%;
+    max-width: min(560px, 100%);
   }
 
   /* Search bar */
   .blog-search {
     position: relative;
     width: 100%;
-    max-width: 560px;
+    min-width: 0;
+    max-width: min(560px, 100%);
   }
 
   .blog-search-icon {
@@ -467,6 +474,9 @@ const toolCards = [
     flex-wrap: wrap;
     justify-content: center;
     gap: var(--spacing-xs);
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .blog-cat-pill {
@@ -1321,12 +1331,12 @@ const toolCards = [
     }
 
     .blog-cat-row {
-      justify-content: flex-start;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      padding-bottom: var(--spacing-xs);
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      /* Pills WRAP on mobile — a nowrap/overflow-x scroller here inflated
+         the hero's min-content width and clipped the H1 off-screen. */
+      justify-content: center;
+      flex-wrap: wrap;
+      overflow-x: visible;
+      padding-bottom: 0;
     }
 
     .blog-cat-row::-webkit-scrollbar {

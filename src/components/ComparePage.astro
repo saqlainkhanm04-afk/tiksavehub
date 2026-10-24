@@ -161,7 +161,7 @@ const jsonLd = JSON.stringify({
         <p class="cmp-sub text-body-lg">{tableSub}</p>
       </header>
 
-      <div class="cmp-table-wrap" role="region" aria-label={`Comparison table: ${a.name} versus ${b.name}`} tabindex="0">
+      <div class="cmp-table-wrap overflow-x-auto -mx-10 px-4 w-[calc(100%_+_5rem)] sm:mx-0 sm:px-0 sm:w-full" role="region" aria-label={`Comparison table: ${a.name} versus ${b.name}`} tabindex="0">
         <table class="cmp-table">
           <thead>
             <tr>
@@ -456,7 +456,8 @@ const jsonLd = JSON.stringify({
 
   /* Table */
   .cmp-table-wrap {
-    width: 100%;
+    /* width comes from the Tailwind utilities on the element
+       (w-[calc(100%+5rem)] on mobile, sm:w-full >=640px) */
     overflow-x: auto;
     background-color: var(--color-canvas);
     border: 1px solid var(--color-hairline);

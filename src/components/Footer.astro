@@ -71,6 +71,8 @@ function localPath(path: string): string {
       <p class="footer-col-label text-caption-mono">{t('footer.resources')}</p>
       <ul class="footer-link-list">
         <li><a href={localPath('/blog')} class="footer-link" id="footer-link-blog">{t('nav.blog')}</a></li>
+        <!-- /about is English-only (no /{locale}/about route), so it is never localized. -->
+        <li><a href="/about" class="footer-link" id="footer-link-about">About Us</a></li>
         <li><a href="#how-it-works" class="footer-link" id="footer-link-how-it-works">{t('nav.how_it_works')}</a></li>
         <li><a href="#features" class="footer-link" id="footer-link-features">{t('nav.features')}</a></li>
         <li><a href="#faq" class="footer-link" id="footer-link-faq">{t('nav.faq')}</a></li>

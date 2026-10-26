@@ -31,6 +31,8 @@ const seoPages = [
 const customPages = [
   ...seoPages.map((p) => site + p),
   ...posts.map((p) => `${site}/blog/${p.slug}`),
+  // English-only trust/E-E-A-T page (no localized variants exist).
+  `${site}/about`,
   // Localized pages for all languages.
   // Locale homepages must be emitted as /de (not /de/) to match trailingSlash: 'never'.
   ...['es', 'ja', 'fr', 'de', 'pt', 'ko', 'it'].flatMap((lang) =>
@@ -49,6 +51,10 @@ export default defineConfig({
   integrations: [
     sitemap({
       customPages,
+      // Every <url> gets a <lastmod> so Google sees the files as fresh. The
+      // value is re-evaluated on every build, so it always reflects the date
+      // the sitemap was generated.
+      lastmod: new Date(),
       filter: (page) => {
         const { pathname } = new URL(page);
         if (pathname === '/404' || pathname === '/500') return false;

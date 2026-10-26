@@ -279,35 +279,6 @@ const breadcrumbJsonLd = JSON.stringify({
   ],
 });
 
-// SoftwareApplication Schema (also provided by Layout, but we ensure it's in the graph)
-const softwareAppJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'TikSaveHub Snapchat Video Downloader',
-  url: 'https://tiksavehub.com/snapchat-downloader',
-  image: 'https://tiksavehub.com/og-downloader.png',
-  description: 'Download Snapchat videos, Stories, and Spotlight without watermark. Free tool, no signup, works on iPhone and Android.',
-  applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'All',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-    category: 'Free',
-  },
-  author: {
-    '@type': 'Organization',
-    name: 'TikSaveHub',
-    url: 'https://tiksavehub.com',
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: 'TikSaveHub',
-    url: 'https://tiksavehub.com',
-  },
-  inLanguage: 'en',
-});
-
 // Person schema (founder: Samneil)
 const personJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -332,26 +303,27 @@ const organizationJsonLd = JSON.stringify({
   '@type': 'Organization',
   name: 'TikSaveHub',
   url: 'https://tiksavehub.com',
-  logo: 'https://tiksavehub.com/logo.png',
+  logo: 'https://tiksavehub.com/web-app-manifest-512x512.png',
   sameAs: [
     'https://github.com/tiksavehub',
     'https://twitter.com/tiksavehub',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '',
-    contactType: 'customer service',
+    contactType: 'customer support',
+    url: 'https://tiksavehub.com/contact',
     availableLanguage: ['English'],
   },
 });
 
+// SoftwareApplication is emitted once, centrally, by Layout.astro (dynamic
+// per-page `appName`), so it is intentionally NOT repeated in this graph.
 const combinedJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
     JSON.parse(faqJsonLd),
     JSON.parse(howToJsonLd),
     JSON.parse(breadcrumbJsonLd),
-    JSON.parse(softwareAppJsonLd),
     JSON.parse(personJsonLd),
     JSON.parse(organizationJsonLd),
   ],
@@ -367,7 +339,7 @@ const combinedJsonLd = JSON.stringify({
   ogType="website"
   platform="snapchat"
   jsonLd={combinedJsonLd}
-  appName="TikSaveHub. Snapchat Video Downloader"
+  appName="TikSaveHub — Snapchat Video Downloader"
 >
  <!-- JSON-LD Structured Data -->
  <script is:inline type="application/ld+json" set:html={JSON.stringify({

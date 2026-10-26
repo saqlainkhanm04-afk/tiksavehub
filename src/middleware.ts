@@ -96,7 +96,26 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
     return Response.redirect(canonical.toString(), 301);
   }
 
-  /* ── 2.5. Path redirects (legacy slugs, double-locale-prefix, localized
+  /* ── 2. Trailing-slash canonicalisation — 301, never 307 ─────────────────
+   *
+   * The project sets `trailingSlash: 'never'`, so the canonical form of every
+   * URL is the slash-less one ("/blog", "/es", "/de/tiktok-to-mp3"). Requests
+   * that arrive with a trailing slash are collapsed here in a SINGLE hop: if the
+   * de-slashed path is itself a legacy redirect (e.g. an old blog slug) we jump
+   * straight to its final target instead of chaining two redirects.
+   *
+   * public/_redirects carries the same wildcard rule (glob `/*` -> `/:splat`, 301) so prerendered
+   * pages served by the Cloudflare asset layer (which never reaches this
+   * worker) redirect identically. */
+  if (ctx.url.pathname !== '/' && ctx.url.pathname.endsWith('/')) {
+    const stripped = ctx.url.pathname.replace(/\/+$/, '') || '/';
+    const target = resolvePathRedirect(stripped) ?? stripped;
+    const dest = new URL(target, ctx.url);
+    dest.search = ctx.url.search;
+    return Response.redirect(dest.toString(), 301);
+  }
+
+  /* ── 3. Path redirects (legacy slugs, double-locale-prefix, localized
    * blog posts). Mirrors public/_redirects so the SSR Cloudflare Worker
    * honors them even though _redirects itself is a Pages-only feature. ──── */
   const pathRedirect = resolvePathRedirect(ctx.url.pathname);
@@ -104,7 +123,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
     return Response.redirect(new URL(pathRedirect, ctx.url).toString(), 301);
   }
 
-  /* ── 3. Run downstream handler (SSR page or static asset) ─────────────── */
+  /* ── 4. Run downstream handler (SSR page or static asset) ─────────────── */
   const response = await next();
 
   /* ── 4. Cache-Control for HTML pages (Cloudflare edge caching) ─────────── */

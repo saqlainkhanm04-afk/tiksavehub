@@ -1,0 +1,357 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+
+const site = 'https://tiksavehub.com';
+
+const aboutJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'AboutPage',
+      name: 'About TikSaveHub',
+      description:
+        'Who builds and maintains TikSaveHub, why the site exists, and how it treats the people who use it.',
+      url: `${site}/about`,
+      inLanguage: 'en',
+      dateModified: '2026-10-26',
+      // Same @id as the Person node in BlogPosting.author — ties every article
+      // byline to this one verifiable human (E-E-A-T entity consolidation).
+      mainEntity: { '@type': 'Person', '@id': `${site}/about#samneil` },
+    },
+    {
+      '@type': 'Person',
+      '@id': `${site}/about#samneil`,
+      name: 'Samneil',
+      url: `${site}/about`,
+      jobTitle: 'Independent developer and founder of TikSaveHub',
+      description:
+        'Samneil builds and maintains TikSaveHub, a browser-based video downloader for TikTok, Instagram, Facebook, X and Snapchat.',
+      knowsAbout: [
+        'Web development',
+        'Video downloading tools',
+        'Search engine optimization',
+        'Cross-platform content publishing',
+      ],
+    },
+    {
+      '@type': 'Organization',
+      name: 'TikSaveHub',
+      url: site,
+      logo: `${site}/web-app-manifest-512x512.png`,
+      founder: { '@type': 'Person', name: 'Samneil', url: `${site}/about` },
+      member: { '@type': 'Person', name: 'Samneil', url: `${site}/about` },
+    },
+  ],
+});
+---
+
+<Layout
+  title="About TikSaveHub — Who Built It and Why"
+  description="TikSaveHub is built and maintained by Samneil, an independent developer. Read why the site exists, how it works, and what it will never do."
+  keywords="about tiksavehub, about us, who built tiksavehub, samneil, tiksavehub founder, tiksavehub team"
+  canonical="/about"
+  skipSoftwareApp
+  localizedHreflang={false}
+  jsonLd={aboutJsonLd}
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner container-page">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li>
+            <a href="/"><span>Home</span></a>
+          </li>
+          <li aria-current="page">
+            <span>About</span>
+          </li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">About</span>
+        <h1 id="legal-headline" class="legal-title">About TikSaveHub</h1>
+        <p class="legal-meta">Built and maintained by Samneil. <time datetime="2026-10-26">Last updated October 2026</time>.</p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+          <section class="legal-clause">
+            <h2 class="legal-h2">Who runs TikSaveHub</h2>
+            <p>
+              TikSaveHub is an independent project built and maintained by
+              <strong>Samneil</strong>, a developer who works on the site
+              directly — there is no agency behind it and no anonymous team
+              writing the code. Every tool page, guide and fix on this site is
+              written, tested and shipped by the same person who answers the
+              support inbox.
+            </p>
+            <p>
+              That matters for a simple reason: when something breaks, there is
+              one owner accountable for it. You can read more about how to reach
+              us on the <a href="/contact">contact page</a>.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Why the site exists</h2>
+            <p>
+              Saving a video you are allowed to keep should not require
+              installing an app, creating an account or handing over a phone
+              number. When Samneil built the first version of TikSaveHub, the
+              goal was narrow and practical: paste a link, get a clean file, and
+              get out of the way.
+            </p>
+            <p>
+              That is still the whole product. The downloaders work in the
+              browser on iPhone, Android and desktop, they do not ask you to log
+              in, and they do not push bundled software. The guides in the
+              <a href="/blog">blog</a> come from the same place — questions that
+              actually came up while using the tools.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">How we keep it honest</h2>
+            <p>
+              Three promises we hold ourselves to:
+            </p>
+            <p>
+              <strong>No fake buttons.</strong> Every download control on this
+              site starts a real download. If a file cannot be fetched, you get
+              an error that explains why instead of a redirect to an advert.
+            </p>
+            <p>
+              <strong>No login walls of our own.</strong> We never ask you to
+              sign in to TikSaveHub, and we never ask for your social media
+              credentials. If a platform itself blocks anonymous access to a
+              link, we say so plainly.
+            </p>
+            <p>
+              <strong>Honest limits.</strong> Only public links can be fetched,
+              private or restricted posts are rejected, and stories that have
+              already expired cannot be recovered. We would rather tell you that
+              than pretend otherwise.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">What we ask of you</h2>
+            <p>
+              Download what you have the right to download. Respect other
+              people's work, do not re-upload copyrighted material as your own,
+              and follow the terms of the platforms you use. TikSaveHub is a
+              tool for saving content you are allowed to keep — the
+              responsibility that comes with it stays with the person clicking
+              the button.
+            </p>
+            <p>
+              Read the full details in our <a href="/privacy">privacy policy</a>
+              and <a href="/terms">terms of service</a>.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Corrections and feedback</h2>
+            <p>
+              Found a broken tool, a guide that is out of date, or something on
+              this site that is simply wrong? Send it over — corrections are
+              applied quickly and without fuss, and the changelog for each tool
+              page reflects them.
+            </p>
+          </section>
+        </div>
+      </div>
+
+      <!-- Back to home -->
+      <div class="legal-back">
+        <a href="/" class="btn-primary-sm">&larr; Back to TikSaveHub</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .legal-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .legal-breadcrumb {
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .legal-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .legal-title {
+    font-size: var(--text-display-xl);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .legal-meta {
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  .legal-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3xl);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .legal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+  }
+
+  .legal-clause {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .legal-h2 {
+    font-size: var(--text-display-md);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .legal-content p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .legal-content strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .legal-content a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+
+  .legal-content a:hover {
+    color: var(--color-link-deep);
+  }
+
+  .legal-back {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    line-height: 2.2;
+    letter-spacing: -0.1px;
+  }
+
+  .btn-primary-sm:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .dark .legal-card {
+    box-shadow:
+      inset 0 0 0 1px #ffffff0a,
+      0px 1px 1px #00000010,
+      0px 4px 8px #00000020;
+  }
+
+  @media (max-width: 600px) {
+    .legal-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+
+    .legal-title {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+    }
+
+    .legal-card {
+      padding: var(--spacing-lg);
+    }
+
+    .legal-h2 {
+      font-size: var(--text-display-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: var(--text-caption);
+    }
+  }
+</style>

@@ -20,6 +20,11 @@ export const LEGACY_PATH_REDIRECTS: ReadonlyArray<readonly [string, string]> = [
   ['/instagram-reels-downloader', '/instagram-reels-downloader-without-watermark'],
   ['/instagram-video-downloader', '/instagram-video-downloader-without-watermark'],
   ['/instagram-story-downloader', '/instagram-story-downloader-without-watermark'],
+  // Keyword-cannibalization cleanup: the two TikTok blog posts were renamed to
+  // informational/long-tail slugs (they used to compete with the tool page for
+  // "TikTok video downloader").
+  ['/blog/tiktok-video-downloader-without-watermark', '/blog/how-to-download-tiktok-videos'],
+  ['/blog/best-tiktok-video-downloader-2026', '/blog/tiktok-downloader-troubleshooting'],
 ] as const;
 
 export function resolvePathRedirect(pathname: string): string | null {

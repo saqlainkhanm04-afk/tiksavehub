@@ -29,17 +29,37 @@ const relatedPosts = posts
   .filter((p) => p.slug !== post.slug && (p.category === post.category || p.tags.some((t) => post.tags.includes(t))))
   .slice(0, 3);
 
+// Blog covers are hand-drawn SVG artwork for the on-page hero. Google's
+// Article rich result only accepts raster images (ideally >=1200px wide), and
+// rejects SVG outright — which is why the structured-data image must fall back
+// to the 1200x630 PNG card whenever the cover is not a raster file.
+const RASTER_COVER = /\.(png|jpe?g|webp|avif)$/i;
+const ARTICLE_IMAGE_FALLBACK = '/og-blog.png';
+const articleImagePath = RASTER_COVER.test(post.cover) ? post.cover : ARTICLE_IMAGE_FALLBACK;
+const articleImageUrl = `${site}${articleImagePath}`;
+const articleImage =
+  articleImagePath === ARTICLE_IMAGE_FALLBACK
+    ? { '@type': 'ImageObject', url: articleImageUrl, width: 1200, height: 630 }
+    : articleImageUrl;
+
 const articleJsonLd: Record<string, unknown> = {
   '@type': 'BlogPosting',
   headline: post.title,
   description: post.excerpt,
-  image: `${site}${post.cover}`,
+  image: articleImage,
   datePublished: post.date,
   dateModified: post.date,
+  articleSection: post.category,
+  isAccessibleForFree: true,
+  inLanguage: 'en',
   keywords: post.tags.join(', '),
+  // E-E-A-T: posts are written by a real, named person (Samneil), not a
+  // faceless "Editorial Team" — see /about for the human behind the site.
   author: {
-    '@type': 'Organization',
+    '@type': 'Person',
+    '@id': `${site}/about#samneil`,
     name: post.author,
+    url: `${site}/about`,
   },
   publisher: {
     '@type': 'Organization',
@@ -107,9 +127,27 @@ const breadcrumbJsonLd = {
   ],
 };
 
+// Standalone author entity (Person) so the named human behind the site is a
+// first-class node in the graph, not just an inline property of BlogPosting.
+const authorSchema = {
+  '@type': 'Person',
+  '@id': `${site}/about#samneil`,
+  name: post.author,
+  url: `${site}/about`,
+  jobTitle: 'Independent developer and founder of TikSaveHub',
+  description:
+    'Samneil builds and maintains TikSaveHub and writes its how-to and troubleshooting guides.',
+  knowsAbout: ['Video downloaders', 'Web development', 'Social media tools'],
+  worksFor: {
+    '@type': 'Organization',
+    name: 'TikSaveHub',
+    url: site,
+  },
+};
+
 const pageJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@graph': [articleJsonLd, faqSchema, howToSchema, breadcrumbJsonLd].filter(Boolean),
+  '@graph': [articleJsonLd, authorSchema, faqSchema, howToSchema, breadcrumbJsonLd].filter(Boolean),
 });
 
 function renderContent(md: string): string {

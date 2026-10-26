@@ -12,3 +12,9 @@ id = "d0334422a3984637ae681480b57b3a22"
 
 [browser]
 binding = "MYBROWSER"
+
+# Serve the real production domain. Custom domains auto-create the proxied DNS
+# record; the middleware's www -> apex 301 handles the www variant.
+[[routes]]
+pattern = "tiksavehub.com"
+custom_domain = true

@@ -7,6 +7,17 @@
 /instagram-video-downloader /instagram-video-downloader-without-watermark 301
 /instagram-story-downloader /instagram-story-downloader-without-watermark 301
 
+# Keyword-cannibalization cleanup: the two TikTok blog posts now target
+# informational / long-tail keywords instead of the product keyword.
+/blog/tiktok-video-downloader-without-watermark /blog/how-to-download-tiktok-videos 301
+/blog/best-tiktok-video-downloader-2026 /blog/tiktok-downloader-troubleshooting 301
+
+# Canonicalisation: trailingSlash: 'never' — any URL that ends in "/" 301s to
+# the slash-less canonical (never 307). `*` swallows everything before the final
+# slash, so "/blog/" -> "/blog", "/de/tiktok-to-mp3/" -> "/de/tiktok-to-mp3".
+# "/" itself does not match (the pattern needs two slashes).
+/*/ /:splat 301
+
 # Localized blog posts only exist in English: /de/blog/{slug} -> /blog/{slug}
 /de/blog/* /blog/:splat 301
 /es/blog/* /blog/:splat 301

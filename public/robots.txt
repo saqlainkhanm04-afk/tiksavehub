@@ -2,53 +2,50 @@
 # TikSaveHub — robots.txt
 # ============================================================
 # https://tiksavehub.com/robots.txt
+#
+# Policy: every crawler is welcome — classic search engines, AI search /
+# answer engines, and AI training crawlers. The AI agents are named explicitly
+# so the intent is unambiguous and auditable.
+#
+# IMPORTANT: this file only controls what the origin serves. If a proxy/CDN
+# prepends a "managed" robots block that disallows these agents, the stricter
+# group wins (RFC 9309 merges groups; the longest match, and Disallow on a tie,
+# takes precedence). Keep any edge "Managed robots.txt" / AI Crawl Control
+# feature disabled for this zone, otherwise these Allow rules are overridden.
 
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-Disallow: /_astro/
-Crawl-delay: 2
 
-# Explicitly allow all crawlers for SEO pages
-User-agent: Googlebot
-Allow: /
-Disallow: /api/
-Crawl-delay: 2
-Sitemap: https://tiksavehub.com/sitemap-index.xml
-
-User-agent: Bingbot
-Allow: /
-Disallow: /api/
-Crawl-delay: 2
-Sitemap: https://tiksavehub.com/sitemap-index.xml
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-# Allow AI crawlers for answer engine optimization
-User-agent: GPTBot
+# ── AI search / answer engines (they must be able to crawl to cite us) ──
+User-agent: OAI-SearchBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: CCBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: ClaudeBot
+User-agent: Claude-SearchBot
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /
 
+# ── AI assistants + training crawlers (same open policy, no mixed signals) ──
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemap directive — exactly once, at the bottom.
 Sitemap: https://tiksavehub.com/sitemap-index.xml

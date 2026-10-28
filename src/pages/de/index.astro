@@ -178,19 +178,9 @@ const itemListJsonLd = {
   itemListElement: tools.map((tool, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    item: {
-      '@type': 'SoftwareApplication',
-      name: tool.title,
-      url: `https://tiksavehub.com${tool.href}`,
-      description: tool.description,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
+    item: `https://tiksavehub.com${tool.href}`,
+    name: tool.title,
+    description: tool.description,
   })),
 };
 
@@ -219,9 +209,9 @@ const features = [
 ---
 
 <Layout
-  title="TikSaveHub — TikTok Videos Ohne Wasserzeichen Herunterladen"
-  description="Laden Sie TikTok-Videos in HD-Qualität ohne Wasserzeichen herunter. Kostenlos, schnell und ohne Anmeldung."
-  keywords="tiktok downloader, tiktok video herunterladen, instagram downloader, facebook downloader, x video downloader, videos ohne wasserzeichen herunterladen, hd video downloader, kostenloser video downloader"
+  title="TikSaveHub — Videos von TikTok, Instagram, Facebook, X & Snapchat herunterladen"
+  description="Laden Sie Videos von TikTok, Instagram, Facebook, X (Twitter) und Snapchat in HD-Qualität ohne Wasserzeichen herunter. Kostenlos, schnell und ohne Anmeldung."
+  keywords="video downloader, tiktok video herunterladen, instagram downloader, facebook downloader, x video downloader, snapchat downloader, videos ohne wasserzeichen herunterladen, hd video downloader, kostenloser video downloader"
   canonical="/"
   ogImage="/og-default.png"
    jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
@@ -240,7 +230,7 @@ const features = [
 
       <h1 id="home-headline" class="home-headline">
         Videos Herunterladen Von<br />
-        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+        <span class="headline-gradient">TikTok, Instagram, Facebook, X &amp; Snapchat</span>
       </h1>
 
       <p class="home-sub text-body-lg">

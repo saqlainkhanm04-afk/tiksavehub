@@ -178,19 +178,9 @@ const itemListJsonLd = {
   itemListElement: tools.map((tool, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    item: {
-      '@type': 'SoftwareApplication',
-      name: tool.title,
-      url: `https://tiksavehub.com${tool.href}`,
-      description: tool.description,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
+    item: `https://tiksavehub.com${tool.href}`,
+    name: tool.title,
+    description: tool.description,
   })),
 };
 
@@ -220,9 +210,9 @@ const features = [
 
 <Layout
   lang="fr"
-  title="TikSaveHub — Télécharger des Vidéos TikTok Sans Filigrane"
-  description="Téléchargez des vidéos TikTok en qualité HD sans filigrane. Gratuit, rapide et sans inscription."
-  keywords="téléchargeur tiktok, téléchargeur instagram, téléchargeur facebook, téléchargeur vidéo x, télécharger vidéos sans filigrane, téléchargeur vidéo hd, téléchargeur vidéo gratuit"
+  title="TikSaveHub — Télécharger des Vidéos de TikTok, Instagram, Facebook, X et Snapchat"
+  description="Téléchargez des vidéos de TikTok, Instagram, Facebook, X (Twitter) et Snapchat en qualité HD sans filigrane. Gratuit, rapide et sans inscription."
+  keywords="téléchargeur vidéo, téléchargeur tiktok, téléchargeur instagram, téléchargeur facebook, téléchargeur vidéo x, téléchargeur snapchat, télécharger vidéos sans filigrane, téléchargeur vidéo hd, téléchargeur vidéo gratuit"
   canonical="/"
   ogImage="/og-default.png"
    jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
@@ -241,7 +231,7 @@ const features = [
 
       <h1 id="home-headline" class="home-headline">
         Téléchargez des Vidéos Depuis<br />
-        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+        <span class="headline-gradient">TikTok, Instagram, Facebook, X &amp; Snapchat</span>
       </h1>
 
       <p class="home-sub text-body-lg">

@@ -1,0 +1,532 @@
+---
+// Dedicated author profile — the canonical Person entity for every byline.
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import { posts } from '../../data/blog-posts';
+
+const site = 'https://tiksavehub.com';
+const authorUrl = `${site}/authors/samneil`;
+const authorId = `${authorUrl}#samneil`;
+const authorImage = `${site}/images/authors/samneil.png`;
+
+const AUTHOR_BIO =
+  'Samneil is the founder, developer and author behind TikSaveHub. He builds the downloaders, tests them on real public links, and writes the how-to and troubleshooting guides published on the blog.';
+
+const sameAs = [
+  'https://github.com/tiksavehub',
+  'https://twitter.com/tiksavehub',
+  'https://www.facebook.com/tiksavehub',
+  'https://www.instagram.com/tiksavehub',
+];
+
+const formatDate = (iso: string) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+
+const recentPosts = [...posts]
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .slice(0, 6);
+
+const authorPageJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfilePage',
+      '@id': `${authorUrl}#profile`,
+      url: authorUrl,
+      name: 'Samneil — Author and founder of TikSaveHub',
+      description: AUTHOR_BIO,
+      inLanguage: 'en',
+      dateModified: '2026-10-29',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'TikSaveHub',
+        url: site,
+      },
+      mainEntity: { '@type': 'Person', '@id': authorId },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: site,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Samneil',
+            item: authorUrl,
+          },
+        ],
+      },
+    },
+    {
+      '@type': 'Person',
+      '@id': authorId,
+      name: 'Samneil',
+      url: authorUrl,
+      image: {
+        '@type': 'ImageObject',
+        url: authorImage,
+        width: 512,
+        height: 512,
+        caption: 'Samneil, founder and author at TikSaveHub',
+      },
+      jobTitle: 'Independent developer, founder and author of TikSaveHub',
+      description: AUTHOR_BIO,
+      knowsAbout: [
+        'Video downloaders',
+        'Web development',
+        'Social media tools',
+        'Search engine optimization',
+        'Technical troubleshooting',
+      ],
+      sameAs,
+      worksFor: {
+        '@type': 'Organization',
+        name: 'TikSaveHub',
+        url: site,
+      },
+      mainEntityOfPage: { '@type': 'ProfilePage', '@id': `${authorUrl}#profile` },
+    },
+  ],
+});
+---
+
+<Layout
+  title="Samneil — Author & Founder | TikSaveHub"
+  description="Meet Samneil, the founder, developer and author behind TikSaveHub. Read his background, how he tests the downloaders, and the guides he writes."
+  keywords="samneil, tiksavehub author, tiksavehub founder, about samneil, video downloader author, editorial team"
+  canonical="/authors/samneil"
+  ogImage="/og-default.png"
+  ogType="profile"
+  skipSoftwareApp
+  localizedHreflang={false}
+  jsonLd={authorPageJsonLd}
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a href="/"><span>Home</span></a></li>
+          <li aria-current="page"><span>Samneil</span></li>
+        </ol>
+      </nav>
+
+      <header class="author-hero">
+        <img
+          src="/images/authors/samneil.png"
+          alt="Samneil, founder and author at TikSaveHub"
+          class="author-photo"
+          width="512"
+          height="512"
+          loading="eager"
+          decoding="async"
+        />
+        <div class="author-intro">
+          <span class="section-eyebrow text-caption-mono">Author profile</span>
+          <h1 id="legal-headline" class="legal-title">Samneil</h1>
+          <p class="author-role">Founder, developer and author at TikSaveHub</p>
+          <p class="author-lede">
+            I build TikSaveHub and write the guides that explain how to use it. Every article
+            under my byline comes from testing the tools on real public links, not from
+            rewriting someone else's tutorial.
+          </p>
+          <div class="author-socials" aria-label="Samneil's profiles">
+            <a href="https://github.com/tiksavehub" rel="me noopener noreferrer" target="_blank">GitHub</a>
+            <a href="https://twitter.com/tiksavehub" rel="me noopener noreferrer" target="_blank">X / Twitter</a>
+            <a href="https://www.facebook.com/tiksavehub" rel="me noopener noreferrer" target="_blank">Facebook</a>
+            <a href="https://www.instagram.com/tiksavehub" rel="me noopener noreferrer" target="_blank">Instagram</a>
+          </div>
+        </div>
+      </header>
+
+      <div class="legal-card">
+        <div class="legal-content">
+          <section class="legal-clause">
+            <h2 class="legal-h2">What I do at TikSaveHub</h2>
+            <p>
+              I am the person who builds and maintains TikSaveHub. That means writing the
+              download pipelines for TikTok, Instagram, Facebook, X and Snapchat, testing
+              them when a platform changes its URLs, and turning the failures I find into
+              clearer error messages and better guides.
+            </p>
+            <p>
+              I also answer the support inbox. When a download breaks, the report usually
+              reaches me directly, and the fix ships with a note in the relevant guide or
+              tool page.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">What I write</h2>
+            <p>
+              My articles focus on the practical side of saving public videos: which link
+              formats work, how to get a clean MP4 or MP3 on iPhone, Android and desktop,
+              how to spot a private or expired post, and what to do when a downloader
+              returns an error. I avoid listicles that repeat the same five paragraphs and
+              prefer step-by-step instructions that match what the tool actually does.
+            </p>
+            <p>
+              The full process I follow is published in the
+              <a href="/editorial-policy">editorial policy</a>.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">How I test</h2>
+            <p>
+              I test with public links across iPhone, Android, Windows and macOS browsers.
+              For each supported platform I check the metadata, the available quality
+              options, the downloaded file itself, and the error path for private, deleted
+              or expired content. A guide is only updated after the behaviour is reproduced
+              in the current build.
+            </p>
+            <p>
+              I do not claim that a private video can be downloaded, I do not invent test
+              results, and I do not remove a limitation from a page just because it sounds
+              better in a meta description.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Latest guides by Samneil</h2>
+            <ul class="author-posts">
+              {recentPosts.map((post) => (
+                <li>
+                  <a href={`/blog/${post.slug}`}>{post.title}</a>
+                  <time datetime={post.date}>{formatDate(post.date)}</time>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Corrections and contact</h2>
+            <p>
+              If a guide is out of date, a tool page claims something the downloader no
+              longer does, or you want to send a correction, use the
+              <a href="/contact">contact page</a> or email
+              <a href="mailto:samneil7582@gmail.com">samneil7582@gmail.com</a>. Corrections
+              are reviewed and applied by the same person who wrote the page.
+            </p>
+          </section>
+        </div>
+      </div>
+
+      <div class="legal-back">
+        <a href="/blog" class="btn-primary-sm">Read the TikSaveHub guides</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .legal-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+    max-width: 820px;
+    margin-inline: auto;
+  }
+
+  .legal-breadcrumb {
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .author-hero {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--spacing-2xl);
+    padding: var(--spacing-3xl);
+    border-radius: var(--radius-lg);
+    background: var(--color-canvas);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .author-photo {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 6px rgba(124, 58, 237, 0.12);
+  }
+
+  .author-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    min-width: 0;
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .legal-title {
+    font-size: var(--text-display-xl);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .author-role {
+    font-size: var(--text-body-md);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .author-lede {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .author-socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+  }
+
+  .author-socials a {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-full);
+    color: var(--color-body);
+    font-size: var(--text-caption);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .author-socials a:hover {
+    border-color: rgba(124, 58, 237, 0.35);
+    color: var(--color-ink);
+  }
+
+  .legal-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3xl);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .legal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+  }
+
+  .legal-clause {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .legal-h2 {
+    font-size: var(--text-display-md);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .legal-content p {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .legal-content a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+
+  .legal-content a:hover {
+    color: var(--color-link-deep);
+  }
+
+  .author-posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .author-posts li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .author-posts li:first-child {
+    padding-top: 0;
+  }
+
+  .author-posts li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .author-posts a {
+    font-size: var(--text-body-md);
+    font-weight: 550;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .author-posts a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .author-posts time {
+    flex-shrink: 0;
+    font-size: var(--text-caption);
+    color: var(--color-mute);
+    white-space: nowrap;
+  }
+
+  .legal-back {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    line-height: 2.2;
+    letter-spacing: -0.1px;
+  }
+
+  .btn-primary-sm:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .dark .legal-card,
+  .dark .author-hero {
+    box-shadow:
+      inset 0 0 0 1px #ffffff0a,
+      0px 1px 1px #00000010,
+      0px 4px 8px #00000020;
+  }
+
+  @media (max-width: 720px) {
+    .author-hero {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+      padding: var(--spacing-2xl);
+    }
+
+    .author-intro {
+      align-items: center;
+    }
+
+    .author-socials {
+      justify-content: center;
+    }
+
+    .author-posts li {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .legal-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+
+    .legal-title {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+    }
+
+    .legal-card {
+      padding: var(--spacing-lg);
+    }
+
+    .legal-h2 {
+      font-size: var(--text-display-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: var(--text-caption);
+    }
+  }
+</style>

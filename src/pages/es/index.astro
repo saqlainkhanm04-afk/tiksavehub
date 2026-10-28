@@ -178,19 +178,9 @@ const itemListJsonLd = {
   itemListElement: tools.map((tool, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    item: {
-      '@type': 'SoftwareApplication',
-      name: tool.title,
-      url: `https://tiksavehub.com${tool.href}`,
-      description: tool.description,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
+    item: `https://tiksavehub.com${tool.href}`,
+    name: tool.title,
+    description: tool.description,
   })),
 };
 
@@ -219,9 +209,9 @@ const features = [
 ---
 
 <Layout
-  title="TikSaveHub — Descargar Videos de TikTok Sin Marca de Agua"
-  description="Descarga videos de TikTok en calidad HD sin marca de agua. Gratis, rápido y sin registro."
-  keywords="descargador tiktok, descargar videos tiktok sin marca de agua, tiktok mp3, descargar reels instagram, descargar videos facebook, hd video downloader, gratis"
+  title="TikSaveHub — Descargar Videos de TikTok, Instagram, Facebook, X y Snapchat"
+  description="Descarga videos de TikTok, Instagram, Facebook, X (Twitter) y Snapchat en calidad HD sin marca de agua. Gratis, rápido y sin registro."
+  keywords="descargador de videos, descargar videos tiktok, descargar reels instagram, descargar videos facebook, descargar videos x, descargar videos snapchat, descargar videos sin marca de agua, descargador video hd, gratis"
   canonical="/"
   ogImage="/og-default.png"
    jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
@@ -241,7 +231,7 @@ const features = [
 
       <h1 id="home-headline" class="home-headline">
         Descarga Videos De<br />
-        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+        <span class="headline-gradient">TikTok, Instagram, Facebook, X &amp; Snapchat</span>
       </h1>
 
       <p class="home-sub text-body-lg">

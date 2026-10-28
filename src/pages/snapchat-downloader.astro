@@ -263,8 +263,10 @@ const breadcrumbJsonLd = JSON.stringify({
 const personJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': 'https://tiksavehub.com/authors/samneil#samneil',
   name: 'Samneil',
-  url: 'https://tiksavehub.com',
+  url: 'https://tiksavehub.com/authors/samneil',
+  image: 'https://tiksavehub.com/images/authors/samneil.png',
   sameAs: [
     'https://github.com/tiksavehub',
     'https://twitter.com/tiksavehub',
@@ -321,16 +323,6 @@ const combinedJsonLd = JSON.stringify({
   jsonLd={combinedJsonLd}
   appName="TikSaveHub - Snapchat Video Downloader"
 >
- <!-- JSON-LD Structured Data -->
- <script is:inline type="application/ld+json" set:html={JSON.stringify({
- "@context": "https://schema.org",
- "@type": "BreadcrumbList",
- "itemListElement": [
- { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tiksavehub.com" },
- { "@type": "ListItem", "position": 2, "name": "Snapchat Video Downloader", "item": "https://tiksavehub.com/snapchat-downloader" }
- ]
- })} />
-
  <!-- Hero Section -->
  <section class="dl-hero" aria-labelledby="dl-hero-headline">
  <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>

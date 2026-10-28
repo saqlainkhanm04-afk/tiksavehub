@@ -178,19 +178,9 @@ const itemListJsonLd = {
   itemListElement: tools.map((tool, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    item: {
-      '@type': 'SoftwareApplication',
-      name: tool.title,
-      url: `https://tiksavehub.com${tool.href}`,
-      description: tool.description,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
+    item: `https://tiksavehub.com${tool.href}`,
+    name: tool.title,
+    description: tool.description,
   })),
 };
 
@@ -219,9 +209,9 @@ const features = [
 ---
 
 <Layout
-  title="TikSaveHub — Baixar Vídeos do TikTok Sem Marca d'Água"
-  description="Baixe vídeos do TikTok em qualidade HD sem marca d'água. Grátis, rápido e sem cadastro."
-  keywords="baixar tiktok, downloader tiktok, baixar videos tiktok sem marca dagua, tiktok hd, baixar reels instagram, baixar videos facebook, downloader instagram, downloader facebook, x video downloader"
+  title="TikSaveHub — Baixar Vídeos de TikTok, Instagram, Facebook, X e Snapchat"
+  description="Baixe vídeos de TikTok, Instagram, Facebook, X (Twitter) e Snapchat em qualidade HD sem marca d'água. Grátis, rápido e sem cadastro."
+  keywords="baixar vídeos, baixar tiktok, downloader tiktok, baixar reels instagram, baixar videos facebook, baixar videos x, baixar videos snapchat, baixar videos sem marca dagua, downloader video hd, downloader instagram, downloader facebook"
   canonical="/"
   ogImage="/og-default.png"
    jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
@@ -240,7 +230,7 @@ const features = [
 
       <h1 id="home-headline" class="home-headline">
         Baixe Vídeos Do<br />
-        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+        <span class="headline-gradient">TikTok, Instagram, Facebook, X &amp; Snapchat</span>
       </h1>
 
       <p class="home-sub text-body-lg">

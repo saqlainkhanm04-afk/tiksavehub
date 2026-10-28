@@ -178,19 +178,9 @@ const itemListJsonLd = {
   itemListElement: tools.map((tool, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    item: {
-      '@type': 'SoftwareApplication',
-      name: tool.title,
-      url: `https://tiksavehub.com${tool.href}`,
-      description: tool.description,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
+    item: `https://tiksavehub.com${tool.href}`,
+    name: tool.title,
+    description: tool.description,
   })),
 };
 
@@ -219,9 +209,9 @@ const features = [
 ---
 
 <Layout
-  title="TikSaveHub - Scarica Video TikTok, Instagram e Facebook"
-  description="Scarica video TikTok in HD senza filigrana. Gratis, veloce, nessuna registrazione."
-  keywords="tiktok downloader, scarica video tiktok, instagram downloader, facebook downloader, x video downloader, scarica video senza filigrana, hd video downloader, downloader video gratuito"
+  title="TikSaveHub — Scarica Video da TikTok, Instagram, Facebook, X e Snapchat"
+  description="Scarica video da TikTok, Instagram, Facebook, X (Twitter) e Snapchat in HD senza filigrana. Gratis, veloce, nessuna registrazione."
+  keywords="video downloader, scarica video tiktok, instagram downloader, facebook downloader, x video downloader, snapchat downloader, scarica video senza filigrana, hd video downloader, downloader video gratuito"
   canonical="/"
   ogImage="/og-default.png"
    jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
@@ -240,7 +230,7 @@ const features = [
 
       <h1 id="home-headline" class="home-headline">
         Scarica Video Da<br />
-        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+        <span class="headline-gradient">TikTok, Instagram, Facebook, X &amp; Snapchat</span>
       </h1>
 
       <p class="home-sub text-body-lg">

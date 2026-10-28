@@ -155,19 +155,9 @@ const itemListJsonLd = {
  itemListElement: tools.map((tool, i) => ({
  '@type': 'ListItem',
  position: i + 1,
- item: {
- '@type': 'SoftwareApplication',
+ item: `https://tiksavehub.com${tool.href}`,
  name: tool.title,
- url: `https://tiksavehub.com${tool.href}`,
  description: tool.description,
- applicationCategory: 'MultimediaApplication',
- operatingSystem: 'Web',
- offers: {
- '@type': 'Offer',
- price: '0',
- priceCurrency: 'USD',
- },
- },
  })),
 };
 
@@ -256,9 +246,9 @@ const features = [
 ---
 
 <Layout
- title="TikSaveHub - Download Social Media Videos in HD"
- description="Download videos from TikTok, Instagram, Facebook, and X (Twitter) in HD quality without watermarks. Free, fast, and no sign-up required."
- keywords="tiktok downloader, instagram downloader, facebook downloader, x video downloader, download videos without watermark, hd video downloader, free video downloader"
+ title="TikSaveHub - Download Videos from TikTok, Instagram, Facebook, X & Snapchat"
+ description="Download videos from TikTok, Instagram, Facebook, X (Twitter), and Snapchat in HD quality without watermarks. Free, fast, and no sign-up required."
+ keywords="video downloader, tiktok downloader, instagram downloader, facebook downloader, x video downloader, snapchat downloader, download videos without watermark, hd video downloader, free video downloader"
  canonical="/"
  ogImage="/og-default.png"
  jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd, breadcrumbJsonLd] })}
@@ -277,7 +267,7 @@ const features = [
 
  <h1 id="home-headline" class="home-headline">
  Download Videos From<br />
- <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+ <span class="headline-gradient">TikTok, Instagram, Facebook, X &amp; Snapchat</span>
  </h1>
 
  <p class="home-sub text-body-lg">

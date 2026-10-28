@@ -17,13 +17,14 @@ const aboutJsonLd = JSON.stringify({
       dateModified: '2026-10-26',
       // Same @id as the Person node in BlogPosting.author — ties every article
       // byline to this one verifiable human (E-E-A-T entity consolidation).
-      mainEntity: { '@type': 'Person', '@id': `${site}/about#samneil` },
+      mainEntity: { '@type': 'Person', '@id': `${site}/authors/samneil#samneil` },
     },
     {
       '@type': 'Person',
-      '@id': `${site}/about#samneil`,
+      '@id': `${site}/authors/samneil#samneil`,
       name: 'Samneil',
-      url: `${site}/about`,
+      url: `${site}/authors/samneil`,
+      image: `${site}/images/authors/samneil.png`,
       jobTitle: 'Independent developer and founder of TikSaveHub',
       description:
         'Samneil builds and maintains TikSaveHub, a browser-based video downloader for TikTok, Instagram, Facebook, X and Snapchat.',
@@ -33,14 +34,20 @@ const aboutJsonLd = JSON.stringify({
         'Search engine optimization',
         'Cross-platform content publishing',
       ],
+      sameAs: [
+        'https://github.com/tiksavehub',
+        'https://twitter.com/tiksavehub',
+        'https://www.facebook.com/tiksavehub',
+        'https://www.instagram.com/tiksavehub',
+      ],
     },
     {
       '@type': 'Organization',
       name: 'TikSaveHub',
       url: site,
       logo: `${site}/web-app-manifest-512x512.png`,
-      founder: { '@type': 'Person', name: 'Samneil', url: `${site}/about` },
-      member: { '@type': 'Person', name: 'Samneil', url: `${site}/about` },
+      founder: { '@type': 'Person', '@id': `${site}/authors/samneil#samneil` },
+      member: { '@type': 'Person', '@id': `${site}/authors/samneil#samneil` },
     },
   ],
 });

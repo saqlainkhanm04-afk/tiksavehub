@@ -57,9 +57,14 @@ const articleJsonLd: Record<string, unknown> = {
   // faceless "Editorial Team" — see /about for the human behind the site.
   author: {
     '@type': 'Person',
-    '@id': `${site}/about#samneil`,
+    '@id': `${site}/authors/samneil#samneil`,
     name: post.author,
-    url: `${site}/about`,
+    url: `${site}/authors/samneil`,
+    image: `${site}/images/authors/samneil.png`,
+    sameAs: [
+      'https://github.com/tiksavehub',
+      'https://twitter.com/tiksavehub',
+    ],
   },
   publisher: {
     '@type': 'Organization',
@@ -131,9 +136,14 @@ const breadcrumbJsonLd = {
 // first-class node in the graph, not just an inline property of BlogPosting.
 const authorSchema = {
   '@type': 'Person',
-  '@id': `${site}/about#samneil`,
+  '@id': `${site}/authors/samneil#samneil`,
   name: post.author,
-  url: `${site}/about`,
+  url: `${site}/authors/samneil`,
+  image: `${site}/images/authors/samneil.png`,
+  sameAs: [
+    'https://github.com/tiksavehub',
+    'https://twitter.com/tiksavehub',
+  ],
   jobTitle: 'Independent developer and founder of TikSaveHub',
   description:
     'Samneil builds and maintains TikSaveHub and writes its how-to and troubleshooting guides.',
@@ -312,7 +322,7 @@ const tagTextColors = [
         </div>
         <h1 id="post-title" class="post-title">{post.title}</h1>
         <div class="post-meta">
-          <span class="post-author">{post.author}</span>
+          <a href="/authors/samneil" class="post-author">{post.author}</a>
           <span class="post-meta-sep">·</span>
           <time datetime={post.date}>{usDate(post.date)}</time>
           <span class="post-meta-sep">·</span>
@@ -537,6 +547,12 @@ const tagTextColors = [
   .post-author {
     font-weight: 500;
     color: var(--color-body);
+    text-decoration: none;
+  }
+
+  .post-author:hover {
+    color: var(--color-accent, var(--color-body));
+    text-decoration: underline;
   }
 
   .post-meta-sep {

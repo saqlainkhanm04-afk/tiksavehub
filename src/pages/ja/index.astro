@@ -178,19 +178,9 @@ const itemListJsonLd = {
   itemListElement: tools.map((tool, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    item: {
-      '@type': 'SoftwareApplication',
-      name: tool.title,
-      url: `https://tiksavehub.com${tool.href}`,
-      description: tool.description,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
+    item: `https://tiksavehub.com${tool.href}`,
+    name: tool.title,
+    description: tool.description,
   })),
 };
 
@@ -219,9 +209,9 @@ const features = [
 ---
 
 <Layout
-  title="TikSaveHub — TikTok動画をウォーターマークなしでダウンロード"
-  description="TikTok、Instagram、Facebook、X（Twitter）の動画をHD画質でウォーターマークなしでダウンロード。無料、高速、登録不要。"
-  keywords="tiktok ダウンローダー, instagram ダウンローダー, facebook ダウンローダー, x 動画ダウンローダー, ウォーターマークなしで動画ダウンロード, hd 動画ダウンローダー, 無料 動画ダウンローダー, tiktok 動画保存, instagram リール保存"
+  title="TikSaveHub — TikTok・Instagram・Facebook・X・Snapchatの動画をダウンロード"
+  description="TikTok、Instagram、Facebook、X（Twitter）、Snapchatの動画をHD画質でウォーターマークなしでダウンロード。無料、高速、登録不要。"
+  keywords="動画ダウンローダー, tiktok ダウンローダー, instagram ダウンローダー, facebook ダウンローダー, x 動画ダウンローダー, snapchat ダウンローダー, ウォーターマークなしで動画ダウンロード, hd 動画ダウンローダー, 無料 動画ダウンローダー"
   canonical="/"
   ogImage="/og-default.png"
    jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
@@ -241,7 +231,7 @@ const features = [
 
       <h1 id="home-headline" class="home-headline">
         動画をダウンロード<br />
-        <span class="headline-gradient">TikTok、Instagram、Facebook &amp; X</span>
+        <span class="headline-gradient">TikTok・Instagram・Facebook・X・Snapchat</span>
       </h1>
 
       <p class="home-sub text-body-lg">

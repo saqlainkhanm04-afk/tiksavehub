@@ -1,0 +1,393 @@
+---
+// Editorial policy — how TikSaveHub guides are researched, tested and updated.
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+
+const site = 'https://tiksavehub.com';
+const pageUrl = `${site}/editorial-policy`;
+const authorUrl = `${site}/authors/samneil`;
+
+const POLICY_DESCRIPTION =
+  'How TikSaveHub researches, tests, updates and corrects its video downloader guides, including our use of hands-on testing and human review.';
+
+const policyJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${pageUrl}#webpage`,
+      url: pageUrl,
+      name: 'Editorial Policy — How TikSaveHub Guides Are Researched',
+      description: POLICY_DESCRIPTION,
+      inLanguage: 'en',
+      dateModified: '2026-10-29',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'TikSaveHub',
+        url: site,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Editorial standards for video downloader guides',
+      },
+      author: {
+        '@type': 'Person',
+        '@id': `${authorUrl}#samneil`,
+        name: 'Samneil',
+        url: authorUrl,
+      },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: site,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Editorial Policy',
+            item: pageUrl,
+          },
+        ],
+      },
+    },
+  ],
+});
+---
+
+<Layout
+  title="Editorial Policy — How TikSaveHub Guides Are Researched"
+  description="How TikSaveHub researches, tests, updates and corrects its video downloader guides, including our hands-on testing and human review standards."
+  keywords="tiksavehub editorial policy, how we test, video downloader guide standards, editorial independence, corrections policy"
+  canonical="/editorial-policy"
+  ogImage="/og-default.png"
+  skipSoftwareApp
+  localizedHreflang={false}
+  jsonLd={policyJsonLd}
+>
+  <section class="legal-section" aria-labelledby="legal-headline">
+    <div class="legal-inner">
+      <nav aria-label="Breadcrumb" class="legal-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a href="/"><span>Home</span></a></li>
+          <li aria-current="page"><span>Editorial Policy</span></li>
+        </ol>
+      </nav>
+
+      <div class="legal-header">
+        <span class="section-eyebrow text-caption-mono">Editorial standards</span>
+        <h1 id="legal-headline" class="legal-title">Editorial Policy</h1>
+        <p class="legal-meta">
+          Written and maintained by <a href="/authors/samneil">Samneil</a>.
+          <time datetime="2026-10-29">Last updated October 29, 2026</time>.
+        </p>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-content">
+          <section class="legal-clause">
+            <h2 class="legal-h2">Who writes and reviews the guides</h2>
+            <p>
+              Every guide on TikSaveHub is written or reviewed by
+              <a href="/authors/samneil">Samneil</a>, the founder and developer who builds
+              the downloaders. There is no separate content farm and no anonymous
+              &ldquo;editorial team&rdquo; byline. When a page says it was tested, the test
+              was run against the same code that serves the tool.
+            </p>
+            <p>
+              The author profile lists the person behind the byline, the platforms he works
+              on, and the public profiles that connect the name to the project.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">How we research a guide</h2>
+            <p>
+              Research starts with the platform itself: the current share-link formats,
+              the supported public content types, and the official help documentation for
+              each service. We then reproduce the workflow with real public links before
+              writing instructions. We do not copy another site's steps, and we do not
+              assume that a link format from an old screenshot still works.
+            </p>
+            <p>
+              Where a platform changes its behaviour, the guide is revised to describe the
+              new behaviour — including cases where the honest answer is that a download is
+              no longer possible without a login or a public link.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">How we test the downloaders</h2>
+            <p>Each supported platform is checked against the same practical checklist:</p>
+            <ul class="policy-list">
+              <li>Paste a real public link and confirm the metadata resolves.</li>
+              <li>Check the available HD and SD options, or the extracted MP3.</li>
+              <li>Download the file and confirm it opens and plays on the target device.</li>
+              <li>Test on iPhone/Safari, Android/Chrome, and a desktop browser.</li>
+              <li>Verify the error path for private, deleted, expired or unsupported links.</li>
+              <li>Re-test after a platform or pipeline change, before the guide is updated.</li>
+            </ul>
+            <p>
+              Tests are run by a person. Automated checks can catch a broken build, but they
+              do not replace opening the downloaded file and confirming it works.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Accuracy, updates and dates</h2>
+            <p>
+              Guides show a publication date and are revised when the underlying tool or
+              platform changes. A revision is not a cosmetic rewrite: it means the steps,
+              limitations or screenshots were checked again. The sitemap uses the source
+              file's real modification time so search engines see when a page actually
+              changed rather than when the site was last deployed.
+            </p>
+            <p>
+              If a page is accurate but incomplete, we add the missing case. If a claim can
+              no longer be supported, we remove it. We do not keep a false claim live just
+              because it ranks well.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Use of automation and AI</h2>
+            <p>
+              Automation is used for repetitive engineering checks, monitoring and site
+              maintenance. It is not used to invent test results, fabricate first-hand
+              experience, or publish a guide without human review. Drafts that use
+              language-model assistance are verified against the live tool before they are
+              published, and the named author remains responsible for every claim.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Independence and advertising</h2>
+            <p>
+              TikSaveHub is independently owned. Advertising and sponsorship do not buy a
+              place in a guide, a ranking, or a positive conclusion. If a page contains an
+              affiliate or sponsored link, it is labelled. Tool recommendations are based on
+              what works in testing, not on who pays the most.
+            </p>
+          </section>
+
+          <section class="legal-clause">
+            <h2 class="legal-h2">Corrections and complaints</h2>
+            <p>
+              If you find an error, an outdated step, or a claim that does not match what
+              the downloader does, please send it to
+              <a href="mailto:samneil7582@gmail.com">samneil7582@gmail.com</a> or use the
+              <a href="/contact">contact page</a>. Include the page URL, the link you
+              tested, and what happened. Corrections are reviewed by the author and applied
+              to the page; serious factual errors are fixed before any unrelated update.
+            </p>
+            <p>
+              For copyright complaints, use the <a href="/dmca">DMCA page</a>. For data
+              handling questions, see the <a href="/privacy">privacy policy</a>.
+            </p>
+          </section>
+        </div>
+      </div>
+
+      <div class="legal-back">
+        <a href="/authors/samneil" class="btn-primary-sm">Meet the author</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-section {
+    background-color: var(--color-canvas-soft);
+    padding: var(--spacing-5xl) var(--spacing-lg);
+  }
+
+  .legal-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+    max-width: 780px;
+    margin-inline: auto;
+  }
+
+  .legal-breadcrumb {
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+  }
+
+  .breadcrumb-list li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--color-hairline-strong);
+  }
+
+  .breadcrumb-list a {
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb-list a:hover {
+    color: var(--color-ink);
+  }
+
+  .legal-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+  }
+
+  .legal-title {
+    font-size: var(--text-display-xl);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .legal-meta {
+    font-size: var(--text-body-sm);
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  .legal-meta a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .legal-card {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3xl);
+    box-shadow:
+      inset 0 0 0 1px #0000000a,
+      0px 1px 1px #00000005,
+      0px 4px 8px #0000000a;
+  }
+
+  .legal-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+  }
+
+  .legal-clause {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .legal-h2 {
+    font-size: var(--text-display-md);
+    font-weight: 600;
+    letter-spacing: -1.28px;
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .legal-content p,
+  .policy-list {
+    font-size: var(--text-body-md);
+    color: var(--color-body);
+    line-height: 1.75;
+    margin: 0;
+    letter-spacing: -0.1px;
+  }
+
+  .policy-list {
+    padding-left: 1.4em;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .legal-content a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+
+  .legal-content a:hover {
+    color: var(--color-link-deep);
+  }
+
+  .legal-back {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    background-color: var(--color-ink);
+    color: var(--color-on-primary);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    line-height: 2.2;
+    letter-spacing: -0.1px;
+  }
+
+  .btn-primary-sm:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .dark .legal-card {
+    box-shadow:
+      inset 0 0 0 1px #ffffff0a,
+      0px 1px 1px #00000010,
+      0px 4px 8px #00000020;
+  }
+
+  @media (max-width: 600px) {
+    .legal-section {
+      padding: var(--spacing-4xl) var(--spacing-md);
+    }
+
+    .legal-title {
+      font-size: 32px;
+      letter-spacing: -1.5px;
+    }
+
+    .legal-card {
+      padding: var(--spacing-lg);
+    }
+
+    .legal-h2 {
+      font-size: var(--text-display-sm);
+    }
+
+    .breadcrumb-list {
+      font-size: var(--text-caption);
+    }
+  }
+</style>

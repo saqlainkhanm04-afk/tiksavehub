@@ -178,19 +178,9 @@ const itemListJsonLd = {
   itemListElement: tools.map((tool, i) => ({
     '@type': 'ListItem',
     position: i + 1,
-    item: {
-      '@type': 'SoftwareApplication',
-      name: tool.title,
-      url: `https://tiksavehub.com${tool.href}`,
-      description: tool.description,
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Web',
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
+    item: `https://tiksavehub.com${tool.href}`,
+    name: tool.title,
+    description: tool.description,
   })),
 };
 
@@ -219,9 +209,9 @@ const features = [
 ---
 
 <Layout
-  title="TikSaveHub — TikTok 비디오를 워터마크 없이 다운로드"
-  description="TikTok 비디오를 HD 품질로 워터마크 없이 다운로드하세요. 무료, 빠르고 회원가입 불필요."
-  keywords="tiktok 다운로더, tiktok 비디오 다운로드, tiktok 워터마크 없이, instagram 다운로더, facebook 다운로더, x 비디오 다운로더, hd 비디오 다운로더, 무료 비디오 다운로드"
+  title="TikSaveHub — TikTok, Instagram, Facebook, X, Snapchat 동영상 다운로드"
+  description="TikTok, Instagram, Facebook, X(Twitter), Snapchat 동영상을 HD 화질로 워터마크 없이 다운로드하세요. 무료, 빠르고 회원가입 불필요."
+  keywords="동영상 다운로더, tiktok 다운로더, instagram 다운로더, facebook 다운로더, x 동영상 다운로더, snapchat 다운로더, 워터마크 없이 동영상 다운로드, hd 동영상 다운로더, 무료 동영상 다운로드"
   canonical="/"
   ogImage="/og-default.png"
    jsonLd={JSON.stringify({ '@context': 'https://schema.org', '@graph': [organizationJsonLd, websiteJsonLd, itemListJsonLd, faqJsonLd] })}
@@ -241,7 +231,7 @@ const features = [
 
       <h1 id="home-headline" class="home-headline">
         다음에서 비디오를 다운로드하세요<br />
-        <span class="headline-gradient">TikTok, Instagram, Facebook & X</span>
+        <span class="headline-gradient">TikTok, Instagram, Facebook, X &amp; Snapchat</span>
       </h1>
 
       <p class="home-sub text-body-lg">

@@ -3,10 +3,17 @@ import { isValidTikTokUrl } from '../../lib/tiktok';
 import { normalizeTikTokUrl, resolveTikTokShortLink } from '../../lib/normalize';
 import { clientIpFrom } from '../../lib/rate-limit';
 import { thirdPartyApiHeaders } from '../../lib/platforms/headers';
+import { cacheGet, cacheSet } from '../../lib/cache';
 
 export const prerender = false;
 
-const TIKWM_COMMENTS = 'https://tikwm.com/api/comment/list';
+const TIKWM_COMMENT_HOSTS = [
+  'https://tikwm.com/api/comment/list',
+  'https://www.tikwm.com/api/comment/list',
+] as const;
+const COMMENT_CACHE_TTL_MS = 5 * 60 * 1000;
+const PROVIDER_TIMEOUT_MS = 8_000;
+const READER_TIMEOUT_MS = 25_000;
 const DEFAULT_COUNT = 50;
 const MAX_COUNT = 50;
 // A 5,000-comment export needs up to 100 paginated requests. The default
@@ -47,6 +54,92 @@ function videoIdFromUrl(value: string): string {
   return match ? match[1] : '';
 }
 
+interface ProviderResult {
+  payload: any | null;
+  error: string;
+}
+
+function providerUrl(base: string, canonical: string, count: number, cursor: number): URL {
+  const endpoint = new URL(base);
+  endpoint.searchParams.set('url', canonical);
+  endpoint.searchParams.set('count', String(count));
+  endpoint.searchParams.set('cursor', String(cursor));
+  return endpoint;
+}
+
+function parseProviderJson(text: string): any | null {
+  const trimmed = text.trim();
+  const start = trimmed.indexOf('{"code"');
+  if (start < 0) return null;
+  const end = trimmed.lastIndexOf('}');
+  if (end <= start) return null;
+  try {
+    return JSON.parse(trimmed.slice(start, end + 1));
+  } catch {
+    return null;
+  }
+}
+
+async function fetchCommentPage(canonical: string, count: number, cursor: number): Promise<ProviderResult> {
+  let lastError = 'Comment provider returned an empty response.';
+
+  for (let i = 0; i < TIKWM_COMMENT_HOSTS.length; i++) {
+    // The sibling host is rate-limited to one request per second. Give the
+    // first host's failed request time to expire before trying it.
+    if (i > 0) await new Promise((resolve) => setTimeout(resolve, 1_100));
+    try {
+      const endpoint = providerUrl(TIKWM_COMMENT_HOSTS[i], canonical, count, cursor);
+      const response = await fetch(endpoint, {
+        headers: thirdPartyApiHeaders(i === 0 ? 'https://tikwm.com/' : 'https://www.tikwm.com/'),
+        signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS),
+      });
+      if (!response.ok) {
+        lastError = `TikWM HTTP ${response.status}`;
+        continue;
+      }
+      const payload = await response.json().catch(() => null) as any;
+      if (!payload) {
+        lastError = 'TikWM returned invalid JSON.';
+        continue;
+      }
+      if (payload.code !== 0) {
+        lastError = String(payload.msg || 'Comment provider returned an error.');
+        continue;
+      }
+      return { payload, error: '' };
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : String(err);
+    }
+  }
+
+  // Cloudflare's shared egress IP frequently exhausts TikWM's free daily
+  // quota. Jina Reader uses a different egress and returns the raw JSON body
+  // wrapped in a small title header, so it is a useful last-resort provider.
+  try {
+    const source = providerUrl(TIKWM_COMMENT_HOSTS[1], canonical, count, cursor);
+    const response = await fetch(`https://r.jina.ai/${source.toString()}`, {
+      headers: {
+        Accept: 'text/plain',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+      },
+      signal: AbortSignal.timeout(READER_TIMEOUT_MS),
+    });
+    if (!response.ok) {
+      return { payload: null, error: `Reader HTTP ${response.status}` };
+    }
+    const payload = parseProviderJson(await response.text());
+    if (!payload) {
+      return { payload: null, error: 'Reader returned an unreadable response.' };
+    }
+    if (payload.code !== 0) {
+      return { payload: null, error: String(payload.msg || 'Reader provider returned an error.') };
+    }
+    return { payload, error: '' };
+  } catch (err) {
+    return { payload: null, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 function jsonResponse(payload: Record<string, unknown>, status = 200): Response {
   return new Response(JSON.stringify(payload), {
     status,
@@ -84,26 +177,24 @@ export const GET: APIRoute = async ({ url, request }) => {
   }
 
   try {
-    const endpoint = new URL(TIKWM_COMMENTS);
-    endpoint.searchParams.set('url', canonical);
-    endpoint.searchParams.set('count', String(count));
-    endpoint.searchParams.set('cursor', String(cursor));
-
-    const response = await fetch(endpoint, {
-      headers: thirdPartyApiHeaders('https://tikwm.com/'),
-      signal: AbortSignal.timeout(20_000),
-    });
-
-    if (!response.ok) {
-      console.error(`[TikSaveHub Comments] TikWM HTTP ${response.status} url=${canonical}`);
-      return jsonResponse({ success: false, error: 'TikTok comments could not be loaded right now. Try again in a minute.' }, 502);
+    const cacheKey = `comments:${canonical}:${cursor}:${count}`;
+    const cached = cacheGet<ProviderResult>(cacheKey);
+    const provider: ProviderResult = cached ?? (await fetchCommentPage(canonical, count, cursor));
+    if (!cached && provider.payload) {
+      cacheSet(cacheKey, provider, COMMENT_CACHE_TTL_MS);
     }
 
-    const payload = await response.json().catch(() => null) as any;
-    if (!payload || payload.code !== 0) {
-      const providerMessage = String(payload?.msg || 'Comment provider returned an error.');
+    const payload = provider.payload;
+    if (!payload) {
+      const providerMessage = provider.error || 'Comment provider returned an error.';
       console.error(`[TikSaveHub Comments] provider error url=${canonical} message=${providerMessage}`);
-      return jsonResponse({ success: false, error: 'TikTok did not return comments for this video. Make sure it is public and has comments enabled.' }, 502);
+      const providerLimited = /limit|rate|too many|busy/i.test(providerMessage);
+      return jsonResponse({
+        success: false,
+        error: providerLimited
+          ? 'The comment provider is busy right now. Try again in a few minutes.'
+          : 'TikTok did not return comments for this video. Make sure it is public and has comments enabled.',
+      }, providerLimited ? 503 : 502);
     }
 
     const rawComments = Array.isArray(payload?.data?.comments) ? payload.data.comments as TikWMComment[] : [];

@@ -1,0 +1,809 @@
+---
+// TikTok Comment Downloader. Export public comments to CSV for research.
+// URL: /tiktok-comment-downloader
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import '../styles/tool-pages.css';
+
+const faqData = [
+  {
+    id: 'tc-how',
+    q: 'How do I export TikTok comments to CSV?',
+    a: 'Paste a public TikTok video link into the field above, choose how many comments you need, and press Export CSV. TikSaveHub fetches the comments in pages, removes duplicates, and downloads a spreadsheet with the comment text, username, likes, reply count, and posting date.',
+  },
+  {
+    id: 'tc-free',
+    q: 'Is the TikTok comment downloader free?',
+    a: 'Yes. The exporter is free and does not require an account, a browser extension, or a paid API key. You can export comments from as many public videos as you need, subject to a fair-use rate limit that prevents abuse.',
+  },
+  {
+    id: 'tc-replies',
+    q: 'Does the CSV include replies to comments?',
+    a: 'The export includes top-level comments and a reply count for each one. TikTok does not expose every nested reply through the public comment endpoint used by this tool. If you need the full reply thread, open the video in TikTok and expand the replies manually.',
+  },
+  {
+    id: 'tc-limit',
+    q: 'How many TikTok comments can I export at once?',
+    a: 'You can choose 100, 500, 1,000, 2,500, or 5,000 comments. Very large threads may be limited by TikTok or the public comment provider before the cap is reached. The result card tells you exactly how many rows were saved, so there is no guesswork.',
+  },
+  {
+    id: 'tc-private',
+    q: 'Can I export comments from a private TikTok video?',
+    a: 'No. A private, friends-only, or deleted video does not expose public comments. The video must be public and comments must be enabled. If comments are turned off, the tool returns an empty result instead of a spreadsheet full of blank rows.',
+  },
+  {
+    id: 'tc-data',
+    q: 'What personal data is included in the CSV?',
+    a: 'The export contains the public username, display name, comment text, like count, reply count, and comment timestamp. It does not include email addresses, phone numbers, or private profile data. Treat the spreadsheet as personal data anyway, because usernames and opinions can identify people.',
+  },
+  {
+    id: 'tc-excel',
+    q: 'How do I open the CSV in Excel or Google Sheets?',
+    a: 'Download the file, then open it directly in Excel, Numbers, or Google Sheets. The file includes a UTF-8 byte-order mark and quoted fields, so commas, quotes, and line breaks inside comments stay in the correct column. In Google Sheets, use File, Import, and Upload if a double-click opens the wrong app.',
+  },
+  {
+    id: 'tc-legal',
+    q: 'Is it legal to collect TikTok comments?',
+    a: 'Public comments can be reviewed and analyzed, but privacy and platform rules still apply. Do not use the export to harass people, build shadow profiles, or republish comments out of context. For commercial research, check the TikTok terms and the privacy laws that apply in your region.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to export TikTok comments to CSV',
+  description: 'Download public TikTok comments as a spreadsheet for analysis.',
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'Copy the public video link',
+      text: 'Open the TikTok video, tap Share, and choose Copy link.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'Choose an export size',
+      text: 'Paste the link, select the maximum number of comments, and press Export CSV.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'Open the spreadsheet',
+      text: 'The CSV downloads automatically and opens in Excel, Numbers, or Google Sheets.',
+    },
+  ],
+});
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
+---
+
+<Layout
+  title="TikTok Comment Downloader - Export Comments to CSV"
+  description="Export TikTok comments to CSV for research and moderation. Paste a public video link, fetch every available comment, and download a clean spreadsheet free."
+  keywords="tiktok comment downloader, tiktok comments to csv, export tiktok comments, download tiktok comments, tiktok comment scraper, tiktok comment export, tiktok comments spreadsheet"
+  canonical="/tiktok-comment-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="tiktok"
+  jsonLd={jsonLd}
+  appName="TikSaveHub - TikTok Comment Downloader"
+  localizedHreflang={false}
+>
+  <section class="tp-hero" aria-labelledby="tc-hero-headline">
+    <div class="tp-hero-bg gradient-mesh" aria-hidden="true"></div>
+    <div class="tp-hero-inner container-page">
+      <nav class="tp-breadcrumb" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-current="page">TikTok Comment Downloader</li>
+        </ol>
+      </nav>
+
+      <span class="tp-badge">
+        <span class="tp-badge-dot" aria-hidden="true"></span>
+        Free · CSV export · No login
+      </span>
+
+      <h1 id="tc-hero-headline">TikTok Comment Downloader: Export Comments to CSV</h1>
+      <p class="tp-subline">Turn a comment thread into a spreadsheet in under a minute.</p>
+      <p class="tp-lead">
+        Paste a public TikTok video link and export the comments with usernames, likes, reply counts, and
+        timestamps. The CSV opens cleanly in Excel, Numbers, and Google Sheets.
+      </p>
+
+      <div id="download-form" class="tp-form-card">
+        <form id="tc-form" class="tp-form" novalidate>
+          <label class="tp-label" for="tc-url">TikTok video link</label>
+          <div class="tp-form-row">
+            <input
+              id="tc-url"
+              class="tp-input"
+              name="url"
+              type="url"
+              inputmode="url"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              placeholder="https://www.tiktok.com/@creator/video/…"
+              required
+            />
+            <select id="tc-limit" class="tp-select" aria-label="Maximum comments to export">
+              <option value="100">100 comments</option>
+              <option value="500" selected>500 comments</option>
+              <option value="1000">1,000 comments</option>
+              <option value="2500">2,500 comments</option>
+              <option value="5000">5,000 comments</option>
+            </select>
+            <button id="tc-submit" class="tp-btn" type="submit">Export CSV</button>
+          </div>
+          <p id="tc-status" class="tp-status" role="status" aria-live="polite">
+            Public comments only. No login required.
+          </p>
+        </form>
+
+        <div id="tc-result" class="tp-result" hidden>
+          <div class="tp-result-head">
+            <div>
+              <h2 id="tc-result-title" class="tp-result-title">CSV export ready</h2>
+              <p id="tc-result-meta" class="tp-result-meta"></p>
+            </div>
+            <span class="tp-pill">CSV</span>
+          </div>
+          <div class="tp-form-row">
+            <a id="tc-download" class="tp-btn tp-btn--sm" href="#" download>Download CSV again</a>
+            <button id="tc-reset" class="tp-btn tp-btn--sm tp-btn--ghost" type="button">Export another video</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tp-trust" aria-label="Tool benefits">
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          Up to 5,000 comments
+        </span>
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          Excel-safe UTF-8 CSV
+        </span>
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          No account needed
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="tc-what-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">The basics</span>
+        <h2 id="tc-what-headline" class="tp-section-title">What the TikTok comment downloader does</h2>
+        <p class="tp-section-sub">
+          It reads the public comment list for one video, paginates through the thread, and writes a spreadsheet.
+        </p>
+      </div>
+      <div class="tp-prose">
+        <p>
+          A TikTok comment downloader is a small research tool with a simple job: take the comments that
+          TikTok already shows to the public and put them in a format you can sort, filter, and read without
+          scrolling. The public comment endpoint returns a page of comments at a time. TikSaveHub requests
+          those pages, collects the fields that matter, removes duplicate IDs, and builds a CSV file in your
+          browser.
+        </p>
+        <p>
+          The export includes top-level comments, not every nested reply. Each row carries the reply count, so
+          you can see which comments started a conversation and open the thread on TikTok if you need the full
+          back-and-forth. TikTok does not expose the complete reply tree through the public endpoint used
+          here. The tool is honest about that limit instead of pretending a partial thread is the whole
+          conversation.
+        </p>
+        <p>
+          The CSV is generated on your device. The server fetches the public comment pages and returns JSON,
+          but it does not persist the spreadsheet, the username list, or your download history. That
+          keeps the request small and avoids building a database of other people's comments. If you need a
+          permanent archive, save the file somewhere you control and treat it with the same care you would use
+          for any other user-generated content.
+        </p>
+        <p>
+          This is useful for creators, social media managers, researchers, and moderators. A spreadsheet can
+          answer questions that the TikTok interface cannot: which words appear most often, which comments
+          got the most likes, which questions keep repeating, and whether a moderation issue is growing. The
+          same data can feed a sentiment analysis, a content brief, or a simple pivot table. You do not need a
+          developer or a paid scraping service to get started.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="tp-section tp-section--soft" aria-labelledby="tc-steps-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Step by step</span>
+        <h2 id="tc-steps-headline" class="tp-section-title">How to export TikTok comments to CSV</h2>
+      </div>
+      <div class="tp-steps">
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">01</span>
+          <h3>Copy the public video link</h3>
+          <p>
+            Open the TikTok video, tap Share, and choose Copy link. Make sure the post is public. Private,
+            friends-only, and deleted videos do not expose comments to any downloader.
+          </p>
+        </article>
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">02</span>
+          <h3>Pick an export size</h3>
+          <p>
+            Paste the link, choose 100, 500, 1,000, 2,500, or 5,000 comments, and press Export CSV. The tool
+            fetches the thread in pages and shows live progress while it works.
+          </p>
+        </article>
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">03</span>
+          <h3>Open the spreadsheet</h3>
+          <p>
+            The CSV downloads automatically. Open it in Excel, Numbers, or Google Sheets. Use filters and
+            pivot tables to sort by likes, find repeated questions, or group comments by date.
+          </p>
+        </article>
+      </div>
+      <div class="tp-prose" style="margin-top: 28px;">
+        <p>
+          The whole export usually finishes in a few seconds for a small thread and longer for a viral video.
+          The progress line tells you how many comments have been collected and, when the provider exposes
+          it, how many are available in total. If the thread is huge, start with 500 comments to check the
+          format, then export a larger batch if you need more. That habit saves time and avoids hitting a
+          rate limit on a video you do not end up using.
+        </p>
+        <p>
+          If you only need a quick count, choose 100. If you are building a research dataset, choose 5,000 and
+          let the pagination run. The exporter stops when it reaches the cap, when TikTok says there are no
+          more pages, or when the public provider stops returning new comments. You can always run it again
+          for a different video or a different batch size.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="tc-columns-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">CSV fields</span>
+        <h2 id="tc-columns-headline" class="tp-section-title">What is included in the comment CSV</h2>
+        <p class="tp-section-sub">
+          Every row is one public comment. The columns are chosen for analysis, not for clutter.
+        </p>
+      </div>
+      <div class="tp-prose">
+        <div class="tp-table-wrap">
+          <table class="tp-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Example</th>
+                <th>What it is useful for</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>comment_id</code></td>
+                <td>7633128333040337671</td>
+                <td>Removing duplicates and tracing a comment back to TikTok</td>
+              </tr>
+              <tr>
+                <td><code>video_url</code></td>
+                <td>tiktok.com/@creator/video/…</td>
+                <td>Keeping the source next to the data</td>
+              </tr>
+              <tr>
+                <td><code>username</code></td>
+                <td>@creatorfan</td>
+                <td>Grouping comments by account</td>
+              </tr>
+              <tr>
+                <td><code>display_name</code></td>
+                <td>Creator Fan</td>
+                <td>Readable names in a report</td>
+              </tr>
+              <tr>
+                <td><code>comment</code></td>
+                <td>Where did you get that filter?</td>
+                <td>Keyword analysis, sentiment, question mining</td>
+              </tr>
+              <tr>
+                <td><code>likes</code></td>
+                <td>42</td>
+                <td>Finding the comments the audience agrees with</td>
+              </tr>
+              <tr>
+                <td><code>replies</code></td>
+                <td>3</td>
+                <td>Spotting active threads and moderation hotspots</td>
+              </tr>
+              <tr>
+                <td><code>posted_at</code></td>
+                <td>2026-10-20T14:32:00.000Z</td>
+                <td>Sorting by time and measuring comment velocity</td>
+              </tr>
+              <tr>
+                <td><code>profile_url</code></td>
+                <td>tiktok.com/@creatorfan</td>
+                <td>Opening the commenter's public profile</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The file is encoded as UTF-8 with a byte-order mark, and every field is quoted when needed. That
+          matters because comments often contain commas, quotation marks, emoji, and line breaks. A naive CSV
+          export would split those comments into extra columns. The exporter escapes them properly, so the
+          text stays inside one cell when you open the file in Excel or Google Sheets.
+        </p>
+        <p>
+          Text cells that begin with a formula character are prefixed with an apostrophe. This is a standard
+          CSV-injection safeguard: a comment such as <code>=SUM(A1:A9)</code> should be stored as text, not
+          executed as a spreadsheet formula. The original words are still readable, and the file is safer to
+          open on a shared computer.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="tp-section tp-section--soft" aria-labelledby="tc-why-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Use cases</span>
+        <h2 id="tc-why-headline" class="tp-section-title">Why export TikTok comments?</h2>
+      </div>
+      <div class="tp-card-grid">
+        <article class="tp-card">
+          <h3>Content research</h3>
+          <p>
+            Find the questions, objections, and jokes that appear again and again. Those patterns are raw
+            material for a follow-up video, a newsletter, or a product FAQ.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Audience sentiment</h3>
+          <p>
+            Sort by likes to see which reactions resonated. Read the low-like comments separately to catch
+            quiet criticism that the algorithm did not surface.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Moderation review</h3>
+          <p>
+            Filter for banned words, threats, or repeated spam. A spreadsheet is easier to review with a
+            second person than a live comment feed that keeps moving.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Creator analytics</h3>
+          <p>
+            Compare comment volume across videos. A spike in questions after a product mention can reveal
+            confusion before it shows up in sales or support tickets.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Academic work</h3>
+          <p>
+            Build a small, transparent sample of public comments for a media study. Keep the video URL and
+            collection date so the sample can be described honestly.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Competitor listening</h3>
+          <p>
+            See what people ask a competitor after a launch. The same questions are often a checklist for
+            your own product page, onboarding, or customer support.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="tc-limits-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Limits</span>
+        <h2 id="tc-limits-headline" class="tp-section-title">How many TikTok comments can you export?</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          The exporter asks for the comment list in pages of 50 and keeps going until it reaches your chosen
+          cap or the provider says there are no more pages. The maximum is 5,000 comments per run. That is a
+          practical ceiling, not a statement that every video has 5,000 public comments. A small video may
+          return 12 rows, while a viral post may hit the cap long before the thread ends.
+        </p>
+        <p>
+          TikTok and the public comment provider can throttle repeated requests. If you export several large
+          videos in a row, later runs may be slower or return a temporary error. Wait a minute and try again.
+          The tool does not retry in an endless loop, because that would make the rate limit worse. A clear
+          error is better than a request that hangs forever.
+        </p>
+        <p>
+          Deleted comments disappear from the public list. Pinned comments usually appear first. Comments
+          from blocked accounts may be missing. The export reflects the public state of the thread at the
+          moment you run it, not a historical archive. If you need a defensible research sample, record the
+          date and time of collection and keep the original video URL with the file.
+        </p>
+        <div class="tp-note">
+          <strong>Nested replies are not included as separate rows.</strong> The CSV includes a reply count so
+          you can identify active threads. For the full reply text, open the video in TikTok and expand the
+          conversation manually.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="tc-analyze-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Analysis</span>
+        <h2 id="tc-analyze-headline" class="tp-section-title">Analyzing TikTok comments in Excel or Google Sheets</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          Once the CSV is open, freeze the header row and turn on filters. Sorting by <code>likes</code> shows
+          the comments the audience endorsed most. Sorting by <code>posted_at</code> shows how the conversation
+          developed. Filtering the <code>comment</code> column for a product name or a question word is often
+          enough to find a content idea in a few minutes.
+        </p>
+        <p>
+          In Google Sheets, try a pivot table with <code>username</code> in rows and <code>comment_id</code> in
+          values. That shows which accounts commented most often. A second pivot with <code>posted_at</code>
+          grouped by hour can reveal when the thread was most active. In Excel, use Remove Duplicates on
+          <code>comment_id</code>, then create a bar chart from the top 20 rows sorted by likes.
+        </p>
+        <p>
+          For text analysis, paste the comment column into a word-frequency tool or a spreadsheet formula that
+          counts a specific phrase. Keep the original file unchanged and work on a copy. That way you can
+          always return to the raw export when a number looks surprising. If you share findings publicly,
+          quote comments accurately and avoid making a single comment look like the consensus of the whole
+          thread.
+        </p>
+        <p>
+          The CSV is deliberately plain. There are no charts, merged cells, or hidden sheets. That makes it
+          easy to import into another tool, combine with a second export, or archive in a version-controlled
+          folder. If you need a different column order, sort or rearrange it in your spreadsheet app rather
+          than re-downloading the file.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="tc-responsible-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Responsible use</span>
+        <h2 id="tc-responsible-headline" class="tp-section-title">Privacy and copyright when exporting comments</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          Comments are public, but the people who wrote them did not necessarily expect them to be collected
+          in a spreadsheet. Do not use an export to harass someone, reveal private information, or build a
+          profile that follows a person across videos. If you quote a comment in a report, keep the username
+          attached only when it is relevant and fair. In many cases, paraphrasing is enough.
+        </p>
+        <p>
+          The comment text belongs to the person who wrote it. A compilation of comments can be used for
+          commentary, criticism, and research, but republishing a large block of comments as your own content
+          is a different matter. Check TikTok's terms and your local privacy rules before using an export in a
+          commercial product, an advertisement, or a dataset you plan to distribute.
+        </p>
+        <p>
+          The tool does not require a login, so it cannot see private videos, private accounts, or comments
+          that are only visible to friends. It also does not bypass a login wall. If TikTok shows a login
+          prompt instead of the video, the export will fail honestly. That limitation protects the people who
+          chose a private audience.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="tc-problems-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Troubleshooting</span>
+        <h2 id="tc-problems-headline" class="tp-section-title">When a TikTok comment export fails</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          The most common cause is a link that does not point to a public video. Open the link in a logged-out
+          browser. If TikTok asks you to log in, the video is not public and no comment exporter can read it.
+          A profile link, a hashtag page, or a search result URL is also not a video link. Use the link from
+          the Share menu on a specific post.
+        </p>
+        <p>
+          If the export starts and then stops early, the provider may have hit a rate limit or the thread may
+          have ended. The result card reports how many comments were saved. Try a smaller cap, wait a minute,
+          or run the export again later. A repeated zero-row result usually means comments are disabled, the
+          video is too new, or the public endpoint is temporarily unavailable.
+        </p>
+        <p>
+          If Excel shows every comment in one column, your app may be using a different list separator. Use
+          Data, From Text/CSV and choose comma as the delimiter, or open the file in Google Sheets and export
+          it again. If characters look garbled, import as UTF-8. The file includes a byte-order mark, but some
+          older spreadsheet versions still need the encoding chosen manually.
+        </p>
+        <p>
+          If the download button does nothing, check the browser's download permissions and any content
+          blocker. A private browsing window can help isolate an extension conflict. The CSV is generated
+          locally, so the file is ready as soon as the progress line says the export is complete.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="tp-section" aria-labelledby="tc-faq-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="tc-faq-headline" class="tp-section-title">TikTok comment export questions, answered</h2>
+      </div>
+      <div class="tp-faq">
+        {faqData.map((faq) => (
+          <details class="tp-faq-item">
+            <summary>{faq.q}</summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="tc-related-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Keep going</span>
+        <h2 id="tc-related-headline" class="tp-section-title">Related TikTok tools</h2>
+      </div>
+      <div class="tp-related">
+        <a href="/tiktok-video-downloader-without-watermark">
+          <strong>TikTok Video Downloader</strong>
+          <span>Save the full video in HD without a watermark.</span>
+        </a>
+        <a href="/tiktok-thumbnail-downloader">
+          <strong>TikTok Thumbnail Downloader</strong>
+          <span>Download the cover image for any public TikTok post.</span>
+        </a>
+        <a href="/tiktok-to-mp3">
+          <strong>TikTok to MP3</strong>
+          <span>Extract the sound or music track as an MP3 file.</span>
+        </a>
+        <a href="/instagram-profile-picture-downloader">
+          <strong>Instagram Profile Picture Downloader</strong>
+          <span>Save a full-size avatar from a public Instagram profile.</span>
+        </a>
+        <a href="/instagram-reels-downloader-without-watermark">
+          <strong>Instagram Reels Downloader</strong>
+          <span>Download Reels in the best available quality.</span>
+        </a>
+        <a href="/blog">
+          <strong>TikSaveHub Guides</strong>
+          <span>Practical download guides for creators and researchers.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section">
+    <div class="tp-section-inner">
+      <div class="tp-final-cta">
+        <h2>Ready to turn comments into a spreadsheet?</h2>
+        <p>
+          Paste a public TikTok video link at the top of this page, choose a batch size, and export. The CSV
+          opens cleanly in Excel, Numbers, and Google Sheets, with no account and no setup.
+        </p>
+        <a class="tp-btn" href="#tc-hero-headline">Export TikTok comments to CSV</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const tcForm = document.getElementById('tc-form') as HTMLFormElement | null;
+  const tcInput = document.getElementById('tc-url') as HTMLInputElement | null;
+  const tcLimit = document.getElementById('tc-limit') as HTMLSelectElement | null;
+  const tcSubmit = document.getElementById('tc-submit') as HTMLButtonElement | null;
+  const tcStatus = document.getElementById('tc-status') as HTMLParagraphElement | null;
+  const tcResult = document.getElementById('tc-result') as HTMLDivElement | null;
+  const tcResultTitle = document.getElementById('tc-result-title') as HTMLHeadingElement | null;
+  const tcResultMeta = document.getElementById('tc-result-meta') as HTMLParagraphElement | null;
+  const tcDownload = document.getElementById('tc-download') as HTMLAnchorElement | null;
+  const tcReset = document.getElementById('tc-reset') as HTMLButtonElement | null;
+
+  interface CommentRow {
+    id: string;
+    text: string;
+    likes: number;
+    replies: number;
+    createdAt: number | null;
+    username: string;
+    displayName: string;
+    verified: boolean;
+  }
+
+  let lastCsvUrl = '';
+
+  function setTcStatus(message: string, tone: '' | 'error' | 'success' = ''): void {
+    if (!tcStatus) return;
+    tcStatus.textContent = message;
+    if (tone) tcStatus.dataset.tone = tone;
+    else delete tcStatus.dataset.tone;
+  }
+
+  function scrollToResult(target: HTMLElement | null): void {
+    if (!target) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+  }
+
+  function safeText(value: string): string {
+    const text = value.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    return /^\s*[=+\-]/.test(text) ? `'${text}` : text;
+  }
+
+  function csvCell(value: string | number | null | undefined): string {
+    const text = safeText(String(value ?? ''));
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+
+  function buildCsv(rows: CommentRow[], videoUrl: string): string {
+    const header = [
+      'comment_id',
+      'video_url',
+      'username',
+      'display_name',
+      'comment',
+      'likes',
+      'replies',
+      'posted_at',
+      'profile_url',
+    ];
+    const lines = [header.map(csvCell).join(',')];
+    for (const row of rows) {
+      const date = row.createdAt && Number.isFinite(row.createdAt) ? new Date(row.createdAt * 1000) : null;
+      const posted = date && !Number.isNaN(date.getTime()) ? date.toISOString() : '';
+      const profile = row.username ? `https://www.tiktok.com/@${row.username}` : '';
+      lines.push([
+        csvCell(row.id),
+        csvCell(videoUrl),
+        csvCell(row.username ? `@${row.username}` : ''),
+        csvCell(row.displayName),
+        csvCell(row.text),
+        csvCell(row.likes),
+        csvCell(row.replies),
+        csvCell(posted),
+        csvCell(profile),
+      ].join(','));
+    }
+    return `\uFEFF${lines.join('\r\n')}\r\n`;
+  }
+
+  function saveCsv(csv: string, name: string): void {
+    if (lastCsvUrl) URL.revokeObjectURL(lastCsvUrl);
+    lastCsvUrl = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    if (tcDownload) {
+      tcDownload.href = lastCsvUrl;
+      tcDownload.setAttribute('download', name);
+    }
+    const anchor = document.createElement('a');
+    anchor.href = lastCsvUrl;
+    anchor.download = name;
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  }
+
+  async function exportComments(): Promise<void> {
+    const videoUrl = tcInput?.value.trim() || '';
+    if (!videoUrl) {
+      setTcStatus('Paste a public TikTok video link first.', 'error');
+      tcInput?.focus();
+      return;
+    }
+
+    const limit = Math.max(100, Math.min(5000, Number(tcLimit?.value) || 500));
+    if (tcSubmit) tcSubmit.disabled = true;
+    if (tcResult) tcResult.hidden = true;
+    setTcStatus('Reading the public comment thread…');
+
+    const rows: CommentRow[] = [];
+    const seen = new Set<string>();
+    const seenCursors = new Set<string>();
+    let cursor = '0';
+    let hasMore = true;
+    let total: number | null = null;
+    let videoId = '';
+    let page = 0;
+
+    try {
+      while (hasMore && rows.length < limit && page < 100) {
+        if (page > 0 && seenCursors.has(cursor)) break;
+        seenCursors.add(cursor);
+
+        setTcStatus(`Fetching comments… ${rows.length.toLocaleString()} collected${total ? ` of about ${total.toLocaleString()}` : ''}.`);
+        const endpoint = `/api/tiktok-comments?url=${encodeURIComponent(videoUrl)}&count=50&cursor=${encodeURIComponent(cursor)}`;
+        const response = await fetch(endpoint);
+        const payload = await response.json().catch(() => null) as any;
+        if (!response.ok || !payload?.success) {
+          throw new Error(String(payload?.error || 'The comments could not be loaded. Try another public video.'));
+        }
+
+        videoId = String(payload.videoId || videoId);
+        if (Number.isFinite(Number(payload.total))) total = Number(payload.total);
+        const batch = Array.isArray(payload.comments) ? payload.comments as CommentRow[] : [];
+        for (const comment of batch) {
+          if (!comment || !comment.id || seen.has(comment.id)) continue;
+          seen.add(comment.id);
+          rows.push(comment);
+          if (rows.length >= limit) break;
+        }
+
+        hasMore = Boolean(payload.hasMore) && batch.length > 0;
+        const next = payload.nextCursor;
+        if (next === null || next === undefined) break;
+        cursor = String(next);
+        page += 1;
+        if (hasMore) await new Promise((resolve) => setTimeout(resolve, 120));
+      }
+
+      if (rows.length === 0) {
+        throw new Error('No public comments were returned. Check that the video is public and comments are enabled.');
+      }
+
+      const suffix = videoId || new Date().toISOString().slice(0, 10);
+      const filename = `tiktok-comments-${suffix}.csv`;
+      saveCsv(buildCsv(rows, videoUrl), filename);
+
+      if (tcResultTitle) tcResultTitle.textContent = 'Comment export ready';
+      if (tcResultMeta) {
+        const totalText = total ? `, about ${total.toLocaleString()} available in the thread` : '';
+        tcResultMeta.textContent = `${rows.length.toLocaleString()} comments saved${totalText}. The CSV download should start automatically.`;
+      }
+      if (tcResult) tcResult.hidden = false;
+      setTcStatus(`Exported ${rows.length.toLocaleString()} comments to CSV.`, 'success');
+      scrollToResult(tcResult);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setTcStatus(message, 'error');
+    } finally {
+      if (tcSubmit) tcSubmit.disabled = false;
+    }
+  }
+
+  tcForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    void exportComments();
+  });
+
+  tcReset?.addEventListener('click', () => {
+    if (tcResult) tcResult.hidden = true;
+    if (tcInput) {
+      tcInput.value = '';
+      tcInput.focus();
+    }
+    setTcStatus('Paste another public TikTok video link to start a new export.');
+  });
+</script>

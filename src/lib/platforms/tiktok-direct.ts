@@ -392,6 +392,7 @@ export const tiktokDirectSource: ApiSource<string, MediaMeta> = {
       wmUrl: null,
       audioUrl: extractUrl(music.play) ?? extractUrl(music.playUrl) ?? null,
       cover: video.cover ?? video.originCover ?? video.dynamicCover ?? null,
+      originCover: video.originCover ?? null,
       title: item.desc ?? '',
       duration: video.duration ?? 0,
       authorName: author.nickname ?? '',

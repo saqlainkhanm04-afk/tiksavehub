@@ -17,6 +17,8 @@ export interface MediaMeta {
   audioUrl: string | null;
   /** Thumbnail / cover image URL */
   cover: string | null;
+  /** Original square cover when the platform exposes a separate rendition */
+  originCover?: string | null;
   /** Video or post title / caption */
   title: string;
   /** Duration in seconds (0 if unknown) */

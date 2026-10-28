@@ -1,7 +1,7 @@
 ---
 // NavBar component — sticky top nav following DESIGN.md nav-bar spec
 import { sectionHref } from '../lib/pageSections';
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getLangFromUrl, getLocalizedPath, useTranslations } from '../i18n/utils';
 import LanguagePicker from './LanguagePicker.astro';
 
 const currentPath = Astro.url.pathname;
@@ -10,8 +10,7 @@ const t = useTranslations(lang);
 const downloadHref = sectionHref(currentPath, 'download-form');
 
 function localPath(path: string): string {
-  if (lang === 'en') return path;
-  return `/${lang}${path}`;
+  return getLocalizedPath(path, lang);
 }
 ---
 
@@ -66,6 +65,28 @@ function localPath(path: string): string {
         </span>
         {t('nav.blog')}
       </a>
+      {lang === 'en' && (
+        <details class="nav-more" id="nav-more">
+          <summary class="nav-link nav-more-trigger">
+            More Tools
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="nav-more-menu">
+            <a href="/tiktok-thumbnail-downloader" class="nav-more-link" id="nav-link-thumbnail">
+              <strong>TikTok Thumbnail Downloader</strong>
+              <span>Save HD covers and cover images</span>
+            </a>
+            <a href="/instagram-profile-picture-downloader" class="nav-more-link" id="nav-link-pfp">
+              <strong>Instagram Profile Picture Downloader</strong>
+              <span>Save an IG PFP in full HD</span>
+            </a>
+            <a href="/tiktok-comment-downloader" class="nav-more-link" id="nav-link-comments">
+              <strong>TikTok Comment Downloader</strong>
+              <span>Export public comments to CSV</span>
+            </a>
+          </div>
+        </details>
+      )}
     </nav>
 
     <!-- Page Section Links + CTAs -->
@@ -157,6 +178,22 @@ function localPath(path: string): string {
         </span>
         {t('nav.blog')}
       </a>
+      {lang === 'en' && (
+        <>
+          <a href="/tiktok-thumbnail-downloader" class="mobile-nav-link" id="mob-link-thumbnail">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            TikTok Thumbnail Downloader
+          </a>
+          <a href="/instagram-profile-picture-downloader" class="mobile-nav-link" id="mob-link-pfp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            Instagram Profile Picture Downloader
+          </a>
+          <a href="/tiktok-comment-downloader" class="mobile-nav-link" id="mob-link-comments">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
+            TikTok Comment Downloader
+          </a>
+        </>
+      )}
       <div class="mobile-section-divider" aria-hidden="true"></div>
       <a href="#how-it-works" class="mobile-nav-link" id="mob-link-how-it-works">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1481,6 +1518,75 @@ function localPath(path: string): string {
   .nav-link-x:active {
     transform: none !important;
   }
+
+  /* Desktop "More Tools" dropdown */
+  .nav-more {
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .nav-more-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .nav-more-trigger::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-more[open] .nav-more-trigger {
+    background: var(--color-canvas-soft-2);
+    color: var(--color-ink);
+  }
+
+  .nav-more-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    padding: 7px;
+    border: 1px solid var(--color-hairline);
+    border-radius: 12px;
+    background: var(--color-canvas);
+    box-shadow: 0 18px 36px -16px #17171740;
+  }
+
+  .nav-more-link {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 11px;
+    border-radius: 8px;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .nav-more-link:hover {
+    background: var(--color-canvas-soft);
+  }
+
+  .nav-more-link strong {
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .nav-more-link span {
+    color: var(--color-mute);
+    font-size: var(--text-caption);
+    line-height: 1.4;
+  }
+
+  html.dark .nav-more-menu {
+    box-shadow: 0 18px 36px -16px #000000cc;
+  }
 </style>
 
 <script>
@@ -1613,6 +1719,9 @@ function localPath(path: string): string {
       'nav-link-x': ['/x-video-downloader'],
       'nav-link-sc': ['/snapchat-downloader', '/snapchat-story-downloader', '/snapchat-to-mp3'],
       'nav-link-blog': ['/blog'],
+      'nav-link-thumbnail': ['/tiktok-thumbnail-downloader'],
+      'nav-link-pfp': ['/instagram-profile-picture-downloader'],
+      'nav-link-comments': ['/tiktok-comment-downloader'],
     };
 
     const mobMap: Record<string, string[]> = {
@@ -1623,6 +1732,9 @@ function localPath(path: string): string {
       'mob-link-x': ['/x-video-downloader'],
       'mob-link-sc': ['/snapchat-downloader', '/snapchat-story-downloader', '/snapchat-to-mp3'],
       'mob-link-blog': ['/blog'],
+      'mob-link-thumbnail': ['/tiktok-thumbnail-downloader'],
+      'mob-link-pfp': ['/instagram-profile-picture-downloader'],
+      'mob-link-comments': ['/tiktok-comment-downloader'],
     };
 
     function applyActive(map: Record<string, string[]>) {
@@ -1638,5 +1750,16 @@ function localPath(path: string): string {
 
     applyActive(linkMap);
     applyActive(mobMap);
+
+    // Close the desktop "More Tools" menu when clicking elsewhere or pressing Escape.
+    document.addEventListener('click', (event) => {
+      const more = document.getElementById('nav-more') as HTMLDetailsElement | null;
+      if (more?.open && !more.contains(event.target as Node)) more.open = false;
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const more = document.getElementById('nav-more') as HTMLDetailsElement | null;
+      if (more?.open) more.open = false;
+    });
   })();
 </script>

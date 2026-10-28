@@ -220,7 +220,7 @@ async function resolveTikTok(videoUrl: string, turnstileToken?: string): Promise
     hdplay: mediaResult.data.hdUrl,
     wmplay: mediaResult.data.wmUrl,
     cover: mediaResult.data.cover,
-    origin_cover: mediaResult.data.cover,
+    origin_cover: mediaResult.data.originCover ?? null,
     title: mediaResult.data.title,
     duration: mediaResult.data.duration,
     author: {

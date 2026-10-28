@@ -5,6 +5,7 @@ import '../styles/global.css';
 
 import { getLangFromUrl, getAlternateLangLinks } from '../i18n/utils';
 import { languages, localeCodes } from '../i18n/ui';
+import { seoDescription, seoTitle, type DescriptionKind } from '../lib/seo';
 
 interface Props {
   title?: string;
@@ -44,6 +45,21 @@ const detectedLang = propLang || getLangFromUrl(Astro.url);
 const currentLang = detectedLang in languages ? detectedLang : 'en';
 const ogLocale = localeCodes[currentLang] || 'en';
 
+// Every page gets the same hard metadata contract: hyphen-only title
+// separators, titles <= 60 characters, descriptions 120-160 characters.
+function descriptionKindFor(pathname: string): DescriptionKind {
+  const path = pathname.replace(/\/+$/, '') || '/';
+  if (path === '/404' || path === '/500') return 'error';
+  if (path.endsWith('/contact')) return 'contact';
+  if (path.endsWith('/privacy') || path.endsWith('/terms') || path.endsWith('/dmca')) return 'legal';
+  if (path.endsWith('/blog') || path.includes('/blog/')) return 'blog';
+  if (path.includes('/compare/')) return 'compare';
+  return 'tool';
+}
+
+const metaTitle = seoTitle(title);
+const metaDescription = seoDescription(description, currentLang, descriptionKindFor(Astro.url.pathname));
+
 const siteURL = String(Astro.site ?? 'https://tiksavehub.com').replace(/\/+$/, '');
 
 // Detect locale prefix from the current URL (e.g. "/de/tiktok..." → "de").
@@ -71,7 +87,7 @@ const softwareAppSchema: Record<string, unknown> = {
   name: appName,
   url: canonicalURL.toString(),
   image: ogImageURL.toString(),
-  description,
+  description: metaDescription,
   applicationCategory: 'MultimediaApplication',
   operatingSystem: 'Web',
   inLanguage: currentLang,
@@ -125,8 +141,8 @@ const structuredData =
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{metaTitle}</title>
+    <meta name="description" content={metaDescription} />
     <meta name="keywords" content={keywords} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -160,23 +176,23 @@ const structuredData =
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={metaTitle} />
+    <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content="TikSaveHub" />
     <meta property="og:image" content={ogImageURL} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={title} />
+    <meta property="og:image:alt" content={metaTitle} />
     <meta property="og:locale" content={ogLocale} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@tiksavehub" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={metaTitle} />
+    <meta name="twitter:description" content={metaDescription} />
     <meta name="twitter:image" content={ogImageURL} />
-    <meta name="twitter:image:alt" content={title} />
+    <meta name="twitter:image:alt" content={metaTitle} />
 
     <!-- Preload critical fonts -->
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />

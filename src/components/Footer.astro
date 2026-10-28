@@ -1,6 +1,6 @@
 ---
 // Footer component — 3-column footer following DESIGN.md footer spec
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getLangFromUrl, getLocalizedPath, useTranslations } from '../i18n/utils';
 interface Props {
   platform?: 'tiktok' | 'instagram' | 'facebook' | 'x' | 'snapchat';
 }
@@ -16,8 +16,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 function localPath(path: string): string {
-  if (lang === 'en') return path;
-  return `/${lang}${path}`;
+  return getLocalizedPath(path, lang);
 }
 ---
 
@@ -52,7 +51,16 @@ function localPath(path: string): string {
       <p class="footer-col-label text-caption-mono">{t('footer.tools')}</p>
       <ul class="footer-link-list">
         <li><a href={localPath('/tiktok-video-downloader-without-watermark')} class="footer-link" id="footer-link-tiktok">TikTok Downloader</a></li>
+        {lang === 'en' && (
+          <>
+            <li><a href="/tiktok-thumbnail-downloader" class="footer-link" id="footer-link-tiktok-thumbnail">TikTok Thumbnail Downloader</a></li>
+            <li><a href="/tiktok-comment-downloader" class="footer-link" id="footer-link-tiktok-comments">TikTok Comment Downloader</a></li>
+          </>
+        )}
         <li><a href={localPath('/tiktok-to-mp3')} class="footer-link" id="footer-link-tiktok-mp3">TikTok to MP3</a></li>
+        {lang === 'en' && (
+          <li><a href="/instagram-profile-picture-downloader" class="footer-link" id="footer-link-ig-pfp">Instagram Profile Picture Downloader</a></li>
+        )}
         <li><a href={localPath('/instagram-reels-downloader-without-watermark')} class="footer-link" id="footer-link-ig-reels">Instagram Reels Downloader</a></li>
         <li><a href={localPath('/instagram-video-downloader-without-watermark')} class="footer-link" id="footer-link-ig-video">Instagram Video Downloader</a></li>
         <li><a href={localPath('/instagram-story-downloader-without-watermark')} class="footer-link" id="footer-link-ig-story">Instagram Story Downloader</a></li>

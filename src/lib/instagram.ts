@@ -492,6 +492,66 @@ export async function resolveUserIdByUsername(username: string, cookieOverride?:
   return String(userId);
 }
 
+export interface InstagramProfileInfo {
+  username: string;
+  fullName: string;
+  profilePicUrl: string;
+  profilePicUrlHd: string | null;
+  isPrivate: boolean;
+  followerCount: number | null;
+}
+
+/**
+ * Public profile metadata for the profile-picture downloader.
+ *
+ * `web_profile_info` is one of the few Instagram endpoints that still answers
+ * anonymous requests (and it also works with the configured mobile-web
+ * session). Instagram serves the full-size avatar as `profile_pic_url_hd`;
+ * the older `profile_pic_url` is the small 150px rendition, so it is only used
+ * as a fallback when the HD field is absent.
+ */
+export async function fetchInstagramProfile(username: string): Promise<InstagramProfileInfo> {
+  const clean = username.trim().replace(/^@+/, '').toLowerCase();
+  if (!/^[a-z0-9._]{1,30}$/i.test(clean)) {
+    throw new Error('Enter a valid Instagram username.');
+  }
+
+  const cacheKey = `ig:pfp:${clean}`;
+  const cached = cacheGet<InstagramProfileInfo>(cacheKey);
+  if (cached) return cached;
+
+  const { status, json } = await apiGet(`/users/web_profile_info/?username=${encodeURIComponent(clean)}`);
+  if (status === 429) {
+    throw new Error('Instagram is rate-limiting profile requests right now. Try again in a minute.');
+  }
+  if (!json) {
+    throw new Error('Instagram did not return profile metadata right now. Try again in a minute.');
+  }
+  const user = json?.data?.user;
+  if (!user) {
+    throw new Error('Instagram profile not found. Check the username and try again.');
+  }
+
+  const hd = typeof user.profile_pic_url_hd === 'string' ? user.profile_pic_url_hd : null;
+  const regular = typeof user.profile_pic_url === 'string' ? user.profile_pic_url : null;
+  const profilePicUrl = hd || regular;
+  if (!profilePicUrl) {
+    throw new Error('This profile does not expose a downloadable profile picture.');
+  }
+
+  const followerCount = Number(user?.edge_followed_by?.count);
+  const info: InstagramProfileInfo = {
+    username: String(user.username || clean),
+    fullName: String(user.full_name || ''),
+    profilePicUrl,
+    profilePicUrlHd: hd,
+    isPrivate: Boolean(user.is_private),
+    followerCount: Number.isFinite(followerCount) ? followerCount : null,
+  };
+  cacheSet(cacheKey, info, 6 * 60 * 60 * 1000);
+  return info;
+}
+
 export async function fetchStoryTray(userId: string, cookieOverride?: string): Promise<any[]> {
   const { json } = await apiGet(`/feed/reels_media/?reel_ids=${encodeURIComponent(userId)}`, {
     requireSession: true,

@@ -147,6 +147,7 @@ export const tikwmSource: ApiSource<string, MediaMeta> = {
       wmUrl: d.wmplay ?? null,
       audioUrl: musicSource?.play ?? musicSource?.play_url ?? null,
       cover: d.cover ?? null,
+      originCover: d.origin_cover ?? null,
       title: d.title ?? '',
       duration: d.duration ?? 0,
       authorName: author.nickname ?? '',

@@ -76,6 +76,10 @@ const customPages = [
   `${site}/about`,
   `${site}/authors/samneil`,
   `${site}/editorial-policy`,
+  // English-only focused tool pages (no localized variants exist).
+  `${site}/tiktok-thumbnail-downloader`,
+  `${site}/instagram-profile-picture-downloader`,
+  `${site}/tiktok-comment-downloader`,
   // Localized pages for all languages.
   // Locale homepages must be emitted as /de (not /de/) to match trailingSlash: 'never'.
   ...['es', 'ja', 'fr', 'de', 'pt', 'ko', 'it'].flatMap((lang) =>

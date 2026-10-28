@@ -1,0 +1,653 @@
+---
+// TikTok Thumbnail Downloader. SEO-optimized landing page for cover images.
+// URL: /tiktok-thumbnail-downloader
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import '../styles/tool-pages.css';
+
+const faqData = [
+  {
+    id: 'thumb-how',
+    q: 'How do I download a TikTok thumbnail?',
+    a: 'Copy the link of any public TikTok video and paste it into the field above. TikSaveHub reads the video metadata and shows every cover image TikTok exposes for that post. Choose the version you want and press Download. The image saves directly to your phone or computer.',
+  },
+  {
+    id: 'thumb-hd',
+    q: 'Are TikTok thumbnails available in HD?',
+    a: 'TikSaveHub always saves the largest cover TikTok publishes for the video. TikTok does not store every cover at 1080p; many are 300x400 or 360x360. The tool shows the exact pixel dimensions before you download, so you can see what the source provides instead of receiving an upscaled image with fake sharpness.',
+  },
+  {
+    id: 'thumb-types',
+    q: 'What is the difference between the cover and the original cover?',
+    a: 'The vertical cover is the image TikTok shows on the video player and in the feed. The original cover is the square or near-square image attached to the post metadata. Both can differ in crop, text overlay, and resolution. The downloader lists each version separately so you can choose the crop that fits your project.',
+  },
+  {
+    id: 'thumb-private',
+    q: 'Can I download a thumbnail from a private TikTok video?',
+    a: 'No. Private, friends-only, and deleted videos do not expose public metadata. TikSaveHub only works when the post is public and TikTok still serves its cover. If the link is valid but the video is gone, the page will explain that instead of showing a broken image.',
+  },
+  {
+    id: 'thumb-quality',
+    q: 'Why is the thumbnail smaller than the video?',
+    a: 'TikTok treats covers as preview images, not full video frames. The platform generates several compressed versions for the feed, search results, and the player. The highest available cover is usually smaller than a 1080p video frame. For a full-resolution image, you can download the video and export a frame in an editor.',
+  },
+  {
+    id: 'thumb-legal',
+    q: 'Can I use a downloaded TikTok thumbnail commercially?',
+    a: 'The image still belongs to the creator or rights holder. Downloading a cover for personal reference, a private mood board, or a review is different from using it in an ad, a product page, or a monetized video. Ask the creator for permission before commercial use, and keep the original attribution intact.',
+  },
+  {
+    id: 'thumb-devices',
+    q: 'Does the TikTok thumbnail downloader work on iPhone and Android?',
+    a: 'Yes. The tool runs in Safari, Chrome, Edge, Firefox, and other modern browsers. On iPhone the image lands in Files or Photos after you tap Download. On Android it goes to the Downloads folder or the gallery. No app, extension, or account is required.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to download a TikTok thumbnail',
+  description: 'Save a TikTok cover image from any public video in three steps.',
+  totalTime: 'PT1M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'Copy the TikTok video link',
+      text: 'Open the public TikTok video, tap Share, and choose Copy link.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'Paste the link into TikSaveHub',
+      text: 'Paste the link into the TikTok Thumbnail Downloader and press Get thumbnail.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'Download the cover',
+      text: 'Pick the vertical or original cover and press Download to save the image.',
+    },
+  ],
+});
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
+---
+
+<Layout
+  title="TikTok Thumbnail Downloader - Save HD Covers & Images"
+  description="Download TikTok thumbnails and cover images in the highest resolution available. Paste any public TikTok link, preview the cover, and save it free."
+  keywords="tiktok thumbnail downloader, tiktok thumbnail download, download tiktok thumbnail, tiktok cover image downloader, tiktok thumbnail hd, save tiktok cover, tiktok video thumbnail"
+  canonical="/tiktok-thumbnail-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="tiktok"
+  jsonLd={jsonLd}
+  appName="TikSaveHub - TikTok Thumbnail Downloader"
+  localizedHreflang={false}
+>
+  <section class="tp-hero" aria-labelledby="thumb-hero-headline">
+    <div class="tp-hero-bg gradient-mesh" aria-hidden="true"></div>
+    <div class="tp-hero-inner container-page">
+      <nav class="tp-breadcrumb" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-current="page">TikTok Thumbnail Downloader</li>
+        </ol>
+      </nav>
+
+      <span class="tp-badge">
+        <span class="tp-badge-dot" aria-hidden="true"></span>
+        Free · No sign-up · Every cover version
+      </span>
+
+      <h1 id="thumb-hero-headline">TikTok Thumbnail Downloader: Save HD Covers &amp; Images</h1>
+      <p class="tp-subline">Grab the cover before it disappears from the feed.</p>
+      <p class="tp-lead">
+        Paste a public TikTok link and preview the vertical cover and original cover side by side.
+        Save the largest version TikTok exposes, with the exact dimensions shown before you download.
+      </p>
+
+      <div id="download-form" class="tp-form-card">
+        <form id="tt-thumb-form" class="tp-form" novalidate>
+          <label class="tp-label" for="tt-thumb-url">TikTok video link</label>
+          <div class="tp-form-row">
+            <input
+              id="tt-thumb-url"
+              class="tp-input"
+              name="url"
+              type="url"
+              inputmode="url"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              placeholder="https://www.tiktok.com/@creator/video/…"
+              required
+            />
+            <button id="tt-thumb-submit" class="tp-btn" type="submit">Get thumbnail</button>
+          </div>
+          <p id="tt-thumb-status" class="tp-status" role="status" aria-live="polite">
+            No download history. Only the public cover is fetched.
+          </p>
+        </form>
+
+        <div id="tt-thumb-result" class="tp-result" hidden>
+          <div class="tp-result-head">
+            <div>
+              <h2 id="tt-thumb-title" class="tp-result-title">Thumbnail ready</h2>
+              <p id="tt-thumb-meta" class="tp-result-meta"></p>
+            </div>
+            <span class="tp-pill">Best available</span>
+          </div>
+          <div id="tt-thumb-grid" class="tp-thumb-grid"></div>
+        </div>
+      </div>
+
+      <div class="tp-trust" aria-label="Tool benefits">
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          Highest available cover
+        </span>
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          Original crop and vertical crop
+        </span>
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          Works on mobile and desktop
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="thumb-what-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">The basics</span>
+        <h2 id="thumb-what-headline" class="tp-section-title">What a TikTok thumbnail actually is</h2>
+        <p class="tp-section-sub">
+          A TikTok thumbnail is the cover image attached to a video post. It is not a random video frame.
+        </p>
+      </div>
+      <div class="tp-prose">
+        <p>
+          When a creator uploads to TikTok, the platform lets them choose a cover from the video timeline.
+          That image is stored separately from the MP4, then resized for the feed, the profile grid, search
+          results, and the player. The result is a small family of cover files rather than one universal
+          image. The TikTok Thumbnail Downloader reads the public metadata for the post and exposes the two
+          versions that are usually available: the vertical cover shown on the player and the original cover
+          stored with the post.
+        </p>
+        <p>
+          Most people encounter a TikTok thumbnail in the feed and assume it is the first frame. Sometimes it
+          is. Often it is not. Creators add title cards, reaction faces, arrows, subtitles, and branded frames
+          to make the cover readable at a glance. That is why a cover can look completely different from the
+          opening second of the video. If you are collecting references for a design system, a content
+          calendar, or a competitor analysis, downloading the cover is faster and cleaner than taking a
+          screenshot with the interface, status bar, and recommendation buttons still visible.
+        </p>
+        <p>
+          The downloader does not invent resolution. It displays the exact pixel dimensions of each cover after
+          the image loads. TikTok compresses and caps these files, so a 300x400 cover is common even when the
+          source video is 1080x1920. The tool gives you the largest version the platform publishes, not an
+          upscaled copy with blurred edges and invented detail. For true full-frame quality, download the
+          <a href="/tiktok-video-downloader-without-watermark">TikTok video without a watermark</a> and export
+          a frame in an editor.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="tp-section tp-section--soft" aria-labelledby="thumb-steps-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Step by step</span>
+        <h2 id="thumb-steps-headline" class="tp-section-title">How to download a TikTok thumbnail in three steps</h2>
+      </div>
+      <div class="tp-steps">
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">01</span>
+          <h3>Copy the public video link</h3>
+          <p>
+            Open TikTok on your phone or in a browser, tap Share, and choose Copy link. The post must be public.
+            A private or friends-only video does not expose cover metadata to any downloader.
+          </p>
+        </article>
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">02</span>
+          <h3>Paste it into the field above</h3>
+          <p>
+            Paste the full URL, including the creator handle and video ID. Short vm.tiktok.com and
+            vt.tiktok.com links also work because TikSaveHub resolves them before reading the cover.
+          </p>
+        </article>
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">03</span>
+          <h3>Choose and download</h3>
+          <p>
+            Preview both covers, check the pixel dimensions, and press the download button on the crop you
+            want. The image is served through TikSaveHub, so it saves instead of opening a raw CDN tab.
+          </p>
+        </article>
+      </div>
+      <div class="tp-prose" style="margin-top: 28px;">
+        <p>
+          The whole flow takes about ten seconds on a normal connection. There is no account, no extension,
+          and no file manager dance. On iPhone, the downloaded image is available in the Files app and can be
+          saved to Photos from there. On Android, Chrome saves it in Downloads; Samsung Internet may ask where
+          to put it. On a desktop browser, the file appears in the default download folder with a clear name
+          based on the video ID.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="tp-section" aria-labelledby="thumb-why-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Use cases</span>
+        <h2 id="thumb-why-headline" class="tp-section-title">Why download a TikTok cover image?</h2>
+      </div>
+      <div class="tp-card-grid">
+        <article class="tp-card">
+          <h3>Content research</h3>
+          <p>
+            Build a swipe file of hooks, title treatments, and visual patterns. A cover image is easier to
+            compare in a spreadsheet than a full video, and it preserves the exact crop viewers saw.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Repurposing</h3>
+          <p>
+            Use a cover as a reference when designing a YouTube thumbnail, a newsletter image, or a Story
+            frame. Always ask the creator before publishing a derivative work commercially.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Archiving</h3>
+          <p>
+            Videos get deleted, accounts go private, and covers change. Save the cover of a campaign or a
+            favorite post while it is still live so your notes keep the original visual context.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Quality checks</h3>
+          <p>
+            See whether a thumbnail is sharp, readable, and correctly cropped at the size TikTok actually
+            serves. This is useful for creators reviewing their own profile grid.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Presentations</h3>
+          <p>
+            Drop a cover into a slide about social trends without capturing the entire TikTok interface.
+            A clean image looks more professional than a phone screenshot with battery icons.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Attribution boards</h3>
+          <p>
+            Keep the creator handle and video URL next to the image. That makes it easy to credit the source
+            later, which matters when a reference becomes part of a published project.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="thumb-size-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Specs</span>
+        <h2 id="thumb-size-headline" class="tp-section-title">TikTok thumbnail size, crop, and file type</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          TikTok uses a vertical 9:16 canvas for videos. The feed cover is designed to fit that frame, while
+          the original cover can be square or close to square. The exact file size changes with the post,
+          the upload device, and the CDN rendition. The table below explains what you will usually see.
+        </p>
+        <div class="tp-table-wrap">
+          <table class="tp-table">
+            <thead>
+              <tr>
+                <th>Cover version</th>
+                <th>Typical size</th>
+                <th>Best for</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Vertical feed cover</td>
+                <td>300x400 to 720x1280</td>
+                <td>Recreating the mobile feed look, Story references, vertical slides</td>
+              </tr>
+              <tr>
+                <td>Original square cover</td>
+                <td>360x360 or larger</td>
+                <td>Profile-grid mockups, avatars, square social posts</td>
+              </tr>
+              <tr>
+                <td>Video frame</td>
+                <td>Up to 1080x1920</td>
+                <td>Full-resolution stills for editing, not a true thumbnail download</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The tool shows the natural width and height of each image after it loads, so the table is a guide,
+          not a promise. If a creator uploaded a custom cover at a lower resolution, TikTok will not
+          magically restore detail. The same applies to old videos that were compressed before the current
+          upload pipeline. The correct expectation is simple: TikSaveHub saves the best file TikTok still has.
+        </p>
+        <div class="tp-note">
+          <strong>Looking for full-frame quality?</strong> Download the video and export a still. A cover is a
+          compressed preview; a video frame can carry the full 1080p resolution. Use the
+          <a href="/tiktok-video-downloader-without-watermark">TikTok video downloader</a> when the frame
+          matters more than the exact cover crop.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="thumb-devices-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Everywhere</span>
+        <h2 id="thumb-devices-headline" class="tp-section-title">Download TikTok covers on iPhone, Android, or PC</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          The downloader is a normal web page. It does not need a store installation, a jailbreak, or a
+          desktop helper. On iPhone and iPad, open the page in Safari, paste the link, and tap the download
+          button. Safari will show the download indicator in the toolbar. Open Files, find the image in
+          Downloads, and move it to Photos if you want it in your camera roll. If Safari asks whether to
+          download or open the image, choose Download.
+        </p>
+        <p>
+          On Android, Chrome and Samsung Internet both work. The file usually appears as a notification when
+          the download finishes. Tap it to open the image, or find it in the Downloads folder. Some Android
+          launchers hide the Downloads icon by default; open the Files app and look under Downloads or Images.
+          On a Chromebook, the file goes to the local Downloads folder and can be moved to Google Drive from
+          there.
+        </p>
+        <p>
+          On Windows and macOS, any modern browser works. The image name includes the video ID and the cover
+          type, which makes it easier to find later. If your browser blocks automatic downloads, allow
+          downloads for tiksavehub.com or click the download button again. The tool does not require
+          JavaScript permissions beyond normal browser scripting, and it does not install anything.
+        </p>
+        <p>
+          The page is responsive, so the form and cover cards stack on a narrow screen. That matters when you
+          are copying a link from the TikTok app and switching to a browser. You do not have to rotate the
+          phone or zoom into a desktop layout to reach the download button.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="thumb-problems-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Troubleshooting</span>
+        <h2 id="thumb-problems-headline" class="tp-section-title">When a TikTok thumbnail will not load</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          Most failures come from the post, not the downloader. A private account, a friends-only video, a
+          deleted post, or a region-restricted upload will not return public cover metadata. If the page
+          returns a clear error, check that the link opens in a logged-out browser. If TikTok asks you to log
+          in, no public downloader can reach the cover.
+        </p>
+        <p>
+          A second common issue is an expired share link. TikTok short links can resolve to the wrong place
+          after the post is removed. Open the short link once, copy the final URL from the address bar, and
+          paste that full URL into the form. The same trick fixes links that were copied from a chat app and
+          picked up extra tracking parameters.
+        </p>
+        <p>
+          If the preview appears but the download does not start, your browser may be blocking the file. Check
+          the download permissions for the site, disable a download manager temporarily, or try another
+          browser. On iOS, a focus mode or content blocker can also interrupt a download. The image still
+          exists at the source; the browser is simply refusing to save it.
+        </p>
+        <p>
+          Finally, remember that a cover can change after it is published. Creators sometimes update the
+          cover without re-uploading the video. If you need a specific version, download it when you see it.
+          The tool always reflects what TikTok serves at the moment you press the button.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="tp-section" aria-labelledby="thumb-faq-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="thumb-faq-headline" class="tp-section-title">TikTok thumbnail questions, answered</h2>
+      </div>
+      <div class="tp-faq">
+        {faqData.map((faq) => (
+          <details class="tp-faq-item">
+            <summary>{faq.q}</summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="thumb-related-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Keep going</span>
+        <h2 id="thumb-related-headline" class="tp-section-title">Related TikTok tools</h2>
+      </div>
+      <div class="tp-related">
+        <a href="/tiktok-video-downloader-without-watermark">
+          <strong>TikTok Video Downloader</strong>
+          <span>Save the full video in HD without the watermark.</span>
+        </a>
+        <a href="/tiktok-comment-downloader">
+          <strong>TikTok Comment Downloader</strong>
+          <span>Export public comments to a CSV file for analysis.</span>
+        </a>
+        <a href="/tiktok-to-mp3">
+          <strong>TikTok to MP3</strong>
+          <span>Extract the sound or music track as an MP3 file.</span>
+        </a>
+        <a href="/instagram-profile-picture-downloader">
+          <strong>Instagram Profile Picture Downloader</strong>
+          <span>Save a full-size IG profile photo from a public username.</span>
+        </a>
+        <a href="/instagram-reels-downloader-without-watermark">
+          <strong>Instagram Reels Downloader</strong>
+          <span>Download Reels in the best available quality without a watermark.</span>
+        </a>
+        <a href="/blog">
+          <strong>TikSaveHub Guides</strong>
+          <span>Step-by-step guides for TikTok, Instagram, and Facebook downloads.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section">
+    <div class="tp-section-inner">
+      <div class="tp-final-cta">
+        <h2>Ready to save that cover?</h2>
+        <p>
+          Paste the TikTok link at the top of this page. The downloader will show every cover TikTok
+          publishes, along with the exact resolution, so you can save the right image the first time.
+        </p>
+        <a class="tp-btn" href="#thumb-hero-headline">Download a TikTok thumbnail</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const thumbForm = document.getElementById('tt-thumb-form') as HTMLFormElement | null;
+  const thumbInput = document.getElementById('tt-thumb-url') as HTMLInputElement | null;
+  const thumbSubmit = document.getElementById('tt-thumb-submit') as HTMLButtonElement | null;
+  const thumbStatus = document.getElementById('tt-thumb-status') as HTMLParagraphElement | null;
+  const thumbResult = document.getElementById('tt-thumb-result') as HTMLDivElement | null;
+  const thumbGrid = document.getElementById('tt-thumb-grid') as HTMLDivElement | null;
+  const thumbTitle = document.getElementById('tt-thumb-title') as HTMLHeadingElement | null;
+  const thumbMeta = document.getElementById('tt-thumb-meta') as HTMLParagraphElement | null;
+
+  function setThumbStatus(message: string, tone: '' | 'error' | 'success' = ''): void {
+    if (!thumbStatus) return;
+    thumbStatus.textContent = message;
+    if (tone) thumbStatus.dataset.tone = tone;
+    else delete thumbStatus.dataset.tone;
+  }
+
+  function proxyUrl(source: string, filename?: string): string {
+    const params = new URLSearchParams({ url: source });
+    if (filename) {
+      params.set('download', '1');
+      params.set('filename', filename);
+    }
+    return `/api/proxy-image?${params.toString()}`;
+  }
+
+  function imageExtension(source: string): string {
+    try {
+      const match = new URL(source).pathname.match(/\.(jpe?g|png|webp|gif|avif)$/i);
+      if (!match) return 'jpg';
+      const ext = match[1].toLowerCase();
+      return ext === 'jpeg' ? 'jpg' : ext;
+    } catch {
+      return 'jpg';
+    }
+  }
+
+  function scrollToResult(target: HTMLElement | null): void {
+    if (!target) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+  }
+
+  function addThumbCard(label: string, source: string): void {
+    if (!thumbGrid) return;
+    const card = document.createElement('article');
+    card.className = 'tp-thumb-card';
+
+    const media = document.createElement('div');
+    media.className = 'tp-thumb-media';
+    const image = document.createElement('img');
+    image.loading = 'lazy';
+    image.alt = `${label} for this TikTok video`;
+    media.appendChild(image);
+
+    const body = document.createElement('div');
+    body.className = 'tp-thumb-body';
+    const copy = document.createElement('div');
+    const title = document.createElement('p');
+    title.className = 'tp-thumb-label';
+    title.textContent = label;
+    const size = document.createElement('p');
+    size.className = 'tp-thumb-size';
+    size.textContent = 'Loading dimensions…';
+    copy.appendChild(title);
+    copy.appendChild(size);
+
+    const filename = `tiktok-thumbnail-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.${imageExtension(source)}`;
+    const download = document.createElement('a');
+    download.className = 'tp-btn tp-btn--sm';
+    download.href = proxyUrl(source, filename);
+    download.textContent = 'Download';
+    download.setAttribute('download', filename);
+
+    const showDimensions = (): void => {
+      if (image.naturalWidth && image.naturalHeight) {
+        size.textContent = `${image.naturalWidth} x ${image.naturalHeight}`;
+      } else {
+        size.textContent = 'Preview unavailable';
+      }
+    };
+    image.addEventListener('load', showDimensions);
+    image.addEventListener('error', () => {
+      size.textContent = 'Preview unavailable';
+    });
+    image.src = proxyUrl(source);
+    if (image.complete) showDimensions();
+
+    body.appendChild(copy);
+    body.appendChild(download);
+    card.appendChild(media);
+    card.appendChild(body);
+    thumbGrid.appendChild(card);
+  }
+
+  thumbForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const value = thumbInput?.value.trim() || '';
+    if (!value) {
+      setThumbStatus('Paste a public TikTok video link first.', 'error');
+      thumbInput?.focus();
+      return;
+    }
+
+    if (thumbSubmit) thumbSubmit.disabled = true;
+    if (thumbResult) thumbResult.hidden = true;
+    if (thumbGrid) thumbGrid.replaceChildren();
+    setThumbStatus('Reading the public cover metadata…');
+
+    try {
+      const response = await fetch(`/api/download?url=${encodeURIComponent(value)}`);
+      const payload = await response.json().catch(() => null) as any;
+      if (!response.ok || !payload?.success) {
+        throw new Error(String(payload?.error || 'This video could not be read. Check the link and try again.'));
+      }
+
+      const video = payload.video || {};
+      const covers: Array<{ label: string; source: string }> = [];
+      if (typeof video.cover === 'string' && video.cover) {
+        covers.push({ label: 'Vertical cover', source: video.cover });
+      }
+      if (typeof video.origin_cover === 'string' && video.origin_cover && video.origin_cover !== video.cover) {
+        covers.push({ label: 'Original cover', source: video.origin_cover });
+      }
+      if (covers.length === 0) {
+        throw new Error('TikTok did not expose a cover image for this video. Try another public post.');
+      }
+
+      const author = video.author?.unique_id ? `@${video.author.unique_id}` : 'TikTok creator';
+      const title = typeof video.title === 'string' && video.title.trim()
+        ? video.title.trim().slice(0, 120)
+        : 'TikTok video';
+      if (thumbTitle) thumbTitle.textContent = title;
+      if (thumbMeta) thumbMeta.textContent = `${author} · ${covers.length} cover ${covers.length === 1 ? 'version' : 'versions'} available`;
+
+      covers.forEach((cover) => addThumbCard(cover.label, cover.source));
+      if (thumbResult) thumbResult.hidden = false;
+      setThumbStatus('Cover ready. Choose a version and press Download.', 'success');
+      scrollToResult(thumbResult);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setThumbStatus(message, 'error');
+    } finally {
+      if (thumbSubmit) thumbSubmit.disabled = false;
+    }
+  });
+</script>

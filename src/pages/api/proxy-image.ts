@@ -111,6 +111,16 @@ export const GET: APIRoute = async (ctx) => {
     headers.set('Cache-Control', 'public, max-age=3600, s-maxage=3600');
     headers.set('Access-Control-Allow-Origin', '*');
 
+    const wantsDownload = url.searchParams.get('download') === '1';
+    if (wantsDownload) {
+      const requested = (url.searchParams.get('filename') || 'tiksavehub-image.jpg')
+        .replace(/[^a-zA-Z0-9._-]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 100) || 'tiksavehub-image.jpg';
+      headers.set('Content-Disposition', `attachment; filename="${requested}"`);
+      headers.set('X-Content-Type-Options', 'nosniff');
+    }
+
     const cl = response.headers.get('content-length');
     if (cl) headers.set('Content-Length', cl);
 

@@ -3,9 +3,12 @@
 // downloader page so nav/footer section links never point at a missing id.
 export const TOOL_PAGES = [
   '/tiktok-video-downloader-without-watermark',
+  '/tiktok-thumbnail-downloader',
+  '/tiktok-comment-downloader',
   '/tiktok-to-mp3',
   '/instagram-video-downloader-without-watermark',
   '/instagram-reels-downloader-without-watermark',
+  '/instagram-profile-picture-downloader',
   '/instagram-story-downloader-without-watermark',
   '/instagram-audio-downloader',
   '/facebook-video-downloader',

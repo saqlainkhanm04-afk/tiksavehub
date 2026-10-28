@@ -1,0 +1,666 @@
+---
+// Instagram Profile Picture Downloader. SEO-optimized landing page.
+// URL: /instagram-profile-picture-downloader
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import '../styles/tool-pages.css';
+
+const faqData = [
+  {
+    id: 'pfp-how',
+    q: 'How do I download an Instagram profile picture?',
+    a: 'Enter a public Instagram username or paste the profile URL into the field above. TikSaveHub loads the profile metadata and shows the full-size avatar. Press Download full-size PFP and the image saves to your device. You do not need to log in or install an app.',
+  },
+  {
+    id: 'pfp-hd',
+    q: 'Is the Instagram profile picture really HD?',
+    a: 'The downloader requests profile_pic_url_hd, the largest avatar Instagram exposes in public profile metadata. Many accounts return 320x320, 640x640, or 1080x1080 files. Instagram controls the source size, so the tool cannot add detail that the account did not upload. The exact dimensions are shown after the image loads.',
+  },
+  {
+    id: 'pfp-private',
+    q: 'Can I download the profile picture of a private Instagram account?',
+    a: 'A private account can still have a public avatar, and that avatar is visible in search and profile previews. If Instagram returns the profile picture, TikSaveHub can save it. The tool cannot view private posts, Stories, or Reels, and it cannot bypass a login wall.',
+  },
+  {
+    id: 'pfp-copy',
+    q: 'Why does saving the image directly look blurry?',
+    a: 'A long-press or right-click often saves the small display thumbnail, not the original avatar. The version rendered in the Instagram interface can be 150x150 even when Instagram stores a larger file. TikSaveHub requests the HD field and serves that file instead, which is why the downloaded image can be much sharper.',
+  },
+  {
+    id: 'pfp-url',
+    q: 'Can I use a profile link instead of a username?',
+    a: 'Yes. Paste a link such as instagram.com/username or @username. The downloader extracts the handle and ignores tracking parameters. Post, Reel, Story, and Explore links are rejected because they do not identify a single profile.',
+  },
+  {
+    id: 'pfp-legal',
+    q: 'Can I use someone else\'s Instagram profile picture?',
+    a: 'The photo belongs to the person who posted it. Saving it for a private reference or a personal mockup is different from publishing it in an ad, a product, or a monetized video. Ask for permission before commercial use, and never use a profile picture to impersonate someone or mislead people about an account.',
+  },
+  {
+    id: 'pfp-devices',
+    q: 'Does this work on iPhone, Android, and desktop?',
+    a: 'Yes. The tool runs in mobile Safari, Chrome, Firefox, Edge, and other modern browsers. On iPhone the file goes to Files, and you can move it to Photos. On Android it goes to Downloads or the gallery. On desktop it appears in the browser download folder.',
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqData.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]*>/g, ''),
+    },
+  })),
+});
+
+const howToJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to download an Instagram profile picture in HD',
+  description: 'Save a full-size Instagram avatar from a public profile.',
+  totalTime: 'PT1M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'Find the Instagram profile',
+      text: 'Open the public profile and copy the username or profile link.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'Load the profile picture',
+      text: 'Paste the username or link into the downloader and press Get profile picture.',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'Download the full-size image',
+      text: 'Check the preview and dimensions, then press Download full-size PFP.',
+    },
+  ],
+});
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
+});
+---
+
+<Layout
+  title="Instagram Profile Picture Downloader - Save IG PFP in HD"
+  description="Download Instagram profile pictures in full HD. Enter any public username to preview and save the full-size IG PFP free, with no login or app."
+  keywords="instagram profile picture downloader, instagram profile pic downloader hd, instagram profile picture download, download instagram pfp, full size instagram profile picture, instagram avatar downloader, ig profile photo"
+  canonical="/instagram-profile-picture-downloader"
+  ogImage="/og-downloader.png"
+  ogType="website"
+  platform="instagram"
+  jsonLd={jsonLd}
+  appName="TikSaveHub - Instagram Profile Picture Downloader"
+  localizedHreflang={false}
+>
+  <section class="tp-hero" aria-labelledby="pfp-hero-headline">
+    <div class="tp-hero-bg gradient-mesh" aria-hidden="true"></div>
+    <div class="tp-hero-inner container-page">
+      <nav class="tp-breadcrumb" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-current="page">Instagram Profile Picture Downloader</li>
+        </ol>
+      </nav>
+
+      <span class="tp-badge">
+        <span class="tp-badge-dot" aria-hidden="true"></span>
+        Free · Full-size avatar · No login
+      </span>
+
+      <h1 id="pfp-hero-headline">Instagram Profile Picture Downloader: Save IG PFP in HD</h1>
+      <p class="tp-subline">See the avatar at its real size, not the tiny feed thumbnail.</p>
+      <p class="tp-lead">
+        Enter any public Instagram username or profile link. TikSaveHub loads the HD profile picture,
+        shows the exact dimensions, and saves the full-size file without an account or app.
+      </p>
+
+      <div id="download-form" class="tp-form-card">
+        <form id="igpfp-form" class="tp-form" novalidate>
+          <label class="tp-label" for="igpfp-username">Instagram username or profile link</label>
+          <div class="tp-form-row">
+            <input
+              id="igpfp-username"
+              class="tp-input"
+              name="username"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              placeholder="@username or instagram.com/username"
+              required
+            />
+            <button id="igpfp-submit" class="tp-btn" type="submit">Get profile picture</button>
+          </div>
+          <p id="igpfp-status" class="tp-status" role="status" aria-live="polite">
+            Only public profile metadata is requested.
+          </p>
+        </form>
+
+        <div id="igpfp-result" class="tp-result" hidden>
+          <div class="tp-result-head">
+            <div>
+              <h2 id="igpfp-name" class="tp-result-title">Instagram profile</h2>
+              <p id="igpfp-handle" class="tp-result-meta"></p>
+            </div>
+            <span id="igpfp-badge" class="tp-pill">HD profile picture</span>
+          </div>
+          <div class="tp-profile-result">
+            <div class="tp-profile-avatar">
+              <img id="igpfp-image" alt="Instagram profile picture preview" width="152" height="152" loading="lazy" />
+            </div>
+            <div class="tp-profile-copy">
+              <p id="igpfp-size" class="tp-result-meta">Loading dimensions…</p>
+              <a id="igpfp-download" class="tp-btn tp-btn--sm" href="#" download>Download full-size PFP</a>
+              <a id="igpfp-profile" class="tp-btn tp-btn--sm tp-btn--ghost" href="#" target="_blank" rel="noopener noreferrer">
+                Open Instagram profile
+              </a>
+              <p id="igpfp-note" class="tp-result-meta"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tp-trust" aria-label="Tool benefits">
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          Requests the HD avatar field
+        </span>
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          Username or profile URL
+        </span>
+        <span class="tp-trust-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+          No login required
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="pfp-what-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">The basics</span>
+        <h2 id="pfp-what-headline" class="tp-section-title">What an Instagram profile picture really is</h2>
+        <p class="tp-section-sub">
+          Instagram stores more than one copy of every avatar. The one you see in the app is usually not the largest.
+        </p>
+      </div>
+      <div class="tp-prose">
+        <p>
+          An Instagram profile picture, often called a PFP, is the square avatar at the top of a profile. When
+          someone uploads a new image, Instagram crops it to a circle and generates several sizes for the
+          feed, search results, comments, direct messages, and the profile header. The small versions load
+          quickly on slow connections. The largest version is kept for high-density screens and profile
+          previews. A long-press on the app usually saves the small version, which is why so many downloaded
+          avatars look soft when viewed at full size.
+        </p>
+        <p>
+          The Instagram Profile Picture Downloader asks for the public profile metadata, then reads the
+          <code>profile_pic_url_hd</code> field. That field is the best avatar Instagram exposes without a
+          login. Some accounts return a 320x320 image, some return 640x640, and some return 1080x1080. The
+          actual size depends on the original upload and the platform's current image pipeline. TikSaveHub
+          shows the real pixel dimensions instead of promising a resolution the account does not have.
+        </p>
+        <p>
+          This is different from a screenshot. A screenshot captures the circle mask, the background, the
+          status bar on mobile, and whatever interface elements happen to be on screen. A profile picture
+          download gives you the square image file itself. That is more useful for design references,
+          account verification, presentations, and any project where a clean avatar matters.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="tp-section tp-section--soft" aria-labelledby="pfp-steps-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Step by step</span>
+        <h2 id="pfp-steps-headline" class="tp-section-title">How to download an Instagram profile picture in three steps</h2>
+      </div>
+      <div class="tp-steps">
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">01</span>
+          <h3>Copy the username or profile link</h3>
+          <p>
+            Open the public profile on Instagram and copy the handle, or use Share and Copy profile URL.
+            A link such as instagram.com/username works just as well as @username.
+          </p>
+        </article>
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">02</span>
+          <h3>Load the profile picture</h3>
+          <p>
+            Paste it into the field above and press Get profile picture. The tool reads the public avatar
+            metadata and prepares the largest version available for that account.
+          </p>
+        </article>
+        <article class="tp-step">
+          <span class="tp-step-num" aria-hidden="true">03</span>
+          <h3>Check the size and download</h3>
+          <p>
+            The preview shows the avatar. The line below it shows the natural pixel dimensions. If the
+            result looks right, press Download full-size PFP and save the image.
+          </p>
+        </article>
+      </div>
+      <div class="tp-prose" style="margin-top: 28px;">
+        <p>
+          The download takes a few seconds on a normal connection. No Instagram login is needed for a public
+          profile. If the account is private, the avatar may still be visible because Instagram shows it in
+          search, comments, and profile previews. The downloader can save that public avatar, but it cannot
+          see private posts or Stories. That limitation is intentional: the tool reads only what Instagram
+          already exposes to a logged-out visitor.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="tp-section" aria-labelledby="pfp-why-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Use cases</span>
+        <h2 id="pfp-why-headline" class="tp-section-title">Why download an Instagram profile photo?</h2>
+      </div>
+      <div class="tp-card-grid">
+        <article class="tp-card">
+          <h3>Design references</h3>
+          <p>
+            Collect avatars for a mood board, a social media mockup, or a presentation. A clean square file
+            is easier to place than a screenshot with the app interface around it.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Account verification</h3>
+          <p>
+            Compare a profile picture across platforms when checking whether two accounts belong to the same
+            creator or brand. A full-size image makes small logo details easier to see.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Contact cards</h3>
+          <p>
+            Use an avatar in a private contact card, a CRM note, or a research document. Keep the source URL
+            with the image so the provenance is clear later.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Content planning</h3>
+          <p>
+            Study how successful creators crop their faces, use color, and place text inside a circle. The
+            square source shows the parts that the circular crop hides in the app.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Brand audits</h3>
+          <p>
+            Check whether a logo is centered, sharp, and readable at small sizes. Comparing the HD source
+            against the tiny comment avatar reveals cropping mistakes quickly.
+          </p>
+        </article>
+        <article class="tp-card">
+          <h3>Personal archives</h3>
+          <p>
+            Save your own old avatars before changing them. Instagram does not offer a profile-picture
+            history, and the previous image can be gone after an update.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="pfp-size-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Quality</span>
+        <h2 id="pfp-size-headline" class="tp-section-title">Instagram profile picture size and quality</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          Instagram displays profile pictures as circles, but the underlying file is square. The recommended
+          upload size is 320x320 pixels, and the platform accepts larger source images and downsizes them.
+          In practice, the HD field can return anything from a 320px avatar to a 1080px avatar. Older accounts
+          and accounts that uploaded a small logo often have less detail than a new account with a modern
+          phone photo.
+        </p>
+        <p>
+          The downloader never upscales. If the source is 320x320, the saved file is 320x320. Upscaling would
+          make the image larger on paper but softer in reality. The size line in the result card tells you
+          exactly what you received, so you can decide whether it is sharp enough for a print piece or only
+          suitable for a screen.
+        </p>
+        <div class="tp-table-wrap">
+          <table class="tp-table">
+            <thead>
+              <tr>
+                <th>What you see</th>
+                <th>Typical result</th>
+                <th>Best use</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>App thumbnail</td>
+                <td>150x150 or smaller</td>
+                <td>Quick identification, not print or large layouts</td>
+              </tr>
+              <tr>
+                <td>Profile header</td>
+                <td>320x320 to 640x640</td>
+                <td>Web mockups, contact cards, research notes</td>
+              </tr>
+              <tr>
+                <td>HD field</td>
+                <td>320x320 to 1080x1080</td>
+                <td>Design references, presentations, detailed comparison</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The file format is usually JPEG or WebP. TikSaveHub proxies the original bytes, so the download
+          keeps the source compression instead of re-encoding the image. If a browser opens the file instead
+          of saving it, use the download button rather than right-clicking the preview. The button sends an
+          attachment header with a clean filename.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="pfp-devices-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Everywhere</span>
+        <h2 id="pfp-devices-headline" class="tp-section-title">Download an Instagram PFP on iPhone, Android, or PC</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          On iPhone and iPad, open the page in Safari, paste the username, and tap the download button. The
+          file appears in the Downloads folder inside the Files app. Tap it to preview, then use the share
+          sheet to save it to Photos. If you use Chrome on iOS, the download appears in Chrome's Downloads
+          list instead. Both routes save the same image bytes.
+        </p>
+        <p>
+          On Android, Chrome, Firefox, and Samsung Internet all work. The browser shows a download notification
+          when the file is ready. Open it from the notification or from the Files app. Some gallery apps do
+          not index the Downloads folder automatically, so use Files first and move the image to Pictures if
+          you want it beside your camera photos.
+        </p>
+        <p>
+          On Windows and macOS, the file goes to the browser's default download location. The filename includes
+          the Instagram handle, which makes it easy to find when several avatars are saved in one session. If
+          the browser asks whether to keep the file, choose Keep. The file is a normal image, not an installer.
+        </p>
+        <p>
+          The page works without an account and without the Instagram app. That is useful on a desktop where
+          the profile is visible in a browser but the app is not installed. It also avoids the "save image"
+          gesture on mobile, which often captures the compressed display version instead of the HD source.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft" aria-labelledby="pfp-rules-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Guidelines</span>
+        <h2 id="pfp-rules-headline" class="tp-section-title">Privacy, copyright, and responsible use</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          A profile picture is a published image, but that does not make it free to reuse. Copyright still
+          belongs to the photographer or the account owner. Saving an avatar for a private reference is one
+          thing. Publishing it in an advertisement, using it as a logo, or implying an endorsement is another.
+          Ask for permission before commercial use, and credit the source when the context calls for it.
+        </p>
+        <p>
+          Never use a downloaded profile picture to impersonate someone, create a fake account, or mislead
+          people about who is speaking. That is harmful regardless of copyright. The downloader is built for
+          research, design, and personal archiving, not for deception.
+        </p>
+        <p>
+          On the privacy side, TikSaveHub does not store the username, the image, or a download history. The
+          request fetches public metadata and streams the image through the proxy so the browser can save it.
+          The source URL is not added to a public gallery, and no account is created. As with any web request,
+          the server sees the public profile handle you submitted, but it does not build a persistent profile
+          of your activity.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="pfp-problems-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Troubleshooting</span>
+        <h2 id="pfp-problems-headline" class="tp-section-title">When an Instagram profile picture will not load</h2>
+      </div>
+      <div class="tp-prose">
+        <p>
+          The most common cause is a typo in the username. Instagram handles can contain letters, numbers,
+          periods, and underscores, but not spaces. Remove the @ symbol if the form does not already strip it,
+          and check that the account still exists. A deleted account returns no public profile metadata.
+        </p>
+        <p>
+          A private account can still have a visible avatar, but Instagram may rate-limit repeated lookups from
+          the same network. If the first request succeeds and later ones fail, wait a minute and try again.
+          TikSaveHub returns a clear error instead of showing a blank circle. A temporary provider error does
+          not mean the account is private or deleted.
+        </p>
+        <p>
+          If the preview loads but the download is blocked, check the browser's download permissions and any
+          content blocker. On iOS, a focus mode can suppress the download prompt. On desktop, a download
+          manager extension may intercept the attachment. Try a private browsing window or another browser
+          to isolate the problem. The image URL is valid if the preview is visible.
+        </p>
+        <p>
+          A very old account may simply have a low-resolution avatar. No downloader can restore detail that
+          Instagram no longer stores. Use the dimensions in the result card to decide whether the file is
+          suitable for your project, or contact the account owner for a higher-resolution copy.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="tp-section tp-section--soft" aria-labelledby="pfp-faq-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="pfp-faq-headline" class="tp-section-title">Instagram profile picture questions, answered</h2>
+      </div>
+      <div class="tp-faq">
+        {faqData.map((faq) => (
+          <details class="tp-faq-item">
+            <summary>{faq.q}</summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section" aria-labelledby="pfp-related-headline">
+    <div class="tp-section-inner">
+      <div class="tp-section-head">
+        <span class="tp-eyebrow text-caption-mono">Keep going</span>
+        <h2 id="pfp-related-headline" class="tp-section-title">Related Instagram tools</h2>
+      </div>
+      <div class="tp-related">
+        <a href="/instagram-video-downloader-without-watermark">
+          <strong>Instagram Video Downloader</strong>
+          <span>Save public Instagram videos without a watermark.</span>
+        </a>
+        <a href="/instagram-reels-downloader-without-watermark">
+          <strong>Instagram Reels Downloader</strong>
+          <span>Download Reels in the best available quality.</span>
+        </a>
+        <a href="/instagram-story-downloader-without-watermark">
+          <strong>Instagram Story Downloader</strong>
+          <span>Save public Stories before they disappear.</span>
+        </a>
+        <a href="/instagram-audio-downloader">
+          <strong>Instagram Audio Downloader</strong>
+          <span>Extract Reel sounds and music as MP3 files.</span>
+        </a>
+        <a href="/tiktok-thumbnail-downloader">
+          <strong>TikTok Thumbnail Downloader</strong>
+          <span>Save TikTok cover images in the largest available size.</span>
+        </a>
+        <a href="/tiktok-comment-downloader">
+          <strong>TikTok Comment Downloader</strong>
+          <span>Export public TikTok comments to a CSV spreadsheet.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="tp-section tp-section--soft">
+    <div class="tp-section-inner">
+      <div class="tp-final-cta">
+        <h2>Want the full-size avatar?</h2>
+        <p>
+          Enter a public username at the top of this page. The downloader will show the HD profile picture and
+          its real dimensions before you save it, so there are no surprises.
+        </p>
+        <a class="tp-btn" href="#pfp-hero-headline">Get an Instagram profile picture</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const pfpForm = document.getElementById('igpfp-form') as HTMLFormElement | null;
+  const pfpInput = document.getElementById('igpfp-username') as HTMLInputElement | null;
+  const pfpSubmit = document.getElementById('igpfp-submit') as HTMLButtonElement | null;
+  const pfpStatus = document.getElementById('igpfp-status') as HTMLParagraphElement | null;
+  const pfpResult = document.getElementById('igpfp-result') as HTMLDivElement | null;
+  const pfpName = document.getElementById('igpfp-name') as HTMLHeadingElement | null;
+  const pfpHandle = document.getElementById('igpfp-handle') as HTMLParagraphElement | null;
+  const pfpImage = document.getElementById('igpfp-image') as HTMLImageElement | null;
+  const pfpSize = document.getElementById('igpfp-size') as HTMLParagraphElement | null;
+  const pfpBadge = document.getElementById('igpfp-badge') as HTMLSpanElement | null;
+  const pfpDownload = document.getElementById('igpfp-download') as HTMLAnchorElement | null;
+  const pfpProfile = document.getElementById('igpfp-profile') as HTMLAnchorElement | null;
+  const pfpNote = document.getElementById('igpfp-note') as HTMLParagraphElement | null;
+
+  function setPfpStatus(message: string, tone: '' | 'error' | 'success' = ''): void {
+    if (!pfpStatus) return;
+    pfpStatus.textContent = message;
+    if (tone) pfpStatus.dataset.tone = tone;
+    else delete pfpStatus.dataset.tone;
+  }
+
+  function pfpProxy(source: string, filename?: string): string {
+    const params = new URLSearchParams({ url: source });
+    if (filename) {
+      params.set('download', '1');
+      params.set('filename', filename);
+    }
+    return `/api/proxy-image?${params.toString()}`;
+  }
+
+  function imageExtension(source: string): string {
+    try {
+      const match = new URL(source).pathname.match(/\.(jpe?g|png|webp|gif|avif)$/i);
+      if (!match) return 'jpg';
+      const ext = match[1].toLowerCase();
+      return ext === 'jpeg' ? 'jpg' : ext;
+    } catch {
+      return 'jpg';
+    }
+  }
+
+  function scrollToResult(target: HTMLElement | null): void {
+    if (!target) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+  }
+
+  pfpForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const value = pfpInput?.value.trim() || '';
+    if (!value) {
+      setPfpStatus('Enter a public Instagram username or profile link first.', 'error');
+      pfpInput?.focus();
+      return;
+    }
+
+    if (pfpSubmit) pfpSubmit.disabled = true;
+    if (pfpResult) pfpResult.hidden = true;
+    setPfpStatus('Loading the public profile picture…');
+
+    try {
+      const response = await fetch(`/api/instagram-profile?username=${encodeURIComponent(value)}`);
+      const payload = await response.json().catch(() => null) as any;
+      if (!response.ok || !payload?.success) {
+        throw new Error(String(payload?.error || 'This Instagram profile could not be loaded.'));
+      }
+
+      const profile = payload.profile || {};
+      const source = String(profile.profilePicUrl || '');
+      if (!source) throw new Error('This profile does not expose a downloadable picture.');
+
+      const handle = String(profile.username || value.replace(/^@+/, ''));
+      const name = String(profile.fullName || `@${handle}`);
+      const followers = Number(profile.followerCount);
+      const followerText = Number.isFinite(followers)
+        ? `${followers.toLocaleString()} followers`
+        : 'Public profile';
+
+      if (pfpName) pfpName.textContent = name;
+      if (pfpHandle) pfpHandle.textContent = `@${handle} · ${followerText}`;
+      if (pfpNote) {
+        pfpNote.textContent = profile.isPrivate
+          ? 'This is a private account. Only its public avatar was requested.'
+          : 'Public profile metadata. No login or private content was accessed.';
+      }
+      if (pfpImage) {
+        pfpImage.alt = `Instagram profile picture for @${handle}`;
+        pfpImage.onload = () => {
+          if (!pfpSize) return;
+          const width = pfpImage.naturalWidth;
+          const height = pfpImage.naturalHeight;
+          pfpSize.textContent = width && height
+            ? `Full-size image · ${width} x ${height} pixels`
+            : 'Full-size image loaded';
+          if (pfpBadge) pfpBadge.textContent = width >= 640 ? 'HD profile picture' : 'Full-size avatar';
+        };
+        pfpImage.onerror = () => {
+          if (pfpSize) pfpSize.textContent = 'Preview could not be displayed. The download may still work.';
+          if (pfpBadge) pfpBadge.textContent = 'Profile picture';
+        };
+        pfpImage.src = pfpProxy(source);
+      }
+
+      const filename = `${handle}-instagram-profile-picture.${imageExtension(source)}`;
+      if (pfpDownload) {
+        pfpDownload.href = pfpProxy(source, filename);
+        pfpDownload.setAttribute('download', filename);
+      }
+      if (pfpProfile) {
+        pfpProfile.href = `https://www.instagram.com/${encodeURIComponent(handle)}/`;
+      }
+
+      if (pfpResult) pfpResult.hidden = false;
+      setPfpStatus('Profile picture ready. Check the dimensions and download.', 'success');
+      scrollToResult(pfpResult);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setPfpStatus(message, 'error');
+    } finally {
+      if (pfpSubmit) pfpSubmit.disabled = false;
+    }
+  });
+</script>

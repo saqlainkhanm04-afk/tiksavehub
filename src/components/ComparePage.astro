@@ -29,6 +29,18 @@ export interface CompareFaq {
   a: string;
 }
 
+export interface CompareLabels {
+  optionA?: string;
+  optionB?: string;
+  openTool?: string;
+  openResource?: string;
+  vs?: string;
+  sideBySide?: string;
+  feature?: string;
+  faqHeadline?: string;
+  home?: string;
+}
+
 export interface Props {
   canonical: string;
   title: string;
@@ -51,6 +63,10 @@ export interface Props {
   ctaHeadline: string;
   ctaText: string;
   ctaLabel: string;
+  lang?: string;
+  enableHreflang?: boolean;
+  ctaHref?: string;
+  labels?: CompareLabels;
 }
 
 const {
@@ -75,9 +91,23 @@ const {
   ctaHeadline,
   ctaText,
   ctaLabel,
+  lang,
+  enableHreflang = false,
+  ctaHref = '/snapchat-downloader',
+  labels,
 } = Astro.props;
 
-const ctaHref = '/snapchat-downloader';
+const lb = {
+  optionA: labels?.optionA ?? 'Option A',
+  optionB: labels?.optionB ?? 'Option B',
+  openTool: labels?.openTool ?? 'Open this tool',
+  openResource: labels?.openResource ?? 'Open this resource',
+  vs: labels?.vs ?? 'vs',
+  sideBySide: labels?.sideBySide ?? 'Side by side',
+  feature: labels?.feature ?? 'Feature',
+  faqHeadline: labels?.faqHeadline ?? 'Frequently asked questions.',
+  home: labels?.home ?? 'Home',
+};
 const site = String(Astro.site ?? 'https://tiksavehub.com').replace(/\/+$/, '');
 const pageUrl = new URL(canonical, site).toString();
 const plain = (html: string) => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
@@ -104,7 +134,7 @@ const jsonLd = JSON.stringify({
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: site },
+        { '@type': 'ListItem', position: 1, name: lb.home, item: site },
         { '@type': 'ListItem', position: 2, name: headline, item: pageUrl },
       ],
     },
@@ -120,8 +150,9 @@ const jsonLd = JSON.stringify({
   ogImage="/og-downloader.png"
   jsonLd={jsonLd}
   skipSoftwareApp
-  localizedHreflang={false}
+  localizedHreflang={enableHreflang ? true : false}
   platform="snapchat"
+  lang={lang}
 >
   <!-- Hero -->
   <section class="cmp-hero" aria-labelledby="cmp-headline">
@@ -132,19 +163,19 @@ const jsonLd = JSON.stringify({
 
       <div class="cmp-tools">
         <a class="cmp-tool" href={a.href}>
-          <span class="cmp-tool-role text-caption-mono">Option A</span>
+          <span class="cmp-tool-role text-caption-mono">{lb.optionA}</span>
           <span class="cmp-tool-name">{a.name}</span>
           <span class="cmp-tool-tagline">{a.tagline}</span>
-          <span class="cmp-tool-cta">Open this tool
+          <span class="cmp-tool-cta">{lb.openTool}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </span>
         </a>
-        <span class="cmp-vs" aria-hidden="true">vs</span>
+        <span class="cmp-vs" aria-hidden="true">{lb.vs}</span>
         <a class="cmp-tool" href={b.href}>
-          <span class="cmp-tool-role text-caption-mono">Option B</span>
+          <span class="cmp-tool-role text-caption-mono">{lb.optionB}</span>
           <span class="cmp-tool-name">{b.name}</span>
           <span class="cmp-tool-tagline">{b.tagline}</span>
-          <span class="cmp-tool-cta">Open this resource
+          <span class="cmp-tool-cta">{lb.openResource}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </span>
         </a>
@@ -156,7 +187,7 @@ const jsonLd = JSON.stringify({
   <section class="cmp-section cmp-band-soft" aria-labelledby="cmp-table-headline">
     <div class="cmp-inner container-page">
       <header class="cmp-header">
-        <span class="cmp-eyebrow text-caption-mono">Side by side</span>
+        <span class="cmp-eyebrow text-caption-mono">{lb.sideBySide}</span>
         <h2 id="cmp-table-headline" class="cmp-headline">{tableHeadline}</h2>
         <p class="cmp-sub text-body-lg">{tableSub}</p>
       </header>
@@ -165,7 +196,7 @@ const jsonLd = JSON.stringify({
         <table class="cmp-table">
           <thead>
             <tr>
-              <th scope="col">Feature</th>
+              <th scope="col">{lb.feature}</th>
               <th scope="col"><a href={a.href}>{a.name}</a></th>
               <th scope="col"><a href={b.href}>{b.name}</a></th>
             </tr>
@@ -230,7 +261,7 @@ const jsonLd = JSON.stringify({
     <div class="cmp-inner container-page">
       <header class="cmp-header">
         <span class="cmp-eyebrow text-caption-mono">FAQ</span>
-        <h2 id="cmp-faq-headline" class="cmp-headline">Frequently asked questions.</h2>
+        <h2 id="cmp-faq-headline" class="cmp-headline">{lb.faqHeadline}</h2>
       </header>
 
       <div class="cmp-faq-list" role="list">

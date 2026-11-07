@@ -5,11 +5,21 @@ export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
 import SocialShare from '../../components/SocialShare.astro';
+import { esPosts } from '../../data/blog-i18n/es.js';
 
+// Localized Snapchat posts exist as real /es/blog/{slug} pages (200).
+// The translated English guides link straight to /blog/{slug} (200) — no
+// /es/blog/{en-slug} intermediary that would 301.
 const blogPosts = [
-  { slug: 'facebook-video-downloader-guide', tag: 'Facebook', title: 'Descargador de Videos de Facebook: Guarda Videos de FB en HD (Guía 2026)', excerpt: 'Descarga videos de Facebook, Reels y clips de Watch en HD 1080p sin marca de agua. Paso a paso para iPhone, Android y PC.' },
-  { slug: 'x-video-downloader-guide', tag: 'X & Twitter', title: 'Descargador de Videos de X: Guarda Videos de Twitter en HD (Guía 2026)', excerpt: 'Descarga videos, GIFs y audio de X (Twitter) en HD 1080p sin marca de agua. Gratis, sin registro.' },
-  { slug: 'how-to-download-tiktok-videos', tag: 'TikTok', title: 'Descargador de Videos de TikTok Sin Marca de Agua (HD y Gratis)', excerpt: 'Descarga videos de TikTok sin marca de agua en calidad HD. Rápido, gratis y funciona en iPhone, Android y PC.' },
+  ...esPosts.map((post) => ({
+    href: `/es/blog/${post.slug}`,
+    tag: 'Snapchat',
+    title: post.title,
+    excerpt: post.excerpt,
+  })),
+  { href: '/blog/facebook-video-downloader-guide', tag: 'Facebook', title: 'Descargador de Videos de Facebook: Guarda Videos de FB en HD (Guía 2026)', excerpt: 'Descarga videos de Facebook, Reels y clips de Watch en HD 1080p sin marca de agua. Paso a paso para iPhone, Android y PC.' },
+  { href: '/blog/x-video-downloader-guide', tag: 'X & Twitter', title: 'Descargador de Videos de X: Guarda Videos de Twitter en HD (Guía 2026)', excerpt: 'Descarga videos, GIFs y audio de X (Twitter) en HD 1080p sin marca de agua. Gratis, sin registro.' },
+  { href: '/blog/how-to-download-tiktok-videos', tag: 'TikTok', title: 'Descargador de Videos de TikTok Sin Marca de Agua (HD y Gratis)', excerpt: 'Descarga videos de TikTok sin marca de agua en calidad HD. Rápido, gratis y funciona en iPhone, Android y PC.' },
 ];
 ---
 
@@ -37,7 +47,7 @@ const blogPosts = [
       </div>
       <div class="blog-grid">
         {blogPosts.map((post) => (
-          <a href={`/blog/${post.slug}`} class="blog-card">
+          <a href={post.href} class="blog-card">
             <span class="blog-tag">{post.tag}</span>
             <h2 class="blog-card-title">{post.title}</h2>
             <p class="blog-card-excerpt">{post.excerpt}</p>

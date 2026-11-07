@@ -1,10 +1,9 @@
 ---
 export const prerender = true;
 import Layout from '../../layouts/Layout.astro';
-import { posts } from '../../data/blog-posts';
-import SocialShare from '../../components/SocialShare.astro';
+import { itPosts } from '../../data/blog-i18n/it.js';
 
-const latestPosts = posts.slice(0, 5);
+const latestPosts = itPosts;
 
 const blogJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -13,13 +12,13 @@ const blogJsonLd = JSON.stringify({
       '@type': 'CollectionPage',
       name: 'Blog TikSaveHub — Consigli e Guide per il Downloader TikTok',
       description: 'Leggi gli ultimi articoli sul blog di TikSaveHub riguardanti il downloader TikTok, consigli, aggiornamenti e tendenze.',
-      url: 'https://tiksavehub.com/blog',
+      url: 'https://tiksavehub.com/it/blog',
     },
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tiksavehub.com/' },
-        { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://tiksavehub.com/blog' },
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tiksavehub.com/it' },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://tiksavehub.com/it/blog' },
       ],
     },
   ],
@@ -63,7 +62,7 @@ const blogJsonLd = JSON.stringify({
               <div class="blog-list">
                 {latestPosts.map((post) => (
                   <article class="blog-card">
-                    <a href={`/blog/${post.slug}`} class="blog-card-link">
+                    <a href={`/it/blog/${post.slug}`} class="blog-card-link">
                       <h3 class="blog-card-title">{post.title}</h3>
                       <p class="blog-card-excerpt">{post.excerpt}</p>
                       <span class="blog-card-date">{post.date}</span>

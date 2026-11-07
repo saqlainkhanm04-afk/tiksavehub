@@ -2,10 +2,11 @@
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
-import { posts } from '../../data/blog-posts';
+import { frPosts } from '../../data/blog-i18n/fr.js';
 
 const categories = [
   { id: 'All', label: 'Tout' },
+  { id: 'Snapchat Guides', label: 'Guides Snapchat' },
   { id: 'TikTok Guides', label: 'Guides TikTok' },
   { id: 'Instagram Tips', label: 'Conseils Instagram' },
   { id: 'Facebook Guides', label: 'Guides Facebook' },
@@ -14,20 +15,21 @@ const categories = [
   { id: 'Tech & Security', label: 'Technologie et Sécurité' },
 ];
 
-const sorted = [...posts].sort(
+const sorted = [...frPosts].sort(
   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
 );
 const [featured, ...restPosts] = sorted;
 const categoryCounts = categories.reduce<Record<string, number>>((acc, cat) => {
   if (cat.id === 'All') {
-    acc[cat.id] = posts.length;
+    acc[cat.id] = frPosts.length;
   } else {
-    acc[cat.id] = posts.filter((p) => p.category === cat.id).length;
+    acc[cat.id] = frPosts.filter((p) => p.category === cat.id).length;
   }
   return acc;
 }, {});
 
 const categoryMeta: Record<string, { label: string; icon: string }> = {
+  'Snapchat Guides': { label: 'Snapchat', icon: 'snapchat' },
   'TikTok Guides': { label: 'TikTok', icon: 'tiktok' },
   'Instagram Tips': { label: 'Instagram', icon: 'instagram' },
   'Facebook Guides': { label: 'Facebook', icon: 'facebook' },
@@ -125,7 +127,7 @@ const toolCards = [
         <h2 id="featured-headline" class="blog-section-title">Guide en tendance</h2>
       </div>
 
-      <a class="featured-card" href={`/blog/${featured.slug}`} data-featured>
+      <a class="featured-card" href={`/fr/blog/${featured.slug}`} data-featured>
         <div class="featured-cover">
           <img src={featured.cover || '/blog/cover-default.svg'}
             alt={featured.title}
@@ -139,7 +141,7 @@ const toolCards = [
 
         <div class="featured-body">
           <div class="featured-meta-row">
-            <span class="featured-cat">{featured.category}</span>
+            <span class="featured-cat">{categoryMeta[featured.category]?.label ?? featured.category}</span>
             <time class="featured-date text-caption-mono" datetime={featured.date}>{featured.date}</time>
             <span class="featured-reading">{featured.readingTime}</span>
           </div>
@@ -169,7 +171,7 @@ const toolCards = [
             {restPosts.map((post) => {
               const cat = categoryMeta[post.category] ?? { label: post.category, icon: 'doc' };
               return (
-                <a class="article-card" href={`/blog/${post.slug}`} data-title={post.title.toLowerCase()} data-cat={post.category}>
+                <a class="article-card" href={`/fr/blog/${post.slug}`} data-title={post.title.toLowerCase()} data-cat={post.category}>
                   <div class="article-cover">
                     <img src={post.cover || '/blog/cover-default.svg'} alt={post.title} loading="lazy" decoding="async" width="800" height="450"  />
                     <span class="article-tag">{cat.label}</span>

@@ -22,6 +22,8 @@ interface Props {
   heroImage?: string;
   lang?: string;
   localizedHreflang?: boolean;
+  hreflangAlternates?: Array<{ lang: string; href: string }>;
+  xDefaultHref?: string;
 }
 
 const {
@@ -39,6 +41,8 @@ const {
   heroImage,
   lang: propLang,
   localizedHreflang = true,
+  hreflangAlternates,
+  xDefaultHref,
 } = Astro.props;
 
 const detectedLang = propLang || getLangFromUrl(Astro.url);
@@ -149,6 +153,16 @@ const structuredData =
     <link rel="alternate" type="application/rss+xml" title="TikSaveHub Blog" href="/rss.xml" />
 
     {(() => {
+      // Noindex error pages must not advertise locale variants that don't exist.
+      if (noindex) return null;
+      // Pages can supply an explicit hreflang set (e.g. localized blog posts
+      // whose slugs differ per language). When provided, it wins over the
+      // path-derived alternates.
+      if (hreflangAlternates && hreflangAlternates.length > 0) {
+        return hreflangAlternates.map(({ lang: altLang, href }) => (
+          <link rel="alternate" hreflang={altLang} href={href} />
+        ));
+      }
       // English-only pages (e.g. blog posts) must not declare localized
       // alternates: "/de/blog/{slug}" does not exist and would 404.
       if (localizedHreflang === false) return null;
@@ -163,13 +177,17 @@ const structuredData =
         <link rel="alternate" hreflang={altLang} href={href} />
       ));
     })()}
-    {/* x-default always points to the English (no-locale) version */}
-    <link rel="alternate" hreflang="x-default" href={`${siteURL}${(() => {
-      const p = rawCanonical === '/' ? '/' : rawCanonical.replace(/\/+$/, '');
-      return detectedLocale && p.startsWith(`/${detectedLocale}/`)
-        ? p.slice(detectedLocale.length + 1) || '/'
-        : p;
-    })()}`} />
+    {/* x-default: explicit override when provided, else the English (no-locale) version.
+        Noindex pages (404/500) emit no hreflang at all — their locale variants
+        (/es/404 …) don't exist and alternates must not point at 404s. */}
+    {!noindex && (
+      <link rel="alternate" hreflang="x-default" href={xDefaultHref ?? `${siteURL}${(() => {
+        const p = rawCanonical === '/' ? '/' : rawCanonical.replace(/\/+$/, '');
+        return detectedLocale && p.startsWith(`/${detectedLocale}/`)
+          ? p.slice(detectedLocale.length + 1) || '/'
+          : p;
+      })()}`} />
+    )}
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}

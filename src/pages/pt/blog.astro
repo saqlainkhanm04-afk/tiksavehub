@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
-import { posts } from '../../data/blog-posts';
+import { ptPosts } from '../../data/blog-i18n/pt.js';
 
 const categories = [
   { id: 'All', label: 'Todos' },
@@ -12,17 +12,18 @@ const categories = [
   { id: 'X & Twitter Guides', label: 'X & Twitter' },
   { id: 'Audio Extraction', label: 'Extração de Áudio' },
   { id: 'Tech & Security', label: 'Tecnologia & Segurança' },
+  { id: 'Snapchat Guides', label: 'Guias do Snapchat' },
 ];
 
-const sorted = [...posts].sort(
+const sorted = [...ptPosts].sort(
   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
 );
 const [featured, ...restPosts] = sorted;
 const categoryCounts = categories.reduce<Record<string, number>>((acc, cat) => {
   if (cat.id === 'All') {
-    acc[cat.id] = posts.length;
+    acc[cat.id] = ptPosts.length;
   } else {
-    acc[cat.id] = posts.filter((p) => p.category === cat.id).length;
+    acc[cat.id] = ptPosts.filter((p) => p.category === cat.id).length;
   }
   return acc;
 }, {});
@@ -34,7 +35,11 @@ const categoryMeta: Record<string, { label: string; icon: string }> = {
   'X & Twitter Guides': { label: 'X / Twitter', icon: 'x' },
   'Audio Extraction': { label: 'Audio', icon: 'audio' },
   'Tech & Security': { label: 'Segurança', icon: 'shield' },
+  'Snapchat Guides': { label: 'Snapchat', icon: 'snapchat' },
 };
+
+const featuredCatLabel =
+  categories.find((c) => c.id === featured.category)?.label ?? featured.category;
 
 const toolCards = [
   {
@@ -125,7 +130,7 @@ const toolCards = [
         <h2 id="featured-headline" class="blog-section-title">Guia em Tendência</h2>
       </div>
 
-      <a class="featured-card" href={`/blog/${featured.slug}`} data-featured>
+      <a class="featured-card" href={`/pt/blog/${featured.slug}`} data-featured>
         <div class="featured-cover">
           <img src={featured.cover || '/blog/cover-default.svg'}
             alt={featured.title}
@@ -139,7 +144,7 @@ const toolCards = [
 
         <div class="featured-body">
           <div class="featured-meta-row">
-            <span class="featured-cat">{featured.category}</span>
+            <span class="featured-cat">{featuredCatLabel}</span>
             <time class="featured-date text-caption-mono" datetime={featured.date}>{featured.date}</time>
             <span class="featured-reading">{featured.readingTime}</span>
           </div>
@@ -169,7 +174,7 @@ const toolCards = [
             {restPosts.map((post) => {
               const cat = categoryMeta[post.category] ?? { label: post.category, icon: 'doc' };
               return (
-                <a class="article-card" href={`/blog/${post.slug}`} data-title={post.title.toLowerCase()} data-cat={post.category}>
+                <a class="article-card" href={`/pt/blog/${post.slug}`} data-title={post.title.toLowerCase()} data-cat={post.category}>
                   <div class="article-cover">
                     <img src={post.cover || '/blog/cover-default.svg'} alt={post.title} loading="lazy" decoding="async" width="800" height="450"  />
                     <span class="article-tag">{cat.label}</span>

@@ -18,14 +18,10 @@
 # "/" itself does not match (the pattern needs two slashes).
 /*/ /:splat 301
 
-# Localized blog posts only exist in English: /de/blog/{slug} -> /blog/{slug}
-/de/blog/* /blog/:splat 301
-/es/blog/* /blog/:splat 301
-/ja/blog/* /blog/:splat 301
-/fr/blog/* /blog/:splat 301
-/it/blog/* /blog/:splat 301
-/pt/blog/* /blog/:splat 301
-/ko/blog/* /blog/:splat 301
+# Localized Snapchat blog posts now live under /{lang}/blog/{slug} as real pages.
+# Unknown localized blog slugs are redirected to English by src/middleware.ts
+# (resolvePathRedirect) — do NOT add a blanket /de/blog/* -> /blog/* rule here,
+# it would 301 the real localized posts.
 
 # Double locale prefix (Google crawled /de/de/... from pre-prefixed links)
 /de/de/* /de/:splat 301

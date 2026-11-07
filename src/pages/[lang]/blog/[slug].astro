@@ -1,0 +1,392 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import SocialShare from '../../../components/SocialShare.astro';
+import PostCtaBox from '../../../components/PostCtaBox.astro';
+import { postsByLang, postHreflangAlternates } from '../../../data/blog-i18n/index.js';
+import '../../../styles/blog-post.css';
+
+export const prerender = true;
+
+const SITE = 'https://tiksavehub.com';
+
+const labels: Record<string, { home: string; blog: string; back: string; related: string }> = {
+  de: { home: 'Startseite', blog: 'Blog', back: 'Zurück zum Blog', related: 'Verwandte Artikel' },
+  es: { home: 'Inicio', blog: 'Blog', back: 'Volver al Blog', related: 'Artículos relacionados' },
+  fr: { home: 'Accueil', blog: 'Blog', back: 'Retour au Blog', related: 'Articles liés' },
+  it: { home: 'Home', blog: 'Blog', back: 'Torna al Blog', related: 'Articoli correlati' },
+  ja: { home: 'ホーム', blog: 'ブログ', back: 'ブログに戻る', related: '関連記事' },
+  ko: { home: '홈', blog: '블로그', back: '블로그로 돌아가기', related: '관련 글' },
+  pt: { home: 'Início', blog: 'Blog', back: 'Voltar ao Blog', related: 'Artigos relacionados' },
+};
+
+export function getStaticPaths() {
+  const paths = [];
+  for (const [lang, list] of Object.entries(postsByLang)) {
+    for (const post of list) {
+      paths.push({
+        params: { lang, slug: post.slug },
+        props: { post, lang },
+      });
+    }
+  }
+  return paths;
+}
+
+interface LocalizedPost {
+  lang: string;
+  topic: string;
+  enSlug: string;
+  slug: string;
+  title: string;
+  metaTitle: string;
+  excerpt: string;
+  date: string;
+  readingTime: string;
+  author: string;
+  category: string;
+  cover: string;
+  tags: string[];
+  cta?: { headline: string; text: string; href: string; label: string };
+  faq: Array<{ q: string; a: string }>;
+  content: string;
+}
+
+const { post, lang } = Astro.props as { post: LocalizedPost; lang: string };
+const ui = labels[lang] ?? labels.de;
+
+const fmtDate = (iso: string) => {
+  try {
+    return new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+};
+
+const postCta = 'cta' in post ? post.cta : undefined;
+
+const pageUrl = `${SITE}/${lang}/blog/${post.slug}`;
+
+const siblings = (postsByLang as Record<string, LocalizedPost[]>)[lang] ?? [];
+const relatedPosts = siblings
+  .filter((p) => p.slug !== post.slug && (p.category === post.category || p.tags.some((t) => post.tags.includes(t))))
+  .slice(0, 3);
+
+const articleJsonLd: Record<string, unknown> = {
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.excerpt,
+  image: `${SITE}${post.cover}`,
+  datePublished: post.date,
+  dateModified: post.date,
+  keywords: post.tags.join(', '),
+  inLanguage: lang,
+  author: {
+    '@type': 'Organization',
+    name: post.author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'TikSaveHub',
+    logo: {
+      '@type': 'ImageObject',
+      url: `${SITE}/web-app-manifest-512x512.png`,
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': pageUrl,
+  },
+};
+
+const faqSchema = post.faq && post.faq.length
+  ? {
+      '@type': 'FAQPage',
+      mainEntity: post.faq.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a,
+        },
+      })),
+    }
+  : undefined;
+
+const breadcrumbJsonLd = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: ui.home,
+      item: `${SITE}/${lang}`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: ui.blog,
+      item: `${SITE}/${lang}/blog`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: post.title,
+      item: pageUrl,
+    },
+  ],
+};
+
+const pageJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [articleJsonLd, faqSchema, breadcrumbJsonLd].filter(Boolean),
+});
+
+const hreflangAlternates = postHreflangAlternates(post, SITE);
+const xDefaultHref = post.enSlug ? `${SITE}/blog/${post.enSlug}` : `${SITE}/blog`;
+
+function renderContent(md: string): string {
+  const lines = md.split('\n');
+  const out: string[] = [];
+  let inList = false;
+  let listTag = '';
+
+  function closeList() {
+    if (inList) {
+      out.push(`</${listTag}>`);
+      inList = false;
+    }
+  }
+
+  for (const raw of lines) {
+    const line = raw;
+    if (line.startsWith('## ')) {
+      closeList();
+      out.push(`<h2>${line.slice(3)}</h2>`);
+    } else if (line.startsWith('### ')) {
+      closeList();
+      const headingText = line.slice(4);
+      if (headingText.endsWith('?') || headingText.endsWith('？')) {
+        out.push(`<div class="question-heading"><h3>${headingText}</h3></div>`);
+      } else {
+        out.push(`<h3>${headingText}</h3>`);
+      }
+    } else if (line.trimStart().startsWith('![')) {
+      closeList();
+      const imgMatch = line.trim().match(/^!\[(.+?)\]\((.+?)\)$/);
+      if (imgMatch) {
+        out.push(
+          `<figure class="post-figure"><img src="${imgMatch[2]}" alt="${imgMatch[1]}" loading="lazy" decoding="async" width="800" height="450" /></figure>`
+        );
+      } else {
+        out.push(`<p>${inline(line)}</p>`);
+      }
+    } else if (line.startsWith('---')) {
+      closeList();
+      out.push('<hr />');
+    } else if (line.startsWith('- ')) {
+      if (!inList) {
+        inList = true;
+        listTag = 'ul';
+        out.push('<ul>');
+      }
+      const item = line.slice(2);
+      const boldLabelMatch = item.match(/^\*\*(.+?):\*\*\s*(.*)/);
+      if (boldLabelMatch) {
+        out.push(`<li class="qa-item"><span class="qa-label">${boldLabelMatch[1]}</span><span class="qa-answer">${inline(boldLabelMatch[2])}</span></li>`);
+      } else {
+        out.push(`<li>${inline(item)}</li>`);
+      }
+    } else if (/^\d[.．、] /.test(line)) {
+      if (!inList) {
+        inList = true;
+        listTag = 'ol';
+        out.push('<ol>');
+      }
+      out.push(`<li>${inline(line.replace(/^\d[.．、] /, ''))}</li>`);
+    } else if (line.trim() === '') {
+      closeList();
+    } else {
+      closeList();
+      const boldLabelMatch = line.match(/^\*\*(.+?):\*\*\s*(.*)/);
+      if (boldLabelMatch) {
+        out.push(renderQACard(boldLabelMatch[1], boldLabelMatch[2]));
+      } else {
+        out.push(`<p>${inline(line)}</p>`);
+      }
+    }
+  }
+  closeList();
+  return out.join('\n');
+}
+
+function renderQACard(question: string, answer: string): string {
+  return `
+<div class="qa-card">
+  <div class="qa-q">${question}</div>
+  <div class="qa-a">${inline(answer)}</div>
+</div>`;
+}
+
+function inline(text: string): string {
+  let html = text;
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="post-inline-link">$1</a>');
+  return html;
+}
+
+const tagColors = [
+  'rgba(124, 58, 237, 0.12)',
+  'rgba(0, 124, 240, 0.12)',
+  'rgba(236, 72, 153, 0.12)',
+  'rgba(16, 185, 129, 0.12)',
+];
+const tagBorderColors = [
+  'rgba(124, 58, 237, 0.25)',
+  'rgba(0, 124, 240, 0.25)',
+  'rgba(236, 72, 153, 0.25)',
+  'rgba(16, 185, 129, 0.25)',
+];
+const tagTextColors = [
+  '#7c3aed',
+  '#007cf0',
+  '#ec4899',
+  '#10b981',
+];
+---
+
+<Layout
+  title={post.metaTitle ?? `${post.title} — TikSaveHub Blog`}
+  description={post.excerpt}
+  keywords={`tiksavehub, tiktok downloader, ${post.tags.join(', ')}`}
+  canonical={`/${lang}/blog/${post.slug}`}
+  ogImage={post.cover}
+  jsonLd={pageJsonLd}
+  lang={lang}
+  hreflangAlternates={hreflangAlternates}
+  xDefaultHref={xDefaultHref}
+>
+  <!-- Hero -->
+  <section class="post-hero" aria-labelledby="post-title">
+    <div class="post-hero-bg"></div>
+    <div class="post-hero-inner container-page">
+      <nav class="post-breadcrumb" aria-label="Breadcrumb">
+        <a href={`/${lang}`} class="breadcrumb-link">{ui.home}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <a href={`/${lang}/blog`} class="breadcrumb-link">{ui.blog}</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span class="breadcrumb-current" aria-current="page">{post.title}</span>
+      </nav>
+      <div class="post-hero-content">
+        <div class="post-tags">
+          {post.tags.map((tag, i) => (
+            <span
+              class="post-tag"
+              style={`background: ${tagColors[i % tagColors.length]}; border-color: ${tagBorderColors[i % tagBorderColors.length]}; color: ${tagTextColors[i % tagTextColors.length]};`}
+            >{tag}</span>
+          ))}
+        </div>
+        <h1 id="post-title" class="post-title">{post.title}</h1>
+        <div class="post-meta">
+          <span class="post-author">{post.author}</span>
+          <span class="post-meta-sep">·</span>
+          <time datetime={post.date}>{fmtDate(post.date)}</time>
+          <span class="post-meta-sep">·</span>
+          <span>{post.readingTime}</span>
+        </div>
+        {postCta && (
+          <PostCtaBox
+            variant="top"
+            headline={postCta.headline}
+            text={postCta.text}
+            href={postCta.href}
+            label={postCta.label}
+          />
+        )}
+        <!-- Featured Banner -->
+        <div class="post-featured-banner" aria-hidden="true">
+          <div class="banner-row">
+            <span class="banner-btn banner-btn-tiktok">TikTok</span>
+            <span class="banner-arrow">&rarr;</span>
+            <span class="banner-btn banner-btn-instagram">Instagram Reels</span>
+            <span class="banner-arrow">&rarr;</span>
+            <span class="banner-btn banner-btn-youtube">YouTube Shorts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <section class="post-body-section">
+    <div class="post-body-inner container-page">
+      <article class="post-article">
+        <div class="post-content">
+          <div class="post-content-inner" set:html={renderContent(post.content)} />
+        </div>
+      </article>
+
+      <!-- CTA -->
+      {postCta ? (
+        <PostCtaBox
+          variant="end"
+          headline={postCta.headline}
+          text={postCta.text}
+          href={postCta.href}
+          label={postCta.label}
+        />
+      ) : (
+        <div class="post-cta-card">
+          <div class="post-cta-content">
+            <h2 class="post-cta-title">{post.title}</h2>
+            <p class="post-cta-text">{post.excerpt}</p>
+            <a href={`/${lang}/snapchat-downloader`} class="post-cta-btn">TikSaveHub</a>
+          </div>
+        </div>
+      )}
+
+      <!-- Share -->
+      <div class="post-share">
+        <SocialShare
+          url={`/${lang}/blog/${post.slug}`}
+          title={`${post.title} — TikSaveHub Blog`}
+          description={post.excerpt}
+          image={post.cover}
+        />
+      </div>
+
+      {/* Related Articles */}
+      {relatedPosts.length > 0 && (
+        <div class="post-related">
+          <h2 class="post-related-title">{ui.related}</h2>
+          <div class="post-related-grid">
+            {relatedPosts.map((rp) => (
+              <a href={`/${lang}/blog/${rp.slug}`} class="post-related-card">
+                <span class="post-related-tag">{rp.category}</span>
+                <h3 class="post-related-headline">{rp.title}</h3>
+                <p class="post-related-excerpt">{rp.excerpt}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Back -->
+      <div class="post-back">
+        <a href={`/${lang}/blog`} class="post-back-link">&larr; {ui.back}</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const POST_IMG_FALLBACK = '/blog/cover-default.svg';
+    const applyPostImgFallback = (img: HTMLImageElement) => {
+      if (img.dataset.imgFallback) return;
+      img.dataset.imgFallback = '1';
+      img.src = POST_IMG_FALLBACK;
+    };
+    document.querySelectorAll<HTMLImageElement>('.post-content-inner img').forEach((img) => {
+      img.addEventListener('error', () => applyPostImgFallback(img));
+      if (img.complete && img.naturalWidth === 0) applyPostImgFallback(img);
+    });
+  </script>
+</Layout>

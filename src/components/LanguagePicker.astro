@@ -1,6 +1,8 @@
 ---
 import { languages } from '../i18n/ui';
-import { getLangFromUrl, getLocalizedPath } from '../i18n/utils';
+import { getLangFromUrl, getLocalizedPath, type Lang } from '../i18n/utils';
+import { posts as enPosts } from '../data/blog-posts';
+import { postsByLang } from '../data/blog-i18n/index.js';
 
 interface Props {
   uid?: string;
@@ -11,6 +13,61 @@ const currentLang = getLangFromUrl(Astro.url);
 const currentPath = (Astro.url.pathname
   .replace(/^\/(en|es|ja|fr|de|pt|ko|it)(\/|$)/, '/')
   .replace(/\/+$/, '') || '/');
+
+// Pages that exist in English only. Their language options must fall back to
+// a localized page that really returns 200 — otherwise every switch is a
+// 301/404 hop that burns crawl budget.
+const EN_ONLY_FALLBACK: Record<string, string> = {
+  '/compare/snapchat-downloader-vs-screen-recording': '/snapchat-downloader',
+  '/compare/snapchat-story-vs-snapchat-spotlight': '/snapchat-downloader',
+};
+
+// English-only pages with no close localized equivalent: send the switcher to
+// the locale homepage instead of a /{lang}/… URL that would 404.
+const EN_ONLY_ROOTS = new Set([
+  '/about',
+  '/authors/samneil',
+  '/editorial-policy',
+  '/tiktok-thumbnail-downloader',
+  '/instagram-profile-picture-downloader',
+  '/tiktok-comment-downloader',
+]);
+
+// Resolve the language-switcher target so it ALWAYS points at a final 200 URL:
+// - blog posts link to the same story in the target language (matched by
+//   enSlug), or to that language's blog index when no translation exists —
+//   never to a slug that redirects or 404s.
+// - English-only pages fall back to the closest localized page.
+function hrefFor(langKey: string): string {
+  // Error pages (404/500) have no locale variants — send the switcher to the
+  // locale homepage instead of /es/404 (which would 404).
+  if (currentPath === '/404' || currentPath === '/500') {
+    return langKey === 'en' ? '/' : `/${langKey}`;
+  }
+  const post = currentPath.match(/^\/blog\/(.+)$/);
+  if (post) {
+    const slug = post[1];
+    const enSlug =
+      (enPosts ?? []).find((p: { slug: string }) => p.slug === slug)?.slug ??
+      (Object.values(postsByLang) as Array<Array<{ enSlug: string; slug: string }>>)
+        .flat()
+        .find((p) => p.slug === slug)?.enSlug;
+    if (langKey === 'en') {
+      return enSlug ? `/blog/${enSlug}` : '/blog';
+    }
+    if (!enSlug) return `/${langKey}/blog`;
+    const match = (postsByLang[langKey as keyof typeof postsByLang] ?? []).find(
+      (p) => p.enSlug === enSlug
+    );
+    return match ? `/${langKey}/blog/${match.slug}` : `/${langKey}/blog`;
+  }
+  const fallback = EN_ONLY_FALLBACK[currentPath];
+  if (fallback && langKey !== 'en') return `/${langKey}${fallback}`;
+  if (EN_ONLY_ROOTS.has(currentPath)) {
+    return langKey === 'en' ? currentPath : `/${langKey}`;
+  }
+  return getLocalizedPath(currentPath, langKey as Lang);
+}
 ---
 
 <div class="lang-picker" id={`${uid}-picker`}>
@@ -35,7 +92,7 @@ const currentPath = (Astro.url.pathname
     </li>
     {Object.entries(languages).map(([lang, label]) => (
       <li role="option" aria-selected={lang === currentLang}>
-        <a href={getLocalizedPath(currentPath, lang as any)} class={`lang-picker-option ${lang === currentLang ? 'lang-active' : ''}`}>
+        <a href={hrefFor(lang)} class={`lang-picker-option ${lang === currentLang ? 'lang-active' : ''}`}>
           {label}
         </a>
       </li>

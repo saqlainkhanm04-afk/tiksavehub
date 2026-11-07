@@ -1,10 +1,9 @@
 ---
 export const prerender = true;
 import Layout from '../../layouts/Layout.astro';
-import { posts } from '../../data/blog-posts';
-import SocialShare from '../../components/SocialShare.astro';
+import { koPosts } from '../../data/blog-i18n/ko.js';
 
-const latestPosts = posts.slice(0, 5);
+const latestPosts = koPosts;
 
 const blogJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -13,13 +12,13 @@ const blogJsonLd = JSON.stringify({
       '@type': 'CollectionPage',
       name: 'TikSaveHub 블로그 — TikTok 동영상 다운로더 팁 & 가이드',
       description: 'TikSaveHub 블로그에서 TikTok 동영상 다운로더, 팁, 업데이트, 트렌드에 대한 최신 기사를 읽어보세요.',
-      url: 'https://tiksavehub.com/blog',
+      url: 'https://tiksavehub.com/ko/blog',
     },
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://tiksavehub.com/' },
-        { '@type': 'ListItem', position: 2, name: '블로그', item: 'https://tiksavehub.com/blog' },
+        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://tiksavehub.com/ko' },
+        { '@type': 'ListItem', position: 2, name: '블로그', item: 'https://tiksavehub.com/ko/blog' },
       ],
     },
   ],
@@ -63,7 +62,7 @@ const blogJsonLd = JSON.stringify({
               <div class="blog-list">
                 {latestPosts.map((post) => (
                   <article class="blog-card">
-                    <a href={`/blog/${post.slug}`} class="blog-card-link">
+                    <a href={`/ko/blog/${post.slug}`} class="blog-card-link">
                       <h3 class="blog-card-title">{post.title}</h3>
                       <p class="blog-card-excerpt">{post.excerpt}</p>
                       <span class="blog-card-date">{post.date}</span>

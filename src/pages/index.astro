@@ -436,6 +436,12 @@ const features = [
  <p class="home-blog-excerpt">Download TikTok videos without watermark in HD quality. Fast, free, and works on iPhone, Android, and PC.</p>
  </a>
  </div>
+ <div class="home-compare-links">
+ <span class="home-compare-label">Comparisons</span>
+ <a href="/compare/snapchat-vs-tiktok-downloader">Snapchat vs TikTok Downloader</a>
+ <a href="/compare/snapchat-downloader-vs-screen-recording">Snapchat Downloader vs Screen Recording</a>
+ <a href="/compare/snapchat-story-vs-snapchat-spotlight">Snapchat Story vs Spotlight</a>
+ </div>
  </div>
  </section>
 </Layout>
@@ -846,6 +852,33 @@ const features = [
     color: var(--color-mute);
     line-height: 1.5;
     margin: 0;
+  }
+
+  .home-compare-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm) var(--spacing-lg);
+    font-size: 14px;
+  }
+
+  .home-compare-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .home-compare-links a {
+    color: var(--color-link);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .home-compare-links a:hover {
+    text-decoration: underline;
   }
 
   /* ─── Shared Section Styles ─── */

@@ -8,6 +8,7 @@ import cloudflare from '@astrojs/cloudflare';
 import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 import { posts } from './src/data/blog-posts.js';
+import { postsByLang } from './src/data/blog-i18n/index.js';
 
 const site = 'https://tiksavehub.com';
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
@@ -80,10 +81,17 @@ const customPages = [
   `${site}/tiktok-thumbnail-downloader`,
   `${site}/instagram-profile-picture-downloader`,
   `${site}/tiktok-comment-downloader`,
+  // Snapchat comparison pages (English + localized).
+  `${site}/compare/snapchat-vs-tiktok-downloader`,
   // Localized pages for all languages.
   // Locale homepages must be emitted as /de (not /de/) to match trailingSlash: 'never'.
-  ...['es', 'ja', 'fr', 'de', 'pt', 'ko', 'it'].flatMap((lang) =>
-    seoPages.map((p) => `${site}/${lang}${p === '/' ? '' : p}`)
+  ...['es', 'ja', 'fr', 'de', 'pt', 'ko', 'it'].flatMap((lang) => [
+    ...seoPages.map((p) => `${site}/${lang}${p === '/' ? '' : p}`),
+    `${site}/${lang}/compare/snapchat-vs-tiktok-downloader`,
+  ]),
+  // Localized Snapchat blog posts (different slugs per language).
+  ...Object.entries(postsByLang).flatMap(([lang, list]) =>
+    list.map((p) => `${site}/${lang}/blog/${p.slug}`)
   ),
 ];
 

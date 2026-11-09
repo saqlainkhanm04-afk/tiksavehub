@@ -52,7 +52,10 @@ function cleanUrl(value: string): string {
   return value
     .replace(/\\u003F/gi, '?')
     .replace(/\\u0026/gi, '&')
-    .replace(/\\\//g, '/');
+    .replace(/\\\//g, '/')
+    .replace(/&amp;/gi, '&')
+    .replace(/&#x26;/gi, '&')
+    .replace(/&#38;/g, '&');
 }
 
 function isStoryUrl(value: string): boolean {
@@ -105,6 +108,20 @@ function storyCandidates(pageProps: UnknownRecord): StoryCandidate[] {
   if (preselectedPlayerStory) candidates.push({ story: preselectedPlayerStory, entry: null, kind: 'public' });
   const preselectedStory = asRecord(preselected?.story);
   if (preselectedStory) candidates.push({ story: preselectedStory, entry: null, kind: 'public' });
+
+  // Saved spotlight/curated highlight reels on profile pages (last resort — only
+  // used when the profile has no active story). Their snapList carries the same
+  // snapUrls.mediaUrl field, which is the original file Snapchat serves.
+  const highlightLists = [
+    ...(Array.isArray(pageProps.spotlightHighlights) ? pageProps.spotlightHighlights : []),
+    ...(Array.isArray(pageProps.curatedHighlights) ? pageProps.curatedHighlights : []),
+  ];
+  for (const rawHighlight of highlightLists) {
+    const highlight = asRecord(rawHighlight);
+    if (highlight && Array.isArray(highlight.snapList)) {
+      candidates.push({ story: highlight, entry: null, kind: 'profile' });
+    }
+  }
 
   return candidates;
 }
@@ -226,6 +243,7 @@ async function fetchFromPage(snapUrl: string, fallbackId: string): Promise<Snapc
       /"videoUrl"\s*:\s*"([^"]+)"/,
       /"video_url"\s*:\s*"([^"]+)"/,
       /property="og:video"\s+content="([^"]+)"/,
+      /"contentUrl"\s*:\s*"(https:[^"]+)"/,
       /src="(https?:\/\/[^"]*\.mp4[^"]*)"/,
     ];
     let mediaUrl: string | null = null;
@@ -302,14 +320,20 @@ export async function fetchSnapchatMedia(snapUrl: string, mediaId: string, turns
   const cacheKey = `sc:media:${mediaId || inputMediaId(snapUrl)}`;
   return memoSWR<SnapchatMediaMeta>(cacheKey, META_TTL_MS, META_STALE_MS, async () => {
     const fallbackId = mediaId || inputMediaId(snapUrl);
+
+    // Prefer the page's own snapList/mediaUrl data (the original file Snapchat
+    // serves) before anything else. Spotlight pages no longer ship __NEXT_DATA__
+    // (Next.js App Router), so they resolve through the HTML/JSON-LD path below.
     const pageDataResult = await fetchFromPageData(snapUrl, fallbackId);
     if (pageDataResult) return pageDataResult;
 
-    const cobaltResult = await fetchFromCobalt(snapUrl, fallbackId, turnstileToken);
-    if (cobaltResult) return cobaltResult;
-
     const pageResult = await fetchFromPage(snapUrl, fallbackId);
     if (pageResult) return pageResult;
+
+    // Cobalt last: it needs a turnstile token (or API key) and otherwise burns
+    // tens of seconds before failing on links the page paths already cover.
+    const cobaltResult = await fetchFromCobalt(snapUrl, fallbackId, turnstileToken);
+    if (cobaltResult) return cobaltResult;
 
     throw new Error(
       'Could not extract media from this Snapchat link. The content may be private, deleted, or geo-restricted.'

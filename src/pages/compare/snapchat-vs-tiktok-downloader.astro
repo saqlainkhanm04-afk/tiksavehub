@@ -13,7 +13,7 @@ import ComparePage from '../../components/ComparePage.astro';
   keywords="snapchat downloader vs tiktok downloader, tiktok vs snapchat video download, compare video downloaders, snapchat video downloader, tiktok video downloader without watermark"
   eyebrow="Comparison"
   headline="Snapchat downloader vs TikTok downloader."
-  lede="Both save videos in HD without watermarks, and both run free in your browser. The difference is the platforms behind them: each tool reads its own link formats, media types, and account rules. This comparison shows what they share and where they split."
+  lede="Both save videos in HD and run free in your browser. The difference is the platforms behind them: each tool reads its own link formats, media types, and account rules. This comparison shows what they share and where they split."
   a={{
     name: 'Snapchat Downloader',
     href: '/snapchat-downloader',
@@ -28,7 +28,7 @@ import ComparePage from '../../components/ComparePage.astro';
   tableSub="The short version of how the two tools differ, before the deep dive."
   rows={[
     { label: 'Supported links', a: 'Snapchat video, Story, and Spotlight links', b: 'TikTok video, Duet, and Stitch links' },
-    { label: 'Watermark', a: 'Snaps arrive with no watermark', b: 'TikTok watermark removed automatically', winner: 'b' },
+    { label: 'Watermark', a: 'Stories clean; Spotlight keeps Snapchat overlay', b: 'TikTok watermark removed automatically', winner: 'b' },
     { label: 'Top quality', a: 'Up to 1080p, as uploaded', b: 'Up to 1080p, best progressive MP4', winner: 'b' },
     { label: 'Media types', a: 'MP4 video and JPG photos', b: 'MP4 video', winner: 'a' },
     { label: '24-hour content', a: 'Yes, Stories before they expire', b: 'No equivalent format', winner: 'a' },
@@ -45,7 +45,7 @@ import ComparePage from '../../components/ComparePage.astro';
       eyebrow: 'The basics',
       headline: 'What each downloader actually does.',
       body: [
-        'The Snapchat Downloader takes a public Snapchat link and returns the original media file behind it. That covers regular snap videos, photo and video Stories posted in the last 24 hours, and Spotlight clips from the public feed. The file you get is the same one the app would have streamed: same resolution, same audio, no watermark baked on top.',
+        'The Snapchat Downloader takes a public Snapchat link and returns the original media file behind it. That covers regular snap videos, photo and video Stories posted in the last 24 hours, and Spotlight clips from the public feed. The file you get is the same one the app would have streamed: same resolution, same audio. Stories come through clean; Spotlight clips include Snapchat\'s own ghost logo and username overlay, exactly as the app serves them.',
         'The TikTok Downloader does the equivalent job on the other platform. Paste a TikTok link and it resolves the share URL to the highest-quality progressive MP4, the combined video and audio file, without the TikTok watermark overlay. Duets and Stitches behave like any other TikTok link, so the same page handles them.',
       ],
       points: [
@@ -75,7 +75,7 @@ import ComparePage from '../../components/ComparePage.astro';
       eyebrow: 'Quality and audio',
       headline: 'Watermarks, resolution, and MP3.',
       body: [
-        'Snapchat content never carries a watermark in the first place, so the downloader simply fetches the file as uploaded. Resolution follows the original post, which sits at 1080p for most modern phones. TikTok content is the opposite case: the platform stamps a watermark on shared videos, and the downloader saves the clean rendition instead, at the highest quality the post provides.',
+        'Stories and public posts on Snapchat carry no watermark, so the downloader simply fetches the file as uploaded. Spotlight clips are the exception: Snapchat bakes its ghost logo and username overlay into every public copy, so that overlay is part of the file and the downloader delivers it as-is instead of altering the video. Resolution follows the original post, which sits at 1080p for most modern phones. TikTok content is the opposite case: the platform stamps a watermark on shared videos, and the downloader saves the clean rendition instead, at the highest quality the post provides.',
         'Audio follows the same rule on both sides. Video files keep their original soundtrack, and if you only want the sound, each platform has a dedicated MP3 page. That matters when you are building a sound reference, a voiceover library, or you simply want the track without the video attached.',
       ],
       points: [
@@ -116,7 +116,7 @@ import ComparePage from '../../components/ComparePage.astro';
     {
       id: 'cmp1-watermark',
       q: 'Do both downloaders remove watermarks?',
-      a: 'Snapchat videos ship without a watermark, so the file you save is already clean. TikTok videos include a watermark on shared copies, and the TikTok Downloader saves the clean rendition without it. Neither tool adds any branding of its own to your file.',
+      a: 'The TikTok Downloader saves the clean rendition without TikTok\'s watermark. Snapchat Stories and posts come through exactly as posted, while Spotlight clips include Snapchat\'s own ghost logo and username overlay — that is the only public copy Snapchat publishes, and no downloader can strip it without re-encoding the video. Neither tool adds any branding of its own to your file.',
     },
     {
       id: 'cmp1-quality',
@@ -135,6 +135,6 @@ import ComparePage from '../../components/ComparePage.astro';
     },
   ]}
   ctaHeadline="Save your next clip in seconds."
-  ctaText="Paste a Snapchat link and get the original file back. Free, no account, no watermark."
+  ctaText="Paste a Snapchat link and get the original file back. Free, no account, original quality."
   ctaLabel="Open the Snapchat Downloader"
 />

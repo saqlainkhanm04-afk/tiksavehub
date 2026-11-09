@@ -26,6 +26,3 @@ export { facebookSources, fbMultiApiSource, fbPageSource, fbEmbedSource, fbCobal
 
 // Twitter/X
 export { twitterSources, xTweetPageSource, xEmbedSource } from './twitter';
-
-// Snapchat
-export { snapchatSources, scPageDataSource, scCobaltSource, scPageHtmlSource } from './snapchat';

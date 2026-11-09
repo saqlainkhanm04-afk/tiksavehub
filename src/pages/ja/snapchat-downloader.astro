@@ -14,7 +14,7 @@ const faqData = [
   { id: 'snap-private', q: '非公開のSnapchatビデオをダウンロードできますか？', a: 'いいえ、公開されているビデオのみ対応しています。' },
   { id: 'snap-no-login', q: 'Snapchatにログインする必要がありますか？', a: 'いいえ、ログインは不要です。' },
 
-  { id: 'sc-ja-spotlight', q: "Snapchat の Spotlight 動画はダウンロードできますか？", a: "はい。TikSaveHub は Spotlight 専用のダウンローダーです。共有メニューから Spotlight のリンクをコピーして貼り付けると、透かしなしの HD MP4 としてクリップ全体を保存できます。" },
+  { id: 'sc-ja-spotlight', q: "Snapchat の Spotlight 動画はダウンロードできますか？", a: "はい。TikSaveHub は Spotlight 専用のダウンローダーです。共有メニューから Spotlight のリンクをコピーして貼り付けると、クリップ全体を HD MP4 として保存できます。なお、Snapchat は Spotlight 動画に自らのロゴとユーザー名を追加します — そのオーバーレイは公開されるすべてのファイルに含まれており、Snapchat が配信するそのままの状態でお届けします。" },
   { id: 'sc-ja-legal', q: "Snapchat の動画をダウンロードするのは合法ですか？", a: "公開されている Snapchat の動画を個人的な利用のためダウンロードすることは、通常問題ありません。ただし、許可なく再共有や再配布は避けてください。TikSaveHub は個人利用を想定したツールです。" },
   { id: 'sc-ja-devices', q: "iPhone と Android で使えますか？", a: "はい。TikSaveHub は iPhone、Android、Windows、Mac、Linux の最新ブラウザーで動作します。インストールは不要で、リンクを貼り付けるだけで使えます。" },
   { id: 'sc-ja-limits', q: "ダウンロードに回数制限はありますか？", a: "ありません。TikSaveHub には毎日の上限、プレミアムプラン、隠れた料金が一切ないため、必要な本数だけ自由に保存できます。" },
@@ -29,8 +29,8 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
 ---
 
 <Layout
-  title="Snapchat Downloader — 無料でHD | TikSaveHub"
-  description="Snapchatの動画をHD品質で無料ダウンロード。ウォーターマークなし、登録不要。iPhone、Android、PCのブラウザでMP4として保存できます。TikSaveHubは無料のブラウザツールで、アプリのインストールも不要です。動画リンクを貼るだけで、すぐに保存できます。"
+  title="Snapchat Downloader — オリジナル画質で保存 | TikSaveHub"
+  description="Snapchatの動画をHD品質で無料ダウンロード。オリジナル画質、登録不要。iPhone、Android、PCのブラウザでMP4として保存できます。TikSaveHubは無料のブラウザツールで、アプリのインストールも不要です。動画リンクを貼るだけで、すぐに保存できます。"
   keywords="snapchat ダウンローダー, snapchat video downloader, snapchat ビデオ 保存, snap ダウンロード"
   canonical="/snapchat-downloader"
   ogImage="/og-downloader.png"
@@ -45,7 +45,7 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
     <div class="dl-hero-inner container-page">
       <div class="dl-badge-row"><span class="badge-pill dl-badge"><span class="badge-dot" aria-hidden="true"></span> 無料 · HD · 登録不要</span></div>
       <h1 id="dl-hero-headline" class="dl-hero-headline">Snapchat Downloader</h1>
-      <p class="dl-hero-sub text-body-lg">SnapchatビデオをHD品質で無料ダウンロード。高速、登録不要。</p>
+      <p class="dl-hero-sub text-body-lg">Snapchatビデオをオリジナル画質・HDで無料ダウンロード。高速、登録不要。</p>
       <div class="dl-hero-form" id="download-tool"><SnapchatDownloadForm /></div>
       <div class="dl-hero-trust">
         <span class="trust-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 100%無料</span>
@@ -55,18 +55,18 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
     </div>
   </section>
 
-  <StatsSection stats={[ { value: '100% 無料', label: 'TikTok動画をウォーターマークなしで即座にダウンロード', icon: 'download' }, { value: '登録不要', label: 'あらゆるデバイス、世界中どこでも動作します', icon: 'globe' }, { value: 'HD画質', label: '元の解像度、ウォーターマークなし、ログイン不要', icon: 'star' } ]} />
+  <StatsSection stats={[ { value: '100% 無料', label: 'Snapchat動画をオリジナル画質で即座にダウンロード', icon: 'download' }, { value: '登録不要', label: 'あらゆるデバイス、世界中どこでも動作します', icon: 'globe' }, { value: 'HD画質', label: '元の解像度、何も追加せず、ログイン不要', icon: 'star' } ]} />
 
     <section class="sc-about-section" aria-labelledby="sc-about-headline">
     <div class="sc-about-inner container-page">
       <span class="section-eyebrow text-caption-mono">TikSaveHub について</span>
-      <h2 id="sc-about-headline" class="section-headline">Snapchat の動画とスポットライトをオンラインで保存、無料、HD、透かしなし</h2>
+      <h2 id="sc-about-headline" class="section-headline">Snapchat の動画とスポットライトをオンラインで保存、無料、HD、オリジナル画質</h2>
       <div class="sc-about-body">
-        <p>TikSaveHub は、公開されている Snapchat の動画を高画質のまま、透かしなしで端末に直接保存できる無料の Snapchat 動画 ダウンローダー です。話題の Spotlight クリップでも、残しておきたいクリエイターのスナップでも、数秒で最適化された MP4 ファイルとして手に入ります。アプリのインストールも、ブラウザー拡張機能も、アカウント登録も必要ありません。すべてブラウザー上で動作するため、リンクを貼り付けてダウンロードするだけです。</p>
+        <p>TikSaveHub は、公開されている Snapchat の動画を高画質のまま、オリジナル画質で端末に直接保存できる無料の Snapchat 動画 ダウンローダー です。話題の Spotlight クリップでも、残しておきたいクリエイターのスナップでも、数秒で最適化された MP4 ファイルとして手に入ります。アプリのインストールも、ブラウザー拡張機能も、アカウント登録も必要ありません。すべてブラウザー上で動作するため、リンクを貼り付けてダウンロードするだけです。</p>
         <h3>Snapchat 動画 ダウンローダー の 使い方</h3>
         <p>Snapchat アプリを開き、保存したい動画を探します。共有アイコンをタップするか URL をコピーしてリンクを取得します。Spotlight の動画、公開投稿、Story のリンクはどれも対応しています。その後 TikSaveHub に戻り、ページ上部の入力欄にリンクを貼り付けてダウンロードボタンを押します。サーバーが数秒で動画の情報を取得し、タイトル、サムネイル、HD 版と SD 版の選択肢が表示されます。好みのほうを選ぶと、ファイルは端末に直接保存されます。</p>
-        <h3>透かしなしで Snapchat の動画を HD 画質でダウンロード</h3>
-        <p>TikSaveHub は、お探しの透かしなし Snapchat 動画 ダウンローダー です。最高で 1080p までの解像度で、透かしやロゴを一切加えずに動画を取得します。snapchat.com/spotlight/… や snapchat.com/p/… 形式のリンクを貼り付けて「HD 動画をダウンロード」をタップするだけです。元の画質はそのまま保持され、再エンコードも圧縮もされないため、オフラインで視聴したり、自分のチャンネルで共有したり、お気に入りのコンテンツをずっと保存したりできます。</p>
+        <h3>Snapchat の動画を HD 画質でダウンロード — オリジナル画質</h3>
+        <p>TikSaveHub は Snapchat の動画を最高 1080p までの解像度で取得し、こちらから何も追加しません。ストーリーと公開投稿は、投稿されたそのままの状態で届きます。一方、Spotlight クリップには Snapchat 自身が追加するロゴとユーザー名のオーバーレイが含まれます — それは Snapchat が公開する唯一のファイルに焼き込まれているため、そのままお届けします。snapchat.com/spotlight/… や snapchat.com/p/… 形式のリンクを貼り付けて「HD 動画をダウンロード」をタップするだけです。元の画質はそのまま保持され、再エンコードも圧縮もされないため、オフラインで視聴したり、自分のチャンネルで共有したり、お気に入りのコンテンツをずっと保存したりできます。</p>
         <h3>iPhone、Android、PC、Mac どの端末でも使えます</h3>
         <p>TikSaveHub はブラウザーだけで完結するため、別のアプリをインストールする必要はありません。iPhone 用の Snapchat ダウンローダー、Android 用の Snapchat ダウンローダー、デスクトップ用のツールは、実はどれも同じものです。Android では MP4 が自動的にギャラリーに表示され、iPhone では Safari のダウンロード一覧から「ビデオを保存」を選ぶと写真に追加されます。パソコンではダウンロードフォルダに保存されます。空き容量を節約でき、サードパーティ製アプリのリスクも避けられます。</p>
         <p>ダウンロードされるのは、利用可能な最高解像度の MP4 ファイルです。クリエイターが HD でアップロードしていれば HD、容量を抑えたい場合は SD を選べます。音声はオリジナルのまま保持され、何も上書きされません。TikSaveHub は無料で、毎日の利用上限やプレミアムプラン、隠れた料金は一切ありません。</p>
@@ -109,7 +109,7 @@ const faqJsonLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'F
             <a href="/ja/facebook-video-downloader" class="related-tool-link">Facebook ビデオ ダウンローダー</a>
             <a href="/ja/x-video-downloader" class="related-tool-link">X/Twitter ビデオ ダウンローダー</a>
             <a href="/ja/compare/snapchat-vs-tiktok-downloader" class="related-tool-link">比較: Snapchat vs TikTok</a>
-            <a href="/ja/blog/snapchat-douga-download-houhou" class="related-tool-link">Snapchat動画をウォーターマークなしでダウンロードする方法：完全ガイド</a>
+            <a href="/ja/blog/snapchat-douga-download-houhou" class="related-tool-link">Snapchat動画をオリジナル画質でダウンロードする方法：完全ガイド</a>
             <a href="/ja/blog/snapchat-story-download" class="related-tool-link">SnapchatのStoryをダウンロードする方法：iPhone・Android・PC対応</a>
       </div>
     </div>

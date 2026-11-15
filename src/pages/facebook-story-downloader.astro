@@ -136,24 +136,11 @@ const howToJsonLd = JSON.stringify({
  },
 });
 
-const webAppJsonLd = JSON.stringify({
- '@context': 'https://schema.org',
- '@type': 'WebApplication',
- name: 'TikSaveHub - Facebook Story Downloader',
- url: 'https://tiksavehub.com/facebook-story-downloader',
- applicationCategory: 'MultimediaApplication',
- operatingSystem: 'Any',
- offers: {
- '@type': 'Offer',
- price: '0',
- priceCurrency: 'USD',
- },
- description: 'Free online Facebook story downloader. Save FB stories as HD MP4 videos or JPG images without watermark.',
-});
-
 const combinedJsonLd = JSON.stringify({
  '@context': 'https://schema.org',
- '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd), JSON.parse(webAppJsonLd)],
+ // WebApplication removed: Google's software-app rich result requires
+ // aggregateRating|review (we have none) — it failed Site Audit validation.
+ '@graph': [JSON.parse(faqJsonLd), JSON.parse(howToJsonLd)],
 });
 ---
 

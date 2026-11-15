@@ -17,6 +17,9 @@ interface Props {
   noindex?: boolean;
   platform?: 'tiktok' | 'instagram' | 'facebook' | 'x' | 'snapchat';
   jsonLd?: string;
+  // No-op props kept for call-site compatibility: the SoftwareApplication
+  // schema was removed from the layout (missing Google-required
+  // aggregateRating|review, 145 Site Audit errors) — see AGENTS.md.
   appName?: string;
   skipSoftwareApp?: boolean;
   heroImage?: string;
@@ -36,8 +39,6 @@ const {
   noindex = false,
   platform = 'tiktok',
   jsonLd,
-  appName = 'TikSaveHub',
-  skipSoftwareApp = false,
   heroImage,
   lang: propLang,
   localizedHreflang = true,
@@ -85,38 +86,12 @@ const canonicalURL = new URL(normalizedCanonicalPath, siteURL);
 
 const ogImageURL = new URL(ogImage, siteURL);
 
-// Centralized SoftwareApplication (WebApplication) JSON-LD — emitted on every indexable page.
-const softwareAppSchema: Record<string, unknown> = {
-  '@type': 'SoftwareApplication',
-  name: appName,
-  url: canonicalURL.toString(),
-  image: ogImageURL.toString(),
-  description: metaDescription,
-  applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'Web',
-  inLanguage: currentLang,
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-    category: 'Free',
-  },
-  author: {
-    '@type': 'Organization',
-    name: 'TikSaveHub',
-    url: siteURL.toString(),
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: 'TikSaveHub',
-    url: siteURL.toString(),
-  },
-};
-
+// Page-level JSON-LD only. The central SoftwareApplication node was removed:
+// Google's Software App rich result requires aggregateRating or review, which
+// this site cannot honestly provide (site not launched, no real ratings) —
+// adding a fake rating risks a manual action. Without it the schema fails
+// rich-results validation, so pages emit their own eligible types instead.
 const graph: Record<string, unknown>[] = [];
-if (!noindex && !skipSoftwareApp) {
-  graph.push(softwareAppSchema);
-}
 if (jsonLd) {
   try {
     const parsed = JSON.parse(jsonLd) as Record<string, unknown> | Record<string, unknown>[];

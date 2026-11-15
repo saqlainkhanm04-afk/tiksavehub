@@ -4,8 +4,11 @@
 # https://tiksavehub.com/robots.txt
 #
 # Policy: every crawler is welcome — classic search engines, AI search /
-# answer engines, and AI training crawlers. The AI agents are named explicitly
-# so the intent is unambiguous and auditable.
+# answer engines, and AI training crawlers. ONE policy, applied uniformly:
+# every group below states the exact same rules (Allow everything except the
+# JSON API and admin paths), so no bot is ever Disallowed in one group and
+# Allowed in another. Named groups exist only to make the intent explicit
+# and auditable for each well-known crawler.
 #
 # IMPORTANT: this file only controls what the origin serves. If a proxy/CDN
 # prepends a "managed" robots block that disallows these agents, the stricter
@@ -13,7 +16,24 @@
 # takes precedence). Keep any edge "Managed robots.txt" / AI Crawl Control
 # feature disabled for this zone, otherwise these Allow rules are overridden.
 
+# ── Universal policy (applies to every bot without a group below) ──
 User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# ── Google crawler families (explicit Allow, identical rules) ──
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+User-agent: Google-CloudVertexBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+User-agent: Googlebot-Other
 Allow: /
 Disallow: /api/
 Disallow: /admin/
@@ -21,31 +41,44 @@ Disallow: /admin/
 # ── AI search / answer engines (they must be able to crawl to cite us) ──
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 # ── AI assistants + training crawlers (same open policy, no mixed signals) ──
 User-agent: GPTBot
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 User-agent: anthropic-ai
 Allow: /
-
-User-agent: Google-Extended
-Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 User-agent: CCBot
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
 # Sitemap directive — exactly once, at the bottom.
 Sitemap: https://tiksavehub.com/sitemap-index.xml

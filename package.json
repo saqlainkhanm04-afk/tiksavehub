@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
+    "check:regressions": "node scripts/check-regressions.mjs",
     "indexnow": "node scripts/indexnow.js"
   },
   "dependencies": {

@@ -9,6 +9,7 @@ import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 import { posts } from './src/data/blog-posts.js';
 import { postsByLang } from './src/data/blog-i18n/index.js';
+import { isNoindexedPath } from './src/lib/indexing.js';
 
 const site = 'https://tiksavehub.com';
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
@@ -26,6 +27,10 @@ function sitemapSourceFor(pathname) {
 
   // Blog post bodies live in one data module, not in individual page files.
   if (clean.startsWith('blog/')) return join(projectRoot, 'src/data/blog-posts.js');
+  const localizedBlog = clean.match(/^(es|ja|fr|de|pt|ko|it)\/blog\//);
+  if (localizedBlog) {
+    return join(projectRoot, `src/data/blog-i18n/${localizedBlog[1]}.js`);
+  }
 
   const candidates = [
     join(projectRoot, 'src/pages', `${clean}.astro`),
@@ -93,7 +98,7 @@ const customPages = [
   ...Object.entries(postsByLang).flatMap(([lang, list]) =>
     list.map((p) => `${site}/${lang}/blog/${p.slug}`)
   ),
-];
+].filter((url) => !isNoindexedPath(new URL(url).pathname));
 
 const isProd = process.argv.includes('build') || process.argv.includes('preview');
 
@@ -116,6 +121,7 @@ export default defineConfig({
       filter: (page) => {
         const { pathname } = new URL(page);
         if (pathname === '/404' || pathname === '/500') return false;
+        if (isNoindexedPath(pathname)) return false;
         if (pathname === '/') return true;
         if (pathname.endsWith('/')) {
           // Locale homepages like /de/ are a single segment ending in a slash.

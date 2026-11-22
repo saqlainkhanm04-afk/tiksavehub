@@ -6,6 +6,7 @@ import '../styles/global.css';
 import { getLangFromUrl, getAlternateLangLinks } from '../i18n/utils';
 import { languages, localeCodes } from '../i18n/ui';
 import { seoDescription, seoTitle, type DescriptionKind } from '../lib/seo';
+import { isNoindexedPath } from '../lib/indexing.js';
 
 interface Props {
   title?: string;
@@ -82,7 +83,27 @@ const canonicalPath = detectedLocale && !rawCanonical.startsWith(`/${detectedLoc
   : rawCanonical;
 const normalizedCanonicalPath =
   canonicalPath === '/' ? '/' : canonicalPath.replace(/\/+$/, '');
-const canonicalURL = new URL(normalizedCanonicalPath, siteURL);
+// Root is emitted without a trailing slash so canonical, hreflang, og:url and
+// sitemap all agree with trailingSlash: 'never' (sitemap emits the bare origin).
+const canonicalURL =
+  normalizedCanonicalPath === '/' ? siteURL : new URL(normalizedCanonicalPath, siteURL).toString();
+
+// Central indexation policy (all localized pages outside the owner keep list).
+// A page-level noindex prop still wins, so 404/500 keep working unchanged.
+const policyNoindex = isNoindexedPath(Astro.url.pathname);
+const shouldNoindex = noindex || policyNoindex;
+
+function pathOfHref(href: string): string {
+  try {
+    return new URL(href, siteURL).pathname;
+  } catch {
+    return href;
+  }
+}
+
+function indexableAlternates(links: Array<{ lang: string; href: string }>) {
+  return links.filter(({ href }) => !isNoindexedPath(pathOfHref(href)));
+}
 
 const ogImageURL = new URL(ogImage, siteURL);
 
@@ -128,44 +149,54 @@ const structuredData =
     <link rel="alternate" type="application/rss+xml" title="TikSaveHub Blog" href="/rss.xml" />
 
     {(() => {
-      // Noindex error pages must not advertise locale variants that don't exist.
-      if (noindex) return null;
+      // Noindex pages (404/500, localized pages outside the keep list) must not
+      // advertise alternates — they are excluded from the index and sitemap.
+      if (shouldNoindex) return null;
       // Pages can supply an explicit hreflang set (e.g. localized blog posts
       // whose slugs differ per language). When provided, it wins over the
-      // path-derived alternates.
+      // path-derived alternates. Drop any alternate that is itself noindexed.
       if (hreflangAlternates && hreflangAlternates.length > 0) {
-        return hreflangAlternates.map(({ lang: altLang, href }) => (
+        const links = indexableAlternates(hreflangAlternates);
+        if (!links.some(({ lang: altLang }) => altLang === 'en')) {
+          links.unshift({ lang: 'en', href: canonicalURL });
+        }
+        return links.map(({ lang: altLang, href }) => (
           <link rel="alternate" hreflang={altLang} href={href} />
         ));
       }
-      // English-only pages (e.g. blog posts) must not declare localized
-      // alternates: "/de/blog/{slug}" does not exist and would 404.
-      if (localizedHreflang === false) return null;
+      // English-only pages (e.g. blog posts, English-only tool pages) must not
+      // declare localized alternates: "/de/blog/{slug}" does not exist and
+      // would 404. They still need an explicit en self-reference.
+      if (localizedHreflang === false) {
+        return <link rel="alternate" hreflang="en" href={canonicalURL} />;
+      }
       // Strip the locale prefix from the pathname so alternates are built from
       // the base path (e.g. "/de/blog" → "/blog", then each locale gets its
       // own prefixed version: /ja/blog, /es/blog, /blog for English).
       const baseHreflangPath = detectedLocale
         ? '/' + Astro.url.pathname.split('/').slice(2).join('/').replace(/\/+$/, '') || '/'
         : Astro.url.pathname;
-      const altLinks = getAlternateLangLinks(baseHreflangPath, siteURL);
+      const altLinks = indexableAlternates(getAlternateLangLinks(baseHreflangPath, siteURL));
       return altLinks.map(({ lang: altLang, href }) => (
         <link rel="alternate" hreflang={altLang} href={href} />
       ));
     })()}
     {/* x-default: explicit override when provided, else the English (no-locale) version.
-        Noindex pages (404/500) emit no hreflang at all — their locale variants
-        (/es/404 …) don't exist and alternates must not point at 404s. */}
-    {!noindex && (
+        Noindex pages emit no hreflang at all — their locale variants
+        (/es/404 …) don't exist and alternates must not point at noindexed pages. */}
+    {!shouldNoindex && (
       <link rel="alternate" hreflang="x-default" href={xDefaultHref ?? `${siteURL}${(() => {
-        const p = rawCanonical === '/' ? '/' : rawCanonical.replace(/\/+$/, '');
+        const p = rawCanonical === '/' ? '' : rawCanonical.replace(/\/+$/, '');
         return detectedLocale && p.startsWith(`/${detectedLocale}/`)
           ? p.slice(detectedLocale.length + 1) || '/'
           : p;
       })()}`} />
     )}
 
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
-    {!noindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
+    {shouldNoindex && (
+      <meta name="robots" content={policyNoindex ? 'noindex, follow' : 'noindex, nofollow'} />
+    )}
+    {!shouldNoindex && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />

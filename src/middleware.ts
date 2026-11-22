@@ -19,8 +19,8 @@ import { primeCfEnv } from './lib/env';
  *   style-src:  self, unsafe-inline, fonts.googleapis.com (Tailwind + component <style>)
  *   img-src:    self, data:, blob:, *.fbcdn.net, *.cdninstagram.com,
  *               *.tiktokcdn.com, *.tiktokcdn-us.com, pbs.twimg.com, video.twimg.com,
- *               *.twimg.com, *.snapcdn.com, *.sc-cdn.net, *.savefromins.com,
- *               marketingdb.live (footer badge; savefromins serves IG covers)
+ *               *.twimg.com, *.snapcdn.com, *.sc-cdn.net, *.savefromins.com
+ *               (savefromins serves IG covers)
  *   connect-src: self, google-analytics.com, challenges.cloudflare.com
  *   font-src:   self, fonts.gstatic.com
  *   frame-src:  self, challenges.cloudflare.com (Turnstile iframe)
@@ -41,7 +41,7 @@ const SECURITY_HEADERS: Record<string, string> = {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://*.fbcdn.net https://*.cdninstagram.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://pbs.twimg.com https://video.twimg.com https://*.twimg.com https://*.snapcdn.com https://*.sc-cdn.net https://api-ak.savefromins.com https://*.savefromins.com https://marketingdb.live",
+    "img-src 'self' data: blob: https://*.fbcdn.net https://*.cdninstagram.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://pbs.twimg.com https://video.twimg.com https://*.twimg.com https://*.snapcdn.com https://*.sc-cdn.net https://api-ak.savefromins.com https://*.savefromins.com",
     "connect-src 'self' https://www.google-analytics.com https://challenges.cloudflare.com",
     "font-src 'self' https://fonts.gstatic.com",
     "frame-src 'self' https://challenges.cloudflare.com",
@@ -129,7 +129,10 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   /* ── 4. Cache-Control for HTML pages (Cloudflare edge caching) ─────────── */
   const contentType = response.headers.get('content-type') || '';
   const newHeaders = new Headers(response.headers);
-  if (contentType.includes('text/html')) {
+  if (response.status >= 400) {
+    // Never let a 404/500 HTML page be cached at the edge or in the browser.
+    newHeaders.set('Cache-Control', 'no-store');
+  } else if (contentType.includes('text/html')) {
     // Cache HTML on Cloudflare edge for 5 minutes (300s), browser for 60s.
     // Stale-while-revalidate serves cached page while fetching fresh copy.
     newHeaders.set('Cache-Control', 'public, s-maxage=300, max-age=60, stale-while-revalidate=86400');

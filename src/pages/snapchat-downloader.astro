@@ -5,120 +5,92 @@ export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
 import SnapchatDownloadForm from '../components/SnapchatDownloadForm.astro';
-import StatsSection from '../components/StatsSection.astro';
 import SocialShare from '../components/SocialShare.astro';
 
 const faqData = [
   {
-  id: 'sc-faq-private',
-  q: 'Does this work for private Snapchat accounts?',
-  a: 'No. TikSaveHub only works for public Stories and Spotlight clips. We do not support private accounts because bypassing account privacy is a violation of our terms and Snapchat\'s security.',
+    id: 'sc-faq-private',
+    q: 'Does this work for private Snapchat accounts?',
+    a: 'No. TikSaveHub only reads public Snapchat links. Private snaps and friends-only Stories are not accessible without an account, and this tool never asks for your Snapchat login. Memories are account-private by default and are not supported here.',
   },
   {
-  id: 'sc-faq-expire',
-  q: 'Why do some video links fail to download?',
-  a: 'Snapchat links expire quickly. If a Story was posted more than 24 hours ago, or if the Spotlight video was deleted by the creator, the link will return a 404 error. Always copy a fresh link.',
+    id: 'sc-faq-expire',
+    q: 'Why do some Snapchat links fail?',
+    a: 'Most Snapchat Stories expire after about 24 hours, public share links expire after around 36 hours, and creators can delete posts or change them to friends-only. If the public page no longer exposes a media file, TikSaveHub returns an error instead of a broken download. Try a fresh public link.',
   },
   {
-  id: 'sc-faq-notify',
-  q: 'Will the creator know I downloaded their video?',
-  a: 'No. Our tool acts as an external web client. It fetches the public media file without sending any notification or read receipt to the original creator.',
+    id: 'sc-faq-notify',
+    q: 'Will the creator know I downloaded their video?',
+    a: 'TikSaveHub does not send a read receipt or notification. It fetches the public file from Snapchat\'s CDN without logging in. Snapchat\'s screenshot alerts do not apply because the tool is not capturing your screen. We cannot control whether Snapchat or the creator uses other signals.',
   },
   {
-  id: 'sc-faq-iphone',
-  q: 'Can I download Snapchat videos on iPhone?',
-  a: 'Yes. Because we are a web-based tool, you don\'t need an app. Just open Safari or Chrome on your iPhone, paste the link, and click download. The file will save to your Files app or Photos.',
+    id: 'sc-faq-iphone',
+    q: 'Can I download Snapchat videos on iPhone and Android?',
+    a: 'Yes. Open tiksavehub.com/snapchat-downloader in Safari or Chrome, paste the public link, and download. On iPhone the MP4 goes to Files; open it and choose Share > Save Video to add it to Photos. On Android it goes to Downloads, and Gallery usually indexes it.',
   },
   {
-  id: 'sc-faq-spotlight-overlay',
-  q: 'Do Spotlight downloads include a watermark?',
-  a: 'Snapchat adds its own automatic overlay — the ghost logo and creator username — to Spotlight videos, and it is baked into every public copy Snapchat serves. That overlay is part of the file, so we deliver it exactly as-is instead of pretending it isn\'t there. Stories and public posts come through as the original clean file, and TikSaveHub never adds a watermark of its own.',
+    id: 'sc-faq-spotlight-overlay',
+    q: 'Do Spotlight downloads include a watermark?',
+    a: 'Spotlight files can include Snapchat\'s ghost logo and username overlay because Snapchat may include it in the public file. TikSaveHub delivers that file as-is and does not add a watermark of its own. TikSaveHub does not add an overlay to Stories or public posts, and it does not re-encode or paint over Snapchat\'s overlay.',
+  },
+  {
+    id: 'sc-faq-memories',
+    q: 'Can I download Snapchat Memories or private snaps?',
+    a: 'TikSaveHub does not target Memories. They are private by default; if you create a shareable link to a Memory, anyone with that link can view it, but Memory links are not a supported category here. To save your own Memories, open Snapchat, go to Memories, select the items, tap Export, then choose where to save them. TikSaveHub only handles public Spotlight, Story, and post links.',
   },
 ];
 
-const paaData = [
-  {
-  id: 'sc-paa-no-watermark',
-  q: 'How do I download a Snapchat video without watermark?',
-  a: 'Paste the Snapchat link into TikSaveHub and tap Download. The tool fetches the original MP4 straight from Snapchat\'s CDN and never adds a watermark of its own. Stories and posts arrive clean exactly as they were posted. Spotlight clips include Snapchat\'s built-in logo and username overlay, because that is the only copy Snapchat publishes — no tool can strip it without re-encoding the video.',
-  },
-  {
-  id: 'sc-paa-stories-expire',
-  q: 'Can I download Snapchat stories before they expire?',
-  a: 'Yes, and you should hurry. Stories vanish after 24 hours and then disappear for good, so a Snapchat story downloader online needs the link before that window closes. Paste the story.snapchat.com URL into TikSaveHub immediately and save the MP4 to keep it forever.',
-  },
-  {
-  id: 'sc-paa-quality',
-  q: 'What quality are Snapchat video downloads?',
-  a: 'TikSaveHub downloads Snapchat videos in the highest available resolution, up to 1080p. Choose HD for full quality or SD for a smaller file when storage is tight. The tool never re-encodes, so every Snapchat video download MP4 matches the original upload exactly.',
-  },
-];
-
-// FAQPage Schema (all visible FAQ questions)
-const faqJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqData.map((faq) => ({
-    '@type': 'Question',
-    name: faq.q,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.a.replace(/<[^>]*>/g, ''),
-    },
-  })),
-});
-
-// HowTo Schema
 const howToJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'HowTo',
-  name: 'How to Download Snapchat Videos in Original Quality',
-  description: 'Step-by-step guide to download Snapchat videos, Spotlight clips, and Stories in HD original quality using TikSaveHub. Free, no sign-up required, works on iPhone, Android, and desktop.',
-  totalTime: 'PT2M',
+  name: 'How to Download a Snapchat Video',
+  description: 'Copy a public Snapchat link, paste it into TikSaveHub, download the file, and save it to your device. No account or app is required.',
   step: [
-  {
-  '@type': 'HowToStep',
-  position: 1,
-  name: 'Copy the Snapchat link',
-  text: 'Open the Snapchat app or website, find the video, Spotlight clip, or Story you want to download. Tap the Share button and select Copy Link, or copy the URL from the address bar.',
-  url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
-  },
-  {
-  '@type': 'HowToStep',
-  position: 2,
-  name: 'Paste the link into TikSaveHub',
-  text: 'Go to TikSaveHub.com/snapchat-downloader and paste the copied Snapchat link into the input field at the top of the page. Use the Paste button to grab it from your clipboard instantly.',
-  url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
-  },
-  {
-  '@type': 'HowToStep',
-  position: 3,
-  name: 'Select quality and download',
-  text: 'Click the Download button. Choose Download HD Video (up to 1080p) for full quality or Download SD Video for a smaller file. The MP4 saves directly to your device. You can also extract audio as MP3.',
-  url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
-  },
+    {
+      '@type': 'HowToStep',
+      position: 1,
+      name: 'Copy the public Snapchat link',
+      text: 'Open the public Spotlight clip, Story, or post in Snapchat and choose Share > Copy Link. Private snaps and friends-only Stories do not have a public link; Memories are not supported by this tool.',
+      url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 2,
+      name: 'Paste the link into TikSaveHub',
+      text: 'Paste the copied link into the input field at the top of this page.',
+      url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 3,
+      name: 'Download the file',
+      text: 'Choose HD for the highest rendition Snapchat exposes, or SD for a smaller file. The Audio tab opens the separate Snapchat to MP3 tool.',
+      url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
+    },
+    {
+      '@type': 'HowToStep',
+      position: 4,
+      name: 'Save it to your device',
+      text: 'On iPhone, open the file in Files and choose Share > Save Video. On Android, the file lands in Downloads and Gallery. On desktop, check the browser downloads folder.',
+      url: 'https://tiksavehub.com/snapchat-downloader#how-it-works',
+    },
   ],
   tool: [
-  { '@type': 'HowToTool', name: 'TikSaveHub' },
-  { '@type': 'HowToTool', name: 'Web Browser (Chrome, Safari, Firefox, Edge)' },
-  { '@type': 'HowToTool', name: 'Internet Connection' },
+    { '@type': 'HowToTool', name: 'TikSaveHub' },
+    { '@type': 'HowToTool', name: 'Web Browser' },
   ],
-  supply: [
-  { '@type': 'HowToSupply', name: 'Snapchat Video URL' },
-  ],
+  supply: [{ '@type': 'HowToSupply', name: 'Public Snapchat URL' }],
 });
 
-// BreadcrumbList Schema
 const breadcrumbJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-  { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://tiksavehub.com' },
-  { '@type': 'ListItem', 'position': 2, 'name': 'Snapchat Video Downloader', 'item': 'https://tiksavehub.com/snapchat-downloader' }
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tiksavehub.com' },
+    { '@type': 'ListItem', position: 2, name: 'Snapchat Video Downloader', item: 'https://tiksavehub.com/snapchat-downloader' },
   ],
 });
 
-// Person schema (founder: Samneil)
 const personJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -139,7 +111,6 @@ const personJsonLd = JSON.stringify({
   },
 });
 
-// Organization schema (TikSaveHub)
 const organizationJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -158,12 +129,20 @@ const organizationJsonLd = JSON.stringify({
   },
 });
 
-// SoftwareApplication is emitted once, centrally, by Layout.astro (dynamic
-// per-page `appName`), so it is intentionally NOT repeated in this graph.
 const combinedJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
-    JSON.parse(faqJsonLd),
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqData.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
     JSON.parse(howToJsonLd),
     JSON.parse(breadcrumbJsonLd),
     JSON.parse(personJsonLd),
@@ -173,9 +152,9 @@ const combinedJsonLd = JSON.stringify({
 ---
 
 <Layout
-  title="Snapchat Video Downloader - Save Original Quality Snaps"
-  description="Download Snapchat videos in HD with our free Snapchat video downloader. Save Spotlight clips and Stories in original quality on iPhone, Android, or PC."
-  keywords="snapchat video downloader without watermark, snapchat downloader without watermark, snapchat video downloader online, snapchat video downloader hd, snapchat video downloader, download snapchat video, snapchat story downloader, save snapchat video, free snapchat downloader, snapchat hd download, no watermark, snapchat spotlight downloader, online snapchat download, snapchat download video without watermark, free video downloader, video downloader without watermark"
+  title="Snapchat Video Downloader - Save Public Snaps"
+  description="Download public Snapchat Spotlight clips, Stories, and posts in the highest quality Snapchat serves. Free, no account, no app, and no watermark added by us."
+  keywords="snapchat video downloader, snapchat spotlight downloader, snapchat story downloader, download snapchat video, snapchat video download, save snapchat video"
   canonical="/snapchat-downloader"
   ogImage="/og-downloader.png"
   ogType="website"
@@ -183,758 +162,366 @@ const combinedJsonLd = JSON.stringify({
   jsonLd={combinedJsonLd}
   appName="TikSaveHub - Snapchat Video Downloader"
 >
- <!-- Hero Section -->
- <section class="dl-hero" aria-labelledby="dl-hero-headline">
- <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
- <div class="dl-hero-inner container-page">
- <!-- Breadcrumb -->
- <nav aria-label="Breadcrumb" class="dl-breadcrumb">
- <ol class="breadcrumb-list">
- <li>
- <a href="/"><span>Home</span></a>
- </li>
- <li aria-current="page">
- <span>Snapchat Video Downloader</span>
- </li>
- </ol>
- </nav>
+  <section class="dl-hero" aria-labelledby="dl-hero-headline">
+    <div class="dl-hero-gradient gradient-mesh" aria-hidden="true"></div>
+    <div class="dl-hero-inner container-page">
+      <nav aria-label="Breadcrumb" class="dl-breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a href="/"><span>Home</span></a></li>
+          <li aria-current="page"><span>Snapchat Video Downloader</span></li>
+        </ol>
+      </nav>
 
- <div class="dl-badge-row">
- <span class="badge-pill dl-badge">
- <span class="badge-dot" aria-hidden="true"></span>
- Free · HD Quality · Instant Download
- </span>
- </div>
+      <div class="dl-badge-row">
+        <span class="badge-pill dl-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Public links only · No sign-up
+        </span>
+      </div>
 
-<h1 id="dl-hero-headline" class="dl-hero-headline">
-  Snapchat Video Downloader - Save Original Quality Snaps
-  </h1>
+      <h1 id="dl-hero-headline" class="dl-hero-headline">
+        Snapchat Video Downloader - Save Public Snaps
+      </h1>
 
-  <div class="dl-hero-define">
-  <p>
-  Download public Stories, Spotlight clips, and Snapchat videos in HD. No signup, no app installation — you get the original file exactly as Snapchat serves it. Built for speed.
-  </p>
-  </div>
+      <div class="dl-hero-define">
+        <p>
+          Download public Spotlight clips, Stories, and Snapchat posts in the highest quality Snapchat serves. No account, no app; the file comes from Snapchat's public CDN.
+        </p>
+      </div>
 
- <div class="dl-hero-form-wrap">
- <SnapchatDownloadForm mode="video" />
- </div>
+      <div class="dl-hero-form-wrap">
+        <SnapchatDownloadForm mode="video" />
+      </div>
 
- <div class="dl-hero-trust">
- <span class="trust-chip">
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
- 100% Free
- </span>
- <span class="trust-chip">
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
- No Sign-Up
- </span>
- <span class="trust-chip">
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
- HD Quality
- </span>
- <span class="trust-chip">
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
- MP3 Audio
- </span>
- <span class="trust-chip">
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
- Works on Mobile
- </span>
- </div>
-
- <div class="dl-hero-share">
- <SocialShare
- url="/snapchat-downloader"
- title="Snapchat Video Downloader. HD, Free, Fast"
- description="Download Snapchat videos in HD. Free, fast, no sign-up. MP4 or MP3."
- image="/og-downloader.png"
- />
- </div>
- </div>
- </section>
-
- <!-- Stats -->
- <StatsSection platform="Snapchat" />
-
- <!-- Why Downloading from Snapchat is Actually Hard -->
- <section class="dl-steps-section" aria-labelledby="sc-why-headline">
- <div class="dl-steps-inner container-page">
- <div class="dl-steps-header">
- <span class="section-eyebrow text-caption-mono">The Challenge</span>
- <h2 id="sc-why-headline" class="section-headline">
- Why Downloading from Snapchat is Actually Hard
- </h2>
- </div>
- <div style="max-width: 760px; margin: 0 auto; text-align: left;">
- <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0 0 var(--spacing-md) 0;">
- Most people think downloading a Snapchat video is just like saving a TikTok. It is not. Snapchat has no public download button, Stories disappear after 24 hours, and the file you get depends on the type of content. Stories and public posts are served as the original file the creator uploaded. Spotlight clips are different: Snapchat adds its own automatic overlay — the ghost logo and the creator's username — and bakes it into the only public copy it publishes.
- </p>
- <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0;">
- I built TikSaveHub because every other tool I tried was failing. They would either give me a broken file, a video with ads plastered over the player, or they just wouldn't load. TikSaveHub reads the same page data Snapchat itself uses and fetches the media file straight from Snapchat's CDN at the highest quality available, with no re-encoding. That overlay on Spotlight videos is part of the file Snapchat provides — we deliver it exactly as-is. We never add a watermark of our own, and we don't alter the original file.
- </p>
- </div>
- </div>
- </section>
-
- <!-- How to Save Snapchat Videos (Step-by-Step) -->
- <section id="how-it-works" class="dl-steps-section" aria-labelledby="sc-steps-headline">
- <div class="dl-steps-inner container-page">
- <div class="dl-steps-header">
- <span class="section-eyebrow text-caption-mono">Step-by-Step Guide</span>
- <h2 id="sc-steps-headline" class="section-headline">
- How to Save Snapchat Videos (Step-by-Step)
- </h2>
- <p class="section-sub text-body-lg">
- The process is simple, but it depends on what you are trying to download.
- </p>
- </div>
- <div style="max-width: 760px; margin: 0 auto; text-align: left;">
- <ol style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; padding-left: 1.25em;">
-  <li style="margin: 0 0 var(--spacing-md) 0;"><strong style="color: var(--color-ink);">Find the Content:</strong> Open Snapchat and navigate to the Story, Spotlight video, or public post you want to save.</li>
-  <li style="margin: 0 0 var(--spacing-md) 0;"><strong style="color: var(--color-ink);">Copy the Link:</strong> Tap the three dots (or the Share icon) and select "Copy Link". Note: This only works for public content. If it is a private snap sent directly to you, you cannot download it (and you shouldn't try to).
-    <div class="my-6 max-w-sm mx-auto rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-900">
-      <img src="/images/snapchat-copy-link.webp" alt="How to copy Snapchat video link on mobile" width="706" height="1079" loading="lazy" class="w-full h-auto object-cover" />
+      <p class="sc-form-note">
+        Public links only. Private snaps, friends-only Stories, and Memories are not supported.
+      </p>
     </div>
-  </li>
-  <li style="margin: 0 0 var(--spacing-md) 0;"><strong style="color: var(--color-ink);">Paste and Process:</strong> Open our Snapchat Downloader page and paste the URL into the input field. Hit "Download".
-    <div class="my-6 rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-900">
-      <img src="/images/snapchat-paste-link.webp" alt="Paste Snapchat link into TikSaveHub" width="1034" height="409" loading="lazy" class="w-full h-auto object-cover" />
+  </section>
+
+  <section class="dl-steps-section" aria-labelledby="sc-why-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Why this exists</span>
+        <h2 id="sc-why-headline" class="section-headline">
+          A downloader I built because the others kept failing.
+        </h2>
+      </div>
+      <div style="max-width: 760px; margin: 0 auto; text-align: left;">
+        <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0 0 var(--spacing-md) 0;">
+          Most people assume saving a Snapchat video works like saving a TikTok. It does not. Snapchat's public pages do not offer a download button for other people's posts, most Stories disappear after about 24 hours, and Spotlight clips can carry Snapchat's own overlay in the public file Snapchat serves.
+        </p>
+        <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0;">
+          I built TikSaveHub because the tools I tried kept failing: broken files, ad-covered players, or links that never resolved. This page reads the public Snapchat page, takes the media URL Snapchat exposes, and streams the file from its CDN. It does not log in, re-encode, or add a watermark. I wrote the full walkthrough in <a href="/blog/how-to-download-snapchat-videos-without-watermark" style="color: var(--color-link); text-decoration: underline; text-underline-offset: 2px;">How to Download Snapchat Videos Without Watermark</a>, and you can read more about me on the <a href="/authors/samneil" style="color: var(--color-link); text-decoration: underline; text-underline-offset: 2px;">author page</a>.
+        </p>
+      </div>
     </div>
-  </li>
-  <li style="margin: 0;"><strong style="color: var(--color-ink);">Save the File:</strong> The tool will process the link in 2-3 seconds. Tap "Download HD" and the MP4 will save directly to your Camera Roll or Downloads folder.
-    <div class="my-6 rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-900">
-      <img src="/images/snapchat-download-result.webp" alt="Download Snapchat video in HD" width="1916" height="936" loading="lazy" class="w-full h-auto object-cover" />
+  </section>
+
+  <section id="how-it-works" class="dl-steps-section" aria-labelledby="sc-steps-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">How it works</span>
+        <h2 id="sc-steps-headline" class="section-headline">
+          How to save a Snapchat video
+        </h2>
+        <p class="section-sub text-body-lg">
+          Four steps, one public link, no account.
+        </p>
+      </div>
+      <div style="max-width: 760px; margin: 0 auto; text-align: left;">
+        <ol style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; padding-left: 1.25em;">
+          <li style="margin: 0 0 var(--spacing-md) 0;">
+            <strong style="color: var(--color-ink);">Copy the public link:</strong> Open the Spotlight clip, Story, or post in Snapchat and choose Share &gt; Copy Link. Private snaps and friends-only Stories do not have a public link; Memories are not supported by this tool.
+            <div class="my-6 max-w-sm mx-auto rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-900">
+              <img src="/images/snapchat-copy-link.webp" alt="How to copy a Snapchat video link on mobile" width="706" height="1079" loading="lazy" class="w-full h-auto object-cover" />
+            </div>
+          </li>
+          <li style="margin: 0 0 var(--spacing-md) 0;">
+            <strong style="color: var(--color-ink);">Paste it into TikSaveHub:</strong> Use the field at the top of this page. Processing time depends on Snapchat's response; the file transfer depends on its size and your connection.
+            <div class="my-6 rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-900">
+              <img src="/images/snapchat-paste-link.webp" alt="Paste a Snapchat link into TikSaveHub" width="1034" height="409" loading="lazy" class="w-full h-auto object-cover" />
+            </div>
+          </li>
+          <li style="margin: 0 0 var(--spacing-md) 0;">
+            <strong style="color: var(--color-ink);">Download the file:</strong> Choose HD for the highest rendition Snapchat exposes, or SD for a smaller file. The Audio tab opens the separate Snapchat to MP3 tool.
+            <div class="my-6 rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-900">
+              <img src="/images/snapchat-download-result.webp" alt="Download a Snapchat video in HD" width="1916" height="936" loading="lazy" class="w-full h-auto object-cover" />
+            </div>
+          </li>
+          <li style="margin: 0;">
+            <strong style="color: var(--color-ink);">Save it to your device:</strong> On iPhone, open the file in Files and choose Share &gt; Save Video. On Android, it lands in Downloads and Gallery. On desktop, check the browser downloads folder.
+          </li>
+        </ol>
+      </div>
     </div>
-  </li>
- </ol>
- </div>
- </div>
- </section>
-
- <!-- SEO Content Section. 600+ words -->
- <section class="seo-content-section" aria-labelledby="seo-about-headline">
- <div class="seo-content-inner container-page">
- <div class="seo-content-grid">
- <div class="seo-content-main">
- <span class="section-eyebrow text-caption-mono">About TikSaveHub</span>
-  <h2 id="seo-about-headline" class="section-headline">
-  Save Snapchat videos and Spotlight clips online, free, HD, in original quality.
-  </h2>
-
-<div class="seo-article">
-  <p>
-  TikSaveHub is a free Snapchat video downloader that lets you save any public Snapchat video directly to your device in high quality — the original file, exactly as Snapchat serves it. Whether you found a viral Spotlight clip, a creative snap you want to keep, or a video from a creator you follow, TikSaveHub gives you an optimized MP4 file in seconds. No app installation, no browser extension, no account creation. This free video downloader works entirely online, just paste the link and download.
-  </p>
-
-  <p>
-  Need it on the go? This Snapchat video saver needs no signup and works from any browser, so you can save Snapchat videos on iPhone, Android, PC, or Mac with the same form. It is a Snapchat video downloader online free, download Snapchat videos without app installation, and grab the MP4 in seconds. Paste one link or many, download Snapchat videos on Android straight to your gallery, and keep every favorite clip forever.
-  </p>
-
- <h3 class="text-highlight">How the Snapchat video downloader works</h3>
- <p>
- Using TikSaveHub as your online Snapchat video downloader is simple. First, open Snapchat and find the video you want to save. Tap the share button or copy the URL from the address bar to grab the link. Spotlight videos, public posts, and story links all work. Next, come back to TikSaveHub and paste that link into the input field at the top of the page. Click the Download button, and our servers fetch the video metadata in seconds. You will then see a preview with the video title, thumbnail, and options to download the HD or SD version. Click your preferred option and the file saves directly to your device.
- </p>
-
- <h3 class="text-highlight">Download Snapchat videos in HD, original quality</h3>
- <p>
- TikSaveHub fetches Snapchat videos at the highest resolution Snapchat provides, up to 1080p, and never re-encodes, so the file matches the original upload exactly. Paste any snapchat.com/spotlight/… or snapchat.com/p/… link and tap "Download HD Video". Stories and public posts come through with no overlay at all. Spotlight clips are served by Snapchat with its logo and username already part of the video — that overlay is in every public copy, so we deliver the file as-is instead of pretending it isn't there. Either way, TikSaveHub never adds a watermark of its own.
- </p>
-
- <h3 class="text-highlight">Save Spotlight clips, stories, and posts</h3>
-<p>
-Whether you need a Snapchat story downloader online for ephemeral content or want to save a viral Spotlight clip, TikSaveHub handles it all. Standard Spotlight videos (snapchat.com/spotlight/…), public posts (snapchat.com/p/…), and stories (story.snapchat.com/…) are fully supported. TikSaveHub is a dedicated Snapchat Spotlight video downloader: it automatically detects the content type and extracts the best available quality, delivered exactly as Snapchat serves it. Save Snapchat Spotlight clips, save Snapchat stories before they expire, and download any Snapchat video link in one tap, online, from any browser.
-</p>
-
- <h3 class="text-highlight">Extract Snapchat audio as MP3</h3>
- <p>
- Beyond saving videos, you can extract the audio track from any Snapchat video and convert it to high-quality MP3 on the fly. perfect for saving a soundtrack, a voice recording, or a funny audio clip from a Snap. The MP3 is extracted at 128kbps for a balance of quality and file size.
- </p>
-
- <h3 class="text-highlight">Works on any device. Android, iPhone, desktop</h3>
-<p>
-One of the biggest advantages of using TikSaveHub is that it works everywhere as a free online video downloader. Whether you reach for a Snapchat video downloader for iPhone, a Snapchat video downloader for Android, or a desktop tool, you can download Snapchat videos in HD straight from the browser. There is no need to install a separate app, download Snapchat videos without app installation altogether, so you save storage space and avoid the security risks that come with third-party applications. On Android the MP4 lands in your gallery automatically; on iPhone, Safari's Downloads folder does the job. Our tool works on any screen size, from a 6-inch phone screen to a 27-inch desktop monitor.
-</p>
-
- <h3 class="text-highlight">What quality and formats do you get?</h3>
-<p>
-Every download is an MP4 in the best available resolution. HD when the creator uploaded in HD, with an SD option whenever you want a smaller file for limited storage. This Snapchat downloader MP4 always writes standard MP4, so every Snapchat video download MP4 plays on any device, TV, or phone. Want the full resolution? The HD button on this snapchat video downloader 1080p page saves the file exactly as the creator shared it. TikSaveHub never re-encodes and never reduces the quality of the original upload, so you also save the Snapchat video with sound intact, sharp and untouched.
-</p>
-
- <h3 class="text-highlight">Safe, private, and completely free</h3>
- <p>
- We take your privacy seriously. TikSaveHub does not require you to create an account, enter an email address, or provide any personal information. We do not store your download history, and we do not track your browsing behavior. The entire download process runs on our servers, so there is nothing stored on your device except the final video file. And unlike many other Snapchat video saving tools that charge fees or limit downloads, TikSaveHub is a free video downloader with no daily caps. completely free, forever.
- </p>
-
- <p>
- Looking for more tools? You can also download <a href="/tiktok-video-downloader-without-watermark">TikTok videos without watermark</a>, save <a href="/instagram-reels-downloader-without-watermark">Instagram Reels</a>, or grab <a href="/facebook-video-downloader">Facebook videos</a> the same way.
- </p>
-
- <p>
-  Ready to try it? Scroll up and paste your first Snapchat link into the download form. Trusted by users worldwide as the go-to Snapchat video downloader for original-quality saves. No hassle. Just your videos, exactly the way Snapchat serves them.
- </p>
- </div>
- </div>
-
- <aside class="seo-content-sidebar">
- <div class="seo-sidebar-card">
- <h3 class="seo-sidebar-title">Quick Links</h3>
- <ul class="seo-sidebar-list">
- <li><a href="/tiktok-video-downloader-without-watermark">TikTok Video Downloader</a></li>
- <li><a href="/tiktok-to-mp3">TikTok to MP3</a></li>
- <li><a href="/instagram-reels-downloader-without-watermark">Instagram Reels Downloader</a></li>
- <li><a href="/instagram-video-downloader-without-watermark">Instagram Video Downloader</a></li>
- <li><a href="/instagram-story-downloader-without-watermark">Instagram Story Downloader</a></li>
- <li><a href="/instagram-audio-downloader">Instagram Audio Downloader</a></li>
- <li><a href="/facebook-video-downloader">Facebook Video Downloader</a></li>
- <li><a href="/facebook-reels-downloader">Facebook Reels Downloader</a></li>
- <li><a href="/facebook-story-downloader">Facebook Story Downloader</a></li>
- <li><a href="/facebook-to-mp3">Facebook to MP3</a></li>
- <li><a href="/facebook-photo-downloader">Facebook Photo Downloader</a></li>
- <li><a href="/snapchat-downloader">Snapchat Downloader</a></li>
- <li><a href="/snapchat-story-downloader">Snapchat Story Downloader</a></li>
- <li><a href="/snapchat-to-mp3">Snapchat to MP3</a></li>
- <li><a href="/x-video-downloader">X/Twitter Video Downloader</a></li>
- </ul>
- </div>
-
- <div class="seo-sidebar-card">
- <h3 class="seo-sidebar-title">Supported Links</h3>
- <ul class="seo-sidebar-list seo-sidebar-mono">
- <li>snapchat.com/spotlight/…</li>
- <li>snapchat.com/p/…</li>
- <li>story.snapchat.com/s/…</li>
- <li>snapchat.com/add/…</li>
- </ul>
- </div>
-
- <div class="seo-sidebar-card seo-sidebar-highlight">
- <h3 class="seo-sidebar-title">Start Downloading</h3>
- <p class="seo-sidebar-text">Paste a Snapchat link above and get your video in seconds.</p>
- <a href="#dl-hero-headline" class="btn-primary-sm seo-sidebar-cta">Try Now</a>
- </div>
-</aside>
-  </div>
-  </div>
   </section>
 
-  <!-- What is Snapchat Video Downloader -->
-  <section class="dl-steps-section" aria-labelledby="sc-what-is-headline">
-  <div class="dl-steps-inner container-page">
-  <div class="dl-steps-header">
-  <span class="section-eyebrow text-caption-mono">What Is It</span>
-  <h2 id="sc-what-is-headline" class="section-headline">
-  What is a Snapchat video downloader?
-  </h2>
-  </div>
-  <div style="max-width: 760px; margin: 0 auto; text-align: left;">
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0;">
-  A Snapchat video downloader is a free online tool that lets you save public Snapchat videos, Spotlight clips, and Stories to your device as MP4 files in original quality. Unlike screen recording, which captures lower quality and includes UI elements, a downloader fetches the original video stream directly from Snapchat's content delivery network. TikSaveHub's Snapchat video downloader works in any browser on iPhone, Android, PC, or Mac with no sign-up, no app installation, and no daily limits. It supports all public Snapchat URL formats including snapchat.com/spotlight/, snapchat.com/p/, and story.snapchat.com/ links. The tool preserves the original video quality up to 1080p and keeps the audio intact, delivering a ready-to-play MP4 file for offline viewing or sharing.
-  </p>
-  </div>
-  </div>
+  <section class="dl-steps-section" aria-labelledby="sc-formats-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Supported links</span>
+        <h2 id="sc-formats-headline" class="section-headline">
+          Which Snapchat links work
+        </h2>
+        <p class="section-sub text-body-lg">
+          Public links only. If the page no longer exposes a media file, the tool returns an error instead of a broken download.
+        </p>
+      </div>
+      <div class="sc-table-wrap">
+        <table class="sc-table">
+          <thead>
+            <tr>
+              <th scope="col">Link type</th>
+              <th scope="col">Example</th>
+              <th scope="col">What you get</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Spotlight</td>
+              <td><code>snapchat.com/spotlight/[id]</code></td>
+              <td>Public Spotlight clip. Some files can include Snapchat's overlay.</td>
+            </tr>
+            <tr>
+              <td>Public post</td>
+              <td><code>snapchat.com/p/[id]</code></td>
+              <td>Public post video or photo.</td>
+            </tr>
+            <tr>
+              <td>Story</td>
+              <td><code>story.snapchat.com/s/[username]/[id]</code></td>
+              <td>Public Story item. Most Stories expire after about 24 hours; share links last around 36 hours.</td>
+            </tr>
+            <tr>
+              <td>Story by ID</td>
+              <td><code>story.snapchat.com/p/[id]</code></td>
+              <td>Public Story link.</td>
+            </tr>
+            <tr>
+              <td>Profile page</td>
+              <td><code>snapchat.com/@[username]</code></td>
+              <td>Active public Story or highlights, when the page exposes them.</td>
+            </tr>
+            <tr>
+              <td>Saved highlight</td>
+              <td><code>snapchat.com/@[username]/highlight/[id]</code></td>
+              <td>Public saved highlight, when the page exposes it.</td>
+            </tr>
+            <tr>
+              <td>Not supported</td>
+              <td>Private snaps, friends-only Stories, Memories</td>
+              <td>TikSaveHub does not target these. Export your own Memories inside Snapchat.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
-  <!-- How to Download Snapchat Videos - Detailed Guide -->
-  <section class="dl-steps-section" aria-labelledby="sc-howto-headline">
-  <div class="dl-steps-inner container-page">
-  <div class="dl-steps-header">
-  <span class="section-eyebrow text-caption-mono">Detailed Guide</span>
-  <h2 id="sc-howto-headline" class="section-headline">
-  How to download Snapchat videos step by step
-  </h2>
-  <p class="section-sub text-body-lg">
-  A complete walkthrough with device-specific instructions for iPhone, Android, and desktop.
-  </p>
-  </div>
-  <div style="max-width: 760px; margin: 0 auto; text-align: left;">
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Step 1: Copy the Snapchat link</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  Open the Snapchat app on your phone or visit snapchat.com on desktop. Navigate to the video, Spotlight clip, or Story you want to save. Tap the share icon (arrow pointing right/up) and select "Copy Link." On desktop, right-click the video and choose "Copy link address" or copy the URL from the browser address bar. The link will look like <code style="font-family: var(--font-mono); font-size: var(--text-body-sm); background: var(--color-canvas-soft); padding: 2px 6px; border-radius: var(--radius-sm);">snapchat.com/spotlight/abc123</code> or <code style="font-family: var(--font-mono); font-size: var(--text-body-sm); background: var(--color-canvas-soft); padding: 2px 6px; border-radius: var(--radius-sm);">story.snapchat.com/s/xyz789</code>.
-  </p>
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Step 2: Paste into TikSaveHub</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  Open a new browser tab and go to <strong>tiksavehub.com/snapchat-downloader</strong>. Tap the input field at the top of the page and paste your link (Ctrl+V / Cmd+V, or long-press and select Paste on mobile). You can also use the "Paste" button next to the field to grab the link directly from your clipboard. Processing starts automatically and takes 2–5 seconds.
-  </p>
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Step 3: Choose quality and download</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  A preview card appears showing the video thumbnail, title, and duration. Two download buttons are available: <strong>Download HD Video</strong> (up to 1080p, original quality) and <strong>Download SD Video</strong> (smaller file size for slower connections or limited storage). Tap your preferred option. The MP4 file saves directly to your device's Downloads folder (desktop) or Gallery/Photos app (mobile). You can also click "Download MP3" to extract just the audio track.
-  </p>
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Step 4: Find your downloaded file</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0;">
-  <strong>iPhone (Safari):</strong> Tap the downloads icon (arrow in toolbar) → tap the MP4 → tap Share → "Save Video" to move to Photos.<br>
-  <strong>Android (Chrome):</strong> Open Chrome → Downloads → tap the file → it appears in Gallery automatically.<br>
-  <strong>Desktop (Windows/Mac/Linux):</strong> Check your browser's download bar or Downloads folder.
-  </p>
-  </div>
-  </div>
+  <section class="dl-steps-section" aria-labelledby="sc-spotlight-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Overlay vs original</span>
+        <h2 id="sc-spotlight-headline" class="section-headline">
+          Spotlight overlay vs Stories
+        </h2>
+      </div>
+      <div class="sc-split">
+        <div class="sc-split-card">
+          <h3>Stories and public posts</h3>
+          <p>
+            Snapchat serves the public media file. TikSaveHub streams it from Snapchat's CDN without adding a watermark or re-encoding. Story photos download as image files; videos download as the MP4 file Snapchat exposes.
+          </p>
+        </div>
+        <div class="sc-split-card">
+          <h3>Spotlight</h3>
+          <p>
+            Spotlight files can include Snapchat's ghost logo and username. TikSaveHub delivers the file as-is; it does not remove the overlay, paint over it, or re-encode. TikSaveHub does not add an overlay to Stories or posts.
+          </p>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Device and Format Guides -->
-  <section class="dl-steps-section" aria-labelledby="sc-guides-headline">
-  <div class="dl-steps-inner container-page">
-  <div class="dl-steps-header">
-  <span class="section-eyebrow text-caption-mono">Device &amp; Format Guides</span>
-  <h2 id="sc-guides-headline" class="section-headline">
-  Snapchat download guides for every device and format
-  </h2>
-  <p class="section-sub text-body-lg">
-  Step-by-step help for iPhone, Android, Snapchat Memories, and MP3 extraction.
-  </p>
-  </div>
-  <div style="max-width: 760px; margin: 0 auto; text-align: left;">
-
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">How to Download Snapchat Videos on iPhone</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  Saving a Snapchat video to your iPhone camera roll takes about 30 seconds in Safari. Open the Snapchat app, find the Spotlight clip, public post, or Story you want, tap the Share icon, and choose Copy Link. Switch to Safari and open TikSaveHub's Snapchat video downloader. Paste the link into the field and tap Download HD. The MP4 lands in Safari's Downloads folder, not Photos, so one extra step is required. Tap the Downloads icon in the toolbar, select the file, tap Share, then choose Save Video. The clip is now in your camera roll and plays offline without the Snapchat app. The same flow works on iPad and on Chrome or Firefox for iOS, because every iPhone browser uses Apple's WebKit engine. There is no screen recording, no watermark added by TikSaveHub, and no app to install. If you prefer a visual walkthrough, our <a href="/blog/snapchat-video-downloader-for-iphone-and-android" style="color:var(--color-link);">guide to the Snapchat video downloader for iPhone and Android</a> covers every tap.
-  </p>
-
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">How to Download Snapchat Videos on Android</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  On Android, Chrome handles the download and Gallery indexes the file automatically. Copy the link from Snapchat's Share menu, open tiksavehub.com/snapchat-downloader in Chrome, paste the URL, and tap Download HD. The MP4 is saved to your Downloads folder. Open Gallery or Files and the video should already appear under Downloads or Movies. No APK, root access, or special permission is needed, which matters because random Snapchat downloader apps often request contacts and storage access they do not need. This browser-based Snapchat video downloader for Android works on Samsung, Pixel, OnePlus, Xiaomi, and other phones running a modern version of Chrome. Wi-Fi is faster for HD files, but mobile data works too. If the video is a Story, download it before the 24-hour expiry using our <a href="/snapchat-story-downloader" style="color:var(--color-link);">Snapchat Story Downloader</a>. For longer clips, keep the screen awake until the download finishes, then play the file in any gallery or video player. TikSaveHub adds no watermark and never compresses the original upload.
-  </p>
-
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Why Snapchat Doesn't Have a Built-in Save Button</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  Snapchat was built around impermanence, so the app intentionally has no save button for most content. When someone sends a Snap, the sender decides who can view it and for how long. A built-in download button would defeat that promise and could expose private moments. Snapchat also notifies people when you screenshot or screen record a chat, which is why screen recording is a poor workaround: it captures notifications, interface elements, and lower-quality video. Downloaders work differently. They only handle public content, such as Spotlight clips, public posts, and public Stories, and they fetch the original file from Snapchat's CDN instead of recording the screen. That means no notification, no UI clutter, and the full resolution the creator uploaded. Private Snaps, friends-only Stories, and Memories stay out of reach by design. If you need to save a public Story before it disappears, paste the link into our <a href="/snapchat-story-downloader" style="color:var(--color-link);">Snapchat Story Downloader</a>. For public videos, copy the link and use the downloader above. Respect the sender's privacy and never repost private content.
-  </p>
-
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Download Snapchat Memories to Gallery</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  Snapchat Memories are private backups stored in your Snapchat account, not public links, so a downloader cannot fetch them. To move Memories to your gallery, open Snapchat, tap Memories, select the Snaps you want, tap Export, and choose Save to Camera Roll on iPhone or Save to Gallery on Android. You can export several Memories at once, and Snapchat saves each clip to your device. If a Memory was saved only to Memories and never posted publicly, there is no URL to paste into TikSaveHub. The tool works only with public Spotlight clips, posts, and Stories. A common confusion is the difference between My Eyes Only, private Memories, and a public Story; only the public Story has a shareable link. Once you export from Snapchat, the file is yours to keep, and you can move it between devices with AirDrop, Google Drive, or a USB cable. For help saving public clips to your phone, see our <a href="/blog/snapchat-video-downloader-for-iphone-and-android" style="color:var(--color-link);">Snapchat video downloader for iPhone and Android guide</a>.
-  </p>
-
-  <h3 style="font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: var(--spacing-lg) 0 var(--spacing-sm) 0;">Extract Audio from Snapchat</h3>
-  <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.7; margin: 0 0 var(--spacing-md) 0;">
-  Sometimes the sound is the reason you saved the clip: a trending song, a voiceover, or a sound effect you want to reuse. TikSaveHub's Snapchat video to MP3 converter extracts the audio track and saves it as a standalone MP3 at 128kbps. Copy the same public Snapchat link you would use for a video, paste it into the Snapchat to MP3 page, and tap Download MP3. The converter works with Spotlight clips, public posts, and public Stories, and it runs in any browser on iPhone, Android, PC, or Mac. No app, account, or file conversion software is needed. Audio quality depends on the source. If the creator uploaded a clean track, the MP3 keeps it; background noise in the original recording cannot be removed. Downloaded audio is best for offline listening, personal projects, and reference, not for reposting someone else's music commercially. For video, use the main downloader; for sound only, open the <a href="/snapchat-to-mp3" style="color:var(--color-link);">Snapchat to MP3 converter</a> and paste the same link.
-  </p>
-
-  </div>
-  </div>
+  <section class="dl-steps-section" aria-labelledby="sc-devices-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Saving the file</span>
+        <h2 id="sc-devices-headline" class="section-headline">
+          iPhone, Android, and desktop
+        </h2>
+      </div>
+      <div style="max-width: 760px; margin: 0 auto; text-align: left;">
+        <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0 0 var(--spacing-md) 0;">
+          <strong style="color: var(--color-ink);">iPhone:</strong> Safari saves the MP4 to Files. Open the download, tap Share, then choose Save Video to move it to Photos.
+        </p>
+        <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0 0 var(--spacing-md) 0;">
+          <strong style="color: var(--color-ink);">Android:</strong> Chrome saves the file to Downloads, and Gallery usually indexes it.
+        </p>
+        <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0;">
+          <strong style="color: var(--color-ink);">Desktop:</strong> The file goes to your browser's downloads folder. Most modern video players can open the MP4.
+        </p>
+      </div>
+    </div>
   </section>
 
-  <!-- Common Problems & Solutions -->
+  <section class="dl-steps-section" aria-labelledby="sc-memories-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Private content</span>
+        <h2 id="sc-memories-headline" class="section-headline">
+          Memories and private snaps
+        </h2>
+      </div>
+      <div style="max-width: 760px; margin: 0 auto; text-align: left;">
+        <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0;">
+          Memories are private by default and TikSaveHub is not designed for them. If you create a shareable link to a Memory, anyone with that link can view it, but Memory links are not a supported category here. To save your own Memories, open Snapchat, go to Memories, select the items, tap Export, and choose where to save them (for example, Camera Roll or Gallery). Private snaps and friends-only Stories are also out of reach by design.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="dl-usecases-section" aria-labelledby="sc-problems-headline">
-  <div class="dl-usecases-inner container-page">
-  <div class="dl-usecases-header">
-  <span class="section-eyebrow text-caption-mono">Troubleshooting</span>
-  <h2 id="sc-problems-headline" class="section-headline">
-  Common problems and solutions
-  </h2>
-  </div>
-  <div class="dl-usecases-grid">
-  <article class="dl-usecase-card">
-  <h3 class="dl-usecase-title">"Video not found" or "Invalid link" error</h3>
-  <p class="dl-usecase-body">
-  This usually means the link is incorrect, the video is private, or it has been deleted. Make sure you copied the link from the Share menu (not a profile or search page). Only public videos and Spotlight clips work. If the creator deleted the video or set it to friends-only, no downloader can access it.
-  </p>
-  </article>
-  <article class="dl-usecase-card">
-  <h3 class="dl-usecase-title">Download quality is lower than expected</h3>
-  <p class="dl-usecase-body">
-  TikSaveHub downloads at the highest quality the creator uploaded. If the original is 720p, you get 720p, and the tool cannot upscale. Check the video on Snapchat first; if it looks sharp there, TikSaveHub delivers the same. For HD downloads, always choose the "HD" button, not "SD."
-  </p>
-  </article>
-  <article class="dl-usecase-card">
-  <h3 class="dl-usecase-title">Download takes too long or stalls</h3>
-  <p class="dl-usecase-body">
-  Processing is fast (2–5 seconds). The delay is usually file transfer. A 60-second 1080p Snapchat video is 8–15 MB. On slow mobile data, this takes 10–20 seconds. Try the SD option for a smaller file, switch to Wi-Fi, or wait a moment, and the download continues in the background.
-  </p>
-  </article>
-  <article class="dl-usecase-card">
-  <h3 class="dl-usecase-title">"Watermark still there" or video has username overlay</h3>
-  <p class="dl-usecase-body">
-  Expected for Spotlight clips. Snapchat bakes its ghost logo and username overlay into the only public copy it serves, so every Spotlight file includes it — waiting won't remove it. Stories and public posts come through without any overlay. Either way, TikSaveHub never adds a watermark of its own; you get the file exactly as Snapchat provides it.
-  </p>
-  </article>
-  <article class="dl-usecase-card">
-  <h3 class="dl-usecase-title">iPhone Safari says "Cannot download this file"</h3>
-  <p class="dl-usecase-body">
-  iOS sometimes blocks direct MP4 downloads in Safari. Fix: After tapping Download HD, tap the downloads icon in Safari's toolbar → tap the file → tap Share → "Save Video" to move it to Photos. Alternatively, use Chrome on iPhone (same Apple WebKit engine, better download handling) or download on desktop and AirDrop to your phone.
-  </p>
-  </article>
-  </div>
-  </div>
+    <div class="dl-usecases-inner container-page">
+      <div class="dl-usecases-header">
+        <span class="section-eyebrow text-caption-mono">Troubleshooting</span>
+        <h2 id="sc-problems-headline" class="section-headline">
+          Common problems
+        </h2>
+      </div>
+      <div class="dl-usecases-grid">
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">"Video not found" or "Invalid link"</h3>
+          <p class="dl-usecase-body">
+            The Story expired, the post was deleted, or the account is private. Copy a fresh public link from the Share menu.
+          </p>
+        </article>
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Quality is lower than expected</h3>
+          <p class="dl-usecase-body">
+            TikSaveHub returns the highest rendition Snapchat exposes. It cannot upscale. Choose HD, not SD, and compare with the public page first.
+          </p>
+        </article>
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Download stalls or takes long</h3>
+          <p class="dl-usecase-body">
+            Metadata is fetched with a 15-second timeout; the file transfer depends on its size and your connection. Try SD or Wi-Fi, then retry.
+          </p>
+        </article>
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">Spotlight overlay is still there</h3>
+          <p class="dl-usecase-body">
+            Spotlight files can include Snapchat's ghost logo and username. TikSaveHub does not remove or repaint it. TikSaveHub does not add an overlay to Stories or posts.
+          </p>
+        </article>
+        <article class="dl-usecase-card">
+          <h3 class="dl-usecase-title">iPhone says "Cannot download this file"</h3>
+          <p class="dl-usecase-body">
+            Safari saves the file to Files first. Open it, tap Share, then choose Save Video. You can also try Chrome or download on desktop.
+          </p>
+        </article>
+      </div>
+    </div>
   </section>
 
-  <!-- Use Cases -->
-  <section class="dl-usecases-section" aria-labelledby="sc-usecases-headline">
-  <div class="dl-usecases-inner container-page">
-  <div class="dl-usecases-header">
-  <span class="section-eyebrow text-caption-mono">Use Cases</span>
-  <h2 id="sc-usecases-headline" class="section-headline">
-  Who Actually Uses This Tool?
-  </h2>
-  <p class="section-sub text-body-lg">
-  This is not just for "saving videos from friends". The real use cases are much more specific:
-  </p>
-  </div>
-  <div style="max-width: 760px; margin: 0 auto; text-align: left;">
-  <ul style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; padding-left: 1.25em;">
-  <li style="margin: 0 0 var(--spacing-md) 0;"><strong style="color: var(--color-ink);">Content Creators:</strong> Saving your own Spotlight videos as high-quality MP4s to post on Instagram Reels or YouTube Shorts.</li>
-  <li style="margin: 0 0 var(--spacing-md) 0;"><strong style="color: var(--color-ink);">Social Media Managers:</strong> Archiving a brand's daily Snapchat stories for monthly reports.</li>
-  <li style="margin: 0 0 var(--spacing-md) 0;"><strong style="color: var(--color-ink);">Researchers &amp; Journalists:</strong> Saving public Spotlight clips to analyze viral trends without the screen recording artifacts.</li>
-  <li style="margin: 0;"><strong style="color: var(--color-ink);">Meme Pages:</strong> Downloading public videos quickly to repost, without dealing with the annoying Snapchat UI overlay.</li>
-  </ul>
-  </div>
-  </div>
+  <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
+    <div class="dl-faq-inner container-page">
+      <div class="dl-faq-header">
+        <span class="section-eyebrow text-caption-mono">FAQ</span>
+        <h2 id="dl-faq-headline" class="section-headline">
+          Frequently asked questions
+        </h2>
+      </div>
+
+      <div class="dl-faq-list" role="list">
+        {faqData.map((faq) => (
+          <div class="dl-faq-item" id={faq.id} role="listitem">
+            <button
+              class="dl-faq-trigger"
+              id={`${faq.id}-btn`}
+              aria-expanded="false"
+              aria-controls={`${faq.id}-panel`}
+              type="button"
+            >
+              <span class="dl-faq-q">{faq.q}</span>
+              <span class="dl-faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </button>
+            <div
+              id={`${faq.id}-panel`}
+              class="dl-faq-panel"
+              role="region"
+              aria-labelledby={`${faq.id}-btn`}
+              hidden
+            >
+              <p class="dl-faq-a">{faq.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   </section>
 
-  <!-- Comparison Table -->
-  <section class="dl-steps-section" aria-labelledby="sc-comparison-headline">
-  <div class="dl-steps-inner container-page">
-  <div class="dl-steps-header">
-  <span class="section-eyebrow text-caption-mono">Comparison</span>
-  <h2 id="sc-comparison-headline" class="section-headline">
-  TikSaveHub vs SnapDownloader, SaveFrom, and SSSTikTok
-  </h2>
-  <p class="section-sub text-body-lg">
-  A side-by-side look at watermark handling, HD quality, Spotlight, Stories, ads, and free download limits.
-  </p>
-  </div>
-  <div class="overflow-x-auto -mx-10 px-4 w-[calc(100%_+_5rem)] sm:mx-0 sm:px-0 sm:w-full">
-  <table style="width:100%;border-collapse:collapse;font-size:var(--text-body-sm);text-align:left;">
-  <thead>
-  <tr style="border-bottom:2px solid var(--color-hairline-strong);">
-  <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">Feature</th>
-  <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">TikSaveHub</th>
-  <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SnapDownloader</th>
-  <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SaveFrom</th>
-  <th style="padding:var(--spacing-md);font-weight:600;color:var(--color-ink);">SSSTikTok</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr style="border-bottom:1px solid var(--color-hairline);">
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Watermark handling</td>
-  <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">None added</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Partial</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Yes</td>
-  </tr>
-  <tr style="border-bottom:1px solid var(--color-hairline);">
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Max quality</td>
-  <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">1080p</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">720p</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">480p</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">720p</td>
-  </tr>
-  <tr style="border-bottom:1px solid var(--color-hairline);">
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Spotlight support</td>
-  <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Yes</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Partial</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  </tr>
-  <tr style="border-bottom:1px solid var(--color-hairline);">
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Story downloads</td>
-  <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Yes</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  </tr>
-  <tr style="border-bottom:1px solid var(--color-hairline);">
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No sign-up required</td>
-  <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Yes</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Yes</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">No</td>
-  </tr>
-  <tr style="border-bottom:1px solid var(--color-hairline);">
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Ads</td>
-  <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">None</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Heavy</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Moderate</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Heavy</td>
-  </tr>
-  <tr>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Free downloads</td>
-  <td style="padding:var(--spacing-md);color:var(--color-ink);font-weight:500;">Unlimited</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Limited</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Limited</td>
-  <td style="padding:var(--spacing-md);color:var(--color-body);">Limited</td>
-  </tr>
-  </tbody>
-  </table>
-  </div>
-  <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-lg) 0 0 0;line-height:1.7;">
-  Honest take: SnapDownloader requires a paid plan for full features and caps quality at 720p while skipping Spotlight entirely. SaveFrom only partially covers Spotlight, lacks Story support, and gates free downloads behind third-party ads. SSSTikTok is TikTok-focused and doesn't properly support Snapchat Spotlight or Stories. These aren't rumors, they're consistent patterns users report across forums. TikSaveHub was the only tool in this comparison that stays HD, original-quality, signup-free, unlimited, and supports both Spotlight and Stories.
-  </p>
-  <p style="color:var(--color-body);font-size:var(--text-body-sm);margin:var(--spacing-md) 0 0 0;line-height:1.7;">
-  Also works for <a href="/snapchat-story-downloader" style="color:var(--color-link);">Snapchat Stories</a>, <a href="/snapchat-to-mp3" style="color:var(--color-link);">Snapchat to MP3</a>, <a href="/tiktok-video-downloader-without-watermark" style="color:var(--color-link);">TikTok</a>, <a href="/instagram-reels-downloader-without-watermark" style="color:var(--color-link);">Instagram</a>, and <a href="/facebook-video-downloader" style="color:var(--color-link);">Facebook</a>.
-  </p>
-  </div>
+  <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
+    <div class="dl-internal-inner container-page">
+      <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
+        Related tools
+      </h2>
+      <div class="dl-internal-grid">
+        <a href="/snapchat-story-downloader" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </span>
+          <span class="dl-internal-title">Snapchat Story Downloader</span>
+          <span class="dl-internal-desc">Save public Story photos and videos before they expire.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/snapchat-to-mp3" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </span>
+          <span class="dl-internal-title">Snapchat to MP3</span>
+          <span class="dl-internal-desc">Extract the audio track from a public Snapchat video as an MP3.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="/tiktok-video-downloader-without-watermark" class="dl-internal-card">
+          <span class="dl-internal-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </span>
+          <span class="dl-internal-title">TikTok Video Downloader</span>
+          <span class="dl-internal-desc">Save public TikTok videos without the TikTok watermark.</span>
+          <span class="dl-internal-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
   </section>
 
-  <!-- Features Grid -->
- <section id="features" class="dl-features-section" aria-labelledby="dl-features-headline">
- <div class="dl-features-inner container-page">
- <div class="dl-features-header">
- <span class="section-eyebrow text-caption-mono">Features</span>
- <h2 id="dl-features-headline" class="section-headline">
- Why TikSaveHub stands out.
- </h2>
- </div>
+  <section class="dl-steps-section" aria-labelledby="sc-copyright-headline">
+    <div class="dl-steps-inner container-page">
+      <div class="dl-steps-header">
+        <span class="section-eyebrow text-caption-mono">Copyright</span>
+        <h2 id="sc-copyright-headline" class="section-headline">
+          Respecting creators and copyright
+        </h2>
+      </div>
+      <div style="max-width: 760px; margin: 0 auto; text-align: left;">
+        <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0;">
+          TikSaveHub is built for personal use. Download only videos you own or have explicit permission to save. Re-uploading someone else's Snapchat content for monetization or claiming it as your own can violate copyright. TikSaveHub does not host any media; it fetches files from Snapchat's public CDN.
+        </p>
+      </div>
+    </div>
+  </section>
 
- <div class="dl-features-grid">
- <article class="dl-feature-card">
- <div class="dl-feature-icon feat-accent-snap" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
- </div>
- <h3 class="dl-feature-title">Spotlight Support</h3>
- <p class="dl-feature-body">
- Download any public Spotlight clip in HD. Paste the snapchat.com/spotlight/ link and save the full video, no app needed.
- </p>
- </article>
-
- <article class="dl-feature-card">
- <div class="dl-feature-icon feat-accent-mp3" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
- </div>
- <h3 class="dl-feature-title">Nothing Added</h3>
- <p class="dl-feature-body">
- Every download is the original file from Snapchat's CDN — nothing added, nothing re-encoded. Stories come through clean; Spotlight's own overlay stays exactly as Snapchat serves it.
- </p>
- </article>
-
- <article class="dl-feature-card">
- <div class="dl-feature-icon feat-accent-fast" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
- </div>
- <h3 class="dl-feature-title">MP3 Extraction</h3>
- <p class="dl-feature-body">
- Convert any Snapchat video to MP3 audio in one tap. Save soundtracks, clips, and voice recordings for offline listening.
- </p>
- </article>
-
- <article class="dl-feature-card">
- <div class="dl-feature-icon feat-accent-snap" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
- </div>
- <h3 class="dl-feature-title">Lightning Fast</h3>
- <p class="dl-feature-body">
- Processing runs on our servers, so downloads start in seconds. Paste the link, click download, and the video is yours.
- </p>
- </article>
-
- <article class="dl-feature-card">
- <div class="dl-feature-icon feat-accent-mp3" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="3"/></svg>
- </div>
- <h3 class="dl-feature-title">All Link Formats</h3>
- <p class="dl-feature-body">
- Spotlight videos, public posts, stories, and profile links, every public Snapchat video format is supported.
- </p>
- </article>
-
- <article class="dl-feature-card">
- <div class="dl-feature-icon feat-accent-fast" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
- </div>
- <h3 class="dl-feature-title">Unlimited Downloads</h3>
- <p class="dl-feature-body">
- No daily limits, no caps, no premium tier. Download as many Snapchat videos as you want, every day, forever. It's completely free.
- </p>
- </article>
- </div>
- </div>
- </section>
-
- <!-- FAQ Section -->
- <section id="faq" class="dl-faq-section" aria-labelledby="dl-faq-headline">
- <div class="dl-faq-inner container-page">
- <div class="dl-faq-header">
- <span class="section-eyebrow text-caption-mono">FAQ</span>
- <h2 id="dl-faq-headline" class="section-headline">
- Frequently Asked Questions (FAQ)
- </h2>
- </div>
-
- <div class="dl-faq-list" role="list">
- {faqData.map((faq) => (
- <div class="dl-faq-item" id={faq.id} role="listitem">
- <button
- class="dl-faq-trigger"
- id={`${faq.id}-btn`}
- aria-expanded="false"
- aria-controls={`${faq.id}-panel`}
- type="button"
- >
- <span class="dl-faq-q">{faq.q}</span>
- <span class="dl-faq-chevron" aria-hidden="true">
- <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
- </span>
- </button>
- <div
- id={`${faq.id}-panel`}
- class="dl-faq-panel"
- role="region"
- aria-labelledby={`${faq.id}-btn`}
- hidden
- >
- <p class="dl-faq-a" set:html={faq.a}></p>
- </div>
- </div>
- ))}
- </div>
- </div>
- </section>
-
- <!-- People Also Ask Section -->
- <section class="dl-paa-section" aria-labelledby="dl-paa-headline">
- <div class="dl-paa-inner container-page">
- <div class="dl-paa-header">
- <span class="section-eyebrow text-caption-mono">People Also Ask</span>
- <h2 id="dl-paa-headline" class="section-headline">
- People also ask about Snapchat downloaders.
- </h2>
- <p class="section-sub text-body-lg">
- Quick, honest answers to the most searched Snapchat download questions.
- </p>
- </div>
-
- <div class="dl-paa-grid">
- {paaData.map((paa) => (
- <article class="dl-paa-item" id={paa.id}>
- <h3 class="dl-paa-q">{paa.q}</h3>
- <p class="dl-paa-a">{paa.a}</p>
- </article>
- ))}
- </div>
- </div>
- </section>
-
- <!-- Video Tutorial Section -->
- <section class="video-tutorial dl-video-section" aria-labelledby="dl-video-headline">
- <div class="dl-video-inner container-page">
- <div class="dl-video-header">
- <span class="section-eyebrow text-caption-mono">Video Guide</span>
- <h2 id="dl-video-headline" class="section-headline">
- How to Download Snapchat Videos (Video Tutorial)
- </h2>
- </div>
- <div class="video-wrapper">
- <!-- YouTube embed will be added later -->
- <p>Video tutorial coming soon.</p>
- </div>
- </div>
- </section>
-
- <!-- Respecting Creators and Copyright -->
- <section class="dl-steps-section" aria-labelledby="sc-copyright-headline">
- <div class="dl-steps-inner container-page">
- <div class="dl-steps-header">
- <span class="section-eyebrow text-caption-mono">Copyright</span>
- <h2 id="sc-copyright-headline" class="section-headline">
- Respecting Creators and Copyright
- </h2>
- </div>
- <div style="max-width: 760px; margin: 0 auto; text-align: left;">
- <p style="font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0;">
- TikSaveHub is built for personal use. You should only download videos that you own, or content that you have explicit permission to save. Re-uploading someone else's Snapchat content for monetization or claiming it as your own is a violation of copyright. We do not host any media on our servers; we simply fetch it from Snapchat's public CDN.
- </p>
- </div>
- </div>
- </section>
-
- <!-- CTA Band -->
- <section class="dl-cta-band" aria-labelledby="dl-cta-headline">
- <div class="dl-cta-inner container-page">
- <h2 id="dl-cta-headline" class="dl-cta-headline">
- Ready to download?
- </h2>
- <p class="dl-cta-sub">
- Paste a Snapchat link above and get your free video in seconds, no account, no distractions, no hassle.
- </p>
- <a href="#dl-hero-headline" class="btn-primary dl-cta-btn">
- Start Downloading
- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
- </a>
- </div>
- </section>
-
- <!-- Internal Links Section -->
- <section class="dl-internal-section" aria-labelledby="dl-internal-headline">
- <div class="dl-internal-inner container-page">
- <h2 id="dl-internal-headline" class="section-headline dl-internal-headline">
- Explore TikSaveHub.
- </h2>
- <div class="dl-internal-grid">
- <a href="/snapchat-story-downloader" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
- </span>
- <span class="dl-internal-title">Snapchat Story Downloader</span>
- <span class="dl-internal-desc">Save Snapchat stories before they expire.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/snapchat-to-mp3" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
- </span>
- <span class="dl-internal-title">Snapchat to MP3</span>
- <span class="dl-internal-desc">Convert Snapchat videos to MP3 audio instantly.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/tiktok-video-downloader-without-watermark" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
- </span>
- <span class="dl-internal-title">TikTok Video Downloader</span>
- <span class="dl-internal-desc">Download TikTok videos without watermark in HD.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/instagram-reels-downloader-without-watermark" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
- </span>
- <span class="dl-internal-title">Instagram Reels Downloader</span>
- <span class="dl-internal-desc">Download Instagram Reels without watermark.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/facebook-video-downloader" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
- </span>
- <span class="dl-internal-title">Facebook Video Downloader</span>
- <span class="dl-internal-desc">Save Facebook videos in HD quality.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/x-video-downloader" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
- </span>
- <span class="dl-internal-title">X/Twitter Video Downloader</span>
- <span class="dl-internal-desc">Download X videos and GIFs in HD.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/compare/snapchat-vs-tiktok-downloader" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
- </span>
- <span class="dl-internal-title">Snapchat vs TikTok Downloader</span>
- <span class="dl-internal-desc">Compare link formats, quality, and features side by side.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/compare/snapchat-downloader-vs-screen-recording" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg>
- </span>
- <span class="dl-internal-title">Snapchat Downloader vs Screen Recording</span>
- <span class="dl-internal-desc">Why a public link beats recording your screen.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- <a href="/compare/snapchat-story-vs-snapchat-spotlight" class="dl-internal-card">
- <span class="dl-internal-icon" aria-hidden="true">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
- </span>
- <span class="dl-internal-title">Snapchat Story vs Spotlight</span>
- <span class="dl-internal-desc">Match your link to the right downloader.</span>
- <span class="dl-internal-arrow" aria-hidden="true">→</span>
- </a>
- </div>
- </div>
- </section>
-
+  <div class="sc-share-wrap">
+    <SocialShare
+      url="/snapchat-downloader"
+      title="Snapchat Video Downloader"
+      description="Download public Snapchat Spotlight clips, Stories, and posts in the highest quality Snapchat serves."
+      image="/og-downloader.png"
+    />
+  </div>
 </Layout>
 
 <style>
@@ -991,31 +578,9 @@ Every download is an MP4 in the best available resolution. HD when the creator u
     text-wrap: balance; animation: fadeInUp 0.5s ease 0.2s both;
   }
 
-  .headline-gradient {
-    background: linear-gradient(135deg, #FFFC00 0%, #FFC800 40%, #ca8a04 70%, #FFFC00 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-
-  .dl-hero-subline {
-    font-size: clamp(20px, 3vw, 28px); font-weight: 600; line-height: 1.2;
-    letter-spacing: -0.5px; margin: 0; max-width: 560px; animation: fadeInUp 0.5s ease 0.25s both;
-  }
-
-  .dl-hero-sub {
-    color: var(--color-body); margin: 0; max-width: 560px;
-    animation: fadeInUp 0.5s ease 0.3s both;
-  }
-
   .dl-hero-form-wrap {
     width: 100%; max-width: 760px; animation: fadeInUp 0.5s ease 0.4s both;
   }
-
-  .dl-hero-trust {
-    display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap;
-    justify-content: center; animation: fadeInUp 0.5s ease 0.5s both;
-  }
-
-  .dl-hero-share { animation: fadeInUp 0.5s ease 0.55s both; }
 
   .dl-hero-define {
     max-width: 560px; margin: 0; padding: var(--spacing-md) var(--spacing-lg);
@@ -1028,32 +593,13 @@ Every download is an MP4 in the best available resolution. HD when the creator u
     line-height: 1.7; letter-spacing: -0.1px;
   }
 
-  .trust-chip {
-    display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-body-sm);
-    font-weight: 500; color: var(--color-body); padding: 0 var(--spacing-md); height: 36px;
-    border-radius: var(--radius-full); border: 1px solid var(--color-hairline);
-    background-color: var(--color-canvas);
-    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-  }
-
-  .trust-chip svg { color: #ca8a04; }
-
-  .trust-chip:hover {
-    border-color: var(--color-hairline-strong); transform: translateY(-2px);
-    box-shadow: 0 4px 12px -2px rgba(255, 252, 0, 0.2);
-  }
-
-  @media (hover: hover) {
-    .trust-chip:hover {
-      border-color: var(--color-hairline-strong); transform: translateY(-2px);
-      box-shadow: 0 4px 12px -2px rgba(255, 252, 0, 0.2);
-    }
+  .sc-form-note {
+    margin: 0; font-size: var(--text-body-sm); color: var(--color-mute); line-height: 1.5;
   }
 
   @media (max-width: 600px) {
     .dl-hero { padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-3xl); }
     .dl-hero-headline { font-size: clamp(22px, 5vw, 32px); letter-spacing: -1px; }
-    .trust-chip { font-size: var(--text-caption); height: 36px; padding: 0 var(--spacing-sm); }
     .breadcrumb-list { font-size: 11px; }
   }
 
@@ -1061,75 +607,8 @@ Every download is an MP4 in the best available resolution. HD when the creator u
   .dl-steps-section { background-color: var(--color-canvas); padding: var(--spacing-5xl) var(--spacing-lg); }
   .dl-steps-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4xl); }
   .dl-steps-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
-  .dl-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg); width: 100%; }
 
-  .dl-step-card {
-    display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-xl);
-    border-radius: var(--radius-lg); border: 1px solid var(--color-hairline);
-    background-color: var(--color-canvas); transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-  .dl-step-card:hover {
-    transform: translateY(-4px);
-    box-shadow: inset 0 0 0 1px #00000014, 0px 2px 2px #0000000a, 0px 8px 16px -4px #0000001a;
-  }
-  .dl-step-num { color: var(--color-mute); font-size: 11px; letter-spacing: 0.1em; }
-
-  .dl-step-icon {
-    width: 48px; height: 48px; border-radius: var(--radius-md);
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #FFFC0015, #FFC80020); color: #ca8a04;
-    box-shadow: inset 0 0 0 1px #FFFC0025;
-  }
-
-  .dl-step-title { font-size: var(--text-display-sm); font-weight: 600; letter-spacing: -0.6px; color: var(--color-ink); margin: 0; }
-  .dl-step-body { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.65; margin: 0; }
-
-  @media (max-width: 960px) { .dl-steps-grid { grid-template-columns: 1fr; max-width: 480px; } }
   @media (max-width: 600px) { .dl-steps-section { padding: var(--spacing-3xl) var(--spacing-md); } }
-
-  /* ─── Features Section ─── */
-  .dl-features-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-features-inner { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
-  .dl-features-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
-  .dl-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); }
-
-  .dl-feature-card {
-    display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-lg);
-    border-radius: var(--radius-md); background-color: var(--color-canvas);
-    box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-  .dl-feature-card:hover {
-    transform: translateY(-3px);
-    box-shadow: inset 0 0 0 1px #00000014, 0px 2px 2px #0000000a, 0px 8px 16px -4px #0000001a;
-  }
-
-  .dl-feature-icon {
-    width: 44px; height: 44px; border-radius: var(--radius-md);
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .feat-accent-snap {
-    background: linear-gradient(135deg, #FFFC0015, #FFC80020); color: #ca8a04;
-    box-shadow: inset 0 0 0 1px #FFFC0030;
-  }
-  .feat-accent-mp3 {
-    background: linear-gradient(135deg, #7928ca15, #ff008020); color: var(--color-grad-preview-start);
-    box-shadow: inset 0 0 0 1px #7928ca25;
-  }
-  .feat-accent-fast {
-    background: linear-gradient(135deg, #ff4d4d15, #f9cb2820); color: var(--color-grad-ship-start);
-    box-shadow: inset 0 0 0 1px #ff4d4d25;
-  }
-
-  .dl-feature-title { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: 0; }
-  .dl-feature-body { font-size: var(--text-body-sm); color: var(--color-body); margin: 0; line-height: 1.6; }
-
-  @media (max-width: 960px) { .dl-features-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) {
-    .dl-features-section { padding: var(--spacing-3xl) var(--spacing-md); }
-    .dl-features-grid { grid-template-columns: 1fr; }
-  }
 
   /* ─── FAQ Section ─── */
   .dl-faq-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
@@ -1167,56 +646,63 @@ Every download is an MP4 in the best available resolution. HD when the creator u
     .dl-faq-q { font-size: var(--text-body-sm); }
   }
 
-  /* ─── PAA Section ─── */
-  .dl-paa-section { background-color: var(--color-canvas); padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-paa-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4xl); }
-  .dl-paa-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
-  .dl-paa-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md); width: 100%; }
-
-  .dl-paa-item {
-    display: flex; flex-direction: column; gap: var(--spacing-sm); padding: var(--spacing-lg);
-    border-radius: var(--radius-md); background-color: var(--color-canvas-soft);
-    border: 1px solid var(--color-hairline);
-    box-shadow: inset 0 0 0 1px #00000005, 0px 1px 1px #00000005, 0px 4px 8px #0000000a;
-  }
-
-  .dl-paa-q { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: 0; letter-spacing: -0.3px; line-height: 1.4; }
-  .dl-paa-a { font-size: var(--text-body-sm); color: var(--color-body); margin: 0; line-height: 1.65; letter-spacing: -0.1px; }
-
-  @media (max-width: 960px) { .dl-paa-grid { grid-template-columns: 1fr; max-width: 560px; } }
-  @media (max-width: 600px) {
-    .dl-paa-section { padding: var(--spacing-3xl) var(--spacing-md); }
-    .dl-paa-item { padding: var(--spacing-md); }
-  }
-
-  /* ─── Video Tutorial Section ─── */
-  .dl-video-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
-  .dl-video-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-4xl); }
-  .dl-video-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-md); }
-
-  .video-wrapper {
-    width: 100%; max-width: 720px; aspect-ratio: 16 / 9;
-    background-color: var(--color-canvas); border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center;
-    box-shadow: inset 0 0 0 1px #00000008, 0px 1px 1px #00000005, 0px 8px 16px -4px #0000001a;
-  }
-  .video-wrapper p { color: var(--color-mute); font-size: var(--text-body-sm); margin: 0; text-align: center; }
-
-  @media (max-width: 600px) { .dl-video-section { padding: var(--spacing-3xl) var(--spacing-md); } }
-
-  /* ─── CTA Band ─── */
-  .dl-cta-band { background-color: var(--color-ink); color: var(--color-on-primary); padding: var(--spacing-5xl) var(--spacing-lg); text-align: center; }
-  .dl-cta-inner { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-lg); }
-  .dl-cta-headline { font-size: var(--text-display-lg); font-weight: 600; letter-spacing: -1.28px; color: var(--color-on-primary); margin: 0; }
-  .dl-cta-sub { font-size: var(--text-body-lg); color: color-mix(in srgb, var(--color-on-primary), transparent 40%); margin: 0; max-width: 480px; }
-  .dl-cta-btn { gap: 8px; background-color: var(--color-canvas) !important; color: var(--color-ink) !important; }
-  .dl-cta-btn:hover { background-color: var(--color-canvas-soft) !important; transform: translateY(-2px); }
-  @media (max-width: 600px) { .dl-cta-band { padding: var(--spacing-3xl) var(--spacing-md); } }
-
   /* ─── Shared Section Styles ─── */
   .section-eyebrow { color: var(--color-mute); }
   .section-headline { font-size: var(--text-display-lg); font-weight: 600; line-height: 1.25; letter-spacing: -1.28px; color: var(--color-ink); margin: 0; max-width: 540px; }
   .section-sub { color: var(--color-body); margin: 0; max-width: 480px; }
+
+  /* ─── Supported links table ─── */
+  .sc-table-wrap {
+    width: 100%; overflow-x: auto; border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg); background-color: var(--color-canvas);
+    box-shadow: inset 0 0 0 1px #00000008, 0px 1px 1px #00000005, 0px 4px 8px #0000000a;
+  }
+
+  .sc-table {
+    width: 100%; border-collapse: collapse; min-width: 640px;
+    font-size: var(--text-body-sm); text-align: left;
+  }
+
+  .sc-table th,
+  .sc-table td {
+    padding: var(--spacing-md); border-bottom: 1px solid var(--color-hairline); vertical-align: top;
+  }
+
+  .sc-table thead th {
+    color: var(--color-ink); background-color: var(--color-canvas-soft);
+    font-weight: 600; border-bottom: 2px solid var(--color-hairline);
+  }
+
+  .sc-table tbody td { color: var(--color-body); }
+  .sc-table tbody tr:last-child td { border-bottom: none; }
+
+  .sc-table code {
+    font-family: var(--font-mono); font-size: var(--text-caption);
+    background-color: var(--color-canvas-soft); padding: 2px 6px;
+    border-radius: var(--radius-sm); word-break: break-all;
+  }
+
+  /* ─── Spotlight vs Stories ─── */
+  .sc-split {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md); width: 100%; max-width: 900px;
+  }
+
+  .sc-split-card {
+    display: flex; flex-direction: column; gap: var(--spacing-sm);
+    padding: var(--spacing-xl); border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline); background-color: var(--color-canvas-soft);
+  }
+
+  .sc-split-card h3 {
+    font-size: var(--text-body-md-strong); font-weight: 600;
+    color: var(--color-ink); margin: 0; letter-spacing: -0.3px;
+  }
+
+  .sc-split-card p {
+    font-size: var(--text-body-sm); color: var(--color-body);
+    line-height: 1.7; margin: 0;
+  }
 
   /* ─── Internal Links Section ─── */
   .dl-internal-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); border-top: 1px solid var(--color-hairline); }
@@ -1252,49 +738,15 @@ Every download is an MP4 in the best available resolution. HD when the creator u
   }
   .dl-internal-card:hover .dl-internal-arrow { color: var(--color-ink); transform: translateX(4px); }
 
-  @media (max-width: 960px) { .dl-internal-grid { grid-template-columns: 1fr; max-width: 480px; } }
-  @media (max-width: 600px) { .dl-internal-section { padding: var(--spacing-3xl) var(--spacing-md); } }
-
-  /* ─── SEO Content Section ─── */
-  .seo-content-section { background-color: var(--color-canvas-soft); padding: var(--spacing-5xl) var(--spacing-lg); }
-  .seo-content-inner { display: flex; flex-direction: column; gap: var(--spacing-4xl); }
-  .seo-content-grid { display: grid; grid-template-columns: 1fr 320px; gap: var(--spacing-3xl); align-items: start; }
-  .seo-content-main { display: flex; flex-direction: column; gap: var(--spacing-md); }
-  .seo-article { display: flex; flex-direction: column; gap: var(--spacing-lg); }
-  .seo-article p { font-size: var(--text-body-md); color: var(--color-body); line-height: 1.75; margin: 0; letter-spacing: -0.1px; }
-
-  .text-highlight {
-    background: linear-gradient(135deg, #ca8a04 0%, #eab308 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-weight: 700; letter-spacing: -0.3px;
-  }
-
-  .seo-article h3 { font-size: var(--text-display-sm); font-weight: 600; letter-spacing: -0.6px; color: var(--color-ink); margin: var(--spacing-sm) 0 0 0; line-height: 1.35; }
-  .seo-content-sidebar { display: flex; flex-direction: column; gap: var(--spacing-md); position: sticky; top: 80px; }
-
-  .seo-sidebar-card {
-    background-color: var(--color-canvas); border-radius: var(--radius-lg); padding: var(--spacing-lg);
-    box-shadow: inset 0 0 0 1px #0000000a, 0px 1px 1px #00000005, 0px 4px 8px #0000000a;
-  }
-
-  .seo-sidebar-highlight { background: linear-gradient(135deg, #FFFC0008, #FFC80008); border: 1px solid #FFFC0025; }
-
-  .seo-sidebar-title { font-size: var(--text-body-md-strong); font-weight: 600; color: var(--color-ink); margin: 0 0 var(--spacing-md) 0; }
-  .seo-sidebar-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-sm); }
-  .seo-sidebar-list li { font-size: var(--text-body-sm); color: var(--color-body); line-height: 1.5; }
-  .seo-sidebar-list a { color: var(--color-body); text-decoration: none; transition: color 0.15s ease; }
-  .seo-sidebar-list a:hover { color: var(--color-ink); }
-  .seo-sidebar-mono li { font-family: var(--font-mono); font-size: var(--text-caption); color: var(--color-mute); }
-  .seo-sidebar-text { font-size: var(--text-body-sm); color: var(--color-body); margin: 0 0 var(--spacing-md) 0; line-height: 1.5; }
-  .seo-sidebar-cta { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+  .sc-share-wrap { padding: var(--spacing-3xl) var(--spacing-lg); text-align: center; }
 
   @media (max-width: 960px) {
-    .seo-content-grid { grid-template-columns: 1fr; }
-    .seo-content-sidebar { position: static; display: grid; grid-template-columns: repeat(2, 1fr); }
+    .dl-internal-grid { grid-template-columns: 1fr; max-width: 480px; }
+    .sc-split { grid-template-columns: 1fr; }
   }
   @media (max-width: 600px) {
-    .seo-content-section { padding: var(--spacing-3xl) var(--spacing-md); }
-    .seo-content-sidebar { grid-template-columns: 1fr; }
+    .dl-internal-section { padding: var(--spacing-3xl) var(--spacing-md); }
+    .sc-share-wrap { padding: var(--spacing-3xl) var(--spacing-md); }
   }
 </style>
 

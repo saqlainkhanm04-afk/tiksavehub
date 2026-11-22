@@ -7,10 +7,6 @@ interface Props {
 
 const { platform = 'tiktok' } = Astro.props;
 const year = new Date().getFullYear();
-const isInstagram = platform === 'instagram';
-const isFacebook = platform === 'facebook';
-const isX = platform === 'x';
-const isSnapchat = platform === 'snapchat';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -23,7 +19,7 @@ function localPath(path: string): string {
 <footer id="site-footer" class="site-footer">
   <div class="footer-inner container-page">
     <!-- Brand Column — explicit vertical stack (flex-col + gap-y-4) so the
-         logo, tagline, copyright and badge can never overlap on any viewport.
+         logo, tagline and copyright can never overlap on any viewport.
          min-w-0 lets long text wrap instead of widening the grid track. -->
     <div class="footer-brand flex min-w-0 flex-col gap-y-4">
       <a href={localPath('/')} class="footer-logo" id="footer-logo" aria-label="TikSaveHub home">
@@ -41,9 +37,6 @@ function localPath(path: string): string {
         {t(`footer.tagline.${platform}`)}
       </p>
       <p class="footer-copy">{t('footer.copyright').replace('{year}', String(year))}</p>
-      <div class="footer-marketingdb-badge">
-        <a href="https://marketingdb.live" target="_blank" rel="noopener noreferrer nofollow sponsored"><img src="https://marketingdb.live/badge.svg" alt="Listed on MarketingDB" width="190" height="44" class="block h-auto max-w-full"/></a>
-      </div>
     </div>
 
     <!-- Quick Links -->
@@ -183,25 +176,6 @@ function localPath(path: string): string {
     overflow-wrap: break-word;
   }
 
-  .footer-marketingdb-badge {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 100%;
-    margin: 0;
-  }
-
-  .footer-marketingdb-badge a {
-    display: flex;
-    max-width: 100%;
-    /* line-height: 0 was collapsing the badge's alt text when the image was
-       blocked/unavailable, painting it over the logo block. Flex removes the
-       baseline gap instead, so alt text now renders inside its own box. */
-  }
-
-  .footer-marketingdb-badge a:hover {
-    opacity: 0.85;
-  }
-
   .footer-col-label {
     color: var(--color-mute);
     margin: 0 0 var(--spacing-md) 0;
@@ -266,15 +240,11 @@ function localPath(path: string): string {
     }
 
     /* Mobile: brand column is a full-width vertical stack — logo → tagline →
-       copyright → badge, each separated by gap-y-4 (16px), never overlapping. */
+       copyright, each separated by gap-y-4 (16px), never overlapping. */
     .footer-brand {
       width: 100%;
       min-width: 0;
       row-gap: var(--spacing-md);
-    }
-
-    .footer-marketingdb-badge {
-      width: 100%;
     }
 
     .footer-link-list {

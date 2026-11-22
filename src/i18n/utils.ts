@@ -42,9 +42,10 @@ export function getAlternateLangLinks(pathname: string, site: string): { lang: s
 
   for (const lang of Object.keys(ui)) {
     const localizedPath = getLocalizedPath(cleanPath, lang as Lang);
+    // Root has no trailing slash: keep hreflang in sync with canonical/sitemap.
     links.push({
       lang,
-      href: `${site}${localizedPath}`,
+      href: localizedPath === '/' ? site : `${site}${localizedPath}`,
     });
   }
   return links;

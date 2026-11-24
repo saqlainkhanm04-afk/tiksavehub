@@ -42,15 +42,27 @@ function sitemapSourceFor(pathname) {
   return candidates.find((file) => existsSync(file));
 }
 
-/** Blog post URL -> its own published or updated date. */
-const BLOG_POST_DATES = new Map(
-  [
-    ...posts.map((post) => [`/blog/${post.slug}`, post.updated ?? post.date]),
-    ...Object.entries(postsByLang).flatMap(([lang, list]) =>
-      list.map((post) => [`/${lang}/blog/${post.slug}`, post.updated ?? post.date])
-    ),
-  ].filter(([, date]) => Boolean(date))
-);
+/**
+ * @param {{ date?: string; updated?: string }} post
+ * @returns {string | undefined}
+ */
+function blogPostDate(post) {
+  return post.updated ?? post.date;
+}
+
+/**
+ * Blog post URL -> its own published or updated date.
+ * @type {Map<string, string | undefined>}
+ */
+const BLOG_POST_DATES = new Map();
+for (const post of posts) {
+  BLOG_POST_DATES.set(`/blog/${post.slug}`, blogPostDate(post));
+}
+for (const [lang, list] of Object.entries(postsByLang)) {
+  for (const post of list) {
+    BLOG_POST_DATES.set(`/${lang}/blog/${post.slug}`, blogPostDate(post));
+  }
+}
 
 /**
  * @param {string} url

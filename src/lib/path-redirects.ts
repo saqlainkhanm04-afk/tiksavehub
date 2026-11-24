@@ -6,10 +6,11 @@
 // 2. Double locale prefix (Google crawled "/de/de/facebook-story-downloader"
 //    from pre-prefixed internal links): collapse to a single locale.
 // 3. Localized blog posts: only redirect /{lang}/blog/{slug} to English when
-//    {slug} is NOT a real localized post for that language. Real localized
-//    posts (e.g. /de/blog/snapchat-videos-ohne-wasserzeichen-herunterladen)
-//    must serve their own page, not bounce to English.
+//    {slug} is a real English post. Real localized posts (e.g.
+//    /de/blog/snapchat-videos-ohne-wasserzeichen-herunterladen) must serve
+//    their own page, and unknown slugs must 404 instead of bouncing to English.
 
+import { posts } from '../data/blog-posts.js';
 import { postsByLang } from '../data/blog-i18n/index.js';
 
 export const LOCALES = ['es', 'ja', 'fr', 'de', 'pt', 'ko', 'it'] as const;
@@ -38,6 +39,24 @@ const LOCALIZED_BLOG_SLUGS: Record<string, Set<string>> = Object.fromEntries(
   ])
 );
 
+/** Slugs that exist as English blog posts. */
+const ENGLISH_BLOG_SLUGS = new Set((posts ?? []).map((p) => p.slug));
+
+/**
+ * True when a localized blog URL points at neither a localized post nor an
+ * English post. These must 404 directly instead of redirecting to a missing
+ * English URL.
+ */
+export function isUnresolvedLocalizedBlogPath(pathname: string): boolean {
+  const blog = pathname.match(LOCALIZED_BLOG_RE);
+  if (!blog) return false;
+  const lang = blog[1];
+  const slug = blog[2].replace(/\/+$/, '');
+  if (!slug) return false;
+  if (LOCALIZED_BLOG_SLUGS[lang]?.has(slug)) return false;
+  return !ENGLISH_BLOG_SLUGS.has(slug);
+}
+
 export function resolvePathRedirect(pathname: string): string | null {
   for (const [from, to] of LEGACY_PATH_REDIRECTS) {
     if (pathname === from) return to;
@@ -55,11 +74,13 @@ export function resolvePathRedirect(pathname: string): string | null {
     const slug = blog[2].replace(/\/+$/, '');
     if (!slug) return `/${lang}/blog`;
     // Real localized post: only redirect if the request carried a trailing
-    // slash (single hop to canonical); unknown slug: send to English.
+    // slash (single hop to canonical). Unknown localized slug: redirect to
+    // English only when that English post exists; otherwise return null so
+    // the router can serve a 404 directly.
     if (LOCALIZED_BLOG_SLUGS[lang]?.has(slug)) {
       return pathname.endsWith('/') ? `/${lang}/blog/${slug}` : null;
     }
-    return `/blog/${slug}`;
+    return ENGLISH_BLOG_SLUGS.has(slug) ? `/blog/${slug}` : null;
   }
 
   return null;

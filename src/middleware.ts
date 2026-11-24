@@ -1,5 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
-import { resolvePathRedirect } from './lib/path-redirects';
+import { resolvePathRedirect, isUnresolvedLocalizedBlogPath } from './lib/path-redirects';
 import { primeCfEnv } from './lib/env';
 
 /* ─── HTTPS redirect + Security headers middleware ──────────────────────────
@@ -109,10 +109,14 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
    * worker) redirect identically. */
   if (ctx.url.pathname !== '/' && ctx.url.pathname.endsWith('/')) {
     const stripped = ctx.url.pathname.replace(/\/+$/, '') || '/';
-    const target = resolvePathRedirect(stripped) ?? stripped;
-    const dest = new URL(target, ctx.url);
-    dest.search = ctx.url.search;
-    return Response.redirect(dest.toString(), 301);
+    // Unknown localized blog slugs must 404 directly, not take an extra
+    // trailing-slash hop to a URL that does not exist.
+    if (!isUnresolvedLocalizedBlogPath(stripped)) {
+      const target = resolvePathRedirect(stripped) ?? stripped;
+      const dest = new URL(target, ctx.url);
+      dest.search = ctx.url.search;
+      return Response.redirect(dest.toString(), 301);
+    }
   }
 
   /* ── 3. Path redirects (legacy slugs, double-locale-prefix, localized

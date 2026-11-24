@@ -15,8 +15,9 @@ const site = 'https://tiksavehub.com';
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
 
 // Map a sitemap URL back to the source file that actually holds its content.
-// Sitemap <lastmod> then reflects the real file edit time instead of the build
-// time, so a deploy that only changes code no longer marks every page as fresh.
+// Non-blog pages use the real file edit time; blog posts use their own
+// published/updated date (see sitemapLastmod) instead of the shared data file's
+// mtime, so each post carries a truthful lastmod.
 /**
  * @param {string} pathname
  * @returns {string | undefined}
@@ -41,12 +42,29 @@ function sitemapSourceFor(pathname) {
   return candidates.find((file) => existsSync(file));
 }
 
+/** Blog post URL -> its own published or updated date. */
+const BLOG_POST_DATES = new Map(
+  [
+    ...posts.map((post) => [`/blog/${post.slug}`, post.updated ?? post.date]),
+    ...Object.entries(postsByLang).flatMap(([lang, list]) =>
+      list.map((post) => [`/${lang}/blog/${post.slug}`, post.updated ?? post.date])
+    ),
+  ].filter(([, date]) => Boolean(date))
+);
+
 /**
  * @param {string} url
  * @returns {Date | undefined}
  */
 function sitemapLastmod(url) {
-  const source = sitemapSourceFor(new URL(url).pathname);
+  const pathname = new URL(url).pathname;
+  const blogDate = BLOG_POST_DATES.get(pathname);
+  if (blogDate) {
+    const parsed = new Date(blogDate);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
+
+  const source = sitemapSourceFor(pathname);
   if (!source) return undefined;
   try {
     return new Date(statSync(source).mtimeMs);
@@ -111,9 +129,9 @@ export default defineConfig({
   integrations: [
     sitemap({
       customPages,
-      // Per-URL <lastmod> from the source file's modification time. If a page
-      // has no resolvable source file we leave lastmod out rather than lie
-      // with the build timestamp.
+      // Per-URL <lastmod>: blog posts use their own published/updated date;
+      // other pages use the source file's modification time. If neither is
+      // available we leave lastmod out rather than lie with the build time.
       serialize: (item) => {
         const lastmod = sitemapLastmod(item.url);
         return lastmod ? { ...item, lastmod: lastmod.toISOString() } : item;

@@ -327,6 +327,7 @@ function cleanCut(value: string): string {
 /** Normalize every title separator to a single hyphen style. */
 export function normalizeTitleSeparators(value: string): string {
   return value
+    .replace(/\u00E2\u20AC[\u201C\u201D]/g, ' - ')
     .replace(/\s*[—–|]\s*/g, ' - ')
     .replace(/\s*--\s*/g, ' - ')
     .replace(/\s*:\s+/g, ' - ')

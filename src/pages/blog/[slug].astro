@@ -33,7 +33,7 @@ const relatedPosts = posts
 
 // Blog covers are hand-drawn SVG artwork for the on-page hero. Google's
 // Article rich result only accepts raster images (ideally >=1200px wide), and
-// rejects SVG outright â€” which is why the structured-data image must fall back
+// rejects SVG outright — which is why the structured-data image must fall back
 // to the 1200x630 PNG card whenever the cover is not a raster file.
 const RASTER_COVER = /\.(png|jpe?g|webp|avif)$/i;
 const ARTICLE_IMAGE_FALLBACK = '/og-blog.png';
@@ -66,7 +66,7 @@ const articleJsonLd: Record<string, unknown> = {
   inLanguage: 'en',
   keywords: post.tags.join(', '),
   // E-E-A-T: posts are written by a real, named person (Samneil), not a
-  // faceless "Editorial Team" â€” see /about for the human behind the site.
+  // faceless "Editorial Team" — see /about for the human behind the site.
   author: {
     '@type': 'Person',
     '@id': `${site}/authors/samneil#samneil`,
